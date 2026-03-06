@@ -1,0 +1,52 @@
+---
+// Interactive pixel art MCM room diorama — replaces AsciiHeader
+// Objects are secretly clickable links to social profiles
+---
+
+<div class="desk-scene-wrap" role="banner" aria-label="Alexander Campos">
+  <canvas id="desk-scene" aria-hidden="true"></canvas>
+  <span class="ds-tooltip" id="ds-tooltip"></span>
+</div>
+
+<style>
+  .desk-scene-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 0.5rem;
+  }
+
+  #desk-scene {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    cursor: default;
+  }
+
+  .ds-tooltip {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--gold-accent);
+    letter-spacing: 0.1em;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .ds-tooltip.visible {
+    opacity: 1;
+  }
+
+  @media (max-width: 480px) {
+    .desk-scene-wrap {
+      max-width: 100%;
+    }
+  }
+</style>

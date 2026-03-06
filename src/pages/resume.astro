@@ -1,0 +1,265 @@
+---
+import Page from '../layouts/Page.astro';
+---
+
+<Page title="resume -- alexander campos" description="Operations engineer, AI systems builder. Capital One, Apple FCU, Guardian, ForgeFrame.">
+  <article class="resume">
+    <h1>Resume</h1>
+
+    <section class="summary">
+      <p>
+        I find where systems break and build the thing that should already exist.
+        Regulated finance by day, AI infrastructure by night. The throughline across
+        both: process awareness, failure-surface mapping, and a low tolerance for
+        tools that don't work the way they should.
+      </p>
+    </section>
+
+    <hr />
+
+    <section>
+      <h2>Technical Skills</h2>
+
+      <h3>AI Systems & Cognitive Architecture</h3>
+      <p class="skills">
+        Multi-Provider LLM Routing (Anthropic/OpenAI/Ollama), Intent-Based Model Selection,
+        Prompt Engineering (Chain-of-Thought, Structured Extraction), Retrieval-Augmented Context
+        Injection, Hierarchical Memory Compression (strength decay, retrieval reinforcement),
+        MCP Protocol (Model Context Protocol), Reframe Detection, Post-Session Intelligence Pipelines
+      </p>
+
+      <h3>Application Engineering</h3>
+      <p class="skills">
+        TypeScript, Node.js, React, Electron (60+ IPC channels, 20 backend modules),
+        SQLite/FTS5, Python, Astro, Web Workers, WebGL2/GLSL, Three.js, Web Audio API,
+        Tone.js, HTML/CSS (hand-built, no frameworks)
+      </p>
+
+      <h3>Systems & Failure Engineering</h3>
+      <p class="skills">
+        Failure-Surface Mapping, Pipeline Anomaly Detection, End-to-End Process Modernization,
+        Root-Cause Analysis Frameworks, Dependency Sequencing, Rollback Architecture
+      </p>
+
+      <h3>Data & Observability</h3>
+      <p class="skills">
+        SQL (Advanced -- Postgres, Snowflake), Splunk (Search & Reporting),
+        Real-Time Monitoring Dashboards, AWS, Looker Studio, QuickSight, Power BI
+      </p>
+    </section>
+
+    <hr />
+
+    <section>
+      <h2>Experience</h2>
+
+      <div class="role">
+        <div class="role-header">
+          <h3>Capital One -- Senior Process Manager, Card Legal Recoveries Operations</h3>
+          <span class="dates">2025 -- Present | Richmond, VA</span>
+        </div>
+        <ul>
+          <li>
+            <strong>Built process health monitoring that made a $600M+ file exchange network
+            operationally visible.</strong> Identified pattern-level blind spots across 300+
+            daily regulatory transmissions -- no unified failure tracking, purely reactive posture.
+            Pitched architectural overhaul to Senior Leadership; evolved a rapid prototype into
+            a pipeline-backed anomaly detection system with predictive validation. Reduced manual
+            monitoring effort by 78%.
+          </li>
+          <li>
+            <strong>Resolved a 20,000+ account logic failure by eliminating dependency on external
+            Data teams.</strong> Uncovered a buried bug in the recovery workflow while Data Analysts
+            were backlogged 6+ weeks. Built an investigative SQL framework to isolate root cause,
+            remediate impacted accounts, and document failure taxonomy. Created a permanent
+            operational shift: Process team now owns root-cause analysis.
+          </li>
+          <li>
+            <strong>Caught specification failures before production cutover during the $35B+
+            Discover merger integration.</strong> Owned technical validation of the Systems
+            Integration Guide for legacy firm onboarding. Engaged Engineering and vendor partners
+            to surface design-layer gaps across regulatory file exchange formats -- zero
+            transmission errors through cutover.
+          </li>
+          <li>
+            <strong>Designed a 5-month modernization roadmap and self-taught the infrastructure
+            tooling to execute it.</strong> Mapped fragmented manual workflows into a staged
+            automated architecture with dependency sequencing, stakeholder gates, and rollback
+            protocols. Learned Splunk, Postgres, and JSON parsing well enough to unblock 6 months
+            of stalled monitoring work -- eliminating the historical dependency on Engineering
+            as a translation layer.
+          </li>
+        </ul>
+      </div>
+
+      <div class="role">
+        <div class="role-header">
+          <h3>Apple Federal Credit Union -- Branch Operations Administrator</h3>
+          <span class="dates">January 2020 -- 2025 | Fairfax, VA</span>
+        </div>
+        <ul>
+          <li>
+            <strong>Promoted four times in five years</strong> -- from teller through loan
+            underwriting and account management, to full branch operational strategy, then
+            enterprise-level operational support across a 25-branch network during a major merger.
+          </li>
+          <li>
+            <strong>Completed B.S. at George Mason University concurrently</strong> while
+            carrying a full-time operational role across all four promotion stages.
+          </li>
+          <li>
+            <strong>Built compliance tracking infrastructure and VP-level reporting dashboards</strong>
+            (Power BI) for regulatory documentation (NCUA, CFPB). Independently identified systemic
+            gaps in compliance tracking and service trend visibility -- designed monitoring
+            infrastructure and workflow automation that reduced complaint response cycles by 50%.
+          </li>
+          <li>
+            <strong>Pitched a branch-wide modernization roadmap to the CEO</strong> with backing
+            from VP and SVP of Retail Delivery. Designed end-to-end automation strategy for manual
+            workflows across the branch network. Approved and moved into active implementation.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <hr />
+
+    <section>
+      <h2>Projects</h2>
+
+      <div class="role">
+        <div class="role-header">
+          <h3>Guardian -- Desktop AI Workspace</h3>
+          <span class="dates">2023 -- Present</span>
+        </div>
+        <p>
+          31,700-line open-source desktop application (Electron + React + Node.js) integrating
+          chat, terminal, notes, and memory into a single interface -- 60+ IPC channels across
+          20 backend modules.
+        </p>
+        <ul>
+          <li>
+            <strong>Built a reframe detection engine that catches when language models subtly
+            rewrite how a user describes themselves.</strong> Classifies distortions in real-time;
+            when user-rated inaccuracy exceeds 40%, the system triggers automatic prompt correction
+            to preserve the user's original intent.
+          </li>
+          <li>
+            <strong>Designed a provider-agnostic routing engine</strong> that auto-selects models
+            by intent complexity and cost across Anthropic, OpenAI, and local Ollama providers.
+            Runs fully air-gapped on local models or scales through cloud APIs -- zero vendor lock-in.
+          </li>
+          <li>
+            <strong>Designed a hierarchical memory compression pipeline</strong> -- raw to summary
+            to pattern to principle -- with threshold-triggered distillation, strength decay at
+            0.97/day, and retrieval reinforcement at +0.15 per access.
+          </li>
+          <li>
+            <strong>Built a post-session intelligence pipeline</strong> that fires on conversation
+            end. Extracts decisions, tasks, and code artifacts via LLM. Auto-generates typed notes.
+            Indexes conversation chunks with semantic summaries into FTS5 for near-semantic search.
+          </li>
+        </ul>
+      </div>
+
+      <div class="role">
+        <div class="role-header">
+          <h3>ForgeFrame -- Sovereign AI Middleware</h3>
+          <span class="dates">2025 -- Present</span>
+        </div>
+        <p>
+          Open-source middleware platform providing memory, routing, and provenance for AI
+          applications. Monorepo architecture -- MIT-licensed memory primitive, AGPL core.
+        </p>
+        <ul>
+          <li>
+            <strong>Built the MCP Memory Server</strong> -- an MIT-licensed memory primitive
+            implementing the Model Context Protocol. SQLite-backed with strength decay, retrieval
+            reinforcement, and semantic search. Designed as the foundational layer other systems
+            build on.
+          </li>
+          <li>
+            <strong>Designed a dual-mechanism integration architecture</strong> -- MCP for
+            ecosystem compatibility plus a proxy layer for full conversation intercept. Enables
+            sovereign context control without vendor lock-in at the protocol level.
+          </li>
+        </ul>
+      </div>
+
+      <div class="role">
+        <div class="role-header">
+          <h3>acampos.dev -- This Site</h3>
+          <span class="dates">2026</span>
+        </div>
+        <p>
+          Hand-built with Astro and vanilla JS. No frameworks beyond the static generator.
+          Runs a WebGL2 ASCII shader over a Gray-Scott reaction-diffusion field computed in
+          a Web Worker, with audio-reactive uniforms fed from a Web Audio API bridge.
+          View source is a feature.
+        </p>
+      </div>
+    </section>
+
+    <hr />
+
+    <section>
+      <h2>Education</h2>
+      <p>
+        <strong>M.Eng. AI Product Innovation</strong> -- In Progress
+      </p>
+      <p>
+        <strong>B.S. Business Administration, Management and Operations</strong> -- George Mason
+        University, December 2024. Completed concurrently with full-time role and four promotions.
+      </p>
+    </section>
+  </article>
+
+  <script is:inline>
+    console.log(
+      '%c you are reading the resume of someone who builds systems like this one. ',
+      'color: #5BF29B; font-family: monospace; font-size: 11px;'
+    );
+  </script>
+</Page>
+
+<style>
+  .resume {
+    font-size: 0.95rem;
+  }
+
+  .skills {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--white-60);
+  }
+
+  .role {
+    margin-bottom: 2rem;
+  }
+
+  .role-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .role-header h3 {
+    margin-bottom: 0.15rem;
+  }
+
+  .dates {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--white-45);
+  }
+
+  .role ul {
+    padding-left: 1.25rem;
+  }
+
+  .role li {
+    margin-bottom: 0.75rem;
+  }
+
+  .role li strong {
+    color: var(--glow-hot);
+  }
+</style>

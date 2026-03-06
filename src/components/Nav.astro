@@ -1,0 +1,81 @@
+---
+const links = [
+  { href: '/', label: 'home' },
+  { href: '/about', label: 'about' },
+  { href: '/projects', label: 'projects' },
+  { href: '/writing', label: 'writing' },
+  { href: '/resume', label: 'resume' },
+  { href: '/links', label: 'links' },
+  { href: '/guestbook', label: 'guestbook' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<nav aria-label="Main navigation">
+  <ul>
+    {links.map(link => (
+      <li>
+        <a
+          href={link.href}
+          class:list={[{ active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) }]}
+        >
+          {link.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  nav {
+    border-top: 2px dashed var(--white-08);
+    border-bottom: 2px dashed var(--white-08);
+    padding: 0.6rem 0;
+    margin-bottom: 0.5rem;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  a {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--white-45);
+    text-decoration: none;
+    text-transform: lowercase;
+    border-bottom: none;
+    transition: color 0.2s;
+  }
+
+  @media (hover: hover) {
+    a:hover {
+      color: var(--gold-accent);
+      border-bottom: 2px dashed var(--gold-accent);
+      transition: border-bottom 0s;
+    }
+  }
+
+  a.active {
+    color: var(--glow);
+    position: relative;
+  }
+
+  a.active::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: var(--gold-accent);
+    display: inline-block;
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+</style>

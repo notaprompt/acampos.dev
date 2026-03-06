@@ -1,0 +1,144 @@
+---
+import '../styles/global.css';
+import '../styles/retro.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogType?: string;
+}
+
+const { title, description = 'Hand-built personal site of Alexander Campos.', ogType = 'website' } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║                                                              ║
+  ║   alexander campos — acampos.dev                             ║
+  ║                                                              ║
+  ║   surface: a hand-built 2003 homepage                        ║
+  ║   substrate: WebGL2 ASCII shaders, reaction-diffusion,       ║
+  ║              procedural audio, generative systems             ║
+  ║                                                              ║
+  ║   view-source is a feature, not a vulnerability.              ║
+  ║                                                              ║
+  ║   stack: astro (static), vanilla JS islands, WebGL2,          ║
+  ║          web workers, web audio API                           ║
+  ║                                                              ║
+  ║   no frameworks were harmed in the making of this site.       ║
+  ║                                                              ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content={Astro.generator} />
+  <link rel="canonical" href={canonicalURL} />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+  <title>{title}</title>
+  <meta name="description" content={description} />
+
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content={ogType} />
+  <meta property="og:url" content={canonicalURL} />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+
+  <!-- Fonts -->
+  <link rel="preload" href="/fonts/cormorant-garamond-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/cormorant-garamond-600.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+
+  <style is:inline>
+    @font-face {
+      font-family: 'Cormorant Garamond';
+      src: url('/fonts/cormorant-garamond-400.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Cormorant Garamond';
+      src: url('/fonts/cormorant-garamond-600.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('/fonts/jetbrains-mono-400.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
+
+  <!-- Styles imported via Astro frontmatter -->
+</head>
+<body>
+  <!-- ASCII background canvas — reaction-diffusion substrate -->
+  <canvas id="ascii-bg" aria-hidden="true"></canvas>
+
+  <slot />
+
+  <!-- Atmospheric overlays -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- Cursor trail canvas -->
+  <canvas id="cursor-trail" aria-hidden="true"></canvas>
+
+  <!-- Console greeting -->
+  <script is:inline>
+    console.log(
+      '%c alexander campos ',
+      'background: #b8965a; color: #050505; padding: 4px 12px; font-family: Georgia, serif; font-size: 14px;'
+    );
+    console.log(
+      '%c 2003 surface. 2026 substrate. you found the good part. ',
+      'color: #E8DCC8; font-family: monospace; font-size: 11px;'
+    );
+    console.log(
+      '%c astro + vanilla JS + WebGL2 + web workers. no frameworks were harmed. ',
+      'color: #555; font-family: monospace; font-size: 10px;'
+    );
+  </script>
+
+  <!-- Islands — loaded after page is interactive -->
+  <script src="../islands/desk-scene.js"></script>
+  <script src="../islands/ascii-bg.js"></script>
+  <script src="../islands/cursor-trail.js"></script>
+  <script src="../islands/konami.js"></script>
+  <script src="../islands/music-panel.js"></script>
+  <script src="../islands/audio-bridge.js"></script>
+  <script src="../islands/ambient-audio.js"></script>
+  <script src="../islands/assistant.js"></script>
+</body>
+</html>
+
+<style is:global>
+  #ascii-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  #cursor-trail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9996;
+    pointer-events: none;
+  }
+</style>

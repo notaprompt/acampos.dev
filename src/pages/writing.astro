@@ -1,0 +1,106 @@
+---
+import Page from '../layouts/Page.astro';
+---
+
+<Page title="writing -- alexander campos" description="Technical writing on cognitive architecture, AI safety, and sovereign systems.">
+  <article>
+    <h1>Writing</h1>
+
+    <p>
+      I think by writing. Most of this lives on Substack and covers the territory
+      between cognitive science, AI systems, and the question of who owns your
+      attention when the tools get smart enough to shape it. Some of it is technical.
+      Some of it is raw. All of it is honest about what I don't know yet.
+    </p>
+
+    <dl class="writing-list">
+      <div class="writing-entry">
+        <dt><a href="https://substack.com">TRIM: Topological-Recursive Identity Model</a></dt>
+        <dd class="date">2026 -- ongoing</dd>
+        <dd>
+          A three-layer recursive self-modeling framework (Object -> Observer -> Interpreter).
+          Explores how AI systems can model identity through behavioral trajectories rather than
+          static profiles. The contradiction register -- stated values vs observed behavior --
+          applies Ibn Khaldun's method as a data structure.
+        </dd>
+      </div>
+
+      <div class="writing-entry">
+        <dt><a href="https://substack.com">On Reframe Detection</a></dt>
+        <dd class="date">2025</dd>
+        <dd>
+          How language models subtly reshape user intent through seven classification types,
+          and the engineering challenge of detecting it in real-time. Built from observations
+          during Guardian development.
+        </dd>
+      </div>
+
+      <div class="writing-entry">
+        <dt><a href="https://substack.com">Memory Compression as Forgetting Curve</a></dt>
+        <dd class="date">2025</dd>
+        <dd>
+          Technical walkthrough of the 4-level hierarchical memory pipeline
+          (raw -> summary -> pattern -> principle), why strength decay mirrors human consolidation,
+          and what retrieval reinforcement means for AI systems that accumulate context over months.
+        </dd>
+      </div>
+
+      <div class="writing-entry">
+        <dt><a href="https://substack.com">Sovereignty at Every Scale</a></dt>
+        <dd class="date">2025</dd>
+        <dd>
+          The unifying thesis behind ForgeFrame and Guardian: every interaction with an AI system
+          is an opportunity for extraction or preservation. The same primitive -- intercept,
+          observe, model, protect, recurse -- applies at the individual, organizational, and
+          infrastructure level.
+        </dd>
+      </div>
+    </dl>
+  </article>
+
+  <script is:inline>
+    console.log(
+      '%c the writing is the thinking made visible. ',
+      'color: #E8DCC8; font-family: monospace; font-size: 11px;'
+    );
+  </script>
+</Page>
+
+<style>
+  .writing-list {
+    margin-top: 1.5rem;
+  }
+
+  .writing-entry {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--white-08);
+  }
+
+  .writing-entry:last-child {
+    border-bottom: none;
+  }
+
+  dt {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+  }
+
+  dt a {
+    color: var(--glow-hot);
+  }
+
+  .date {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--white-45);
+    margin-bottom: 0.5rem;
+  }
+
+  dd:not(.date) {
+    color: var(--glow);
+    line-height: 1.6;
+  }
+</style>

@@ -1,0 +1,131 @@
+---
+import Page from '../../layouts/Page.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Page
+  title={`${entry.data.title} -- alexander campos`}
+  description={entry.data.tagline}
+  ogType="article"
+>
+  <article class="project-detail">
+    <header class="project-header">
+      <h1>{entry.data.title}</h1>
+      <p class="tagline">{entry.data.tagline}</p>
+      <div class="meta">
+        <span class={`status status-${entry.data.status}`}>{entry.data.status}</span>
+        <div class="stack">
+          {entry.data.stack.map(tech => (
+            <span class="tech">{tech}</span>
+          ))}
+        </div>
+        {entry.data.repo && (
+          <a href={entry.data.repo} class="repo-link" target="_blank" rel="noopener noreferrer">
+            source >>
+          </a>
+        )}
+      </div>
+    </header>
+
+    <div class="project-content">
+      <Content />
+    </div>
+
+    <nav class="back-nav">
+      <a href="/projects">&lt;&lt; all projects</a>
+    </nav>
+  </article>
+</Page>
+
+<style>
+  .project-detail {
+    max-width: 100%;
+  }
+
+  .project-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--white-08);
+  }
+
+  .tagline {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--white-60);
+    margin-bottom: 1rem;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .status {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 0.15em 0.5em;
+    border: 1px solid;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-active { color: var(--alive); border-color: var(--alive); }
+  .status-shipped { color: var(--gold-accent); border-color: var(--gold-accent); }
+  .status-concept { color: var(--white-45); border-color: var(--white-30); }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .tech {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--white-45);
+    background: var(--depth-2);
+    padding: 0.15em 0.4em;
+    border: 1px solid var(--white-08);
+  }
+
+  .repo-link {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+  }
+
+  .project-content :global(h2) {
+    margin-top: 2.5rem;
+  }
+
+  .project-content :global(pre) {
+    font-size: 0.8rem;
+  }
+
+  .project-content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .back-nav {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--white-08);
+  }
+
+  .back-nav a {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+</style>

@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Oliver Sprite Editor</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #111; color: #ccc; font-family: 'Courier New', monospace;
+    display: flex; height: 100vh; overflow: hidden;
+  }
+
+  /* ── Left: palette + tools ── */
+  .sidebar {
+    width: 200px; background: #1a1a1a; border-right: 1px solid #333;
+    padding: 12px; display: flex; flex-direction: column; gap: 12px;
+    overflow-y: auto; flex-shrink: 0;
+  }
+  .sidebar h3 { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .palette {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
+  }
+  .swatch {
+    width: 100%; aspect-ratio: 1; border: 2px solid transparent; border-radius: 3px;
+    cursor: pointer; position: relative;
+  }
+  .swatch.active { border-color: #5BF29B; }
+  .swatch.transparent-swatch {
+    background: repeating-conic-gradient(#333 0% 25%, #555 0% 50%) 50% / 12px 12px;
+  }
+  .swatch-label {
+    font-size: 8px; color: #888; text-align: center; margin-top: 1px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .tool-group { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tool-btn {
+    background: #252525; border: 1px solid #444; color: #ccc; padding: 4px 8px;
+    font-family: inherit; font-size: 11px; cursor: pointer; border-radius: 3px;
+  }
+  .tool-btn:hover { background: #333; }
+  .tool-btn.active { border-color: #5BF29B; color: #5BF29B; }
+
+  .size-inputs { display: flex; gap: 6px; align-items: center; font-size: 11px; }
+  .size-inputs input {
+    width: 40px; background: #222; border: 1px solid #444; color: #ccc;
+    padding: 2px 4px; font-family: inherit; font-size: 11px; text-align: center;
+  }
+
+  /* ── Center: canvas grid ── */
+  .editor-main {
+    flex: 1; display: flex; flex-direction: column; min-width: 0;
+  }
+  .canvas-wrap {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    overflow: auto; padding: 20px;
+  }
+  #grid-canvas {
+    cursor: crosshair; image-rendering: pixelated;
+    border: 1px solid #333;
+  }
+  .editor-toolbar {
+    padding: 8px 12px; background: #1a1a1a; border-top: 1px solid #333;
+    display: flex; gap: 8px; align-items: center; font-size: 11px;
+  }
+  .coord-display { color: #666; min-width: 80px; }
+
+  /* ── Right: frames + animation ── */
+  .frames-panel {
+    width: 280px; background: #1a1a1a; border-left: 1px solid #333;
+    display: flex; flex-direction: column; flex-shrink: 0;
+  }
+  .frames-header {
+    padding: 8px 12px; border-bottom: 1px solid #333;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .frames-list {
+    flex: 1; overflow-y: auto; padding: 8px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .frame-thumb {
+    display: flex; align-items: center; gap: 8px; padding: 6px;
+    background: #222; border: 2px solid transparent; border-radius: 4px;
+    cursor: pointer;
+  }
+  .frame-thumb:hover { background: #2a2a2a; }
+  .frame-thumb.active { border-color: #5BF29B; }
+  .frame-thumb canvas {
+    image-rendering: pixelated; border: 1px solid #333; flex-shrink: 0;
+  }
+  .frame-thumb .frame-info { font-size: 10px; color: #888; flex: 1; }
+  .frame-thumb .frame-label { font-size: 11px; color: #ccc; }
+  .frame-actions { display: flex; gap: 4px; }
+  .frame-actions button {
+    background: none; border: none; color: #666; font-size: 14px;
+    cursor: pointer; padding: 2px;
+  }
+  .frame-actions button:hover { color: #ccc; }
+
+  .anim-controls {
+    padding: 8px 12px; border-top: 1px solid #333;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .anim-preview {
+    padding: 12px; border-top: 1px solid #333;
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px;
+  }
+  #preview-canvas { image-rendering: pixelated; border: 1px solid #333; }
+
+  /* ── Export modal ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 100; align-items: center; justify-content: center;
+  }
+  .modal-overlay.visible { display: flex; }
+  .modal {
+    background: #1a1a1a; border: 1px solid #444; border-radius: 6px;
+    padding: 16px; width: 700px; max-height: 80vh; display: flex; flex-direction: column;
+  }
+  .modal h3 { margin-bottom: 8px; font-size: 13px; color: #5BF29B; }
+  .modal textarea {
+    width: 100%; height: 400px; background: #111; border: 1px solid #333;
+    color: #ccc; font-family: 'Courier New', monospace; font-size: 11px;
+    padding: 8px; resize: vertical;
+  }
+  .modal-actions { margin-top: 8px; display: flex; gap: 8px; }
+  .modal-actions button {
+    background: #252525; border: 1px solid #444; color: #ccc;
+    padding: 6px 12px; font-family: inherit; cursor: pointer; border-radius: 3px;
+  }
+  .modal-actions button:hover { background: #333; }
+  .modal-actions .primary { border-color: #5BF29B; color: #5BF29B; }
+</style>
+</head>
+<body>
+
+<!-- Left sidebar: palette + tools -->
+<div class="sidebar">
+  <div>
+    <h3>palette</h3>
+    <div class="palette" id="palette"></div>
+  </div>
+  <div>
+    <h3>custom color</h3>
+    <input type="color" id="custom-color" value="#6b7b8a" style="width:100%;height:28px;border:1px solid #444;background:#222;cursor:pointer;">
+    <button class="tool-btn" style="width:100%;margin-top:4px" id="add-color-btn">add to palette</button>
+  </div>
+  <div>
+    <h3>tool</h3>
+    <div class="tool-group">
+      <button class="tool-btn active" data-tool="paint">paint</button>
+      <button class="tool-btn" data-tool="erase">erase</button>
+      <button class="tool-btn" data-tool="pick">pick</button>
+      <button class="tool-btn" data-tool="fill">fill</button>
+    </div>
+  </div>
+  <div>
+    <h3>grid size</h3>
+    <div class="size-inputs">
+      <input type="number" id="grid-cols" value="20" min="1" max="64">
+      <span>x</span>
+      <input type="number" id="grid-rows" value="18" min="1" max="64">
+      <button class="tool-btn" id="resize-btn">set</button>
+    </div>
+  </div>
+  <div>
+    <h3>display</h3>
+    <div class="size-inputs">
+      <span>zoom</span>
+      <input type="number" id="zoom-level" value="16" min="4" max="40" step="2">
+      <span>px</span>
+    </div>
+    <label style="font-size:11px;display:flex;align-items:center;gap:4px;margin-top:4px">
+      <input type="checkbox" id="show-grid" checked> grid lines
+    </label>
+  </div>
+  <div>
+    <h3>actions</h3>
+    <button class="tool-btn" style="width:100%" id="export-btn">export JS</button>
+    <button class="tool-btn" style="width:100%;margin-top:4px" id="import-btn">import JS</button>
+    <button class="tool-btn" style="width:100%;margin-top:4px" id="export-all-btn">export all frames</button>
+  </div>
+</div>
+
+<!-- Center: editing canvas -->
+<div class="editor-main">
+  <div class="canvas-wrap">
+    <canvas id="grid-canvas"></canvas>
+  </div>
+  <div class="editor-toolbar">
+    <span class="coord-display" id="coord-display">--</span>
+    <span style="color:#555">|</span>
+    <span id="frame-label" style="color:#5BF29B">frame 0</span>
+    <span style="color:#555">|</span>
+    <button class="tool-btn" id="flip-h-btn">flip H</button>
+    <button class="tool-btn" id="flip-v-btn">flip V</button>
+    <button class="tool-btn" id="shift-l-btn">&larr;</button>
+    <button class="tool-btn" id="shift-r-btn">&rarr;</button>
+    <button class="tool-btn" id="shift-u-btn">&uarr;</button>
+    <button class="tool-btn" id="shift-d-btn">&darr;</button>
+    <button class="tool-btn" id="clear-btn">clear</button>
+  </div>
+</div>
+
+<!-- Right: frames panel -->
+<div class="frames-panel">
+  <div class="frames-header">
+    <h3 style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.1em">frames</h3>
+    <div style="display:flex;gap:4px">
+      <button class="tool-btn" id="add-frame-btn">+</button>
+      <button class="tool-btn" id="dupe-frame-btn">dup</button>
+    </div>
+  </div>
+  <div class="frames-list" id="frames-list"></div>
+  <div class="anim-controls">
+    <button class="tool-btn" id="play-btn">play</button>
+    <span style="font-size:10px;color:#666">speed</span>
+    <input type="number" id="anim-speed" value="350" min="50" max="2000" step="50"
+      style="width:50px;background:#222;border:1px solid #444;color:#ccc;font-size:11px;text-align:center;font-family:inherit">
+    <span style="font-size:10px;color:#666">ms</span>
+  </div>
+  <div class="anim-preview">
+    <canvas id="preview-canvas"></canvas>
+  </div>
+</div>
+
+<!-- Export modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3 id="modal-title">export</h3>
+    <textarea id="modal-text"></textarea>
+    <div class="modal-actions">
+      <button id="modal-copy" class="primary">copy</button>
+      <button id="modal-import" style="display:none">import</button>
+      <button id="modal-close">close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Oliver's default palette ──
+  var DEFAULT_COLORS = {
+    0:  { hex: null,      label: 'empty' },
+    1:  { hex: '#6b7b8a', label: 'base' },
+    2:  { hex: '#4a5662', label: 'dark' },
+    3:  { hex: '#3b4550', label: 'paws' },
+    4:  { hex: '#111111', label: 'black' },
+    5:  { hex: '#c75050', label: 'tongue' },
+    6:  { hex: '#6b7b8a', label: 'tail' },
+    7:  { hex: '#8a9aaa', label: 'light' },
+    8:  { hex: '#586878', label: 'mid' },
+    9:  { hex: '#7d8d9c', label: 'ltmid' },
+    10: { hex: '#e0d8d0', label: 'white' },
+    11: { hex: '#c4a090', label: 'ear' },
+    17: { hex: '#917e3e', label: 'rug1' },
+    18: { hex: '#6b5828', label: 'rug2' },
+    19: { hex: '#b0a060', label: 'rug3' },
+    20: { hex: '#2d5a27', label: 'dkgrn' },
+    21: { hex: '#5a8a3a', label: 'ltgrn' },
+    22: { hex: '#a85030', label: 'terra' },
+    23: { hex: '#7a3820', label: 'potdk' },
+    24: { hex: '#4a3020', label: 'trunk' },
+  };
+
+  // ── Oliver's default frames ──
+  var _ = 0;
+  var OLIVER_FRAMES = [
+    // 0: idle
+    [
+      [_,_,_,1,1,_,_,_,_,_,_,_,_,_,_,1,1,_,_,_],
+      [_,_,1,1,2,1,_,_,1,1,1,1,_,_,1,2,1,1,_,_],
+      [_,_,1,1,2,1,1,9,1,1,1,1,9,1,1,2,1,1,_,_],
+      [_,_,1,8,1,1,9,1,1,1,1,1,1,9,1,1,8,1,_,_],
+      [_,_,_,1,1,1,9,7,1,1,1,1,7,9,1,1,1,_,_,_],
+      [_,_,_,1,4,4,4,1,1,1,1,1,1,4,4,4,1,_,_,_],
+      [_,_,_,_,1,1,1,1,1,4,4,1,1,1,1,1,_,_,_,_],
+      [_,_,_,_,_,1,1,1,1,1,1,1,1,1,1,_,_,_,_,_],
+      [_,_,_,_,_,1,1,7,7,7,7,7,7,1,1,_,_,_,_,_],
+      [_,_,_,_,1,2,8,1,9,1,1,9,1,8,2,1,_,_,_,_],
+      [_,_,_,1,1,8,2,1,1,9,9,1,1,2,8,1,1,_,_,_],
+      [_,_,_,1,2,8,1,8,2,2,2,2,8,1,8,2,1,_,_,_],
+      [_,_,_,1,1,1,1,1,1,1,1,1,1,1,1,1,1,_,_,_],
+      [_,_,_,1,1,2,1,1,1,1,1,1,1,1,2,1,1,_,_,_],
+      [_,_,_,1,1,8,1,_,_,_,_,_,_,1,8,1,1,_,_,_],
+      [_,_,_,1,1,2,1,_,_,_,_,_,_,1,2,1,1,_,_,_],
+      [_,_,_,3,3,3,3,_,_,_,_,_,_,3,3,3,3,_,_,_],
+      [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    ],
+  ];
+
+  // ── State ──
+  var COLS = 20, ROWS = 18;
+  var zoom = 16;
+  var showGrid = true;
+  var currentTool = 'paint';
+  var currentColor = 1;
+  var frames = [];
+  var currentFrame = 0;
+  var playing = false;
+  var playTimer = null;
+  var colors = {};
+  var painting = false;
+  var lastPaintCell = null;
+
+  // Deep copy a frame
+  function cloneFrame(f) {
+    return f.map(function(row) { return row.slice(); });
+  }
+
+  // Initialize with Oliver's data
+  function init() {
+    // Copy palette
+    for (var k in DEFAULT_COLORS) {
+      colors[k] = { hex: DEFAULT_COLORS[k].hex, label: DEFAULT_COLORS[k].label };
+    }
+    // Copy first frame as starting data
+    frames = [cloneFrame(OLIVER_FRAMES[0])];
+    buildPalette();
+    renderGrid();
+    renderFramesList();
+    renderPreview();
+  }
+
+  // ── Palette ──
+  var paletteEl = document.getElementById('palette');
+
+  function buildPalette() {
+    paletteEl.innerHTML = '';
+    var keys = Object.keys(colors).sort(function(a,b) { return Number(a) - Number(b); });
+    keys.forEach(function(k) {
+      var c = colors[k];
+      var wrap = document.createElement('div');
+      wrap.style.textAlign = 'center';
+
+      var sw = document.createElement('div');
+      sw.className = 'swatch' + (Number(k) === currentColor ? ' active' : '');
+      if (c.hex === null) {
+        sw.className += ' transparent-swatch';
+      } else {
+        sw.style.background = c.hex;
+      }
+      sw.dataset.colorId = k;
+      sw.addEventListener('click', function() {
+        currentColor = Number(this.dataset.colorId);
+        currentTool = 'paint';
+        updateToolButtons();
+        buildPalette();
+      });
+      // Right click to edit color
+      sw.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        if (Number(this.dataset.colorId) === 0) return;
+        var picker = document.getElementById('custom-color');
+        picker.value = colors[this.dataset.colorId].hex || '#000000';
+        picker.focus();
+        picker.click();
+      });
+      wrap.appendChild(sw);
+
+      var lbl = document.createElement('div');
+      lbl.className = 'swatch-label';
+      lbl.textContent = c.label;
+      wrap.appendChild(lbl);
+
+      paletteEl.appendChild(wrap);
+    });
+  }
+
+  document.getElementById('add-color-btn').addEventListener('click', function() {
+    var hex = document.getElementById('custom-color').value;
+    var nextId = Object.keys(colors).length;
+    colors[nextId] = { hex: hex, label: 'c' + nextId };
+    buildPalette();
+  });
+
+  // ── Tools ──
+  var toolBtns = document.querySelectorAll('[data-tool]');
+  toolBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      currentTool = this.dataset.tool;
+      updateToolButtons();
+    });
+  });
+  function updateToolButtons() {
+    toolBtns.forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.tool === currentTool);
+    });
+  }
+
+  // ── Grid canvas ──
+  var canvas = document.getElementById('grid-canvas');
+  var ctx = canvas.getContext('2d');
+  var coordDisplay = document.getElementById('coord-display');
+
+  function renderGrid() {
+    var w = COLS * zoom;
+    var h = ROWS * zoom;
+    canvas.width = w;
+    canvas.height = h;
+
+    var frame = frames[currentFrame];
+    if (!frame) return;
+
+    // Background
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, w, h);
+
+    // Cells
+    for (var r = 0; r < ROWS; r++) {
+      for (var c = 0; c < COLS; c++) {
+        var val = frame[r] ? frame[r][c] : 0;
+        var col = colors[val];
+        if (col && col.hex) {
+          ctx.fillStyle = col.hex;
+          ctx.fillRect(c * zoom, r * zoom, zoom, zoom);
+        } else {
+          // Checkerboard for transparent
+          ctx.fillStyle = '#1a1a1a';
+          ctx.fillRect(c * zoom, r * zoom, zoom, zoom);
+          ctx.fillStyle = '#222';
+          var half = zoom / 2;
+          ctx.fillRect(c * zoom, r * zoom, half, half);
+          ctx.fillRect(c * zoom + half, r * zoom + half, half, half);
+        }
+      }
+    }
+
+    // Grid lines
+    if (showGrid && zoom >= 6) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.lineWidth = 1;
+      for (var r = 0; r <= ROWS; r++) {
+        ctx.beginPath();
+        ctx.moveTo(0, r * zoom + 0.5);
+        ctx.lineTo(w, r * zoom + 0.5);
+        ctx.stroke();
+      }
+      for (var c = 0; c <= COLS; c++) {
+        ctx.beginPath();
+        ctx.moveTo(c * zoom + 0.5, 0);
+        ctx.lineTo(c * zoom + 0.5, h);
+        ctx.stroke();
+      }
+    }
+
+    document.getElementById('frame-label').textContent = 'frame ' + currentFrame;
+  }
+
+  function cellFromEvent(e) {
+    var rect = canvas.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    var c = Math.floor(x / zoom);
+    var r = Math.floor(y / zoom);
+    if (c < 0 || c >= COLS || r < 0 || r >= ROWS) return null;
+    return { r: r, c: c };
+  }
+
+  canvas.addEventListener('mousemove', function(e) {
+    var cell = cellFromEvent(e);
+    if (cell) {
+      coordDisplay.textContent = cell.c + ', ' + cell.r;
+      if (painting) {
+        var key = cell.r + ',' + cell.c;
+        if (key !== lastPaintCell) {
+          applyTool(cell.r, cell.c);
+          lastPaintCell = key;
+        }
+      }
+    } else {
+      coordDisplay.textContent = '--';
+    }
+  });
+
+  canvas.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    var cell = cellFromEvent(e);
+    if (!cell) return;
+
+    if (e.button === 2) {
+      // Right click = erase
+      frames[currentFrame][cell.r][cell.c] = 0;
+      renderGrid();
+      renderFrameThumb(currentFrame);
+      renderPreview();
+      return;
+    }
+
+    painting = true;
+    lastPaintCell = cell.r + ',' + cell.c;
+    applyTool(cell.r, cell.c);
+  });
+
+  document.addEventListener('mouseup', function() {
+    painting = false;
+    lastPaintCell = null;
+  });
+
+  canvas.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+  function applyTool(r, c) {
+    var frame = frames[currentFrame];
+    if (!frame) return;
+
+    if (currentTool === 'paint') {
+      frame[r][c] = currentColor;
+    } else if (currentTool === 'erase') {
+      frame[r][c] = 0;
+    } else if (currentTool === 'pick') {
+      currentColor = frame[r][c];
+      currentTool = 'paint';
+      updateToolButtons();
+      buildPalette();
+    } else if (currentTool === 'fill') {
+      floodFill(frame, r, c, frame[r][c], currentColor);
+    }
+    renderGrid();
+    renderFrameThumb(currentFrame);
+    renderPreview();
+  }
+
+  function floodFill(frame, r, c, target, replacement) {
+    if (target === replacement) return;
+    if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
+    if (frame[r][c] !== target) return;
+    frame[r][c] = replacement;
+    floodFill(frame, r - 1, c, target, replacement);
+    floodFill(frame, r + 1, c, target, replacement);
+    floodFill(frame, r, c - 1, target, replacement);
+    floodFill(frame, r, c + 1, target, replacement);
+  }
+
+  // ── Grid resize ──
+  document.getElementById('resize-btn').addEventListener('click', function() {
+    var nc = parseInt(document.getElementById('grid-cols').value) || 20;
+    var nr = parseInt(document.getElementById('grid-rows').value) || 18;
+    nc = Math.max(1, Math.min(64, nc));
+    nr = Math.max(1, Math.min(64, nr));
+
+    frames.forEach(function(frame, fi) {
+      var newFrame = [];
+      for (var r = 0; r < nr; r++) {
+        var row = [];
+        for (var c = 0; c < nc; c++) {
+          row.push(frame[r] && frame[r][c] !== undefined ? frame[r][c] : 0);
+        }
+        newFrame.push(row);
+      }
+      frames[fi] = newFrame;
+    });
+    COLS = nc; ROWS = nr;
+    renderGrid();
+    renderFramesList();
+    renderPreview();
+  });
+
+  // ── Zoom ──
+  document.getElementById('zoom-level').addEventListener('change', function() {
+    zoom = parseInt(this.value) || 16;
+    renderGrid();
+  });
+
+  document.getElementById('show-grid').addEventListener('change', function() {
+    showGrid = this.checked;
+    renderGrid();
+  });
+
+  // ── Frame transforms ──
+  document.getElementById('flip-h-btn').addEventListener('click', function() {
+    frames[currentFrame].forEach(function(row) { row.reverse(); });
+    renderGrid(); renderFrameThumb(currentFrame); renderPreview();
+  });
+  document.getElementById('flip-v-btn').addEventListener('click', function() {
+    frames[currentFrame].reverse();
+    renderGrid(); renderFrameThumb(currentFrame); renderPreview();
+  });
+  document.getElementById('shift-l-btn').addEventListener('click', function() {
+    frames[currentFrame].forEach(function(row) { row.push(row.shift()); });
+    renderGrid(); renderFrameThumb(currentFrame); renderPreview();
+  });
+  document.getElementById('shift-r-btn').addEventListener('click', function() {
+    frames[currentFrame].forEach(function(row) { row.unshift(row.pop()); });
+    renderGrid(); renderFrameThumb(currentFrame); renderPreview();
+  });
+  document.getElementById('shift-u-btn').addEventListener('click', function() {
+    frames[currentFrame].push(frames[currentFrame].shift());
+    renderGrid(); renderFrameThumb(currentFrame); renderPreview();
+  });
+  document.getElementById('shift-d-btn').addEventListener('click', function() {
+    frames[currentFrame].unshift(frames[currentFrame].pop());
+    renderGrid(); renderFrameThumb(currentFrame); renderPreview();
+  });
+  document.getElementById('clear-btn').addEventListener('click', function() {
+    for (var r = 0; r < ROWS; r++)
+      for (var c = 0; c < COLS; c++)
+        frames[currentFrame][r][c] = 0;
+    renderGrid(); renderFrameThumb(currentFrame); renderPreview();
+  });
+
+  // ── Frames list ──
+  var framesListEl = document.getElementById('frames-list');
+
+  function renderFramesList() {
+    framesListEl.innerHTML = '';
+    frames.forEach(function(frame, i) {
+      var thumb = document.createElement('div');
+      thumb.className = 'frame-thumb' + (i === currentFrame ? ' active' : '');
+      thumb.dataset.index = i;
+
+      var tc = document.createElement('canvas');
+      tc.width = COLS * 3;
+      tc.height = ROWS * 3;
+      tc.style.width = (COLS * 3) + 'px';
+      tc.style.height = (ROWS * 3) + 'px';
+      thumb.appendChild(tc);
+      renderThumbCanvas(tc, frame);
+
+      var info = document.createElement('div');
+      info.style.flex = '1';
+      info.innerHTML = '<div class="frame-label">frame ' + i + '</div>' +
+        '<div class="frame-info">' + COLS + 'x' + ROWS + '</div>';
+      thumb.appendChild(info);
+
+      var actions = document.createElement('div');
+      actions.className = 'frame-actions';
+      if (frames.length > 1) {
+        var delBtn = document.createElement('button');
+        delBtn.textContent = '\u00D7';
+        delBtn.title = 'delete';
+        delBtn.dataset.index = i;
+        delBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var idx = Number(this.dataset.index);
+          frames.splice(idx, 1);
+          if (currentFrame >= frames.length) currentFrame = frames.length - 1;
+          renderGrid(); renderFramesList(); renderPreview();
+        });
+        actions.appendChild(delBtn);
+      }
+      thumb.appendChild(actions);
+
+      thumb.addEventListener('click', function() {
+        currentFrame = Number(this.dataset.index);
+        renderGrid();
+        renderFramesList();
+      });
+
+      framesListEl.appendChild(thumb);
+    });
+  }
+
+  function renderThumbCanvas(tc, frame) {
+    var tctx = tc.getContext('2d');
+    tctx.fillStyle = '#0a0a0a';
+    tctx.fillRect(0, 0, tc.width, tc.height);
+    for (var r = 0; r < ROWS; r++) {
+      for (var c = 0; c < COLS; c++) {
+        var val = frame[r] ? frame[r][c] : 0;
+        var col = colors[val];
+        if (col && col.hex) {
+          tctx.fillStyle = col.hex;
+          tctx.fillRect(c * 3, r * 3, 3, 3);
+        }
+      }
+    }
+  }
+
+  function renderFrameThumb(idx) {
+    var thumbs = framesListEl.querySelectorAll('.frame-thumb');
+    if (thumbs[idx]) {
+      var tc = thumbs[idx].querySelector('canvas');
+      if (tc) renderThumbCanvas(tc, frames[idx]);
+    }
+  }
+
+  document.getElementById('add-frame-btn').addEventListener('click', function() {
+    var blank = [];
+    for (var r = 0; r < ROWS; r++) {
+      var row = [];
+      for (var c = 0; c < COLS; c++) row.push(0);
+      blank.push(row);
+    }
+    frames.push(blank);
+    currentFrame = frames.length - 1;
+    renderGrid(); renderFramesList(); renderPreview();
+  });
+
+  document.getElementById('dupe-frame-btn').addEventListener('click', function() {
+    frames.splice(currentFrame + 1, 0, cloneFrame(frames[currentFrame]));
+    currentFrame = currentFrame + 1;
+    renderGrid(); renderFramesList(); renderPreview();
+  });
+
+  // ── Animation preview ──
+  var previewCanvas = document.getElementById('preview-canvas');
+  var previewCtx = previewCanvas.getContext('2d');
+  var previewScale = 4;
+
+  function renderPreview() {
+    previewCanvas.width = COLS * previewScale;
+    previewCanvas.height = ROWS * previewScale;
+    var frame = frames[currentFrame];
+    if (!frame) return;
+    previewCtx.fillStyle = '#0a0a0a';
+    previewCtx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+    for (var r = 0; r < ROWS; r++) {
+      for (var c = 0; c < COLS; c++) {
+        var val = frame[r] ? frame[r][c] : 0;
+        var col = colors[val];
+        if (col && col.hex) {
+          previewCtx.fillStyle = col.hex;
+          previewCtx.fillRect(c * previewScale, r * previewScale, previewScale, previewScale);
+        }
+      }
+    }
+  }
+
+  var playBtn = document.getElementById('play-btn');
+  playBtn.addEventListener('click', function() {
+    if (playing) {
+      stopAnim();
+    } else {
+      startAnim();
+    }
+  });
+
+  function startAnim() {
+    playing = true;
+    playBtn.textContent = 'stop';
+    playBtn.classList.add('active');
+    var speed = parseInt(document.getElementById('anim-speed').value) || 350;
+    var idx = 0;
+    playTimer = setInterval(function() {
+      idx = (idx + 1) % frames.length;
+      currentFrame = idx;
+      renderGrid();
+      renderPreview();
+      // Update frame list selection
+      var thumbs = framesListEl.querySelectorAll('.frame-thumb');
+      thumbs.forEach(function(t, i) {
+        t.classList.toggle('active', i === currentFrame);
+      });
+    }, speed);
+  }
+
+  function stopAnim() {
+    playing = false;
+    playBtn.textContent = 'play';
+    playBtn.classList.remove('active');
+    if (playTimer) { clearInterval(playTimer); playTimer = null; }
+  }
+
+  // ── Export / Import ──
+  var modal = document.getElementById('modal');
+  var modalText = document.getElementById('modal-text');
+  var modalTitle = document.getElementById('modal-title');
+  var modalImportBtn = document.getElementById('modal-import');
+
+  function exportFrame(frame) {
+    var lines = [];
+    lines.push('    [');
+    frame.forEach(function(row) {
+      var cells = row.map(function(v) {
+        if (v === 0) return '_';
+        return String(v);
+      });
+      lines.push('      [' + cells.join(',') + '],');
+    });
+    lines.push('    ],');
+    return lines.join('\n');
+  }
+
+  document.getElementById('export-btn').addEventListener('click', function() {
+    modalTitle.textContent = 'export current frame';
+    modalText.value = exportFrame(frames[currentFrame]);
+    modalImportBtn.style.display = 'none';
+    modal.classList.add('visible');
+  });
+
+  document.getElementById('export-all-btn').addEventListener('click', function() {
+    modalTitle.textContent = 'export all frames';
+    var out = '  var FRAMES = [\n';
+    frames.forEach(function(frame, i) {
+      out += '    // ' + i + '\n';
+      out += exportFrame(frame) + '\n';
+    });
+    out += '  ];';
+    modalText.value = out;
+    modalImportBtn.style.display = 'none';
+    modal.classList.add('visible');
+  });
+
+  document.getElementById('import-btn').addEventListener('click', function() {
+    modalTitle.textContent = 'import frames (paste JS array data)';
+    modalText.value = '';
+    modalImportBtn.style.display = 'inline-block';
+    modal.classList.add('visible');
+  });
+
+  modalImportBtn.addEventListener('click', function() {
+    try {
+      var code = modalText.value;
+      // Normalize: replace _ with 0, handle var _ = 0
+      code = code.replace(/var\s+_\s*=\s*0\s*;?/g, '');
+      code = code.replace(/var\s+FRAMES\s*=\s*/g, '');
+      code = code.replace(/\/\/[^\n]*/g, ''); // strip comments
+      // Replace standalone _ with 0 (not inside strings)
+      code = code.replace(/(?<![a-zA-Z_])_(?![a-zA-Z_0-9])/g, '0');
+      // Try to evaluate as array
+      var parsed = eval('(' + code + ')');
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Check if it's a single frame (array of arrays of numbers) or multiple frames
+        if (Array.isArray(parsed[0]) && typeof parsed[0][0] === 'number') {
+          // Single frame
+          frames = [parsed];
+        } else if (Array.isArray(parsed[0]) && Array.isArray(parsed[0][0])) {
+          // Multiple frames
+          frames = parsed;
+        }
+        ROWS = frames[0].length;
+        COLS = frames[0][0].length;
+        document.getElementById('grid-rows').value = ROWS;
+        document.getElementById('grid-cols').value = COLS;
+        currentFrame = 0;
+        renderGrid(); renderFramesList(); renderPreview();
+        modal.classList.remove('visible');
+      } else {
+        alert('Could not parse frame data.');
+      }
+    } catch(e) {
+      alert('Parse error: ' + e.message);
+    }
+  });
+
+  document.getElementById('modal-copy').addEventListener('click', function() {
+    modalText.select();
+    document.execCommand('copy');
+    this.textContent = 'copied!';
+    setTimeout(function() { document.getElementById('modal-copy').textContent = 'copy'; }, 1500);
+  });
+
+  document.getElementById('modal-close').addEventListener('click', function() {
+    modal.classList.remove('visible');
+  });
+
+  // Close modal on overlay click
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) modal.classList.remove('visible');
+  });
+
+  // ── Keyboard shortcuts ──
+  document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'b' || e.key === 'p') { currentTool = 'paint'; updateToolButtons(); }
+    if (e.key === 'e') { currentTool = 'erase'; updateToolButtons(); }
+    if (e.key === 'i') { currentTool = 'pick'; updateToolButtons(); }
+    if (e.key === 'g' || e.key === 'f') { currentTool = 'fill'; updateToolButtons(); }
+    if (e.key === '[' && currentFrame > 0) {
+      currentFrame--;
+      renderGrid(); renderFramesList();
+    }
+    if (e.key === ']' && currentFrame < frames.length - 1) {
+      currentFrame++;
+      renderGrid(); renderFramesList();
+    }
+    if (e.key === 'd' && !e.ctrlKey) {
+      // Duplicate frame
+      frames.splice(currentFrame + 1, 0, cloneFrame(frames[currentFrame]));
+      currentFrame++;
+      renderGrid(); renderFramesList(); renderPreview();
+    }
+    // Number keys select palette color
+    if (e.key >= '0' && e.key <= '9') {
+      var colorId = Number(e.key);
+      if (colors[colorId] !== undefined) {
+        currentColor = colorId;
+        currentTool = 'paint';
+        updateToolButtons();
+        buildPalette();
+      }
+    }
+    if (e.key === ' ') {
+      e.preventDefault();
+      if (playing) stopAnim(); else startAnim();
+    }
+  });
+
+  // ── Init ──
+  init();
+
+})();
+</script>
+</body>
+</html>

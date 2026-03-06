@@ -1,0 +1,104 @@
+---
+import Page from '../layouts/Page.astro';
+---
+
+<Page title="guestbook -- alexander campos" description="Sign the guestbook. Just like 2003.">
+  <article>
+    <h1>Guestbook</h1>
+
+    <p>Say hi. Leave a note. Entries live in your browser's localStorage -- no server, no tracking, no database. Just like it should be.</p>
+
+    <form id="guestbook-form" class="gb-form">
+      <div class="form-row">
+        <label for="gb-name">name:</label>
+        <input type="text" id="gb-name" name="name" maxlength="50" required />
+      </div>
+      <div class="form-row">
+        <label for="gb-website">website:</label>
+        <input type="url" id="gb-website" name="website" maxlength="200" placeholder="https://" />
+      </div>
+      <div class="form-row">
+        <label for="gb-message">message:</label>
+        <textarea id="gb-message" name="message" maxlength="500" rows="3" required></textarea>
+      </div>
+      <button type="submit" class="gb-submit">sign guestbook</button>
+    </form>
+
+    <hr />
+
+    <div id="guestbook-entries" class="gb-entries">
+      <p class="gb-empty">no entries yet. be the first.</p>
+    </div>
+  </article>
+
+  <script src="../islands/guestbook.js"></script>
+</Page>
+
+<style>
+  .gb-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+  }
+
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .form-row label {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--white-45);
+  }
+
+  .form-row input,
+  .form-row textarea {
+    background: var(--depth-1);
+    border: 1px solid var(--white-08);
+    color: var(--glow);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+
+  .form-row input:focus,
+  .form-row textarea:focus {
+    outline: none;
+    box-shadow: -2px 0 0 var(--gold-accent), 2px 0 0 var(--gold-accent), 0 -2px 0 var(--gold-accent), 0 2px 0 var(--gold-accent);
+  }
+
+  .gb-submit {
+    align-self: flex-start;
+    background: var(--depth-2);
+    border: 1px solid var(--white-08);
+    color: var(--gold-accent);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  @media (hover: hover) {
+    .gb-submit:hover {
+      background: var(--depth-3);
+      border-color: var(--gold-accent);
+      background-image: url("data:image/svg+xml,%3Csvg width='2' height='2' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1' height='1' fill='white' fill-opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 2px 2px;
+      transition: none;
+    }
+  }
+
+  .gb-entries {
+    margin-top: 1rem;
+  }
+
+  .gb-empty {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--white-30);
+  }
+</style>

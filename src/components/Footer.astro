@@ -1,0 +1,31 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <p class="copyright">alexander campos {year}. hand-built.</p>
+  <p class="best-viewed">best viewed in a browser that respects view-source.</p>
+</footer>
+
+<style>
+  footer {
+    border-top: 2px dashed var(--white-08);
+    padding-top: 1.5rem;
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .copyright {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--white-30);
+    margin-bottom: 0.25rem;
+  }
+
+  .best-viewed {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--white-15);
+    margin-bottom: 0;
+  }
+</style>

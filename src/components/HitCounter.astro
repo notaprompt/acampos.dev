@@ -1,0 +1,56 @@
+<div class="hit-counter" aria-label="Page visits">
+  <span class="hit-label">visitors:</span>
+  <span class="hit-digits" id="hit-digits">
+    <span class="digit">0</span>
+    <span class="digit">0</span>
+    <span class="digit">0</span>
+    <span class="digit">0</span>
+    <span class="digit">0</span>
+    <span class="digit">0</span>
+  </span>
+</div>
+
+<style>
+  .hit-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+  }
+
+  .hit-label {
+    color: var(--white-30);
+  }
+
+  .hit-digits {
+    display: inline-flex;
+    gap: 1px;
+  }
+
+  .digit {
+    position: relative;
+    display: inline-block;
+    width: 1.1em;
+    text-align: center;
+    background: var(--depth-1);
+    color: var(--alive);
+    border: 1px solid var(--white-08);
+    padding: 0.1em 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .digit::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 1px,
+      rgba(0, 0, 0, 0.08) 1px,
+      rgba(0, 0, 0, 0.08) 2px
+    );
+    pointer-events: none;
+  }
+</style>

@@ -4,8 +4,8 @@
   // Don't re-init on client-side navigation
   if (window.__oliverInit) return;
   window.__oliverInit = true;
-  // Desktop only — no mouse to follow on touch devices
-  if (!window.matchMedia('(hover: hover)').matches) return;
+  // Skip on narrow screens (mobile)
+  if (window.innerWidth <= 768) return;
 
   // ── Oliver's Pixel Sprite ───────────────────────────────────
   // French Bulldog as a CSS pixel grid — no text alignment issues
@@ -655,8 +655,8 @@
       '  letter-spacing: 0.06em; margin-top: 16px;',
       '}',
       '',
-      '/* Hide on mobile / touch */',
-      '@media (hover: none), (max-width: 768px) {',
+      '/* Hide on mobile */',
+      '@media (max-width: 768px) {',
       '  #oliver-room, #or-toggle { display: none !important; }',
       '}',
     ].join('\n');

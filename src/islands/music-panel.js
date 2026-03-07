@@ -343,8 +343,8 @@
     '  pointer-events: none;',
     '}',
     '',
-    '/* Hide on mobile / touch */',
-    '@media (hover: none), (max-width: 768px) {',
+    '/* Hide on mobile */',
+    '@media (max-width: 768px) {',
     '  #music-panel, #mp-toggle { display: none !important; }',
     '}',
   ].join('\n');

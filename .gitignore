@@ -17,6 +17,10 @@ pnpm-debug.log*
 .env
 .env.production
 
+# large audio source files (use mp3 versions)
+public/audio/*.wav
+public/audio/*.mp4
+
 # macOS-specific files
 .DS_Store
 

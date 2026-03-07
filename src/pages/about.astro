@@ -2,7 +2,7 @@
 import Page from '../layouts/Page.astro';
 ---
 
-<Page title="about -- alexander campos" description="I build things that protect how people think.">
+<Page title="about -- alexander campos" description="building things to protect how we think.">
   <article>
     <h1>About</h1>
 
@@ -12,76 +12,116 @@ import Page from '../layouts/Page.astro';
     </p>
 
     <p>
-      Most of what I make comes from the same impulse: I see a system,
-      I find where it breaks people, and I build the thing that should
-      already exist. That impulse doesn't turn off. It runs during the
-      day when I'm mapping failure surfaces across regulatory operations
-      at Capital One, and it runs at midnight while my wife sleeps and
-      the French Bulldog holds down the other end of the couch.
+      During the day I work in regulatory operations at Capital One.
+      At night I build tools. The impulse is the same in both --
+      find where the system breaks and fix it.
     </p>
 
     <p>
-      I get it from somewhere. Mom raised us and cleaned houses to make
-      it work. Dad worked his way from cook to spending over two decades
-      running blood transfusions in the OR. They never had the
-      infrastructure. They were the infrastructure. Shout out mom
-      and dad.
-    </p>
-
-    <p>
-      I broke my spine and femur at 19. Months immobilized. I came out
-      of it understanding that identity is something you rebuild, not
-      something you're given -- and that lesson shows up in everything
-      I've touched since. The forge metaphor in everything I name isn't
-      decorative.
+      I broke my spine and femur at 19. Came out of it understanding
+      that identity is something you rebuild. That shows up in the work.
     </p>
 
     <p>
       <a href="/projects/guardian">Guardian</a> started because I
-      noticed AI tools subtly rewriting how I described myself. Not
-      overtly -- just enough to shift the framing over time. I wanted
-      something that worked for me, not on me. That became a context
-      protection system with a reframe detection engine. Then it
+      noticed language models subtly rewriting how I described myself.
+      Not overtly -- just enough to shift the framing over time. That
+      became a desktop app with a reframe detection engine. Then it
       surfaced a deeper problem, so I started building
-      <a href="/projects/forgeframe">ForgeFrame</a> -- infrastructure
-      for keeping your AI stack yours. The
+      <a href="/projects/forgeframe">ForgeFrame</a> -- middleware
+      for keeping your intelligence stack local and yours. The
       <a href="/projects/mcp-memory-server">memory layer</a> is open
-      source. The governance layer is not. Some things shouldn't be
-      commoditized.
+      source. The governance layer is not.
     </p>
 
     <p>
-      I'm pursuing a Master of Engineering in AI Product Innovation.
-      No CS degree -- I learned Python weeks before I shipped my first
-      working system. I read Hofstadter, Marcus Aurelius, Spinoza, Ibn Khaldun,
-      and too many others for someone who started as a bank teller --
-      but I arrived at most of the frameworks before I found the names
-      for them. The doubt keeps me honest. The work keeps moving.
+      I'm pursuing a Master of Engineering in Product Innovation.
+      I learned Python weeks before I shipped my first working system.
+      Started as a bank teller. The work keeps moving.
     </p>
 
     <p>
-      I'm building for a future where my kids can safely thrive in a
-      world full of things smarter than the safeguards around them.
+      I'm building for a future where the safeguards are as good as the
+      tools they're guarding.
     </p>
 
     <p>
-      This site is hand-built because I think you should be able to
-      read the source code of the person asking for your trust. View
-      source. Open the console. The craft is the credential.
+      This site is hand-built. View source if you want to know how.
     </p>
 
     <h2>Elsewhere</h2>
     <ul>
       <li><a href="https://github.com/notaprompt">GitHub</a> -- open source work</li>
-      <li><a href="https://linkedin.com">LinkedIn</a> -- professional history</li>
-      <li><a href="https://substack.com">Substack</a> -- writing on TRIM and cognitive architecture</li>
+      <li><a href="https://www.linkedin.com/in/alexander-d-campos/">LinkedIn</a> -- professional history</li>
+      <li><a href="https://substack.com/@alexinthefield">Substack</a> -- writing on identity modeling and system design</li>
     </ul>
+
+    <h2>Contact</h2>
+    <p>
+      <a href="mailto:adc.acampos@gmail.com">adc.acampos@gmail.com</a>
+    </p>
   </article>
 
   <script is:inline>
     console.log(
-      '%c you are reading about someone who builds things that protect how people think. ',
+      '%c you are reading about someone building things to protect how we think. ',
       'color: #E8DCC8; font-family: monospace; font-size: 11px;'
     );
   </script>
 </Page>
+
+<style>
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    max-width: 400px;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--glow);
+    background: var(--depth-2);
+    border: 1px solid var(--white-08);
+    padding: 0.5rem 0.75rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    color: var(--white-30);
+  }
+
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-color: var(--gold-accent);
+  }
+
+  .contact-form textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .contact-form button {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--gold-accent);
+    background: var(--depth-2);
+    border: 1px solid var(--gold-accent);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: background 0.2s, color 0.2s;
+    align-self: flex-start;
+  }
+
+  .contact-form button:hover {
+    background: var(--gold-accent);
+    color: var(--depth-1);
+  }
+</style>

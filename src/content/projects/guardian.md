@@ -1,37 +1,37 @@
 ---
 title: "Guardian"
-tagline: "Cognitive desktop application — neuroprotective AI workspace"
+tagline: "Desktop workspace that keeps your context local and your language yours"
 status: "active"
 stack: ["Electron 33", "React 18", "Node.js", "SQLite/FTS5", "Zustand", "xterm.js"]
+image: "/images/projects/guardian.png"
 repo: "https://github.com/notaprompt/guardian-ui-scaffold"
 order: 1
 ---
 
 ## Goals
 
-I wanted an AI workspace that worked for me, not on me. Every tool I tried was designed to send my context somewhere else. So I built one where I control every layer -- what model runs, what gets remembered, what gets forgotten, and what never leaves the machine.
+Desktop workspace where chat, terminal, notes, and memory live in one local-first interface. You pick the model, the data stays on your machine.
 
 ## Process
 
-Guardian started as a bare Electron shell with a chat window and a local Ollama connection. I was just trying to talk to a model without my data leaving the room.
+Started as an Electron shell with a chat window and a local Ollama connection. Built outward from there.
 
-The architecture grew outward from the user's position. 60+ IPC channels across 20 backend modules now connect the UI to a provider-agnostic routing engine that auto-selects models by intent complexity and cost. The routing layer supports Anthropic, OpenAI, and local Ollama providers simultaneously.
+**Routing.** Provider-agnostic engine across Anthropic, OpenAI, and Ollama. Auto-selects by intent complexity and cost. Runs air-gapped on local models or through cloud APIs.
 
-The reframe detection engine emerged from observing how model responses subtly reshape user statements. It classifies reframes across 7 types and triggers automatic prompt correction when user-rated inaccuracy exceeds 40%.
+**Reframe detection.** Classifies when model responses subtly reshape user statements across 7 types. Triggers prompt correction when user-rated inaccuracy exceeds 40%.
 
-The memory system uses a 4-level hierarchical compression pipeline (raw -> summary -> pattern -> principle) with automatic threshold-triggered distillation. Strength decays at 0.97/day with retrieval reinforcement at +0.15 per access — an emergent forgetting curve that prioritizes frequently-accessed knowledge.
+**Memory.** 4-level compression pipeline (raw -> summary -> pattern -> principle). Strength decays over time, reinforces on retrieval.
 
-The post-session intelligence pipeline fires on conversation end: extracts decisions, tasks, code artifacts, and insights via LLM; auto-generates typed notes; indexes conversation chunks with semantic summaries into FTS5 for near-semantic search; links entities into a knowledge graph; and runs reframe detection — all without user intervention.
+**Post-session pipeline.** Fires on conversation end. Extracts decisions, tasks, and code artifacts. Generates typed notes. Indexes into FTS5 for search. Links entities into a knowledge graph.
 
 ## Limitations
 
-- The reframe detection engine uses heuristic classification, not a trained model. False positive rate is not formally measured.
-- Memory compression thresholds are hand-tuned, not empirically optimized. The decay rate of 0.97/day is a plausible starting point, not a validated parameter.
-- The codebase is 31,700 lines. Some modules carry technical debt from rapid prototyping phases.
-- No formal user study has validated the neuroprotective claims. The safety layer is engineered intuition, not peer-reviewed evidence.
+- Reframe detection uses heuristic classification, not a trained model. False positive rate unmeasured.
+- Memory compression thresholds are hand-tuned, not empirically optimized.
+- No formal user study on reframe detection accuracy.
 
 ## Learnings
 
-The hardest problems were not AI problems. They were state synchronization, process lifecycle management, and making 20 modules agree on what "the current conversation" means. Architectural boundaries are the product.
+The hardest problems were state synchronization and process lifecycle management, not the models themselves.
 
-The reframe detection work changed how I think about AI safety entirely. The problem isn't that models lie. It's that they subtly reshape your language until you can't tell the difference between your thoughts and their suggestions. Detecting this requires understanding the user's baseline, which requires memory, which requires trust, which requires sovereignty. The problems are recursive. That recursion is why ForgeFrame exists.
+Reframe detection surfaced a deeper problem: models subtly reshape your language over time. Detecting that requires understanding the user's baseline, which requires memory, which requires local persistence. That dependency chain is why ForgeFrame exists.

@@ -1,6 +1,6 @@
 ---
 title: "Cipher"
-tagline: "Financial intelligence agent — always-on monitoring, threshold escalation, thesis automation"
+tagline: "Financial monitoring agent — always-on scoring, threshold escalation, thesis automation"
 status: "concept"
 stack: ["Python", "ForgeFrame", "Twilio", "RSS", "LLM Scoring"]
 order: 5

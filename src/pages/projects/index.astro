@@ -10,9 +10,8 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
     <h1>Projects</h1>
 
     <p>
-      Everything here is documented honestly -- what I was trying to do, how I actually
-      did it, where it falls short, and what I learned. The limitations section is not
-      a formality. I put real ones there.
+      What I was trying to do, how I actually did it, where it falls short.
+      The limitations sections are real.
     </p>
 
     <div class="project-list">
@@ -163,4 +162,5 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
     padding: 0.15em 0.4em;
     border: 1px solid var(--white-08);
   }
+
 </style>

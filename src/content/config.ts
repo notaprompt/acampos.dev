@@ -7,7 +7,9 @@ const projects = defineCollection({
     tagline: z.string(),
     status: z.enum(['active', 'shipped', 'concept']),
     stack: z.array(z.string()),
+    image: z.string().optional(),
     repo: z.string().optional(),
+    demo: z.string().optional(),
     order: z.number(),
   }),
 });

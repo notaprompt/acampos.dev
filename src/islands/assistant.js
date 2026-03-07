@@ -1,6 +1,9 @@
 // Oliver — the site's resident clippy
 // a dog who lives in his room, dances, and provides moral support
 (function () {
+  // Don't re-init on client-side navigation
+  if (window.__oliverInit) return;
+  window.__oliverInit = true;
   // Desktop only — no mouse to follow on touch devices
   if (!window.matchMedia('(hover: hover)').matches) return;
 
@@ -390,48 +393,10 @@
     'i contain multitudes. mostly woof.',
   ];
 
-  // ── State ──────────────────────────────────────────────────
-  var isActive = sessionStorage.getItem('oliver-active') === '1';
-  var storedName = sessionStorage.getItem('oliver-name') || 'oliver';
-
-  if (isActive) {
-    hidePrompt();
-    injectStyles();
-    spawnInRoom(storedName);
-    return;
-  }
-
-  // ── Dialog Binding (homepage only) ─────────────────────────
-  var prompt = document.getElementById('assistant-prompt');
-  if (!prompt) return;
-
+  // ── Auto-spawn ────────────────────────────────────────────
   injectStyles();
-
-  var genBtn = document.getElementById('assistant-gen');
-  var nameInput = document.getElementById('assistant-name');
-  var closeBtn = prompt.querySelector('.ap-close');
-
-  if (genBtn) genBtn.addEventListener('click', generate);
-  if (nameInput) nameInput.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') generate();
-  });
-  if (closeBtn) closeBtn.addEventListener('click', function () {
-    prompt.style.display = 'none';
-  });
-
-  function generate() {
-    var name = (nameInput && nameInput.value || '').trim() || 'oliver';
-    sessionStorage.setItem('oliver-active', '1');
-    sessionStorage.setItem('oliver-name', name);
-
-    prompt.style.transition = 'opacity 0.3s, transform 0.3s';
-    prompt.style.opacity = '0';
-    prompt.style.transform = 'scale(0.95)';
-    setTimeout(function () {
-      prompt.style.display = 'none';
-      spawnInRoom(name);
-    }, 300);
-  }
+  hidePrompt();
+  spawnInRoom('oliver');
 
   function hidePrompt() {
     var p = document.getElementById('assistant-prompt');
@@ -617,9 +582,9 @@
     var css = document.createElement('style');
     css.id = 'oliver-styles';
     css.textContent = [
-      '/* Oliver room panel — mirrors music panel on left side */',
+      '/* Oliver room panel — slides in from the left */',
       '#oliver-room {',
-      '  position: fixed; top: 0; left: 0; bottom: 0; width: 380px;',
+      '  position: fixed; top: 0; left: 0; bottom: 0; width: 19vw;',
       '  background: rgba(5,5,5,0.96); border-right: 1px solid rgba(255,255,255,0.06);',
       '  z-index: 9599; font-family: var(--mono); transform: translateX(-100%);',
       '  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);',
@@ -639,7 +604,7 @@
       '  backdrop-filter: blur(6px);',
       '}',
       '#or-toggle:hover { color: var(--gold-accent); background: rgba(5,5,5,0.95); }',
-      '#or-toggle.shifted { left: 380px; }',
+      '#or-toggle.shifted { left: 19vw; }',
       '',
       '.or-titlebar {',
       '  display: flex; align-items: center; justify-content: space-between;',

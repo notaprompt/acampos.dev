@@ -35,8 +35,19 @@ const { Content } = await render(entry);
             source >>
           </a>
         )}
+        {entry.data.demo && (
+          <a href={entry.data.demo} class="demo-link" target="_blank" rel="noopener noreferrer">
+            launch demo >>
+          </a>
+        )}
       </div>
     </header>
+
+    {entry.data.image && (
+      <div class="project-screenshot">
+        <img src={entry.data.image} alt={`${entry.data.title} screenshot`} loading="lazy" />
+      </div>
+    )}
 
     <div class="project-content">
       <Content />
@@ -101,9 +112,14 @@ const { Content } = await render(entry);
     border: 1px solid var(--white-08);
   }
 
-  .repo-link {
+  .repo-link,
+  .demo-link {
     font-family: var(--mono);
     font-size: 0.75rem;
+  }
+
+  .demo-link {
+    color: var(--alive);
   }
 
   .project-content :global(h2) {
@@ -127,5 +143,20 @@ const { Content } = await render(entry);
   .back-nav a {
     font-family: var(--mono);
     font-size: 0.8rem;
+  }
+
+  .project-screenshot {
+    margin-bottom: 2rem;
+    border: 1px solid var(--white-08);
+    transition: border-color 0.2s;
+  }
+
+  .project-screenshot:hover {
+    border-color: var(--gold-accent);
+  }
+
+  .project-screenshot img {
+    width: 100%;
+    display: block;
   }
 </style>

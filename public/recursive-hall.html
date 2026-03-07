@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recursive Hall of Mirrors</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#111;--panel:rgba(8,8,8,0.96);--border:rgba(255,255,255,0.06);--text:#bbb;--dim:#888;--ghost:#555;--accent:#b8965a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'JetBrains Mono',monospace;background:#000;color:var(--text);overflow:hidden;height:100vh}
+.wrap{display:flex;height:100vh}
+.side{width:260px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);padding:18px 14px;overflow-y:auto;overflow-x:hidden;z-index:10}
+.side::-webkit-scrollbar{width:3px}.side::-webkit-scrollbar-thumb{background:var(--ghost);border-radius:3px}
+.logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;letter-spacing:.1em;color:#ddd}
+.sub{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ghost);margin-bottom:20px}
+.sec{margin-bottom:20px}
+.sl{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--ghost);margin-bottom:10px;padding:2px 0 2px 10px;border-left:2px solid var(--accent)}
+.si{width:100%;background:rgba(255,255,255,.04);padding:7px 9px;border-radius:3px;font-family:inherit;font-size:12px;color:var(--text);margin-bottom:5px;border:1px solid var(--border);text-align:center;letter-spacing:.1em}
+.si:focus{outline:none;border-color:var(--accent)}
+.bg{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px}
+.b{background:rgba(255,255,255,.04);color:var(--dim);border:1px solid var(--border);padding:6px 8px;border-radius:3px;font-size:10px;font-family:inherit;cursor:pointer;transition:all .2s}
+.b:hover{background:rgba(255,255,255,.08);color:var(--text);border-color:rgba(255,255,255,.15);box-shadow:0 0 8px rgba(184,150,90,.12)}
+.cg{margin-bottom:12px}
+.cg label{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-bottom:5px;transition:color .2s}
+.cg:hover label{color:var(--text)}
+.v{font-size:9px;color:var(--ghost);font-variant-numeric:tabular-nums;transition:color .2s}
+.cg:hover .v{color:var(--dim)}
+input[type=range]{width:100%;height:3px;background:rgba(255,255,255,.08);border-radius:2px;outline:none;-webkit-appearance:none;transition:background .2s}
+input[type=range]:hover{background:rgba(255,255,255,.12)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;background:var(--accent);border-radius:50%;cursor:pointer;box-shadow:0 0 4px rgba(0,0,0,.4);transition:transform .15s,box-shadow .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);box-shadow:0 0 8px rgba(184,150,90,.3)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;background:var(--accent);border-radius:50%;border:none;cursor:pointer;box-shadow:0 0 4px rgba(0,0,0,.4)}
+.pr{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
+.pb{background:rgba(255,255,255,.03);color:var(--ghost);border:1px solid rgba(255,255,255,.06);padding:4px 8px;border-radius:3px;font-size:9px;font-family:inherit;cursor:pointer;transition:all .2s}
+.pb:hover{color:var(--accent);border-color:rgba(184,150,90,.25);box-shadow:0 0 6px rgba(184,150,90,.1)}
+.mt{display:flex;gap:3px;margin-bottom:12px}
+.mb{flex:1;background:rgba(255,255,255,.03);color:var(--ghost);border:1px solid var(--border);padding:5px 4px;border-radius:3px;font-size:9px;font-family:inherit;cursor:pointer;text-align:center;transition:all .2s}
+.mb:hover{background:rgba(255,255,255,.06);color:var(--dim)}
+.mb.on{background:rgba(255,255,255,.1);color:#ddd;border-color:rgba(255,255,255,.15);border-left:2px solid var(--accent)}
+.cv{flex:1;position:relative;cursor:crosshair}
+.cv.locked{cursor:none}
+#cv{width:100%;height:100%;display:block}
+.fps{position:fixed;bottom:8px;right:12px;font-size:9px;color:var(--ghost);z-index:100}
+.hint{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--ghost);z-index:100;pointer-events:none;transition:opacity 1s}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="side">
+    <div class="logo">Recursive Hall</div>
+    <div class="sub">ink on paper · webgl</div>
+    <div class="sec"><div class="mt">
+        <button class="mb on" onclick="setMode('free')" id="m-free">Free (WASD)</button>
+        <button class="mb" onclick="setMode('fly')" id="m-fly">Auto Fly</button>
+        <button class="mb" onclick="setMode('orbit')" id="m-orbit">Orbit</button>
+    </div></div>
+    <div class="sec">
+        <div class="sl">Seed</div>
+        <input type="text" class="si" id="si" value="42" onkeypress="if(event.key==='Enter')uSeed()">
+        <div class="bg"><button class="b" onclick="pSeed()">prev</button><button class="b" onclick="nSeed()">next</button></div>
+        <div class="bg"><button class="b" onclick="rSeed()">random</button><button class="b" onclick="rebuild()">regen</button></div>
+        <div class="pr">
+            <button class="pb" onclick="goSeed(42)">42</button>
+            <button class="pb" onclick="goSeed(137)">137</button>
+            <button class="pb" onclick="goSeed(777)">777</button>
+            <button class="pb" onclick="goSeed(2024)">2024</button>
+        </div>
+    </div>
+    <div class="sec">
+        <div class="sl">Geometry</div>
+        <div class="cg"><label>Depth <span class="v" id="vd">5</span></label><input type="range" id="rd" min="2" max="7" value="5" step="1" oninput="sp('depth',+this.value,1)"></div>
+        <div class="cg"><label>Scale Decay <span class="v" id="vs">0.58</span></label><input type="range" id="rs" min="0.35" max="0.82" value="0.58" step="0.01" oninput="sp('decay',+this.value,1)"></div>
+        <div class="cg"><label>Width <span class="v" id="vw">400</span></label><input type="range" id="rw" min="200" max="700" value="400" step="20" oninput="sp('cw',+this.value,1)"></div>
+        <div class="cg"><label>Height <span class="v" id="vh">280</span></label><input type="range" id="rh" min="120" max="500" value="280" step="20" oninput="sp('ch',+this.value,1)"></div>
+        <div class="cg"><label>Corridor <span class="v" id="vc">600</span></label><input type="range" id="rc" min="300" max="1000" value="600" step="50" oninput="sp('corr',+this.value,1)"></div>
+    </div>
+    <div class="sec">
+        <div class="sl">Atmosphere</div>
+        <div class="cg"><label>Particles <span class="v" id="vp">250</span></label><input type="range" id="rp" min="0" max="2000" value="250" step="50" oninput="sp('nP',+this.value,1)"></div>
+        <div class="cg"><label>Ink Density <span class="v" id="vf">50</span></label><input type="range" id="rf" min="0" max="100" value="50" step="5" oninput="sp('fog',+this.value)"></div>
+        <div class="cg"><label>Grain <span class="v" id="vgr">40</span></label><input type="range" id="rgr" min="0" max="100" value="40" step="5" oninput="sp('grain',+this.value)"></div>
+        <div class="cg"><label>Bleed <span class="v" id="vbl">30</span></label><input type="range" id="rbl" min="0" max="100" value="30" step="5" oninput="sp('bleed',+this.value)"></div>
+    </div>
+    <div class="sec">
+        <div class="sl">Look</div>
+        <div class="mt">
+            <button class="mb on" onclick="setTheme('dark')" id="t-dark">Ink on Black</button>
+            <button class="mb" onclick="setTheme('light')" id="t-light">Ink on Paper</button>
+        </div>
+        <div class="cg"><label>Line Weight <span class="v" id="vlw">1.0</span></label><input type="range" id="rlw" min="0.3" max="3.0" value="1.0" step="0.1" oninput="sp('lineW',+this.value)"></div>
+    </div>
+    <div class="sec">
+        <div class="sl">Camera</div>
+        <div class="cg"><label>Move Speed <span class="v" id="vcs">1.0</span></label><input type="range" id="rcs" min="0.2" max="4.0" value="1.0" step="0.1" oninput="sp('spd',+this.value)"></div>
+        <div class="cg"><label>Mouse Sens <span class="v" id="vms">0.3</span></label><input type="range" id="rms" min="0.05" max="1.0" value="0.3" step="0.05" oninput="sp('sens',+this.value)"></div>
+    </div>
+    <div class="sec">
+        <div class="sl">Actions</div>
+        <div class="bg">
+            <button class="b" onclick="resetAll()">reset</button>
+            <button class="b" onclick="savePNG()">save png</button>
+        </div>
+    </div>
+</div>
+<div class="cv" id="cvWrap"><canvas id="cv"></canvas></div>
+</div>
+<div class="fps" id="fps"></div>
+<div class="hint" id="hint">click canvas to look around / WASD to move / ESC to release</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+// PARAMS
+// ═══════════════════════════════════════════════════════════
+const P = {seed:42, depth:5, decay:0.58, cw:400, ch:280, corr:600, nP:250, fog:50, grain:40, bleed:30, lineW:1.0, spd:1.0, sens:0.3};
+const D = {...P};
+let mode = 'free', theme = 'dark';
+
+// Camera
+let yaw = 0, pitch = 0;
+let camPos = new THREE.Vector3(0, -8, 150);
+let camVel = new THREE.Vector3();
+const keys = {};
+let isLocked = false;
+
+// Core objects
+let renderer, scene, camera, hallMesh, partPoints, glowPoints;
+let partPos, partCol, partLife, partMaxLife, partPhase, partSpd, partRz, partVx, partVy;
+let fC = 0, fT = 0, fV = 0, t = 0;
+
+// Post-processing
+let sceneRT, brightRT, blurRT_A, blurRT_B;
+let postScene, postCamera, postQuad;
+let brightMat, blurMat, compositeMat;
+let particleSprite;
+
+// Seeded RNG
+let _s = 42;
+function srand(s) { _s = s; }
+function rand() { _s = (_s * 16807 + 0) % 2147483647; return (_s & 0x7fffffff) / 2147483647; }
+function rr(a, b) { return a + rand() * (b - a); }
+
+// Theme colors
+function getBg()       { return theme === 'dark' ? 0x050505 : 0xf0ece4; }
+function getBgVec()    { return theme === 'dark' ? [0.02, 0.02, 0.02] : [0.94, 0.93, 0.89]; }
+function getInk()      { return theme === 'dark' ? [1, 1, 1] : [0.08, 0.06, 0.04]; }
+function getInkDim()   { return theme === 'dark' ? [0.5, 0.5, 0.5] : [0.35, 0.3, 0.25]; }
+function getInkFaint() { return theme === 'dark' ? [0.18, 0.18, 0.18] : [0.6, 0.55, 0.5]; }
+function getWarmTint()  { return theme === 'dark' ? [1.0, 0.9, 0.65] : [0.6, 0.45, 0.3]; }
+function getCoolTint()  { return theme === 'dark' ? [0.55, 0.5, 1.0] : [0.3, 0.35, 0.55]; }
+function getGlowColor() { return theme === 'dark' ? [1.0, 0.85, 0.5] : [0.5, 0.35, 0.15]; }
+function getPartColor() { return theme === 'dark' ? [1.0, 0.9, 0.7] : [0.45, 0.35, 0.2]; }
+function getFogVec()    { return theme === 'dark' ? [0.03, 0.02, 0.04] : [0.94, 0.93, 0.89]; }
+
+// ═══════════════════════════════════════════════════════════
+// SHADERS
+// ═══════════════════════════════════════════════════════════
+
+const FULLSCREEN_VERT = `
+varying vec2 vUv;
+void main() {
+    vUv = uv;
+    gl_Position = vec4(position, 1.0);
+}`;
+
+// Custom hall line shaders — breathing walls, depth color gradient, shimmer
+const HALL_VERT = `
+attribute vec3 color;
+varying vec3 vColor;
+varying float vDepth;
+uniform float time;
+
+void main() {
+    vec3 pos = position;
+
+    // Breathing walls — subtle sine displacement, stronger on X than Y
+    float wave = sin(time * 0.4 + pos.z * 0.008 + pos.y * 0.01) * 2.5;
+    pos.x += wave;
+    pos.y += cos(time * 0.3 + pos.z * 0.006) * 1.5;
+
+    vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
+    vDepth = -mvPos.z;
+    vColor = color;
+    gl_Position = projectionMatrix * mvPos;
+}`;
+
+const HALL_FRAG = `
+varying vec3 vColor;
+varying float vDepth;
+uniform float time;
+uniform vec3 warmTint;
+uniform vec3 coolTint;
+uniform float fogDensity;
+uniform vec3 fogColor;
+
+void main() {
+    // Depth gradient: warm close, cool far
+    float depthT = smoothstep(0.0, 3500.0, vDepth);
+    vec3 tint = mix(warmTint, coolTint, depthT);
+
+    // Shimmer — subtle per-line temporal variation
+    float shimmer = 0.92 + 0.08 * sin(time * 1.5 + vDepth * 0.003);
+
+    vec3 col = vColor * tint * shimmer;
+
+    // Fog (handled here so we can color-shift it)
+    float fog = exp(-fogDensity * vDepth);
+    col = mix(fogColor, col, fog);
+
+    gl_FragColor = vec4(col, mix(0.4, 0.92, fog));
+}`;
+
+// Extract bright (dark theme) or dark (light theme) areas for bloom
+const BRIGHT_FRAG = `
+uniform sampler2D tDiffuse;
+uniform float threshold;
+uniform float isDark;
+varying vec2 vUv;
+void main() {
+    vec4 c = texture2D(tDiffuse, vUv);
+    float l = dot(c.rgb, vec3(0.299, 0.587, 0.114));
+    if (isDark > 0.5) {
+        float soft = smoothstep(threshold, threshold + 0.2, l);
+        gl_FragColor = c * soft;
+    } else {
+        float soft = smoothstep(1.0 - threshold, 1.0 - threshold - 0.25, l);
+        gl_FragColor = (1.0 - c) * soft;
+    }
+}`;
+
+// Separable 9-tap gaussian blur
+const BLUR_FRAG = `
+uniform sampler2D tDiffuse;
+uniform vec2 direction;
+uniform vec2 resolution;
+varying vec2 vUv;
+void main() {
+    vec2 px = direction / resolution;
+    vec4 sum = vec4(0.0);
+    sum += texture2D(tDiffuse, vUv - 4.0 * px) * 0.0162;
+    sum += texture2D(tDiffuse, vUv - 3.0 * px) * 0.0540;
+    sum += texture2D(tDiffuse, vUv - 2.0 * px) * 0.1216;
+    sum += texture2D(tDiffuse, vUv - 1.0 * px) * 0.1945;
+    sum += texture2D(tDiffuse, vUv)             * 0.2270;
+    sum += texture2D(tDiffuse, vUv + 1.0 * px) * 0.1945;
+    sum += texture2D(tDiffuse, vUv + 2.0 * px) * 0.1216;
+    sum += texture2D(tDiffuse, vUv + 3.0 * px) * 0.0540;
+    sum += texture2D(tDiffuse, vUv + 4.0 * px) * 0.0162;
+    gl_FragColor = sum;
+}`;
+
+// Final composite: bloom + film grain + vignette + color grade
+const COMPOSITE_FRAG = `
+uniform sampler2D tScene;
+uniform sampler2D tBloom;
+uniform float bloomStrength;
+uniform float grainAmount;
+uniform float vignetteStrength;
+uniform float isDark;
+uniform float time;
+uniform vec2 resolution;
+varying vec2 vUv;
+
+// Fast hash noise — no texture lookups
+float hash(vec2 p) {
+    vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1030, 0.0973));
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+void main() {
+    vec4 scene = texture2D(tScene, vUv);
+    vec4 bloom = texture2D(tBloom, vUv);
+    vec3 color = scene.rgb;
+
+    // Bloom: additive for dark (wireframe glow), subtractive for light (ink bleed)
+    if (isDark > 0.5) {
+        color += bloom.rgb * bloomStrength;
+    } else {
+        color -= bloom.rgb * bloomStrength * 0.6;
+    }
+
+    // Film grain — GPU noise, no CPU canvas, no toDataURL
+    vec2 grainUv = gl_FragCoord.xy + vec2(time * 173.13, time * 89.71);
+    float grain = (hash(grainUv) - 0.5) * grainAmount;
+    color += grain;
+
+    // Vignette — elliptical, aspect-corrected, warm-tinted edges
+    vec2 center = vUv - 0.5;
+    float aspect = resolution.x / resolution.y;
+    float dist = length(center * vec2(aspect, 1.0)) / (0.5 * aspect);
+    float vigMask = smoothstep(0.35, 1.05, dist) * vignetteStrength;
+    vec3 vigTint = isDark > 0.5 ? vec3(0.95, 0.9, 0.85) : vec3(0.9, 0.92, 0.96);
+    color *= mix(vec3(1.0), vigTint, vigMask);
+    color *= (1.0 - vigMask);
+
+    // Color grade — warm highlights, cool shadows
+    float lum = dot(color, vec3(0.299, 0.587, 0.114));
+    if (isDark > 0.5) {
+        color *= mix(vec3(0.92, 0.95, 1.08), vec3(1.08, 1.02, 0.94), lum);
+    } else {
+        color *= mix(vec3(1.06, 1.03, 0.94), vec3(0.94, 0.96, 1.05), lum);
+    }
+
+    gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+}`;
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+function init() {
+    const wrap = document.getElementById('cvWrap');
+    const cv = document.getElementById('cv');
+    const W = wrap.offsetWidth, H = wrap.offsetHeight;
+
+    renderer = new THREE.WebGLRenderer({canvas: cv, antialias: true});
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setClearColor(getBg());
+
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(getBg(), 0.0006 + P.fog * 0.00004);
+
+    camera = new THREE.PerspectiveCamera(68, W / H, 1, 12000);
+    camera.position.copy(camPos);
+
+    setupPostProcessing(W, H);
+    createParticleSprite();
+    rebuild();
+    setupControls();
+    animate();
+}
+
+function setupPostProcessing(W, H) {
+    const opts = {minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat};
+    const pW = Math.floor(W / 2), pH = Math.floor(H / 2);
+
+    sceneRT  = new THREE.WebGLRenderTarget(W, H, opts);
+    brightRT = new THREE.WebGLRenderTarget(pW, pH, opts);
+    blurRT_A = new THREE.WebGLRenderTarget(pW, pH, opts);
+    blurRT_B = new THREE.WebGLRenderTarget(pW, pH, opts);
+
+    postScene = new THREE.Scene();
+    postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    postQuad = new THREE.Mesh(new THREE.PlaneBufferGeometry(2, 2));
+    postQuad.frustumCulled = false;
+    postScene.add(postQuad);
+
+    brightMat = new THREE.ShaderMaterial({
+        uniforms: {
+            tDiffuse:  {value: null},
+            threshold: {value: 0.1},
+            isDark:    {value: 1.0}
+        },
+        vertexShader: FULLSCREEN_VERT,
+        fragmentShader: BRIGHT_FRAG,
+        depthTest: false, depthWrite: false
+    });
+
+    blurMat = new THREE.ShaderMaterial({
+        uniforms: {
+            tDiffuse:   {value: null},
+            direction:  {value: new THREE.Vector2(1, 0)},
+            resolution: {value: new THREE.Vector2(pW, pH)}
+        },
+        vertexShader: FULLSCREEN_VERT,
+        fragmentShader: BLUR_FRAG,
+        depthTest: false, depthWrite: false
+    });
+
+    compositeMat = new THREE.ShaderMaterial({
+        uniforms: {
+            tScene:           {value: null},
+            tBloom:           {value: null},
+            bloomStrength:    {value: 0.5},
+            grainAmount:      {value: 0.06},
+            vignetteStrength: {value: 0.6},
+            isDark:           {value: 1.0},
+            time:             {value: 0},
+            resolution:       {value: new THREE.Vector2(W, H)}
+        },
+        vertexShader: FULLSCREEN_VERT,
+        fragmentShader: COMPOSITE_FRAG,
+        depthTest: false, depthWrite: false
+    });
+}
+
+function resizePostProcessing(W, H) {
+    const pW = Math.floor(W / 2), pH = Math.floor(H / 2);
+    sceneRT.setSize(W, H);
+    brightRT.setSize(pW, pH);
+    blurRT_A.setSize(pW, pH);
+    blurRT_B.setSize(pW, pH);
+    blurMat.uniforms.resolution.value.set(pW, pH);
+    compositeMat.uniforms.resolution.value.set(W, H);
+}
+
+// Soft radial gradient sprite — replaces square point dots
+function createParticleSprite() {
+    const size = 64;
+    const c = document.createElement('canvas');
+    c.width = size; c.height = size;
+    const ctx = c.getContext('2d');
+    const g = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+    g.addColorStop(0, 'rgba(255,255,255,1)');
+    g.addColorStop(0.1, 'rgba(255,255,255,0.9)');
+    g.addColorStop(0.4, 'rgba(255,255,255,0.2)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, size, size);
+    particleSprite = new THREE.CanvasTexture(c);
+}
+
+window.addEventListener('resize', () => {
+    const el = document.getElementById('cvWrap');
+    const W = el.offsetWidth, H = el.offsetHeight;
+    renderer.setSize(W, H);
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+    resizePostProcessing(W, H);
+});
+
+// ═══════════════════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════════════════
+function setupControls() {
+    const wrap = document.getElementById('cvWrap');
+
+    wrap.addEventListener('click', () => {
+        if (mode === 'free' && !isLocked) wrap.requestPointerLock();
+    });
+
+    document.addEventListener('pointerlockchange', () => {
+        isLocked = !!document.pointerLockElement;
+        wrap.classList.toggle('locked', isLocked);
+        document.getElementById('hint').style.opacity = isLocked ? '0' : '1';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isLocked || mode !== 'free') return;
+        yaw   -= e.movementX * P.sens * 0.004;
+        pitch -= e.movementY * P.sens * 0.004;
+        pitch = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, pitch));
+    });
+
+    document.addEventListener('keydown', (e) => {
+        keys[e.code] = true;
+        if (['KeyW','KeyA','KeyS','KeyD','Space'].includes(e.code)) e.preventDefault();
+    });
+    document.addEventListener('keyup', (e) => { keys[e.code] = false; });
+}
+
+function updateFreeCamera(dt) {
+    const speed = P.spd * 3.0 * dt;
+    const dir = new THREE.Vector3();
+
+    if (keys['KeyW']) { dir.x -= Math.sin(yaw) * speed; dir.z -= Math.cos(yaw) * speed; }
+    if (keys['KeyS']) { dir.x += Math.sin(yaw) * speed; dir.z += Math.cos(yaw) * speed; }
+    if (keys['KeyA']) { dir.x -= Math.cos(yaw) * speed; dir.z += Math.sin(yaw) * speed; }
+    if (keys['KeyD']) { dir.x += Math.cos(yaw) * speed; dir.z -= Math.sin(yaw) * speed; }
+    if (keys['Space']) { dir.y += speed; }
+    if (keys['ShiftLeft'] || keys['ShiftRight']) { dir.y -= speed; }
+
+    // Frame-rate independent smoothing
+    const smooth = 1 - Math.pow(1 - 0.2, dt);
+    camVel.lerp(dir, smooth);
+    camPos.add(camVel);
+
+    camera.position.copy(camPos);
+
+    const lookAt = new THREE.Vector3(
+        camPos.x - Math.sin(yaw) * Math.cos(pitch),
+        camPos.y + Math.sin(pitch),
+        camPos.z - Math.cos(yaw) * Math.cos(pitch)
+    );
+    camera.lookAt(lookAt);
+}
+
+// ═══════════════════════════════════════════════════════════
+// BUILD HALL
+// ═══════════════════════════════════════════════════════════
+function rebuild() {
+    srand(P.seed);
+    t = 0;
+
+    if (hallMesh) { scene.remove(hallMesh); hallMesh.geometry.dispose(); hallMesh.material.dispose(); }
+    if (partPoints) { scene.remove(partPoints); partPoints.geometry.dispose(); partPoints.material.dispose(); }
+    if (glowPoints) { scene.remove(glowPoints); glowPoints.geometry.dispose(); glowPoints.material.dispose(); glowPoints = null; }
+
+    const verts = [], colors = [];
+    const ink = getInk(), inkD = getInkDim(), inkF = getInkFaint();
+
+    const numSegs = 9;
+    let driftX = 0;
+    const maxDrift = P.cw * 0.15;
+    const segInfo = [];
+
+    for (let seg = 0; seg < numSegs; seg++) {
+        srand(P.seed * 7919 + seg * 4729);
+
+        const wScale = 0.88 + rand() * 0.24;
+        const hScale = 0.92 + rand() * 0.16;
+        const isChamber = rand() < 0.25;
+        const chamberMul = isChamber ? 1.25 : 1.0;
+        const finalW = P.cw * wScale * chamberMul;
+        const finalH = P.ch * hScale;
+
+        const prevDriftX = driftX;
+        const driftStep = (rand() - 0.5) * P.cw * 0.08;
+        driftX = Math.max(-maxDrift, Math.min(maxDrift, driftX + driftStep));
+
+        const segZ = P.corr - seg * P.corr;
+        segInfo.push({ cx: driftX, w: finalW, h: finalH, z: segZ, prevCx: prevDriftX, isChamber });
+
+        const segBrightMul = isChamber ? 1.15 : (0.9 + rand() * 0.1);
+
+        const segLines = [];
+        buildRecurse(segLines, driftX, 0, segZ, finalW, finalH, P.corr, 0, P.depth);
+
+        for (const L of segLines) {
+            const lineJitter = 0.85 + rand() * 0.3;
+            const b = Math.min(L[6] * segBrightMul * lineJitter, 1.0);
+
+            let jx1 = 0, jy1 = 0, jx2 = 0, jy2 = 0;
+            if (L[6] < 0.5) {
+                const jAmt = 1.5;
+                jx1 = (rand() - 0.5) * jAmt * 2; jy1 = (rand() - 0.5) * jAmt * 2;
+                jx2 = (rand() - 0.5) * jAmt * 2; jy2 = (rand() - 0.5) * jAmt * 2;
+            }
+
+            verts.push(L[0] + jx1, L[1] + jy1, L[2], L[3] + jx2, L[4] + jy2, L[5]);
+
+            let r, g, bb;
+            if (b > 0.6)       { r = ink[0]*b;       g = ink[1]*b;       bb = ink[2]*b; }
+            else if (b > 0.25) { r = inkD[0]*b*1.5;  g = inkD[1]*b*1.5;  bb = inkD[2]*b*1.5; }
+            else               { r = inkF[0]*b*2;    g = inkF[1]*b*2;    bb = inkF[2]*b*2; }
+            colors.push(r, g, bb, r, g, bb);
+        }
+
+        // 1 arch per segment with random Y rotation offset
+        const archZ = segZ - P.corr * (0.3 + rand() * 0.4);
+        const aw = finalW * 0.48, ah = finalH * 0.48;
+        const archRot = (rand() - 0.5) * 0.3;
+        const archB = isChamber ? 0.16 : 0.12;
+        for (let k = 0; k < 20; k++) {
+            const a1 = -Math.PI + k / 20 * Math.PI;
+            const a2 = -Math.PI + (k + 1) / 20 * Math.PI;
+            verts.push(
+                driftX + Math.cos(a1) * aw, Math.sin(a1) * ah, archZ + Math.sin(a1 + archRot) * 3,
+                driftX + Math.cos(a2) * aw, Math.sin(a2) * ah, archZ + Math.sin(a2 + archRot) * 3
+            );
+            colors.push(inkD[0]*archB, inkD[1]*archB, inkD[2]*archB, inkD[0]*archB, inkD[1]*archB, inkD[2]*archB);
+        }
+    }
+
+    // Connecting rails between drifted segments
+    for (let seg = 1; seg < segInfo.length; seg++) {
+        const prev = segInfo[seg - 1];
+        const curr = segInfo[seg];
+        const jZ = curr.z; // shared junction z
+        const phw = prev.w / 2, phh = prev.h / 2;
+        const chw = curr.w / 2, chh = curr.h / 2;
+        const rb = 0.15;
+        const corners = [
+            [prev.cx - phw, -phh, curr.cx - chw, -chh],
+            [prev.cx + phw, -phh, curr.cx + chw, -chh],
+            [prev.cx - phw,  phh, curr.cx - chw,  chh],
+            [prev.cx + phw,  phh, curr.cx + chw,  chh],
+        ];
+        for (const [sx, sy, ex, ey] of corners) {
+            verts.push(sx, sy, jZ, ex, ey, jZ);
+            colors.push(inkF[0]*rb, inkF[1]*rb, inkF[2]*rb, inkF[0]*rb, inkF[1]*rb, inkF[2]*rb);
+        }
+    }
+
+    // Guide beams
+    const hw = P.cw * 0.5, hh = P.ch * 0.5, bLen = P.corr * numSegs;
+    const gb2 = 0.06;
+    for (const c of [[-hw,-hh],[hw,-hh],[-hw,hh],[hw,hh]]) {
+        verts.push(c[0], c[1], P.corr, c[0], c[1], -bLen);
+        colors.push(inkF[0]*gb2, inkF[1]*gb2, inkF[2]*gb2, inkF[0]*gb2, inkF[1]*gb2, inkF[2]*gb2);
+    }
+
+    // Vanishing point markers (reduced, scaled up)
+    for (let i = 0; i < 6; i++) {
+        const zz = -i * P.corr * 1.2;
+        const s = 0.03 + i * 0.008;
+        const sz = 5;
+        verts.push(-sz, 0, zz, sz, 0, zz);
+        verts.push(0, -sz, zz, 0, sz, zz);
+        colors.push(inkF[0]*s, inkF[1]*s, inkF[2]*s, inkF[0]*s, inkF[1]*s, inkF[2]*s);
+        colors.push(inkF[0]*s, inkF[1]*s, inkF[2]*s, inkF[0]*s, inkF[1]*s, inkF[2]*s);
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    const warm = getWarmTint(), cool = getCoolTint(), fogC = getFogVec();
+    const mat = new THREE.ShaderMaterial({
+        uniforms: {
+            time:       {value: 0},
+            warmTint:   {value: new THREE.Vector3(warm[0], warm[1], warm[2])},
+            coolTint:   {value: new THREE.Vector3(cool[0], cool[1], cool[2])},
+            fogDensity: {value: 0.00015 + P.fog * 0.000008},
+            fogColor:   {value: new THREE.Vector3(fogC[0], fogC[1], fogC[2])}
+        },
+        vertexShader: HALL_VERT,
+        fragmentShader: HALL_FRAG,
+        transparent: true,
+        depthWrite: false,
+        fog: false
+    });
+    hallMesh = new THREE.LineSegments(geo, mat);
+    scene.add(hallMesh);
+
+    buildGlowNodes(segInfo);
+    buildParticles();
+
+    scene.fog.color.set(getBg());
+    scene.fog.density = 0.0004 + P.fog * 0.00005;
+    renderer.setClearColor(getBg());
+}
+
+function buildRecurse(out, cx, cy, cz, w, h, d, lev, maxLev) {
+    if (lev > maxLev) return;
+    const hw = w/2, hh = h/2;
+    const z0 = cz, z1 = cz - d;
+    const b = 1.0 - lev / maxLev * 0.7;
+
+    // Rails
+    out.push([cx-hw, cy-hh, z0, cx-hw, cy-hh, z1, b]);
+    out.push([cx+hw, cy-hh, z0, cx+hw, cy-hh, z1, b]);
+    out.push([cx-hw, cy+hh, z0, cx-hw, cy+hh, z1, b]);
+    out.push([cx+hw, cy+hh, z0, cx+hw, cy+hh, z1, b]);
+
+    // Near frame
+    out.push([cx-hw, cy-hh, z0, cx+hw, cy-hh, z0, b]);
+    out.push([cx+hw, cy-hh, z0, cx+hw, cy+hh, z0, b]);
+    out.push([cx+hw, cy+hh, z0, cx-hw, cy+hh, z0, b]);
+    out.push([cx-hw, cy+hh, z0, cx-hw, cy-hh, z0, b]);
+
+    // Far frame
+    out.push([cx-hw, cy-hh, z1, cx+hw, cy-hh, z1, b]);
+    out.push([cx+hw, cy-hh, z1, cx+hw, cy+hh, z1, b]);
+    out.push([cx+hw, cy+hh, z1, cx-hw, cy+hh, z1, b]);
+    out.push([cx-hw, cy+hh, z1, cx-hw, cy-hh, z1, b]);
+
+    // Cross braces — level 0 only, 2 subdivisions
+    if (lev === 0) {
+        for (let i = 1; i <= 2; i++) {
+            const zz = z0 + (z1 - z0) * i / 3;
+            out.push([cx-hw, cy+hh, zz, cx+hw, cy+hh, zz, b*0.28]);
+            out.push([cx-hw, cy-hh, zz, cx+hw, cy-hh, zz, b*0.28]);
+            out.push([cx-hw, cy-hh, zz, cx-hw, cy+hh, zz, b*0.16]);
+            out.push([cx+hw, cy-hh, zz, cx+hw, cy+hh, zz, b*0.16]);
+        }
+    }
+
+    // X cross on back wall
+    if (lev < maxLev) {
+        const xb = b * 0.08;
+        out.push([cx-hw*0.8, cy-hh*0.8, z1, cx+hw*0.8, cy+hh*0.8, z1, xb]);
+        out.push([cx+hw*0.8, cy-hh*0.8, z1, cx-hw*0.8, cy+hh*0.8, z1, xb]);
+    }
+
+    // Recurse deeper
+    const nw = w * P.decay, nh = h * P.decay, nd = d * P.decay;
+    buildRecurse(out, cx, cy + (h-nh)*0.1, z1, nw, nh, nd, lev+1, maxLev);
+
+    // Side reflections
+    if (lev < 2 && lev + 2 <= maxLev) {
+        const ss = P.decay * 0.5;
+        const sw = w*ss, sh = h*ss, sd = d*ss*0.4;
+        const midZ = (z0 + z1) / 2;
+        buildRecurse(out, cx - hw - sw*0.35, cy, midZ, sw, sh, sd, lev+2, maxLev);
+        buildRecurse(out, cx + hw + sw*0.35, cy, midZ, sw, sh, sd, lev+2, maxLev);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// GLOW NODES
+// ═══════════════════════════════════════════════════════════
+function buildGlowNodes(segInfo) {
+    const gc = getGlowColor();
+    const positions = [], colors = [], sizes = [], phases = [];
+
+    for (let i = 0; i < segInfo.length; i++) {
+        const seg = segInfo[i];
+        // Chamber centers get a large glow node
+        if (seg.isChamber) {
+            const midZ = seg.z - P.corr * 0.5;
+            positions.push(seg.cx, 0, midZ);
+            colors.push(gc[0], gc[1], gc[2]);
+            sizes.push(35);
+            phases.push(i * 1.7);
+        }
+        // Every 2nd junction gets a smaller glow node
+        if (i % 2 === 0 && i > 0) {
+            positions.push(seg.cx, 0, seg.z);
+            colors.push(gc[0] * 0.7, gc[1] * 0.7, gc[2] * 0.7);
+            sizes.push(20);
+            phases.push(i * 2.3);
+        }
+    }
+
+    if (positions.length === 0) return;
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+    geo.setAttribute('phase', new THREE.Float32BufferAttribute(phases, 1));
+
+    const glowMat = new THREE.PointsMaterial({
+        size: 30,
+        map: particleSprite,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.35,
+        depthWrite: false,
+        sizeAttenuation: true,
+        blending: theme === 'dark' ? THREE.AdditiveBlending : THREE.SubtractiveBlending,
+    });
+
+    glowPoints = new THREE.Points(geo, glowMat);
+    scene.add(glowPoints);
+}
+
+// ═══════════════════════════════════════════════════════════
+// PARTICLES
+// ═══════════════════════════════════════════════════════════
+function buildParticles() {
+    const n = P.nP;
+    partPos     = new Float32Array(n * 3);
+    partCol     = new Float32Array(n * 3);
+    partLife    = new Float32Array(n);
+    partMaxLife = new Float32Array(n);
+    partPhase   = new Float32Array(n);
+    partSpd     = new Float32Array(n);
+    partRz      = new Float32Array(n);
+    partVx      = new Float32Array(n);
+    partVy      = new Float32Array(n);
+
+    for (let i = 0; i < n; i++) resetPart(i, true);
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(partPos, 3));
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(partCol, 3));
+
+    const ptMat = new THREE.PointsMaterial({
+        size: 10,
+        map: particleSprite,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.5,
+        depthWrite: false,
+        sizeAttenuation: true,
+        blending: theme === 'dark' ? THREE.AdditiveBlending : THREE.SubtractiveBlending,
+    });
+
+    partPoints = new THREE.Points(geo, ptMat);
+    scene.add(partPoints);
+}
+
+function resetPart(i, init) {
+    const spread = P.cw * 0.65, spreadY = P.ch * 0.45;
+    partPos[i*3]     = rr(-spread, spread);
+    partPos[i*3 + 1] = rr(-spreadY, spreadY);
+    partRz[i] = init ? -rr(50, P.corr * 2.2) : -P.corr * 0.5 - rr(0, P.corr * 1.8);
+    partPos[i*3 + 2] = camPos.z + partRz[i];
+    partVx[i]    = rr(-0.1, 0.1);
+    partVy[i]    = rr(-0.06, 0.06);
+    partPhase[i] = rr(0, 6.28);
+    partSpd[i]   = rr(0.3, 0.9);
+    const life = rr(250, 500) | 0;
+    partLife[i] = life;
+    partMaxLife[i] = life;
+
+    const pc = getPartColor();
+    const bright = rr(0.2, 0.5);
+    partCol[i*3]     = pc[0] * bright;
+    partCol[i*3 + 1] = pc[1] * bright;
+    partCol[i*3 + 2] = pc[2] * bright;
+}
+
+function updateParts() {
+    const n = P.nP;
+    const pos = partPoints.geometry.attributes.position.array;
+    const col = partPoints.geometry.attributes.color.array;
+    const fogMax = P.corr * 2.2;
+    const fogPow = 1 + P.fog * 0.022;
+
+    for (let i = 0; i < n; i++) {
+        const tl = t * 0.007 * partSpd[i];
+        pos[i*3]     += partVx[i] + Math.sin(tl + partPhase[i]) * 0.25;
+        pos[i*3 + 1] += partVy[i] + Math.cos(tl * 0.7 + partPhase[i]) * 0.15;
+        partRz[i] += 0.025;
+        pos[i*3 + 2] = camPos.z + partRz[i];
+        partLife[i]--;
+
+        if (partLife[i] <= 0 || partRz[i] > 180) {
+            resetPart(i, false);
+            pos[i*3] = partPos[i*3]; pos[i*3+1] = partPos[i*3+1]; pos[i*3+2] = partPos[i*3+2];
+            continue;
+        }
+
+        const dist = Math.abs(partRz[i]);
+        let ff = 1 - Math.min(dist / fogMax, 1);
+        ff = Math.pow(ff, fogPow);
+        const life = partLife[i], ml = partMaxLife[i];
+        const lf = life < 30 ? life / 30 : (life > ml - 20 ? (ml - life) / 20 : 1);
+        const fade = ff * lf;
+        col[i*3]     = partCol[i*3]     * fade;
+        col[i*3 + 1] = partCol[i*3 + 1] * fade;
+        col[i*3 + 2] = partCol[i*3 + 2] * fade;
+    }
+    partPoints.geometry.attributes.position.needsUpdate = true;
+    partPoints.geometry.attributes.color.needsUpdate = true;
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER PIPELINE
+// ═══════════════════════════════════════════════════════════
+function renderPipeline() {
+    const isDark = theme === 'dark' ? 1.0 : 0.0;
+
+    // 1. Scene to texture
+    renderer.setRenderTarget(sceneRT);
+    renderer.render(scene, camera);
+
+    // 2. Bright pass — extract glow sources at half resolution
+    postQuad.material = brightMat;
+    brightMat.uniforms.tDiffuse.value = sceneRT.texture;
+    brightMat.uniforms.isDark.value = isDark;
+    brightMat.uniforms.threshold.value = theme === 'dark' ? 0.06 : 0.12;
+    renderer.setRenderTarget(brightRT);
+    renderer.render(postScene, postCamera);
+
+    // 3. Gaussian blur pass 1 (tight bloom)
+    postQuad.material = blurMat;
+
+    blurMat.uniforms.tDiffuse.value = brightRT.texture;
+    blurMat.uniforms.direction.value.set(1.0, 0.0);
+    renderer.setRenderTarget(blurRT_A);
+    renderer.render(postScene, postCamera);
+
+    blurMat.uniforms.tDiffuse.value = blurRT_A.texture;
+    blurMat.uniforms.direction.value.set(0.0, 1.0);
+    renderer.setRenderTarget(blurRT_B);
+    renderer.render(postScene, postCamera);
+
+    // 4. Gaussian blur pass 2 (wider spread)
+    blurMat.uniforms.tDiffuse.value = blurRT_B.texture;
+    blurMat.uniforms.direction.value.set(2.5, 0.0);
+    renderer.setRenderTarget(blurRT_A);
+    renderer.render(postScene, postCamera);
+
+    blurMat.uniforms.tDiffuse.value = blurRT_A.texture;
+    blurMat.uniforms.direction.value.set(0.0, 2.5);
+    renderer.setRenderTarget(blurRT_B);
+    renderer.render(postScene, postCamera);
+
+    // 5. Composite to screen: bloom + grain + vignette + color grade
+    postQuad.material = compositeMat;
+    compositeMat.uniforms.tScene.value = sceneRT.texture;
+    compositeMat.uniforms.tBloom.value = blurRT_B.texture;
+    compositeMat.uniforms.bloomStrength.value = P.bleed * 0.025;
+    compositeMat.uniforms.grainAmount.value = P.grain * 0.0013;
+    compositeMat.uniforms.vignetteStrength.value = 0.55 + P.fog * 0.003;
+    compositeMat.uniforms.isDark.value = isDark;
+    compositeMat.uniforms.time.value = t * 0.1;
+    renderer.setRenderTarget(null);
+    renderer.render(postScene, postCamera);
+}
+
+// ═══════════════════════════════════════════════════════════
+// ANIMATE
+// ═══════════════════════════════════════════════════════════
+let lastTime = performance.now();
+function animate() {
+    requestAnimationFrame(animate);
+    const now = performance.now();
+    const dt = Math.min((now - lastTime) / 16.67, 3);
+    lastTime = now;
+
+    // FPS
+    fC++;
+    if (now - fT > 600) { fV = Math.round(fC / ((now - fT) / 1000)); fC = 0; fT = now; }
+    document.getElementById('fps').textContent = fV + ' fps';
+
+    // Camera
+    if (mode === 'free') {
+        updateFreeCamera(dt);
+    } else if (mode === 'fly') {
+        camPos.z -= P.spd * 0.8 * dt;
+        camPos.x = Math.sin(t * 0.0012) * 50;
+        camPos.y = Math.cos(t * 0.0009) * 25 - 5;
+        camera.position.copy(camPos);
+        camera.lookAt(Math.sin(t * 0.0008) * 20, Math.cos(t * 0.0006) * 12, camPos.z - 900);
+        camera.rotation.z = Math.sin(t * 0.0006) * 0.03;
+    } else {
+        const oA = t * 0.003 * P.spd * 0.2;
+        const oR = P.cw * 0.85;
+        camera.position.set(Math.cos(oA) * oR, Math.sin(t * 0.002) * P.ch * 0.2 - 10, Math.sin(oA) * oR);
+        camera.lookAt(0, 0, -P.corr * 0.7);
+        camPos.copy(camera.position);
+    }
+
+    // Hall scroll + shader time update
+    if (hallMesh) {
+        hallMesh.position.z = Math.floor(-camPos.z / P.corr) * P.corr;
+        hallMesh.material.uniforms.time.value = t * 0.016;
+    }
+
+    // Glow node scroll + opacity pulse
+    if (glowPoints) {
+        glowPoints.position.z = hallMesh.position.z;
+        glowPoints.material.opacity = 0.3 + Math.sin(t * 0.013) * 0.1;
+    }
+
+    // Particles
+    if (partPoints) updateParts();
+
+    // Fog breathing
+    const baseFog = 0.0004 + P.fog * 0.00005;
+    scene.fog.density = baseFog + Math.sin(t * 0.005) * baseFog * 0.08;
+
+    // Render through post-processing pipeline
+    renderPipeline();
+    t++;
+}
+
+// ═══════════════════════════════════════════════════════════
+// UI
+// ═══════════════════════════════════════════════════════════
+const vMap = {depth:'vd', decay:'vs', cw:'vw', ch:'vh', corr:'vc', nP:'vp', fog:'vf', grain:'vgr', bleed:'vbl', lineW:'vlw', spd:'vcs', sens:'vms'};
+function sp(k, v, reb) {
+    P[k] = v;
+    if (vMap[k]) document.getElementById(vMap[k]).textContent = v;
+    if (k === 'fog') scene.fog.density = 0.0004 + P.fog * 0.00005;
+    if (reb) rebuild();
+}
+function setMode(m) {
+    mode = m;
+    document.querySelectorAll('.mb').forEach(b => b.classList.remove('on'));
+    document.getElementById('m-' + m).classList.add('on');
+    if (m !== 'free' && document.pointerLockElement) document.exitPointerLock();
+    document.getElementById('hint').style.opacity = m === 'free' ? '1' : '0';
+}
+function setTheme(th) {
+    theme = th;
+    document.querySelectorAll('#t-dark,#t-light').forEach(b => b.classList.remove('on'));
+    document.getElementById('t-' + th).classList.add('on');
+    rebuild();
+}
+function goSeed(s) { P.seed = s; document.getElementById('si').value = s; rebuild(); }
+function uSeed() { const v = parseInt(document.getElementById('si').value); if (v > 0) { P.seed = v; rebuild(); } }
+function pSeed() { goSeed(Math.max(1, P.seed - 1)); }
+function nSeed() { goSeed(P.seed + 1); }
+function rSeed() { goSeed(Math.floor(Math.random() * 999999) + 1); }
+function savePNG() {
+    renderPipeline();
+    const a = document.createElement('a');
+    a.href = renderer.domElement.toDataURL('image/png');
+    a.download = 'hall-' + P.seed + '.png';
+    a.click();
+}
+function resetAll() {
+    Object.assign(P, D); theme = 'dark'; mode = 'free'; yaw = 0; pitch = 0;
+    camPos.set(0, -8, 150); camVel.set(0, 0, 0);
+    document.getElementById('si').value = P.seed;
+    const els = [['rd','vd','depth'],['rs','vs','decay'],['rw','vw','cw'],['rh','vh','ch'],['rc','vc','corr'],
+                 ['rp','vp','nP'],['rf','vf','fog'],['rgr','vgr','grain'],['rbl','vbl','bleed'],
+                 ['rlw','vlw','lineW'],['rcs','vcs','spd'],['rms','vms','sens']];
+    for (const [r, v, k] of els) { document.getElementById(r).value = P[k]; document.getElementById(v).textContent = P[k]; }
+    document.querySelectorAll('.mb').forEach(b => b.classList.remove('on'));
+    document.getElementById('m-free').classList.add('on');
+    document.getElementById('t-dark').classList.add('on');
+    document.getElementById('t-light').classList.remove('on');
+    rebuild();
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>

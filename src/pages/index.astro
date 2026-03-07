@@ -3,9 +3,9 @@ import Page from '../layouts/Page.astro';
 import HitCounter from '../components/HitCounter.astro';
 ---
 
-<Page title="alexander campos" description="Hand-built personal site. I build things that protect how people think.">
+<Page title="alexander campos" description="Hand-built personal site. building things to protect how we think.">
   <section class="splash">
-    <p class="tagline">i build things that protect how people think.</p>
+    <p class="tagline">building things to protect how we think.</p>
 
     <marquee class="retro-marquee" behavior="scroll" direction="left" scrollamount="2">
       welcome to my corner of the internet -- last updated march 2026 -- yes this is a marquee tag, it stays
@@ -13,15 +13,14 @@ import HitCounter from '../components/HitCounter.astro';
 
     <div class="intro">
       <p>
-        I'm Alex. I work in regulated finance during the day and build AI infrastructure
-        at night. Probably too late at night. The stuff I make sits at the intersection of
-        cognitive safety, sovereign systems, and the question of what happens when the tools
-        you use are smarter than they are trustworthy.
+        I'm Alex. I work in regulated finance during the day and build local intelligence
+        infrastructure at night. Probably too late at night.
       </p>
       <p>
-        Right now I'm building <a href="/projects/forgeframe">ForgeFrame</a> (sovereign AI middleware)
-        and <a href="/projects/guardian">Guardian</a> (a desktop app that detects when AI
-        subtly rewrites how you think). I also <a href="/writing">write about it</a>.
+        Right now I'm building <a href="/projects/forgeframe">ForgeFrame</a> (local-first
+        middleware for routing, memory, and provenance)
+        and <a href="/projects/guardian">Guardian</a> (a desktop app that detects when
+        language models subtly rewrite how you describe yourself). I also <a href="/writing">write about it</a>.
         This site is hand-built. View source if you're curious what that means.
       </p>
     </div>
@@ -31,24 +30,6 @@ import HitCounter from '../components/HitCounter.astro';
       <a href="/about" class="enter-link">about me >></a>
       <a href="/writing" class="enter-link">writing >></a>
     </nav>
-
-    <div class="assistant-prompt" id="assistant-prompt">
-      <div class="ap-window">
-        <div class="ap-titlebar">
-          <span>website_assistant.exe</span>
-          <button class="ap-close">&times;</button>
-        </div>
-        <div class="ap-body">
-          <p class="ap-main">generate your website assistant</p>
-          <p class="ap-sub">(doesn't do anything. just follows you around and dances for moral support)</p>
-          <p class="ap-hint">(if you don't know, type <strong>oliver</strong> to see my handsome boy)</p>
-          <div class="ap-row">
-            <input type="text" id="assistant-name" placeholder="oliver" maxlength="20" />
-            <button id="assistant-gen">generate</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <div class="counter-row">
       <HitCounter />
@@ -107,124 +88,9 @@ import HitCounter from '../components/HitCounter.astro';
     border-top: 1px solid var(--white-08);
   }
 
-  /* ── Assistant Prompt Window ── */
-  .assistant-prompt {
-    padding-top: 0.5rem;
-  }
-
-  .ap-window {
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    max-width: 420px;
-    font-family: var(--mono);
-  }
-
-  .ap-titlebar {
-    background: #111;
-    padding: 5px 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.3);
-  }
-
-  .ap-close {
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.25);
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0 4px;
-    line-height: 1;
-  }
-  .ap-close:hover {
-    color: #c75050;
-  }
-
-  .ap-body {
-    background: #0a0a0a;
-    padding: 16px;
-  }
-
-  .ap-main {
-    font-size: 0.8rem;
-    color: var(--glow);
-    margin: 0 0 6px;
-  }
-
-  .ap-sub {
-    font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.22);
-    margin: 0 0 3px;
-  }
-
-  .ap-hint {
-    font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.18);
-    margin: 0 0 14px;
-  }
-  .ap-hint strong {
-    color: var(--gold-accent);
-  }
-
-  .ap-row {
-    display: flex;
-    gap: 8px;
-  }
-
-  #assistant-name {
-    flex: 1;
-    background: #050505;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--glow);
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    padding: 7px 10px;
-    outline: none;
-  }
-  #assistant-name:focus {
-    border-color: var(--gold-accent);
-  }
-
-  #assistant-gen {
-    background: none;
-    border: 1px solid var(--gold-accent);
-    color: var(--gold-accent);
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    padding: 7px 14px;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  #assistant-gen:hover {
-    background: rgba(184, 150, 90, 0.1);
-    color: var(--glow-hot);
-    transition: none;
-  }
-
-  @media (hover: none) {
-    .assistant-prompt {
-      display: none;
-    }
-  }
-
   /* ── Pixel Grid Hover Texture ── */
   @media (hover: hover) {
     .enter-link:hover {
-      background-image: url("data:image/svg+xml,%3Csvg width='2' height='2' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1' height='1' fill='white' fill-opacity='0.04'/%3E%3C/svg%3E");
-      background-size: 2px 2px;
-      transition: none;
-    }
-
-    #assistant-gen:hover {
-      background-image: url("data:image/svg+xml,%3Csvg width='2' height='2' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1' height='1' fill='white' fill-opacity='0.04'/%3E%3C/svg%3E");
-      background-size: 2px 2px;
-      border-color: var(--glow-hot);
-      transition: none;
-    }
-
-    .ap-close:hover {
       background-image: url("data:image/svg+xml,%3Csvg width='2' height='2' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1' height='1' fill='white' fill-opacity='0.04'/%3E%3C/svg%3E");
       background-size: 2px 2px;
       transition: none;

@@ -1,5 +1,7 @@
 // Ambient audio — Tone.js procedural drone, activated by button only
 (function () {
+  if (window.__ambientInit) return;
+  window.__ambientInit = true;
   let started = false;
   let synth = null;
   let reverb = null;

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import '../styles/retro.css';
+import { ViewTransitions } from 'astro:transitions';
 
 interface Props {
   title: string;
@@ -38,6 +39,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <link rel="canonical" href={canonicalURL} />
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
+  <ViewTransitions />
   <title>{title}</title>
   <meta name="description" content={description} />
 
@@ -109,15 +111,47 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     );
   </script>
 
+  <!-- Persistent audio element — survives page transitions -->
+  <audio id="music-player-audio" preload="metadata" transition:persist="audio"></audio>
+
   <!-- Islands — loaded after page is interactive -->
-  <script src="../islands/desk-scene.js"></script>
-  <script src="../islands/ascii-bg.js"></script>
-  <script src="../islands/cursor-trail.js"></script>
-  <script src="../islands/konami.js"></script>
-  <script src="../islands/music-panel.js"></script>
-  <script src="../islands/audio-bridge.js"></script>
-  <script src="../islands/ambient-audio.js"></script>
-  <script src="../islands/assistant.js"></script>
+  <script is:inline src="/islands/desk-scene.js"></script>
+  <script is:inline src="/islands/ascii-bg.js"></script>
+  <script is:inline src="/islands/cursor-trail.js"></script>
+  <script is:inline src="/islands/konami.js"></script>
+  <script is:inline src="/islands/music-panel.js"></script>
+  <script is:inline src="/islands/audio-bridge.js"></script>
+  <script is:inline src="/islands/ambient-audio.js"></script>
+  <script is:inline src="/islands/assistant.js"></script>
+
+  <!-- Re-run islands after View Transition page swaps -->
+  <script is:inline>
+    document.addEventListener('astro:after-swap', function () {
+      // Clean up island instances before re-init
+      if (window.__musicPanelCleanup) window.__musicPanelCleanup();
+      // Clear all init guards so scripts can rebuild DOM
+      window.__deskSceneInit = false;
+      window.__asciiBgInit = false;
+      window.__cursorTrailInit = false;
+      window.__konamiInit = false;
+      window.__musicPanelInit = false;
+      window.__audioBridgeInit = false;
+      window.__ambientInit = false;
+      window.__oliverInit = false;
+      // Re-execute island scripts
+      var islands = [
+        '/islands/desk-scene.js', '/islands/ascii-bg.js',
+        '/islands/cursor-trail.js', '/islands/konami.js',
+        '/islands/music-panel.js', '/islands/audio-bridge.js',
+        '/islands/ambient-audio.js', '/islands/assistant.js'
+      ];
+      islands.forEach(function (src) {
+        var s = document.createElement('script');
+        s.src = src + '?t=' + Date.now();
+        document.body.appendChild(s);
+      });
+    });
+  </script>
 </body>
 </html>
 

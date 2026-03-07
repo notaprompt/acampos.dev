@@ -2,19 +2,38 @@
 // Replaces Webamp with full UI control: visualizer, controls, playlist, weather
 (function () {
   'use strict';
+  // Don't re-init on client-side navigation
+  if (window.__musicPanelInit) return;
+  window.__musicPanelInit = true;
 
   // ── Playlist ──────────────────────────────────────────────
   var PLAYLIST = [
     { artist: 'Aphex Twin', title: 'Avril 14th', url: '/audio/avril-14th.wav' },
+    { artist: 'Brent Faiyaz', title: 'white noise.', url: '/audio/white-noise.wav' },
+    { artist: 'Piero Piccioni', title: 'Easy Lovers', url: '/audio/easy-lovers.wav' },
+    { artist: 'Maison Music', title: "l'histoire de ta vie", url: '/audio/lhistoire-de-ta-vie.wav' },
+    { artist: 'Shigeo Sekito', title: 'the word II', url: '/audio/the-word-ii.wav' },
   ];
 
-  // ── State ─────────────────────────────────────────────────
-  var currentIndex = 0;
+  // ── State (restore from localStorage if available) ────────
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem('mp_state')); } catch(e) {}
+  var currentIndex = saved ? saved.idx : 0;
   var isPlaying = false;
   var isShuffled = false;
-  var repeatMode = 0; // 0=off, 1=all, 2=one
+  var repeatMode = 1; // 0=off, 1=all, 2=one — default: loop playlist
   var shuffleOrder = null;
-  var volume = 0.7;
+  var volume = saved ? (saved.vol != null ? saved.vol : 0.7) : 0.7;
+
+  function saveState() {
+    try {
+      localStorage.setItem('mp_state', JSON.stringify({
+        idx: currentIndex,
+        vol: volume,
+        time: audio.currentTime || 0
+      }));
+    } catch(e) {}
+  }
   var audioCtx = null;
   var analyser = null;
   var sourceNode = null;
@@ -23,12 +42,14 @@
   var peakDecay = [];
   var animId = null;
 
-  // ── Audio element ─────────────────────────────────────────
-  var audio = document.createElement('audio');
-  audio.id = 'music-player-audio';
-  audio.preload = 'metadata';
+  // ── Audio element (reuse persistent element from HTML) ────
+  var audio = document.getElementById('music-player-audio') || document.createElement('audio');
+  if (!audio.id) {
+    audio.id = 'music-player-audio';
+    audio.preload = 'metadata';
+    document.body.appendChild(audio);
+  }
   audio.volume = volume;
-  document.body.appendChild(audio);
 
   // ── Helpers ───────────────────────────────────────────────
   function shuffle(arr) {
@@ -79,6 +100,7 @@
     updateNowPlaying(track);
     updatePlaylistHighlight();
     updateProgressDisplay();
+    saveState();
   }
 
   function playTrack() {
@@ -157,7 +179,7 @@
   var style = document.createElement('style');
   style.textContent = [
     '#music-panel {',
-    '  position: fixed; top: 0; right: 0; bottom: 0; width: 380px;',
+    '  position: fixed; top: 0; right: 0; bottom: 0; width: 19vw;',
     '  background: rgba(5,5,5,0.96); border-left: 1px solid rgba(255,255,255,0.06);',
     '  z-index: 9599; font-family: var(--mono); transform: translateX(100%);',
     '  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);',
@@ -177,7 +199,7 @@
     '  backdrop-filter: blur(6px);',
     '}',
     '#mp-toggle:hover { color: var(--gold-accent); background: rgba(5,5,5,0.95); }',
-    '#mp-toggle.shifted { right: 380px; }',
+    '#mp-toggle.shifted { right: 19vw; }',
     '',
     '#mp-titlebar {',
     '  display: flex; align-items: center; justify-content: space-between;',
@@ -189,7 +211,7 @@
     '#mp-titlebar .close:hover { color: var(--danger); }',
     '',
     '#mp-visualizer {',
-    '  width: 100%; height: 120px; flex-shrink: 0;',
+    '  width: 100%; flex: 1; min-height: 0;',
     '  background: var(--depth-2); display: block;',
     '}',
     '',
@@ -272,23 +294,39 @@
     '.mp-pl-item.active { color: var(--alive); }',
     '.mp-pl-item .marker { flex-shrink: 0; width: 10px; font-size: 0.55rem; }',
     '',
-    '/* Now-playing banner (top bar) */',
+    '/* Now-playing banner (top bar) — marquee ticker */',
     '#now-playing {',
     '  position: fixed; top: 0; left: 0; right: 0; z-index: 9500;',
     '  background: rgba(5,5,5,0.92); border-bottom: 1px solid rgba(255,255,255,0.06);',
-    '  padding: 6px 16px; font-family: var(--mono); font-size: 0.7rem;',
-    '  display: flex; align-items: center; gap: 8px;',
+    '  padding: 6px 0; font-family: var(--mono); font-size: 0.7rem;',
+    '  overflow: hidden; white-space: nowrap;',
     '  backdrop-filter: blur(6px); opacity: 0; transition: opacity 0.4s;',
     '  pointer-events: none;',
     '}',
     '#now-playing.visible { opacity: 1; }',
-    '.np-label { color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.1em; flex-shrink: 0; }',
-    '.np-track { color: var(--gold-accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+    '.np-scroll {',
+    '  display: inline-block; padding-left: 100%;',
+    '  animation: np-marquee 48s linear infinite;',
+    '}',
+    '@keyframes np-marquee {',
+    '  0% { transform: translateX(0); }',
+    '  100% { transform: translateX(-100%); }',
+    '}',
+    '.np-label { color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.1em; }',
+    '.np-track { color: var(--gold-accent); }',
     '.np-artist { color: rgba(255,255,255,0.4); }',
     '.np-sep { color: rgba(255,255,255,0.12); }',
+    '.np-spacer { display: inline-block; width: 60px; }',
+    '.np-weather { color: rgba(255,255,255,0.3); }',
+    '.wx-temp { color: rgba(255,255,255,0.5); }',
+    '.wx-desc { color: rgba(255,255,255,0.25); }',
+    '.wx-loc { color: rgba(184,150,90,0.4); }',
     '',
-    '/* Weather widget */',
-    '#weather-widget {',
+    '/* Hide separate weather widget — merged into banner */',
+    '#weather-widget { display: none !important; }',
+    '',
+    '/* Legacy weather widget positioning (hidden) */',
+    '#weather-widget-legacy {',
     '  position: fixed; top: 0; right: 16px; z-index: 9501;',
     '  padding: 6px 0; font-family: var(--mono); font-size: 0.65rem;',
     '  color: rgba(255,255,255,0.3); display: flex; align-items: center; gap: 6px;',
@@ -298,7 +336,7 @@
     '.wx-loc { color: rgba(184,150,90,0.4); }',
     '',
     '/* CRT scanlines for visualizer */',
-    '#mp-vis-wrap { position: relative; flex-shrink: 0; }',
+    '#mp-vis-wrap { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }',
     '#mp-vis-wrap::after {',
     '  content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;',
     '  background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.15) 1px, rgba(0,0,0,0.15) 2px);',
@@ -314,11 +352,12 @@
 
   // ── DOM ────────────────────────────────────────────────────
 
-  // Now-playing banner
+  // Now-playing banner — marquee ticker
   var banner = document.createElement('div');
   banner.id = 'now-playing';
-  banner.innerHTML = '<span class="np-label">now playing:</span> <span class="np-track">--</span>';
+  banner.innerHTML = '<span class="np-scroll"><span class="np-label">now playing:</span> <span class="np-track">--</span><span class="np-spacer"></span><span class="np-weather"></span><span class="np-spacer"></span><span class="np-label">now playing:</span> <span class="np-track np-track-2">--</span><span class="np-spacer"></span></span>';
   document.body.appendChild(banner);
+  var npWeatherEl = banner.querySelector('.np-weather');
 
   // Weather widget
   var weatherEl = document.createElement('div');
@@ -469,7 +508,10 @@
     timeDur.textContent = formatTime(audio.duration);
   }
 
-  audio.addEventListener('timeupdate', updateProgressDisplay);
+  audio.addEventListener('timeupdate', function () {
+    updateProgressDisplay();
+    saveState();
+  });
   audio.addEventListener('loadedmetadata', function () {
     timeDur.textContent = formatTime(audio.duration);
   });
@@ -509,14 +551,22 @@
     titleEl.textContent = track.title;
     artistEl.textContent = track.artist;
 
-    var npTrack = banner.querySelector('.np-track');
-    var html = '';
+    // Update both marquee track slots
+    var trackHtml = '';
     if (track.artist) {
-      html += '<span class="np-artist">' + track.artist + '</span>';
-      html += '<span class="np-sep"> // </span>';
+      trackHtml += '<span class="np-artist">' + track.artist + '</span>';
+      trackHtml += '<span class="np-sep"> // </span>';
     }
-    html += track.title;
-    npTrack.innerHTML = html;
+    trackHtml += track.title;
+    var npTracks = banner.querySelectorAll('.np-track');
+    for (var i = 0; i < npTracks.length; i++) {
+      npTracks[i].innerHTML = trackHtml;
+    }
+  }
+
+  // Update weather in the marquee banner
+  function updateBannerWeather(html) {
+    if (npWeatherEl) npWeatherEl.innerHTML = html;
   }
 
   function showBanner(visible) {
@@ -538,7 +588,7 @@
   function resizeCanvas() {
     var wrap = canvas.parentElement;
     canvas.width = wrap.clientWidth;
-    canvas.height = 120;
+    canvas.height = wrap.clientHeight || 400;
   }
 
   function startVisualizer() {
@@ -547,63 +597,396 @@
     drawVisualizer();
   }
 
+  var visTime = 0;
+  var waveData = null;
+  var camDriftX = 0, camDriftY = 0;
+  // Story state — accumulates over time, reacts to music arc
+  var energy = 0;         // rolling energy — tracks the song's emotional state
+  var energyPeak = 0;     // highest energy seen — normalizes the story
+  var tension = 0;        // builds during quiet, releases on hits
+  var breathPhase = 0;    // slow inhale/exhale tied to dynamics
+  var storyTime = 0;      // separate clock that speeds/slows with music
+
+  // Site palette — no hsl, raw hex/rgba
+  var COL_GLOW = '#E8DCC8';       // warm white
+  var COL_GOLD = '#b8965a';       // gold accent
+  var COL_ALIVE = '#5BF29B';      // green
+  var COL_DANGER = '#c75050';     // red
+  // Pre-computed rgba versions for alpha blending
+  function rgba(hex, a) {
+    var r = parseInt(hex.slice(1,3), 16);
+    var g = parseInt(hex.slice(3,5), 16);
+    var b = parseInt(hex.slice(5,7), 16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+  }
+  // Color cycle through the palette — not rainbow, just the 4 site colors
+  var PALETTE = [COL_GOLD, COL_GLOW, COL_ALIVE, COL_DANGER];
+  var palIdx = 0;
+  var palBlend = 0;
+  function lerpColor(a, b, t) {
+    var ar = parseInt(a.slice(1,3),16), ag = parseInt(a.slice(3,5),16), ab = parseInt(a.slice(5,7),16);
+    var br = parseInt(b.slice(1,3),16), bg = parseInt(b.slice(3,5),16), bb = parseInt(b.slice(5,7),16);
+    var r = Math.round(ar + (br - ar) * t);
+    var g = Math.round(ag + (bg - ag) * t);
+    var bl = Math.round(ab + (bb - ab) * t);
+    return 'rgb(' + r + ',' + g + ',' + bl + ')';
+  }
+  function lerpColorA(a, b, t, alpha) {
+    var ar = parseInt(a.slice(1,3),16), ag = parseInt(a.slice(3,5),16), ab = parseInt(a.slice(5,7),16);
+    var br = parseInt(b.slice(1,3),16), bg = parseInt(b.slice(3,5),16), bb = parseInt(b.slice(5,7),16);
+    var r = Math.round(ar + (br - ar) * t);
+    var g = Math.round(ag + (bg - ag) * t);
+    var bl = Math.round(ab + (bb - ab) * t);
+    return 'rgba(' + r + ',' + g + ',' + bl + ',' + alpha + ')';
+  }
+
   function drawVisualizer() {
     animId = requestAnimationFrame(drawVisualizer);
 
     if (!analyser) return;
 
     var bufferLength = analyser.frequencyBinCount;
-    var dataArray = new Uint8Array(bufferLength);
-    analyser.getByteFrequencyData(dataArray);
+    var freqData = new Uint8Array(bufferLength);
+    analyser.getByteFrequencyData(freqData);
+    if (!waveData) waveData = new Uint8Array(analyser.fftSize);
+    analyser.getByteTimeDomainData(waveData);
 
     var w = canvas.width;
     var h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
+    if (w === 0 || h === 0) { resizeCanvas(); return; }
 
-    // Draw 32 bars
-    var barCount = 32;
-    var gap = 2;
-    var barWidth = (w - gap * (barCount - 1)) / barCount;
-    var step = Math.floor(bufferLength / barCount);
+    // Phosphor ghosting
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.07)';
+    ctx.fillRect(0, 0, w, h);
 
-    for (var i = 0; i < barCount; i++) {
-      // Average a few bins per bar
-      var sum = 0;
-      for (var j = 0; j < step; j++) {
-        sum += dataArray[i * step + j] || 0;
+    visTime += 0.014;
+
+    // Slow palette cycle
+    palBlend += 0.003;
+    if (palBlend >= 1) { palBlend = 0; palIdx = (palIdx + 1) % PALETTE.length; }
+    var colA = PALETTE[palIdx];
+    var colB = PALETTE[(palIdx + 1) % PALETTE.length];
+    var curCol = lerpColor(colA, colB, palBlend);
+
+    // Audio
+    var bass = 0, mid = 0, high = 0, total = 0;
+    var third = Math.floor(bufferLength / 3);
+    for (var i = 0; i < bufferLength; i++) {
+      var v = freqData[i] / 255;
+      total += v;
+      if (i < third) bass += v;
+      else if (i < third * 2) mid += v;
+      else high += v;
+    }
+    bass /= third; mid /= third; high /= Math.max(1, bufferLength - third * 2);
+    total /= bufferLength;
+
+    var speed = 0.3 + bass * 0.8 + total * 0.3;
+
+    // Camera drift
+    camDriftX += 0.003 * Math.sin(visTime * 0.23);
+    camDriftY += 0.004 * Math.cos(visTime * 0.17);
+    var camX = Math.sin(camDriftX) * w * 0.12;
+    var camY = Math.cos(camDriftY) * h * 0.1;
+    var cx = w / 2 + camX;
+    var cy = h / 2 + camY;
+    var maxR = Math.max(w, h) * 1.2;
+
+    // ═══ TUNNEL RINGS ═══
+    var ringCount = 28;
+    for (var ri = 0; ri < ringCount; ri++) {
+      var zRaw = ((ri / ringCount) + visTime * speed * 0.15) % 1;
+      var z = zRaw * zRaw;
+      var radius = z * maxR;
+      if (radius < 1.5) continue;
+
+      var rot = visTime * (0.6 + z * 2) + ri * 0.73;
+      var segments = 36;
+      ctx.beginPath();
+      for (var s = 0; s <= segments; s++) {
+        var a = (s / segments) * Math.PI * 2 + rot;
+        var freqIdx = Math.floor((s / segments) * bufferLength) % bufferLength;
+        var fv = freqData[freqIdx] / 255;
+        var morph = 1
+          + fv * 0.25 * z
+          + Math.sin(a * 3 + visTime * 1.9) * mid * 0.12
+          + Math.sin(a * 7 + visTime * 3.3 + ri) * high * 0.06;
+        var r = radius * morph;
+        var x = cx + Math.cos(a) * r;
+        var y = cy + Math.sin(a) * r * 0.8;
+        if (s === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       }
-      var val = sum / step / 255;
-      var barH = val * h;
 
-      // Peak hold
-      if (!peaks[i] || val > peaks[i]) {
-        peaks[i] = val;
-        peakDecay[i] = 0;
-      } else {
-        peakDecay[i] = (peakDecay[i] || 0) + 1;
-        if (peakDecay[i] > 15) {
-          peaks[i] = Math.max(0, peaks[i] - 0.02);
+      var ringAlpha = z * (0.25 + total * 0.45);
+      ctx.strokeStyle = lerpColorA(colA, colB, palBlend, Math.min(ringAlpha, 0.55));
+      ctx.lineWidth = 0.3 + z * 2.5;
+      ctx.stroke();
+    }
+
+    // ═══ STORY SPIRALS — two characters that react to the song's arc ═══
+    // Update story state
+    var prevEnergy = energy;
+    energy = energy * 0.92 + total * 0.08; // slow rolling average
+    if (energy > energyPeak) energyPeak = energy;
+    var normEnergy = energyPeak > 0.01 ? energy / energyPeak : 0;
+
+    // Tension builds when energy is low, releases on hits
+    if (total < energy) {
+      tension = Math.min(1, tension + 0.004); // quiet = building
+    } else {
+      tension = Math.max(0, tension - 0.02 * bass); // loud = release
+    }
+
+    // Breath — slow cycle that the music pushes and pulls
+    breathPhase += 0.008 + bass * 0.01;
+    var breath = Math.sin(breathPhase);
+
+    // Story clock — fast during energy, slow during quiet
+    storyTime += 0.005 + normEnergy * 0.012;
+
+    var waveLen = waveData.length;
+
+    // ── Two spirals: one gold (warmth/reach), one glow (retreat/reflection) ──
+    var spiralCols = [COL_GOLD, COL_GLOW];
+    // They orbit each other — distance driven by tension
+    var orbitR = 8 + tension * 25 + breath * 5;
+    var orbitAngle = storyTime * 0.3;
+    var centers = [
+      { x: cx + Math.cos(orbitAngle) * orbitR, y: cy + Math.sin(orbitAngle) * orbitR * 0.7 },
+      { x: cx - Math.cos(orbitAngle) * orbitR, y: cy - Math.sin(orbitAngle) * orbitR * 0.7 }
+    ];
+
+    for (var sp = 0; sp < 2; sp++) {
+      var spiralCx = centers[sp].x;
+      var spiralCy = centers[sp].y;
+      // Rotation: opposite directions, speed tied to energy
+      var dir = sp === 0 ? 1 : -1;
+      var spiralRot = storyTime * dir * (0.3 + normEnergy * 0.4);
+
+      // Reach — how far the spiral extends. Quiet = curled tight, loud = unfurling
+      var reach = 0.15 + normEnergy * 0.65 + breath * 0.05;
+      // Tightness — how wound the spiral is. Tension = tight coil, release = open
+      var coils = 2 + tension * 3 - normEnergy * 1.5;
+
+      var trunkPoints = 90;
+      var trunkPath = [];
+
+      for (var ti = 0; ti < trunkPoints; ti++) {
+        var t = ti / trunkPoints;
+        var zt = t * t;
+
+        // Read the waveform at this point — the spiral literally traces the audio
+        var wIdx = Math.floor(t * waveLen) % waveLen;
+        var sample = (waveData[wIdx] - 128) / 128;
+        // Next sample for direction
+        var wIdx2 = Math.min(wIdx + 4, waveLen - 1);
+        var sample2 = (waveData[wIdx2] - 128) / 128;
+        var sampleDelta = sample2 - sample; // rising or falling
+
+        // Spiral geometry
+        var angle = t * Math.PI * coils * dir + spiralRot;
+        var baseR = zt * maxR * reach;
+
+        // Audio shapes the radius — not just wobble, the waveform IS the shape
+        var audioR = baseR * (1 + sample * 0.3);
+        // Rising audio = reach outward, falling = pull in
+        audioR += sampleDelta * baseR * 0.4;
+        // Breath modulates everything
+        audioR *= (0.9 + breath * 0.1);
+
+        var px = spiralCx + Math.cos(angle) * audioR;
+        var py = spiralCy + Math.sin(angle) * audioR * 0.8;
+
+        trunkPath.push({
+          x: px, y: py, t: t, angle: angle, r: audioR,
+          sample: sample, delta: sampleDelta
+        });
+      }
+
+      // Draw main trunk — thicker when energy is high
+      ctx.beginPath();
+      ctx.moveTo(trunkPath[0].x, trunkPath[0].y);
+      for (var ti = 1; ti < trunkPath.length; ti++) {
+        ctx.lineTo(trunkPath[ti].x, trunkPath[ti].y);
+      }
+      var trunkAlpha = 0.2 + normEnergy * 0.45 + (sp === 0 ? bass : mid) * 0.15;
+      ctx.strokeStyle = rgba(spiralCols[sp], trunkAlpha);
+      ctx.lineWidth = 0.8 + normEnergy * 2 + bass;
+      ctx.stroke();
+
+      // Glow on trunk during high energy
+      if (normEnergy > 0.4) {
+        ctx.strokeStyle = rgba(spiralCols[sp], (normEnergy - 0.4) * 0.15);
+        ctx.lineWidth = 3 + normEnergy * 4;
+        ctx.stroke();
+      }
+
+      // ── Branches — grow during energy, retract during quiet ──
+      // Branch density follows the story
+      for (var ti = 3; ti < trunkPath.length; ti++) {
+        var bp = trunkPath[ti];
+
+        // Branches grow where the waveform has amplitude
+        var branchDrive = Math.abs(bp.sample) * normEnergy;
+        // Rising sections = more branches (crescendo = growth)
+        branchDrive += Math.max(0, bp.delta) * 2;
+        // Tension builds = sparse but long branches (reaching)
+        // Energy = dense short branches (flowering)
+        var branchChance = branchDrive * 0.4 + (ti % 3 === 0 ? 0.05 : 0);
+        if (Math.random() > branchChance) continue;
+
+        // Branch direction influenced by waveform direction
+        var branchAngle = bp.angle + bp.sample * 1.8 + (Math.random() - 0.5) * 1.2;
+        // Length: tension = long reaching, energy = short bushy
+        var branchLen = tension > 0.5
+          ? (10 + bp.t * maxR * 0.2 * tension)
+          : (5 + bp.t * maxR * 0.1 * normEnergy);
+        var branchSegs = 2 + Math.floor(Math.random() * 3) + Math.floor(normEnergy * 2);
+        var bbx = bp.x, bby = bp.y;
+
+        ctx.beginPath();
+        ctx.moveTo(bbx, bby);
+        for (var bs = 0; bs < branchSegs; bs++) {
+          var segLen = branchLen / branchSegs;
+          // Branches curve toward high-energy direction
+          branchAngle += bp.delta * 0.5 + (Math.random() - 0.5) * 0.6;
+          bbx += Math.cos(branchAngle) * segLen;
+          bby += Math.sin(branchAngle) * segLen * 0.8;
+          ctx.lineTo(bbx, bby);
+
+          // Sub-branches during high energy — flowering
+          if (normEnergy > 0.3 && Math.random() < 0.25 + normEnergy * 0.2) {
+            var subAngle = branchAngle + (Math.random() - 0.5) * 2.2;
+            var subLen = segLen * (0.25 + Math.random() * 0.4);
+            var subSegs = 1 + Math.floor(Math.random() * 2);
+            var sbx = bbx, sby = bby;
+            ctx.moveTo(sbx, sby);
+            for (var ss = 0; ss < subSegs; ss++) {
+              subAngle += (Math.random() - 0.5) * 0.7;
+              sbx += Math.cos(subAngle) * subLen;
+              sby += Math.sin(subAngle) * subLen * 0.8;
+              ctx.lineTo(sbx, sby);
+            }
+            ctx.moveTo(bbx, bby);
+          }
+        }
+        var branchAlpha = 0.1 + normEnergy * 0.25 + Math.abs(bp.sample) * 0.1;
+        ctx.strokeStyle = rgba(spiralCols[sp], branchAlpha);
+        ctx.lineWidth = 0.3 + normEnergy * 0.6;
+        ctx.stroke();
+      }
+    }
+
+    // ── Connection between the two spirals — visible during quiet/tension ──
+    if (tension > 0.3) {
+      var connAlpha = (tension - 0.3) * 0.4;
+      ctx.beginPath();
+      ctx.moveTo(centers[0].x, centers[0].y);
+      // Curved connection, not straight
+      var midX = cx + Math.sin(storyTime) * 10;
+      var midY = cy + Math.cos(storyTime * 0.7) * 8;
+      ctx.quadraticCurveTo(midX, midY, centers[1].x, centers[1].y);
+      ctx.strokeStyle = rgba(COL_GLOW, connAlpha);
+      ctx.lineWidth = 0.5 + tension;
+      ctx.stroke();
+    }
+
+    // ═══ LIGHTNING — slow, branching, fills the space ═══
+    // Use seeded positions that drift slowly instead of random each frame
+    var boltCount = 5 + Math.floor(bass * 6 + high * 3);
+    for (var bi = 0; bi < boltCount; bi++) {
+      // Slow rotating base angles — not random, drifts
+      var boltAngle = (bi / boltCount) * Math.PI * 2 + visTime * 0.2;
+      boltAngle += Math.sin(visTime * 0.4 + bi * 1.7) * 0.6;
+      var boltLen = maxR * (0.55 + total * 0.4);
+
+      // Seeded pseudo-random per bolt — stable between frames, drifts with time
+      var seed = bi * 7919 + Math.floor(visTime * 2);
+
+      function seededRand(s) {
+        s = ((s + seed) * 9301 + 49297) % 233280;
+        return s / 233280;
+      }
+
+      var segments = 18 + Math.floor(bass * 8);
+      var bx = cx, by = cy;
+
+      // Recursive bolt drawing function
+      function drawBolt(startX, startY, angle, len, segs, depth, colIdx) {
+        if (depth > 4 || segs < 2 || len < 3) return;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        var bpx = startX, bpy = startY;
+
+        for (var bs = 0; bs < segs; bs++) {
+          var segLen = len / segs;
+          var progress = bs / segs;
+          // Gentle drift, not sharp — slower movement
+          var drift = Math.sin(visTime * 0.8 + bi * 3 + bs * 0.7 + depth) * (0.3 + progress * 0.5);
+          drift += Math.cos(visTime * 0.5 + bs * 1.3 + bi) * 0.2;
+          var segAngle = angle + drift;
+          bpx += Math.cos(segAngle) * segLen;
+          bpy += Math.sin(segAngle) * segLen * 0.8;
+          ctx.lineTo(bpx, bpy);
+
+          // Branch points — heavily branched tree structure
+          var branchChance = 0.2 + progress * 0.35 + bass * 0.1;
+          var branchRoll = seededRand(bs * 13 + depth * 47 + Math.floor(visTime * 1.5));
+          if (branchRoll < branchChance) {
+            var branchDir = (seededRand(bs * 31 + depth * 19) - 0.5) * 2.5;
+            var branchAngle = segAngle + branchDir;
+            var branchLen = len * (0.3 + seededRand(bs * 23 + depth * 7) * 0.3) * (1 - progress * 0.5);
+            var branchSegs = Math.max(2, Math.floor(segs * 0.4));
+            // Draw the branch recursively
+            drawBolt(bpx, bpy, branchAngle, branchLen, branchSegs, depth + 1, colIdx);
+          }
+
+          // Second branch chance for dense forking
+          if (progress > 0.4 && seededRand(bs * 41 + depth * 61 + Math.floor(visTime * 1.2)) < 0.15 + high * 0.15) {
+            var subDir = (seededRand(bs * 53 + depth * 37) - 0.5) * 3;
+            drawBolt(bpx, bpy, segAngle + subDir, len * 0.2, 3, depth + 2, colIdx);
+          }
+        }
+
+        var boltCol = PALETTE[colIdx % PALETTE.length];
+        var alphaBase = depth === 0 ? 0.4 : 0.25;
+        var boltAlpha = alphaBase + total * 0.35 - depth * 0.08;
+        var lineW = depth === 0 ? (1 + bass * 2) : (0.4 + bass * 0.8) / (depth * 0.7);
+        ctx.strokeStyle = rgba(boltCol, Math.max(0.05, Math.min(boltAlpha, 0.8)));
+        ctx.lineWidth = Math.max(0.3, lineW);
+        ctx.stroke();
+
+        // Glow on main bolts
+        if (depth === 0 && (bass > 0.2 || total > 0.25)) {
+          ctx.strokeStyle = rgba(boltCol, 0.04 + bass * 0.08);
+          ctx.lineWidth = 3 + bass * 4;
+          ctx.stroke();
         }
       }
 
-      var x = i * (barWidth + gap);
-      var y = h - barH;
+      drawBolt(cx, cy, boltAngle, boltLen, segments, 0, bi);
+    }
 
-      // Gradient: alive (green) at bottom -> gold in middle -> danger (red) at top
-      var grad = ctx.createLinearGradient(x, h, x, 0);
-      grad.addColorStop(0, '#5BF29B');
-      grad.addColorStop(0.5, '#b8965a');
-      grad.addColorStop(1, '#c75050');
-
-      ctx.fillStyle = grad;
-      ctx.fillRect(x, y, barWidth, barH);
-
-      // Peak hold line
-      if (peaks[i] > 0.01) {
-        var peakY = h - peaks[i] * h;
-        ctx.fillStyle = '#E8DCC8';
-        ctx.fillRect(x, peakY, barWidth, 2);
-      }
+    // ═══ STREAKING STARS ═══
+    var starCount = Math.floor(4 + total * 12);
+    for (var si = 0; si < starCount; si++) {
+      var sa = Math.random() * Math.PI * 2;
+      var sd = Math.random();
+      sd = sd * sd;
+      var sr = sd * maxR * 0.6;
+      var sx = cx + Math.cos(sa) * sr;
+      var sy = cy + Math.sin(sa) * sr * 0.8;
+      var streakLen = 1 + sd * (4 + bass * 6);
+      var dx = Math.cos(sa) * streakLen;
+      var dy = Math.sin(sa) * streakLen * 0.8;
+      var starCol = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+      ctx.strokeStyle = rgba(starCol, 0.08 + sd * 0.3);
+      ctx.lineWidth = 0.5 + sd;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx + dx, sy + dy);
+      ctx.stroke();
     }
   }
 
@@ -638,10 +1021,11 @@
         var desc = weatherDesc(data.current.weather_code);
         var tz = data.timezone || '';
         var loc = tz.split('/').pop().replace(/_/g, ' ');
-        weatherEl.innerHTML =
-          '<span class="wx-loc">' + loc + '</span> ' +
+        var wxHtml = '<span class="wx-loc">' + loc + '</span> ' +
           '<span class="wx-temp">' + temp + 'F</span> ' +
           '<span class="wx-desc">' + desc + '</span>';
+        weatherEl.innerHTML = wxHtml;
+        updateBannerWeather(wxHtml);
       })
       .catch(function () {});
   }
@@ -661,7 +1045,64 @@
 
   fetchWeather();
 
-  // ── Init ──────────────────────────────────────────────────
-  loadTrack(0);
+  // ── Init — never interrupt audio that's already playing ──
+  audio.loop = false; // don't loop single track — auto-advance playlist
+
+  // Detect if audio is already loaded with a src (playing OR paused mid-track)
+  var audioHasSrc = audio.src && audio.src !== '' && audio.src !== window.location.href;
+
+  if (audioHasSrc) {
+    // Audio element survived (View Transition persist or same-page re-init)
+    // Figure out which track from the src — don't touch playback
+    var curSrc = audio.src;
+    for (var pi = 0; pi < PLAYLIST.length; pi++) {
+      if (curSrc.indexOf(PLAYLIST[pi].url) !== -1) {
+        currentIndex = pi;
+        break;
+      }
+    }
+    isPlaying = !audio.paused;
+    updateNowPlaying(PLAYLIST[getPlayIndex(currentIndex)]);
+    updatePlaylistHighlight();
+    updatePlayBtn();
+    if (isPlaying) showBanner(true);
+    initAudioContext();
+    if (isPlaying) startVisualizer();
+  } else {
+    // Truly fresh — no audio loaded at all
+    var restoreIdx = saved ? saved.idx : 0;
+    var restoreTime = saved ? saved.time : 0;
+    if (restoreIdx >= PLAYLIST.length) restoreIdx = 0;
+
+    // Set src without loadTrack to avoid saveState race
+    var track = PLAYLIST[getPlayIndex(restoreIdx)];
+    currentIndex = restoreIdx;
+    audio.src = track.url;
+    updateNowPlaying(track);
+    updatePlaylistHighlight();
+
+    function tryAutoPlay() {
+      initAudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (restoreTime > 0) {
+        audio.addEventListener('loadedmetadata', function restorePos() {
+          audio.removeEventListener('loadedmetadata', restorePos);
+          if (restoreTime < audio.duration) audio.currentTime = restoreTime;
+        });
+      }
+      audio.play().then(function () {
+        isPlaying = true;
+        updatePlayBtn();
+        showBanner(true);
+        startVisualizer();
+      }).catch(function () {
+        document.addEventListener('click', function autoplayOnClick() {
+          document.removeEventListener('click', autoplayOnClick);
+          tryAutoPlay();
+        }, { once: true });
+      });
+    }
+    tryAutoPlay();
+  }
 
 })();

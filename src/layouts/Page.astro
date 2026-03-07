@@ -30,13 +30,20 @@ const { title, description, ogType } = Astro.props;
   .page-wrapper {
     position: relative;
     z-index: 1;
-    max-width: 800px;
+    width: 62%;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
-    padding-top: 2.5rem;
+    padding: 2.5rem 2rem 2rem;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+  }
+
+  @media (max-width: 1200px) {
+    .page-wrapper {
+      width: auto;
+      margin: 0 1.5rem;
+      padding: 2rem 1.5rem;
+    }
   }
 
   main {

@@ -4,6 +4,7 @@ const year = new Date().getFullYear();
 
 <footer>
   <p class="copyright">alexander campos {year}. hand-built.</p>
+  <p class="contact"><a href="mailto:adc.acampos@gmail.com">adc.acampos@gmail.com</a></p>
   <p class="best-viewed">best viewed in a browser that respects view-source.</p>
 </footer>
 
@@ -20,6 +21,21 @@ const year = new Date().getFullYear();
     font-size: 0.75rem;
     color: var(--white-30);
     margin-bottom: 0.25rem;
+  }
+
+  .contact {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .contact a {
+    color: var(--white-30);
+    transition: color 0.2s;
+  }
+
+  .contact a:hover {
+    color: var(--gold-accent);
   }
 
   .best-viewed {

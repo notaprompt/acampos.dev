@@ -528,6 +528,9 @@
     ];
     placeSprite(printer, prX, prY);
     registerObject('printer', prX, prY, 15, 14, '/projects', 'projects', false);
+
+    // ── Books as clickable object — toggles influences list ──
+    registerObject('books', SHELF_X + 2, SHELF_Y + 6, 40, 22, null, 'influences', false);
   }
 
   // ── Tower speakers (floor-standing, B&W style) ──
@@ -1062,6 +1065,15 @@
       o.action = function () {
         var toggle = document.querySelector('.mp-toggle');
         if (toggle) toggle.click();
+      };
+    }
+    if (o.id === 'books') {
+      o.action = function () {
+        var list = document.getElementById('influences-list');
+        if (list) {
+          list.classList.toggle('influences-hidden');
+          list.classList.toggle('influences-visible');
+        }
       };
     }
   });

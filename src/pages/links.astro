@@ -15,7 +15,7 @@ const links = [
   <article>
     <h1>Links</h1>
 
-    <p>Things I use, things I read, things I think are worth your time. The 88x31 buttons are non-negotiable.</p>
+    <p>Things I use, things I read, things I think are worth your time.</p>
 
     <div class="button-grid">
       {links.map(link => (
@@ -29,7 +29,8 @@ const links = [
     <hr />
 
     <h2>Influences</h2>
-    <ul>
+    <p class="influences-sub">Much of what I build comes from what I've read. Click the bookshelf in the scene above to see the list.</p>
+    <ul id="influences-list" class="influences-hidden">
       <li>Ibn Khaldun -- behavioral observation as structural analysis</li>
       <li>Christopher Alexander -- patterns that generate life in systems</li>
       <li>Norbert Wiener -- cybernetics, the human use of human beings</li>
@@ -95,5 +96,32 @@ const links = [
       );
       pointer-events: none;
     }
+  }
+
+  @media (min-width: 1400px) {
+    .button-88x31 {
+      width: 132px;
+      height: 46px;
+    }
+    .btn-label {
+      font-size: 0.75rem;
+    }
+    .btn-desc {
+      font-size: 0.55rem;
+    }
+  }
+
+  .influences-sub {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--white-30);
+  }
+
+  .influences-hidden {
+    display: none;
+  }
+
+  .influences-visible {
+    display: block;
   }
 </style>

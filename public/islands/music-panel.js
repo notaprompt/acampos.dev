@@ -787,14 +787,14 @@
     var zoomCx = w / 2 + chaseX * w * 0.15;
     var zoomCy = h / 2 + chaseY * h * 0.12;
     ctx.save();
-    ctx.globalAlpha = 0.94 - sTotal * 0.04;
+    ctx.globalAlpha = 0.55 - sTotal * 0.1;
     ctx.translate(zoomCx, zoomCy);
     ctx.rotate(flipAngle * 0.3);
     ctx.scale(feedbackZoom, feedbackZoom);
     ctx.translate(-zoomCx, -zoomCy);
     ctx.drawImage(canvas, 0, 0);
     ctx.restore();
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
     ctx.fillRect(0, 0, w, h);
 
     visTime += 0.016;

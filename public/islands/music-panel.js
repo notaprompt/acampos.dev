@@ -647,6 +647,9 @@
   var targetVelX = 0, targetVelY = 0; // target velocity for smooth curves
   var steerAngle = 0;                 // current heading
   var flipAngle = 0;                  // rotation for flips (radians)
+  // Bend system — makes the tunnel curve like a bendy straw
+  var bendX = 0, bendY = 0;           // current bend offset (normalized)
+  var bendTargetX = 0, bendTargetY = 0;
   var flipVel = 0;                    // angular velocity during flip
   var flipCooldown = 0;               // frames until next flip allowed
   var reverseTimer = 0;               // frames of reverse motion remaining
@@ -748,6 +751,13 @@
     flipVel *= 0.96;
     if (Math.abs(flipVel) < 0.003) flipVel = 0;
 
+    // ── Bend system — tunnel curves like a bendy straw ──
+    // Bend target drifts slowly based on accumulated steering, offset from chase
+    bendTargetX = Math.sin(visTime * 0.13) * 0.4 + chaseX * 0.5;
+    bendTargetY = Math.cos(visTime * 0.09) * 0.3 + chaseY * 0.4;
+    bendX += (bendTargetX - bendX) * 0.015;
+    bendY += (bendTargetY - bendY) * 0.015;
+
     // ── Reverse system — occasional backward pull ──
     if (hit > 0.1 && reverseTimer <= 0 && Math.random() < 0.08) {
       reverseTimer = 30 + Math.floor(Math.random() * 30); // 0.5-1 sec reverse
@@ -806,6 +816,10 @@
       var parallax = z * z; // quadratic — near rects barely move, far rects swing hard
       var rectCx = vpx + (w / 2 - vpx) * parallax;
       var rectCy = vpy + (h / 2 - vpy) * parallax;
+      // Bend offset — mid-depth rects swing most (bell curve: peaks at z~0.5)
+      var bendInfluence = Math.sin(z * Math.PI);
+      rectCx += bendX * w * 0.2 * bendInfluence;
+      rectCy += bendY * h * 0.15 * bendInfluence;
       var rx = rectCx - rectW / 2;
       var ry = rectCy - rectH / 2;
 
@@ -890,6 +904,10 @@
 
     // ═══ LAYER 3: TUNNEL EDGES — perspective lines selling depth ═══
     // 4 corner edges (where walls meet ceiling/floor)
+    // Bend control point — where the tunnel curves through
+    var bendCpx = w / 2 + bendX * w * 0.35;
+    var bendCpy = h / 2 + bendY * h * 0.25;
+
     var corners = [
       [0, 0], [w, 0], [w, h], [0, h]
     ];
@@ -900,7 +918,7 @@
       ctx.lineWidth = 1 + cfv * 2;
       ctx.beginPath();
       ctx.moveTo(corners[ci][0], corners[ci][1]);
-      ctx.lineTo(vpx, vpy);
+      ctx.quadraticCurveTo(bendCpx, bendCpy, vpx, vpy);
       ctx.stroke();
       if (cfv > 0.3) {
         ctx.strokeStyle = lerpColorA(colA, colB, (ci / 4 + palBlend) % 1, cfv * 0.06);
@@ -908,7 +926,7 @@
         ctx.stroke();
       }
     }
-    // Wall seam lines — horizontal edges along left/right walls converging to VP
+    // Wall seam lines — curved through bend point
     var seamCount = 6;
     for (var si = 0; si < seamCount; si++) {
       var sfrac = (si + 1) / (seamCount + 1);
@@ -919,21 +937,21 @@
       // Left wall seam
       ctx.beginPath();
       ctx.moveTo(0, h * sfrac);
-      ctx.lineTo(vpx, vpy);
+      ctx.quadraticCurveTo(bendCpx, bendCpy, vpx, vpy);
       ctx.stroke();
       // Right wall seam
       ctx.beginPath();
       ctx.moveTo(w, h * sfrac);
-      ctx.lineTo(vpx, vpy);
+      ctx.quadraticCurveTo(bendCpx, bendCpy, vpx, vpy);
       ctx.stroke();
       // Top/bottom seams
       ctx.beginPath();
       ctx.moveTo(w * sfrac, 0);
-      ctx.lineTo(vpx, vpy);
+      ctx.quadraticCurveTo(bendCpx, bendCpy, vpx, vpy);
       ctx.stroke();
       ctx.beginPath();
       ctx.moveTo(w * sfrac, h);
-      ctx.lineTo(vpx, vpy);
+      ctx.quadraticCurveTo(bendCpx, bendCpy, vpx, vpy);
       ctx.stroke();
     }
 

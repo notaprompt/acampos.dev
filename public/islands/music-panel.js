@@ -919,7 +919,38 @@
       }
     }
 
-    // ═══ LAYER 3: TUNNEL WALLS — lines end at far-wall edges, not one point ═══
+    // ═══ LAYER 3a: WALL SURFACE FILLS — opaque dark walls, then color gradient ═══
+    var wallTraps = [
+      { pts: [[0, 0], [vpx, vpy], [0, h]], gradFrom: [0, h / 2], gradTo: [vpx, vpy], brightness: 0.06 },
+      { pts: [[w, 0], [vpx, vpy], [w, h]], gradFrom: [w, h / 2], gradTo: [vpx, vpy], brightness: 0.06 },
+      { pts: [[0, 0], [vpx, vpy], [w, 0]], gradFrom: [w / 2, 0], gradTo: [vpx, vpy], brightness: 0.08 },
+      { pts: [[0, h], [vpx, vpy], [w, h]], gradFrom: [w / 2, h], gradTo: [vpx, vpy], brightness: 0.05 },
+    ];
+    for (var ti = 0; ti < wallTraps.length; ti++) {
+      var trap = wallTraps[ti];
+      // Solid dark base — you cannot see through the walls
+      ctx.fillStyle = 'rgba(5, 5, 8, 0.95)';
+      ctx.beginPath();
+      for (var pi = 0; pi < trap.pts.length; pi++) {
+        if (pi === 0) ctx.moveTo(trap.pts[pi][0], trap.pts[pi][1]);
+        else ctx.lineTo(trap.pts[pi][0], trap.pts[pi][1]);
+      }
+      ctx.closePath();
+      ctx.fill();
+      // Color gradient overlay
+      var trapCol = lerpColor(colA, colB, (ti / 4 + palBlend) % 1);
+      var trapGrad = ctx.createLinearGradient(
+        trap.gradFrom[0], trap.gradFrom[1], trap.gradTo[0], trap.gradTo[1]
+      );
+      var nearAlpha = trap.brightness + sTotal * 0.04;
+      trapGrad.addColorStop(0, rgba(trapCol, nearAlpha));
+      trapGrad.addColorStop(0.7, rgba(trapCol, nearAlpha * 0.2));
+      trapGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = trapGrad;
+      ctx.fill();
+    }
+
+    // ═══ LAYER 3b: TUNNEL WALL LINES — seams and corners on top of solid walls ═══
     // The "far wall" is a small rectangle at the VP — lines from each screen
     // edge terminate at the corresponding edge of this rectangle, not all
     // at the same pixel. This is what makes it read as a hall, not an X.
@@ -996,39 +1027,6 @@
         ctx.lineWidth = 5 + cfv * 6;
         ctx.stroke();
       }
-    }
-
-    // ═══ LAYER 3b: WALL SURFACE FILLS — gradient trapezoids per wall ═══
-    // Each wall is a trapezoid from screen edge to far-wall edge, filled
-    // with a gradient that darkens toward the VP (far = dark = depth).
-    var wallTraps = [
-      // Left wall: screen TL → VP → screen BL (triangle to VP)
-      { pts: [[0, 0], [vpx, vpy], [0, h]], gradFrom: [0, h / 2], gradTo: [vpx, vpy], brightness: 0.06 },
-      // Right wall
-      { pts: [[w, 0], [vpx, vpy], [w, h]], gradFrom: [w, h / 2], gradTo: [vpx, vpy], brightness: 0.06 },
-      // Ceiling
-      { pts: [[0, 0], [vpx, vpy], [w, 0]], gradFrom: [w / 2, 0], gradTo: [vpx, vpy], brightness: 0.08 },
-      // Floor
-      { pts: [[0, h], [vpx, vpy], [w, h]], gradFrom: [w / 2, h], gradTo: [vpx, vpy], brightness: 0.05 },
-    ];
-    for (var ti = 0; ti < wallTraps.length; ti++) {
-      var trap = wallTraps[ti];
-      var trapCol = lerpColor(colA, colB, (ti / 4 + palBlend) % 1);
-      var trapGrad = ctx.createLinearGradient(
-        trap.gradFrom[0], trap.gradFrom[1], trap.gradTo[0], trap.gradTo[1]
-      );
-      var nearAlpha = trap.brightness + sTotal * 0.04;
-      trapGrad.addColorStop(0, rgba(trapCol, nearAlpha));
-      trapGrad.addColorStop(0.7, rgba(trapCol, nearAlpha * 0.2));
-      trapGrad.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = trapGrad;
-      ctx.beginPath();
-      for (var pi = 0; pi < trap.pts.length; pi++) {
-        if (pi === 0) ctx.moveTo(trap.pts[pi][0], trap.pts[pi][1]);
-        else ctx.lineTo(trap.pts[pi][0], trap.pts[pi][1]);
-      }
-      ctx.closePath();
-      ctx.fill();
     }
 
     // ═══ LAYER 3c: CORNER AO — dark gradients where walls meet ═══

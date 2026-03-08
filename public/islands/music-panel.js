@@ -1020,6 +1020,84 @@
       }
     }
 
+    // ═══ LAYER 3b: WALL SURFACE FILLS — gradient trapezoids per wall ═══
+    // Each wall is a trapezoid from screen edge to far-wall edge, filled
+    // with a gradient that darkens toward the VP (far = dark = depth).
+    var wallTraps = [
+      // Left wall: TL screen → TL far, BL screen → BL far
+      { pts: [[0, 0], farTL, farBL, [0, h]], gradFrom: [0, h / 2], gradTo: [vpx, vpy], brightness: 0.06 },
+      // Right wall
+      { pts: [[w, 0], farTR, farBR, [w, h]], gradFrom: [w, h / 2], gradTo: [vpx, vpy], brightness: 0.06 },
+      // Ceiling
+      { pts: [[0, 0], farTL, farTR, [w, 0]], gradFrom: [w / 2, 0], gradTo: [vpx, vpy], brightness: 0.08 },
+      // Floor
+      { pts: [[0, h], farBL, farBR, [w, h]], gradFrom: [w / 2, h], gradTo: [vpx, vpy], brightness: 0.05 },
+    ];
+    for (var ti = 0; ti < wallTraps.length; ti++) {
+      var trap = wallTraps[ti];
+      var trapCol = lerpColor(colA, colB, (ti / 4 + palBlend) % 1);
+      var trapGrad = ctx.createLinearGradient(
+        trap.gradFrom[0], trap.gradFrom[1], trap.gradTo[0], trap.gradTo[1]
+      );
+      var nearAlpha = trap.brightness + sTotal * 0.04;
+      trapGrad.addColorStop(0, rgba(trapCol, nearAlpha));
+      trapGrad.addColorStop(0.7, rgba(trapCol, nearAlpha * 0.2));
+      trapGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = trapGrad;
+      ctx.beginPath();
+      ctx.moveTo(trap.pts[0][0], trap.pts[0][1]);
+      ctx.lineTo(trap.pts[1][0], trap.pts[1][1]);
+      ctx.lineTo(trap.pts[2][0], trap.pts[2][1]);
+      ctx.lineTo(trap.pts[3][0], trap.pts[3][1]);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // ═══ LAYER 3c: CORNER AO — dark gradients where walls meet ═══
+    ctx.save();
+    ctx.globalCompositeOperation = 'multiply';
+    for (var ai = 0; ai < 4; ai++) {
+      var sc = screenCorners[ai];
+      var fc = farCorners[ai];
+      // Radial gradient along each corner edge — darkest at the seam
+      var aoR = Math.max(w, h) * 0.25;
+      var aoGrad = ctx.createRadialGradient(sc[0], sc[1], 0, sc[0], sc[1], aoR);
+      aoGrad.addColorStop(0, 'rgba(0,0,0,0.25)');
+      aoGrad.addColorStop(0.3, 'rgba(0,0,0,0.1)');
+      aoGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = aoGrad;
+      ctx.fillRect(0, 0, w, h);
+    }
+    ctx.restore();
+
+    // ═══ LAYER 3d: EDGE HIGHLIGHTS — thin bright lines at wall seams ═══
+    for (var ei = 0; ei < 4; ei++) {
+      var esc = screenCorners[ei];
+      var efc = farCorners[ei];
+      var efv = freqData[(ei * 12) % bufferLength] / 255;
+      // Bright thin line — specular rim catching light at each corner edge
+      ctx.strokeStyle = 'rgba(255, 255, 255,' + (0.03 + efv * 0.06 + sTotal * 0.02) + ')';
+      ctx.lineWidth = 0.5;
+      var ecp1x = midX + cornerBias[ei][0] * w + bendX2 * w * 0.15;
+      var ecp1y = midY + cornerBias[ei][1] * h + bendY2 * h * 0.12;
+      var ecp2x = (ecp1x + efc[0]) / 2 + cornerBias[ei][0] * w * 0.3;
+      var ecp2y = (ecp1y + efc[1]) / 2 + cornerBias[ei][1] * h * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(esc[0], esc[1]);
+      ctx.bezierCurveTo(ecp1x, ecp1y, ecp2x, ecp2y, efc[0], efc[1]);
+      ctx.stroke();
+    }
+
+    // ═══ LAYER 3e: DEPTH FOG — radial darkening centered on VP ═══
+    var fogR = Math.max(w, h) * 0.8;
+    var fogGrad = ctx.createRadialGradient(vpx, vpy, 0, vpx, vpy, fogR);
+    fogGrad.addColorStop(0, 'rgba(0,0,0,0.35)');
+    fogGrad.addColorStop(0.08, 'rgba(0,0,0,0.2)');
+    fogGrad.addColorStop(0.3, 'rgba(0,0,0,0.03)');
+    fogGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = fogGrad;
+    ctx.fillRect(0, 0, w, h);
+
     // ═══ LAYER 4: MIRROR FRAMES — rectangles on the "walls" ═══
     var frameCount = 8;
     for (var fi = 0; fi < frameCount; fi++) {

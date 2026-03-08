@@ -658,8 +658,20 @@
     var h = canvas.height;
     if (w === 0 || h === 0) { resizeCanvas(); return; }
 
-    // Phosphor ghosting
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.07)';
+    // ── Feedback zoom — WMP-style recursive trails ──
+    // Capture current frame, redraw it scaled + rotated for fractal echo
+    var feedbackZoom = 1.012 + bass * 0.008;
+    var feedbackRot = (mid - 0.3) * 0.006;
+    ctx.save();
+    ctx.globalAlpha = 0.92 - total * 0.08;
+    ctx.translate(w / 2, h / 2);
+    ctx.rotate(feedbackRot);
+    ctx.scale(feedbackZoom, feedbackZoom);
+    ctx.translate(-w / 2, -h / 2);
+    ctx.drawImage(canvas, 0, 0);
+    ctx.restore();
+    // Fade — slower than before so trails persist
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
     ctx.fillRect(0, 0, w, h);
 
     visTime += 0.014;

@@ -845,11 +845,17 @@
       var fv = freqData[freqIdx] / 255;
       var warp = fv * scale * 8;
 
+      // Light sweep — bright band rolling through depth, sells infinite motion
+      var sweepPos = (visTime * 0.4 + sBass * 0.3) % 1;
+      var sweepDist = Math.abs(zRaw - sweepPos);
+      if (sweepDist > 0.5) sweepDist = 1 - sweepDist;
+      var sweepBoost = Math.max(0, 1 - sweepDist * 8) * (0.4 + sTotal * 0.3);
+
       // Color cycles through palette based on depth
-      var rectAlpha = (0.15 + fv * 0.35) * (0.3 + z * 0.7);
+      var rectAlpha = (0.15 + fv * 0.35 + sweepBoost) * (0.3 + z * 0.7);
       var colT = (z + palBlend) % 1;
-      ctx.strokeStyle = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 0.7));
-      ctx.lineWidth = 0.5 + z * 2.5 + fv * 1.5;
+      ctx.strokeStyle = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 0.85));
+      ctx.lineWidth = 0.5 + z * 2.5 + fv * 1.5 + sweepBoost * 2;
 
       // Draw warped rectangle — not a perfect rect, audio bends it
       ctx.beginPath();
@@ -950,82 +956,53 @@
       ctx.fill();
     }
 
-    // ═══ LAYER 3b: TUNNEL WALL LINES — seams and corners on top of solid walls ═══
-    // The "far wall" is a small rectangle at the VP — lines from each screen
-    // edge terminate at the corresponding edge of this rectangle, not all
-    // at the same pixel. This is what makes it read as a hall, not an X.
+    // ═══ LAYER 3b: WALL SEAM LINES — fade out before center (no X convergence) ═══
     var midX = w / 2 + bendX1 * w * 0.25;
     var midY = h / 2 + bendY1 * h * 0.2;
+    var screenCorners = [[0, 0], [w, 0], [w, h], [0, h]];
 
     var wallDefs = [
-      // Left wall — lines from left edge, control points biased left
       { genY: true, ex: 0, cpBiasX: -0.2, cpBiasY: 0, colShift: 0 },
-      // Right wall
       { genY: true, ex: w, cpBiasX: 0.2, cpBiasY: 0, colShift: 0.25 },
-      // Ceiling
       { genX: true, ey: 0, cpBiasX: 0, cpBiasY: -0.15, colShift: 0.5 },
-      // Floor
       { genX: true, ey: h, cpBiasX: 0, cpBiasY: 0.15, colShift: 0.75 },
     ];
     var wallSeams = 5;
     for (var wi = 0; wi < wallDefs.length; wi++) {
       var wd = wallDefs[wi];
-      var wcp1x = midX + wd.cpBiasX * w + bendX2 * w * 0.15;
-      var wcp1y = midY + wd.cpBiasY * h + bendY2 * h * 0.12;
 
       for (var si = 0; si < wallSeams; si++) {
         var sfrac = (si + 0.5) / wallSeams;
         var sfv = freqData[(wi * wallSeams + si + 8) % bufferLength] / 255;
-        var sAlpha = 0.06 + sfv * 0.18 + sTotal * 0.08;
         var sColT = (sfrac * 0.3 + wd.colShift + palBlend) % 1;
-        ctx.strokeStyle = lerpColorA(colA, colB, sColT, sAlpha);
-        ctx.lineWidth = 0.5 + sfv * 1.5;
 
-        // Start: point on screen edge
         var startX, startY;
-        if (wd.genY) {
-          startX = wd.ex;
-          startY = h * sfrac;
-        } else {
-          startX = w * sfrac;
-          startY = wd.ey;
-        }
-        // End: all lines vanish into VP (swallowed by depth fog)
-        var wcp2x = (wcp1x + vpx) / 2 + wd.cpBiasX * w * 0.3;
-        var wcp2y = (wcp1y + vpy) / 2 + wd.cpBiasY * h * 0.25;
+        if (wd.genY) { startX = wd.ex; startY = h * sfrac; }
+        else { startX = w * sfrac; startY = wd.ey; }
 
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-        ctx.bezierCurveTo(wcp1x, wcp1y, wcp2x, wcp2y, vpx, vpy);
-        ctx.stroke();
+        // Draw line as segments that fade out toward VP — never reaches center
+        var segs = 12;
+        for (var sg = 0; sg < segs; sg++) {
+          var t0 = sg / segs;
+          var t1 = (sg + 1) / segs;
+          // Fade: full alpha near screen edge, zero by 55% of the way
+          var segAlpha = (1 - t0 / 0.55);
+          if (segAlpha <= 0) break;
+          segAlpha = segAlpha * segAlpha * (0.08 + sfv * 0.2 + sTotal * 0.08);
 
-        if (sfv > 0.4) {
-          ctx.strokeStyle = lerpColorA(colA, colB, sColT, sfv * 0.05);
-          ctx.lineWidth = 3 + sfv * 4;
+          // Lerp along straight line from start to VP (bend handled by rects)
+          var x0 = startX + (vpx - startX) * t0;
+          var y0 = startY + (vpy - startY) * t0;
+          var x1 = startX + (vpx - startX) * t1;
+          var y1 = startY + (vpy - startY) * t1;
+
+          ctx.strokeStyle = lerpColorA(colA, colB, sColT, segAlpha);
+          ctx.lineWidth = (0.5 + sfv * 1.5) * (1 - t0 * 0.7);
+          ctx.beginPath();
+          ctx.moveTo(x0, y0);
+          ctx.lineTo(x1, y1);
           ctx.stroke();
         }
-      }
-    }
-    // 4 corner edges — screen corners to VP (vanish into fog)
-    var screenCorners = [[0, 0], [w, 0], [w, h], [0, h]];
-    var cornerBias = [[-0.15, -0.12], [0.15, -0.12], [0.15, 0.12], [-0.15, 0.12]];
-    for (var ci = 0; ci < 4; ci++) {
-      var cfv = freqData[(ci * 8) % bufferLength] / 255;
-      var cAlpha = 0.2 + cfv * 0.3 + sTotal * 0.1;
-      ctx.strokeStyle = lerpColorA(colA, colB, (ci / 4 + palBlend) % 1, cAlpha);
-      ctx.lineWidth = 1.5 + cfv * 2.5;
-      var ccp1x = midX + cornerBias[ci][0] * w + bendX2 * w * 0.15;
-      var ccp1y = midY + cornerBias[ci][1] * h + bendY2 * h * 0.12;
-      var ccp2x = (ccp1x + vpx) / 2 + cornerBias[ci][0] * w * 0.3;
-      var ccp2y = (ccp1y + vpy) / 2 + cornerBias[ci][1] * h * 0.3;
-      ctx.beginPath();
-      ctx.moveTo(screenCorners[ci][0], screenCorners[ci][1]);
-      ctx.bezierCurveTo(ccp1x, ccp1y, ccp2x, ccp2y, vpx, vpy);
-      ctx.stroke();
-      if (cfv > 0.3) {
-        ctx.strokeStyle = lerpColorA(colA, colB, (ci / 4 + palBlend) % 1, cfv * 0.06);
-        ctx.lineWidth = 5 + cfv * 6;
-        ctx.stroke();
       }
     }
 
@@ -1045,21 +1022,25 @@
     }
     ctx.restore();
 
-    // ═══ LAYER 3d: EDGE HIGHLIGHTS — thin bright lines at wall seams ═══
+    // ═══ LAYER 3d: EDGE HIGHLIGHTS — fading specular at corners ═══
     for (var ei = 0; ei < 4; ei++) {
       var esc = screenCorners[ei];
       var efv = freqData[(ei * 12) % bufferLength] / 255;
-      // Bright thin line — specular rim catching light at each corner edge
-      ctx.strokeStyle = 'rgba(255, 255, 255,' + (0.03 + efv * 0.06 + sTotal * 0.02) + ')';
-      ctx.lineWidth = 0.5;
-      var ecp1x = midX + cornerBias[ei][0] * w + bendX2 * w * 0.15;
-      var ecp1y = midY + cornerBias[ei][1] * h + bendY2 * h * 0.12;
-      var ecp2x = (ecp1x + vpx) / 2 + cornerBias[ei][0] * w * 0.3;
-      var ecp2y = (ecp1y + vpy) / 2 + cornerBias[ei][1] * h * 0.3;
-      ctx.beginPath();
-      ctx.moveTo(esc[0], esc[1]);
-      ctx.bezierCurveTo(ecp1x, ecp1y, ecp2x, ecp2y, vpx, vpy);
-      ctx.stroke();
+      // Fading segments — only near half, never reaches center
+      var hl = 8;
+      for (var hi = 0; hi < hl; hi++) {
+        var ht0 = hi / hl;
+        var ht1 = (hi + 1) / hl;
+        var hAlpha = (1 - ht0 / 0.5);
+        if (hAlpha <= 0) break;
+        hAlpha = hAlpha * (0.03 + efv * 0.06 + sTotal * 0.02);
+        ctx.strokeStyle = 'rgba(255,255,255,' + hAlpha + ')';
+        ctx.lineWidth = 0.5 * (1 - ht0);
+        ctx.beginPath();
+        ctx.moveTo(esc[0] + (vpx - esc[0]) * ht0, esc[1] + (vpy - esc[1]) * ht0);
+        ctx.lineTo(esc[0] + (vpx - esc[0]) * ht1, esc[1] + (vpy - esc[1]) * ht1);
+        ctx.stroke();
+      }
     }
 
     // ═══ LAYER 3e: DEPTH FOG — radial darkening centered on VP ═══

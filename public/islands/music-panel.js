@@ -762,7 +762,7 @@
     if (reverseTimer > 0) feedbackZoom = 1 / (1.006 + sBass * 0.005);
     // Zoom origin = where the VP will be (chase position)
     var zoomCx = w / 2 + chaseX * w * 0.35;
-    var zoomCy = h * 0.45 + chaseY * h * 0.3;
+    var zoomCy = h / 2 + chaseY * h * 0.3;
     ctx.save();
     ctx.globalAlpha = 0.94 - sTotal * 0.04;
     ctx.translate(zoomCx, zoomCy);
@@ -787,7 +787,7 @@
 
     // Vanishing point — driven by the chase system
     var vpx = w / 2 + chaseX * w * 0.35;
-    var vpy = h * 0.45 + chaseY * h * 0.3;
+    var vpy = h / 2 + chaseY * h * 0.3;
 
     // ═══ LAYER 1: INFINITE HALL — receding rectangles ═══
     var rectCount = 24;

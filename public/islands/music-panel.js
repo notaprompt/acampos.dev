@@ -1228,7 +1228,8 @@
       var oz = ozRaw * ozRaw * ozRaw;
       if (oz < 0.01 || oz > 0.85) continue; // skip too far or too near
 
-      var oScale = oz;
+      // Scale: oz is 0-1 but cubed, so boost for visible object sizes
+      var oScale = oz * 3 + 0.15;
       var oParallax = oz * oz;
       var oCx = vpx + (w / 2 - vpx) * oParallax;
       var oCy = vpy + (h / 2 - vpy) * oParallax;
@@ -1257,7 +1258,7 @@
       }
 
       // Alpha fades with distance, brightens when near
-      var oAlpha = (0.12 + oz * 0.4) * (0.4 + sTotal * 0.2);
+      var oAlpha = (0.15 + oz * 0.5) * (0.5 + sTotal * 0.3);
       var oColT = (oz + palBlend + obj.seed) % 1;
       var oCol = lerpColor(colA, colB, oColT);
       var oRgb = parseInt(oCol.slice(1,3),16)+','+parseInt(oCol.slice(3,5),16)+','+parseInt(oCol.slice(5,7),16);

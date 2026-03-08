@@ -738,21 +738,21 @@
     chaseX += (targetX - chaseX) * chaseSpeed;
     chaseY += (targetY - chaseY) * chaseSpeed;
 
-    // ── Flip system — rare, triggered by accumulated bass energy ──
+    // ── Flip system — rollercoaster backflips on bass accumulation ──
     if (flipCooldown > 0) flipCooldown--;
-    if (hitAccum > 0.8 && flipCooldown <= 0 && Math.random() < 0.3) {
-      // Trigger flip — full rotation
-      flipVel = (Math.random() < 0.5 ? 1 : -1) * (0.15 + Math.random() * 0.1);
-      flipCooldown = 180; // ~3 seconds before another flip
+    if (hitAccum > 0.5 && flipCooldown <= 0 && Math.random() < 0.5) {
+      // Full rotation — fast enough to feel like a backflip
+      flipVel = (Math.random() < 0.5 ? 1 : -1) * (0.25 + Math.random() * 0.15);
+      flipCooldown = 90; // ~1.5 seconds cooldown — more frequent
       hitAccum = 0;
     }
-    // Decay hit accumulator slowly
-    hitAccum *= 0.98;
+    // Decay hit accumulator
+    hitAccum *= 0.97;
 
-    // Flip animation — angular velocity decays
+    // Flip animation — carries momentum, decays into next movement
     flipAngle += flipVel;
-    flipVel *= 0.96;
-    if (Math.abs(flipVel) < 0.003) flipVel = 0;
+    flipVel *= 0.94;
+    if (Math.abs(flipVel) < 0.002) flipVel = 0;
 
     // ── Bend system — two-point S-curves, U-turns, hard randoms ──
     // Bend angles wander continuously, bass hits jolt them hard
@@ -789,7 +789,7 @@
     ctx.save();
     ctx.globalAlpha = 0.55 - sTotal * 0.1;
     ctx.translate(zoomCx, zoomCy);
-    ctx.rotate(flipAngle * 0.3);
+    ctx.rotate(flipAngle * 0.8);
     ctx.scale(feedbackZoom, feedbackZoom);
     ctx.translate(-zoomCx, -zoomCy);
     ctx.drawImage(canvas, 0, 0);
@@ -919,31 +919,47 @@
       }
     }
 
-    // ═══ LAYER 3: TUNNEL WALLS — four distinct surfaces with own curves ═══
-    // Each wall gets its own control points biased toward that wall,
-    // so left-wall lines curve left, right curves right, etc.
-    // This is what makes it read as a rectangular tunnel, not an X.
+    // ═══ LAYER 3: TUNNEL WALLS — lines end at far-wall edges, not one point ═══
+    // The "far wall" is a small rectangle at the VP — lines from each screen
+    // edge terminate at the corresponding edge of this rectangle, not all
+    // at the same pixel. This is what makes it read as a hall, not an X.
+    var farW = 30 + sBass * 15;  // far wall half-width
+    var farH = 22 + sBass * 10;  // far wall half-height
     var midX = w / 2 + bendX1 * w * 0.25;
     var midY = h / 2 + bendY1 * h * 0.2;
+
+    // Far wall corners
+    var farTL = [vpx - farW, vpy - farH];
+    var farTR = [vpx + farW, vpy - farH];
+    var farBR = [vpx + farW, vpy + farH];
+    var farBL = [vpx - farW, vpy + farH];
+
+    // Draw the far wall rectangle (the void at the end)
+    ctx.strokeStyle = lerpColorA(colA, colB, palBlend, 0.15 + sTotal * 0.1);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(farTL[0], farTL[1]);
+    ctx.lineTo(farTR[0], farTR[1]);
+    ctx.lineTo(farBR[0], farBR[1]);
+    ctx.lineTo(farBL[0], farBL[1]);
+    ctx.closePath();
+    ctx.stroke();
+
     var wallDefs = [
-      // [label, edge start generator, cp bias x, cp bias y, color shift]
-      // Left wall — lines from left edge, control points biased left
-      { ex: 0, genY: true, cpBiasX: -0.2, cpBiasY: 0, colShift: 0 },
-      // Right wall — lines from right edge, biased right
-      { ex: w, genY: true, cpBiasX: 0.2, cpBiasY: 0, colShift: 0.25 },
-      // Ceiling — lines from top edge, biased up
-      { ey: 0, genX: true, cpBiasX: 0, cpBiasY: -0.15, colShift: 0.5 },
-      // Floor — lines from bottom edge, biased down
-      { ey: h, genX: true, cpBiasX: 0, cpBiasY: 0.15, colShift: 0.75 },
+      // Left wall: screen left edge → far wall left edge
+      { genY: true, ex: 0, farA: farTL, farB: farBL, cpBiasX: -0.2, cpBiasY: 0, colShift: 0 },
+      // Right wall: screen right edge → far wall right edge
+      { genY: true, ex: w, farA: farTR, farB: farBR, cpBiasX: 0.2, cpBiasY: 0, colShift: 0.25 },
+      // Ceiling: screen top edge → far wall top edge
+      { genX: true, ey: 0, farA: farTL, farB: farTR, cpBiasX: 0, cpBiasY: -0.15, colShift: 0.5 },
+      // Floor: screen bottom edge → far wall bottom edge
+      { genX: true, ey: h, farA: farBL, farB: farBR, cpBiasX: 0, cpBiasY: 0.15, colShift: 0.75 },
     ];
     var wallSeams = 5;
     for (var wi = 0; wi < wallDefs.length; wi++) {
       var wd = wallDefs[wi];
-      // Per-wall control points — global bend + wall bias
       var wcp1x = midX + wd.cpBiasX * w + bendX2 * w * 0.15;
       var wcp1y = midY + wd.cpBiasY * h + bendY2 * h * 0.12;
-      var wcp2x = (midX + vpx) / 2 + wd.cpBiasX * w * 0.5;
-      var wcp2y = (midY + vpy) / 2 + wd.cpBiasY * h * 0.4;
 
       for (var si = 0; si < wallSeams; si++) {
         var sfrac = (si + 0.5) / wallSeams;
@@ -953,6 +969,7 @@
         ctx.strokeStyle = lerpColorA(colA, colB, sColT, sAlpha);
         ctx.lineWidth = 0.5 + sfv * 1.5;
 
+        // Start: point on screen edge
         var startX, startY;
         if (wd.genY) {
           startX = wd.ex;
@@ -961,12 +978,17 @@
           startX = w * sfrac;
           startY = wd.ey;
         }
+        // End: interpolate along the far wall edge (not a single point)
+        var endX = wd.farA[0] + (wd.farB[0] - wd.farA[0]) * sfrac;
+        var endY = wd.farA[1] + (wd.farB[1] - wd.farA[1]) * sfrac;
+        var wcp2x = (wcp1x + endX) / 2 + wd.cpBiasX * w * 0.3;
+        var wcp2y = (wcp1y + endY) / 2 + wd.cpBiasY * h * 0.25;
+
         ctx.beginPath();
         ctx.moveTo(startX, startY);
-        ctx.bezierCurveTo(wcp1x, wcp1y, wcp2x, wcp2y, vpx, vpy);
+        ctx.bezierCurveTo(wcp1x, wcp1y, wcp2x, wcp2y, endX, endY);
         ctx.stroke();
 
-        // Glow on loud seams
         if (sfv > 0.4) {
           ctx.strokeStyle = lerpColorA(colA, colB, sColT, sfv * 0.05);
           ctx.lineWidth = 3 + sfv * 4;
@@ -974,26 +996,22 @@
         }
       }
     }
-    // 4 corner edges — strongest lines, where walls meet
-    var corners = [
-      [0, 0], [w, 0], [w, h], [0, h]
-    ];
-    var cornerCps = [
-      // TL: bias up-left, TR: up-right, BR: down-right, BL: down-left
-      [-0.15, -0.12], [0.15, -0.12], [0.15, 0.12], [-0.15, 0.12]
-    ];
+    // 4 corner edges — screen corners to far-wall corners
+    var screenCorners = [[0, 0], [w, 0], [w, h], [0, h]];
+    var farCorners = [farTL, farTR, farBR, farBL];
+    var cornerBias = [[-0.15, -0.12], [0.15, -0.12], [0.15, 0.12], [-0.15, 0.12]];
     for (var ci = 0; ci < 4; ci++) {
       var cfv = freqData[(ci * 8) % bufferLength] / 255;
       var cAlpha = 0.2 + cfv * 0.3 + sTotal * 0.1;
       ctx.strokeStyle = lerpColorA(colA, colB, (ci / 4 + palBlend) % 1, cAlpha);
       ctx.lineWidth = 1.5 + cfv * 2.5;
-      var ccp1x = midX + cornerCps[ci][0] * w + bendX2 * w * 0.15;
-      var ccp1y = midY + cornerCps[ci][1] * h + bendY2 * h * 0.12;
-      var ccp2x = (midX + vpx) / 2 + cornerCps[ci][0] * w * 0.5;
-      var ccp2y = (midY + vpy) / 2 + cornerCps[ci][1] * h * 0.5;
+      var ccp1x = midX + cornerBias[ci][0] * w + bendX2 * w * 0.15;
+      var ccp1y = midY + cornerBias[ci][1] * h + bendY2 * h * 0.12;
+      var ccp2x = (ccp1x + farCorners[ci][0]) / 2 + cornerBias[ci][0] * w * 0.3;
+      var ccp2y = (ccp1y + farCorners[ci][1]) / 2 + cornerBias[ci][1] * h * 0.3;
       ctx.beginPath();
-      ctx.moveTo(corners[ci][0], corners[ci][1]);
-      ctx.bezierCurveTo(ccp1x, ccp1y, ccp2x, ccp2y, vpx, vpy);
+      ctx.moveTo(screenCorners[ci][0], screenCorners[ci][1]);
+      ctx.bezierCurveTo(ccp1x, ccp1y, ccp2x, ccp2y, farCorners[ci][0], farCorners[ci][1]);
       ctx.stroke();
       if (cfv > 0.3) {
         ctx.strokeStyle = lerpColorA(colA, colB, (ci / 4 + palBlend) % 1, cfv * 0.06);
@@ -1107,16 +1125,11 @@
       ctx.fillRect(0, 0, w, h);
     }
 
-    // ═══ LAYER 7: VANISHING POINT — tiny pulsing core ═══
-    var vpR = 2 + sBass * 4 + hit * 12;
-    ctx.beginPath();
-    ctx.arc(vpx, vpy, vpR, 0, Math.PI * 2);
-    ctx.fillStyle = rgba(COL_GLOW, 0.3 + sTotal * 0.4);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(vpx, vpy, vpR * 3, 0, Math.PI * 2);
-    ctx.fillStyle = rgba(COL_GLOW, 0.03 + sTotal * 0.03);
-    ctx.fill();
+    // ═══ LAYER 7: VOID — dark rectangle at the far end of the hall ═══
+    var voidW = 6 + sBass * 8;
+    var voidH = 4 + sBass * 6;
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillRect(vpx - voidW / 2, vpy - voidH / 2, voidW, voidH);
   }
 
   // Resize canvas on window resize

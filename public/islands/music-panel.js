@@ -636,9 +636,11 @@
     return 'rgba(' + r + ',' + g + ',' + bl + ',' + alpha + ')';
   }
 
-  // Smoothed audio values for less jitter
+  // Smoothed audio values
   var sBass = 0, sMid = 0, sHigh = 0, sTotal = 0;
-  var prevBass = 0; // for transient detection
+  var prevBass = 0;
+  // Hall forward motion accumulator
+  var hallZ = 0;
 
   function drawVisualizer() {
     animId = requestAnimationFrame(drawVisualizer);
@@ -668,194 +670,272 @@
     bass /= third; mid /= third; high /= Math.max(1, bufferLength - third * 2);
     total /= bufferLength;
 
-    // Smooth for less jitter
     sBass = sBass * 0.7 + bass * 0.3;
     sMid = sMid * 0.7 + mid * 0.3;
     sHigh = sHigh * 0.7 + high * 0.3;
     sTotal = sTotal * 0.7 + total * 0.3;
 
-    // Transient detection — bass hit
     var hit = Math.max(0, sBass - prevBass);
     prevBass = sBass;
 
-    // ── Feedback zoom — the core WMP trick ──
-    var feedbackZoom = 1.008 + sBass * 0.012 + hit * 0.03;
-    var feedbackRot = (sMid - 0.3) * 0.008 + Math.sin(visTime * 0.1) * 0.002;
+    // ── Feedback zoom — falling forward into the void ──
+    var feedbackZoom = 1.006 + sBass * 0.008 + hit * 0.02;
     ctx.save();
-    ctx.globalAlpha = 0.93 - sTotal * 0.06;
+    ctx.globalAlpha = 0.94 - sTotal * 0.04;
     ctx.translate(w / 2, h / 2);
-    ctx.rotate(feedbackRot);
     ctx.scale(feedbackZoom, feedbackZoom);
     ctx.translate(-w / 2, -h / 2);
     ctx.drawImage(canvas, 0, 0);
     ctx.restore();
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.025)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';
     ctx.fillRect(0, 0, w, h);
 
     visTime += 0.016;
 
-    // Palette cycle
-    palBlend += 0.004 + sTotal * 0.003;
+    // Forward motion — speed driven by bass
+    hallZ += 0.008 + sBass * 0.025 + hit * 0.15;
+
+    // Palette
+    palBlend += 0.003 + sTotal * 0.002;
     if (palBlend >= 1) { palBlend = 0; palIdx = (palIdx + 1) % PALETTE.length; }
     var colA = PALETTE[palIdx];
     var colB = PALETTE[(palIdx + 1) % PALETTE.length];
 
-    var cx = w / 2;
-    var cy = h / 2;
-    var maxR = Math.min(w, h) * 0.45;
+    // Vanishing point — drifts slowly with mid frequencies
+    var vpx = w / 2 + Math.sin(visTime * 0.13) * w * 0.06;
+    var vpy = h / 2 + Math.cos(visTime * 0.09) * h * 0.04;
 
-    // ── Symmetry count — shifts with energy ──
-    var symCount = 6 + Math.floor(sTotal * 4); // 6 to 10 fold symmetry
-    var symAngle = Math.PI * 2 / symCount;
+    // ═══ LAYER 1: INFINITE HALL — receding rectangles ═══
+    var rectCount = 24;
+    for (var ri = 0; ri < rectCount; ri++) {
+      // z cycles forward continuously — each rect has a depth slot
+      var zRaw = ((ri / rectCount) + hallZ) % 1;
+      // Ease: close rects spread out, far ones compress (perspective)
+      var z = zRaw * zRaw * zRaw;
+      if (z < 0.001) continue;
 
-    // ═══ LAYER 1: RADIAL FREQUENCY BARS — the foundation ═══
-    ctx.save();
-    ctx.translate(cx, cy);
-    for (var sym = 0; sym < symCount; sym++) {
-      ctx.save();
-      ctx.rotate(sym * symAngle + visTime * 0.15);
-      for (var i = 0; i < bufferLength; i++) {
-        var fv = freqData[i] / 255;
-        if (fv < 0.05) continue;
-        var angle = (i / bufferLength) * symAngle * 0.9;
-        var innerR = maxR * 0.15;
-        var outerR = innerR + fv * maxR * 0.8;
-        var x1 = Math.cos(angle) * innerR;
-        var y1 = Math.sin(angle) * innerR;
-        var x2 = Math.cos(angle) * outerR;
-        var y2 = Math.sin(angle) * outerR;
-        var barAlpha = 0.3 + fv * 0.5;
-        ctx.strokeStyle = lerpColorA(colA, colB, (i / bufferLength + palBlend) % 1, barAlpha);
-        ctx.lineWidth = 1.5 + fv * 3;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-        // Glow layer
-        if (fv > 0.4) {
-          ctx.strokeStyle = lerpColorA(colA, colB, (i / bufferLength + palBlend) % 1, fv * 0.15);
-          ctx.lineWidth = 4 + fv * 8;
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.stroke();
-        }
-      }
-      ctx.restore();
-    }
-    ctx.restore();
+      // Perspective scale: 0 = vanishing point, 1 = fills screen
+      var scale = z;
+      var rectW = w * scale;
+      var rectH = h * scale;
 
-    // ═══ LAYER 2: WAVEFORM RIBBON — thick, bold, kaleidoscoped ═══
-    var waveLen = waveData.length;
-    ctx.save();
-    ctx.translate(cx, cy);
-    for (var sym = 0; sym < symCount; sym++) {
-      ctx.save();
-      ctx.rotate(sym * symAngle + visTime * -0.08);
-      // Mirror every other
-      if (sym % 2 === 1) ctx.scale(1, -1);
+      // Position: lerp from vanishing point to screen edges
+      var rx = vpx - rectW / 2;
+      var ry = vpy - rectH / 2;
 
+      // Audio modulation — frequency data warps the rectangle
+      var freqIdx = Math.floor(z * bufferLength) % bufferLength;
+      var fv = freqData[freqIdx] / 255;
+      var warp = fv * scale * 8;
+
+      // Color cycles through palette based on depth
+      var rectAlpha = (0.15 + fv * 0.35) * (0.3 + z * 0.7);
+      var colT = (z + palBlend) % 1;
+      ctx.strokeStyle = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 0.7));
+      ctx.lineWidth = 0.5 + z * 2.5 + fv * 1.5;
+
+      // Draw warped rectangle — not a perfect rect, audio bends it
       ctx.beginPath();
-      for (var wi = 0; wi < waveLen; wi += 2) {
-        var t = wi / waveLen;
-        var sample = (waveData[wi] - 128) / 128;
-        var angle = t * symAngle * 0.95;
-        var r = maxR * (0.2 + 0.6 * t) + sample * maxR * 0.25;
-        var x = Math.cos(angle) * r;
-        var y = Math.sin(angle) * r;
-        if (wi === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      ctx.moveTo(rx - warp, ry - warp);
+      ctx.lineTo(rx + rectW + warp, ry - warp * 0.7);
+      ctx.lineTo(rx + rectW + warp * 0.7, ry + rectH + warp);
+      ctx.lineTo(rx - warp * 0.7, ry + rectH + warp * 0.7);
+      ctx.closePath();
+      ctx.stroke();
+
+      // Glow on close / loud rects
+      if (z > 0.3 && fv > 0.3) {
+        ctx.strokeStyle = lerpColorA(colA, colB, colT, fv * 0.08);
+        ctx.lineWidth = 3 + z * 6;
+        ctx.stroke();
       }
-      var waveAlpha = 0.4 + sBass * 0.4;
-      ctx.strokeStyle = lerpColorA(colB, colA, palBlend, waveAlpha);
-      ctx.lineWidth = 2 + sBass * 3;
+    }
+
+    // ═══ LAYER 2: VERTICAL COLUMNS — pillars passing by ═══
+    var colCount = 12;
+    for (var ci = 0; ci < colCount; ci++) {
+      var cz = ((ci / colCount) + hallZ * 1.3) % 1;
+      cz = cz * cz;
+      if (cz < 0.005) continue;
+
+      var cScale = cz;
+      var spread = w * cScale * 0.55;
+
+      // Left and right columns
+      var freqIdx = Math.floor(cz * bufferLength) % bufferLength;
+      var cfv = freqData[freqIdx] / 255;
+      var colAlpha = (0.1 + cfv * 0.3) * (0.2 + cz * 0.8);
+      var cColT = (cz * 0.7 + palBlend + 0.5) % 1;
+      ctx.strokeStyle = lerpColorA(colB, colA, cColT, Math.min(colAlpha, 0.6));
+      ctx.lineWidth = 0.5 + cz * 2;
+
+      // Left column
+      var lx = vpx - spread;
+      ctx.beginPath();
+      ctx.moveTo(lx, vpy - h * cScale * 0.5);
+      ctx.lineTo(lx, vpy + h * cScale * 0.5);
       ctx.stroke();
+
+      // Right column
+      var rrx = vpx + spread;
+      ctx.beginPath();
+      ctx.moveTo(rrx, vpy - h * cScale * 0.5);
+      ctx.lineTo(rrx, vpy + h * cScale * 0.5);
+      ctx.stroke();
+
+      // Cross beams — horizontal connections
+      if (ci % 3 === 0 && cz > 0.1) {
+        var beamY1 = vpy - h * cScale * 0.35;
+        var beamY2 = vpy + h * cScale * 0.35;
+        ctx.strokeStyle = lerpColorA(colB, colA, cColT, colAlpha * 0.5);
+        ctx.lineWidth = 0.3 + cz;
+        ctx.beginPath();
+        ctx.moveTo(lx, beamY1);
+        ctx.lineTo(rrx, beamY1);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(lx, beamY2);
+        ctx.lineTo(rrx, beamY2);
+        ctx.stroke();
+      }
+    }
+
+    // ═══ LAYER 3: CONVERGENCE LINES — diagonals to vanishing point ═══
+    var lineCount = 8;
+    for (var li = 0; li < lineCount; li++) {
+      var la = (li / lineCount) * Math.PI * 2 + visTime * 0.03;
+      // Start from screen edges
+      var edgeX = w / 2 + Math.cos(la) * w * 0.8;
+      var edgeY = h / 2 + Math.sin(la) * h * 0.8;
+
+      var freqIdx = (li * 4) % bufferLength;
+      var lfv = freqData[freqIdx] / 255;
+      var lineAlpha = 0.06 + lfv * 0.2 + sTotal * 0.1;
+
+      ctx.strokeStyle = lerpColorA(colA, colB, (li / lineCount + palBlend) % 1, lineAlpha);
+      ctx.lineWidth = 0.5 + lfv * 1.5;
+      ctx.beginPath();
+      ctx.moveTo(edgeX, edgeY);
+      ctx.lineTo(vpx, vpy);
+      ctx.stroke();
+
       // Glow
-      ctx.strokeStyle = lerpColorA(colB, colA, palBlend, waveAlpha * 0.2);
-      ctx.lineWidth = 6 + sBass * 8;
+      if (lfv > 0.4) {
+        ctx.strokeStyle = lerpColorA(colA, colB, (li / lineCount + palBlend) % 1, lfv * 0.05);
+        ctx.lineWidth = 3 + lfv * 4;
+        ctx.stroke();
+      }
+    }
+
+    // ═══ LAYER 4: MIRROR FRAMES — rectangles on the "walls" ═══
+    var frameCount = 8;
+    for (var fi = 0; fi < frameCount; fi++) {
+      var fz = ((fi / frameCount) + hallZ * 0.7 + 0.1) % 1;
+      fz = fz * fz;
+      if (fz < 0.02) continue;
+
+      var fScale = fz;
+      var fSpread = w * fScale * 0.5;
+
+      var freqIdx = Math.floor((fi * 3 + 7) % bufferLength);
+      var ffv = freqData[freqIdx] / 255;
+      var fAlpha = (0.1 + ffv * 0.25) * (0.3 + fz * 0.7);
+      var fColT = (fz + palBlend + 0.3) % 1;
+      ctx.strokeStyle = lerpColorA(colA, colB, fColT, Math.min(fAlpha, 0.5));
+      ctx.lineWidth = 0.5 + fz * 1.5;
+
+      // Frame dimensions
+      var fw = w * fScale * 0.12 + ffv * 10;
+      var fh = h * fScale * 0.15 + ffv * 8;
+
+      // Left wall frame
+      var lfx = vpx - fSpread - fw * 0.3;
+      var lfy = vpy - fh / 2 + Math.sin(visTime * 0.3 + fi) * h * fScale * 0.05;
+      ctx.strokeRect(lfx, lfy, fw, fh);
+
+      // Right wall frame
+      var rfx = vpx + fSpread - fw * 0.7;
+      var rfy = vpy - fh / 2 + Math.cos(visTime * 0.25 + fi) * h * fScale * 0.05;
+      ctx.strokeRect(rfx, rfy, fw, fh);
+
+      // Inner frame lines — mirror reflections (waveform fragments)
+      if (fz > 0.08) {
+        var waveLen = waveData.length;
+        ctx.save();
+        ctx.globalAlpha = fAlpha * 0.6;
+        // Left mirror — draw a slice of waveform inside
+        ctx.beginPath();
+        for (var mi = 0; mi < 20; mi++) {
+          var mt = mi / 20;
+          var mIdx = Math.floor((fi * 50 + mi * 5) % waveLen);
+          var mSample = (waveData[mIdx] - 128) / 128;
+          var mx = lfx + mt * fw;
+          var my = lfy + fh / 2 + mSample * fh * 0.3;
+          if (mi === 0) ctx.moveTo(mx, my);
+          else ctx.lineTo(mx, my);
+        }
+        ctx.strokeStyle = lerpColorA(colB, colA, fColT, 0.3);
+        ctx.lineWidth = 0.5 + fz;
+        ctx.stroke();
+        // Right mirror
+        ctx.beginPath();
+        for (var mi = 0; mi < 20; mi++) {
+          var mt = mi / 20;
+          var mIdx = Math.floor((fi * 50 + mi * 5 + 30) % waveLen);
+          var mSample = (waveData[mIdx] - 128) / 128;
+          var mx = rfx + mt * fw;
+          var my = rfy + fh / 2 + mSample * fh * 0.3;
+          if (mi === 0) ctx.moveTo(mx, my);
+          else ctx.lineTo(mx, my);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    // ═══ LAYER 5: FLOOR GRID — perspective grid beneath ═══
+    var gridLines = 10;
+    for (var gi = 0; gi < gridLines; gi++) {
+      var gz = ((gi / gridLines) + hallZ * 1.5) % 1;
+      gz = gz * gz;
+      if (gz < 0.01) continue;
+
+      var gScale = gz;
+      var gy = vpy + h * gScale * 0.45;
+      var gxSpread = w * gScale * 0.55;
+      var gfv = freqData[Math.floor(gz * bufferLength) % bufferLength] / 255;
+      var gAlpha = (0.05 + gfv * 0.15) * (0.2 + gz * 0.8);
+
+      ctx.strokeStyle = lerpColorA(colA, colB, (gz + palBlend) % 1, gAlpha);
+      ctx.lineWidth = 0.3 + gz;
+      ctx.beginPath();
+      ctx.moveTo(vpx - gxSpread, gy);
+      ctx.lineTo(vpx + gxSpread, gy);
       ctx.stroke();
-
-      ctx.restore();
     }
-    ctx.restore();
 
-    // ═══ LAYER 3: SPINNING LISSAJOUS — the hypnotic center ═══
-    var lissA = 3 + Math.floor(sMid * 4);
-    var lissB = 2 + Math.floor(sHigh * 3);
-    var lissPhase = visTime * 0.7;
-    var lissR = maxR * (0.3 + sTotal * 0.35);
-
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(visTime * 0.05);
-    ctx.beginPath();
-    for (var li = 0; li <= 360; li++) {
-      var la = (li / 360) * Math.PI * 2;
-      // Read freq data to modulate the curve
-      var freqMod = freqData[li % bufferLength] / 255;
-      var lx = Math.sin(lissA * la + lissPhase) * lissR * (0.8 + freqMod * 0.4);
-      var ly = Math.sin(lissB * la + lissPhase * 1.3) * lissR * (0.8 + freqMod * 0.4);
-      if (li === 0) ctx.moveTo(lx, ly);
-      else ctx.lineTo(lx, ly);
-    }
-    ctx.closePath();
-    ctx.strokeStyle = rgba(COL_GLOW, 0.35 + sTotal * 0.3);
-    ctx.lineWidth = 1.5 + sTotal * 2;
-    ctx.stroke();
-    ctx.strokeStyle = rgba(COL_GLOW, 0.06 + sTotal * 0.06);
-    ctx.lineWidth = 5 + sTotal * 10;
-    ctx.stroke();
-    ctx.restore();
-
-    // ═══ LAYER 4: BASS FLARE — bright burst on transients ═══
+    // ═══ LAYER 6: BASS FLARE — depth pulse on transients ═══
     if (hit > 0.03) {
-      var flareR = maxR * hit * 8;
-      var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, flareR);
+      var flareR = Math.min(w, h) * 0.3 * hit * 6;
+      var grad = ctx.createRadialGradient(vpx, vpy, 0, vpx, vpy, flareR);
       var flareCol = lerpColor(colA, colB, palBlend);
-      grad.addColorStop(0, rgba(flareCol, hit * 2));
-      grad.addColorStop(0.3, rgba(flareCol, hit * 0.5));
+      grad.addColorStop(0, rgba(flareCol, hit * 1.5));
+      grad.addColorStop(0.4, rgba(flareCol, hit * 0.3));
       grad.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
     }
 
-    // ═══ LAYER 5: ORBITAL DOTS — particles that trace the symmetry ═══
-    var dotCount = 12 + Math.floor(sTotal * 20);
-    ctx.save();
-    ctx.translate(cx, cy);
-    for (var di = 0; di < dotCount; di++) {
-      var dPhase = visTime * (0.3 + di * 0.07) + di * 2.39996;
-      var dR = maxR * (0.2 + 0.7 * ((Math.sin(dPhase * 0.3) + 1) * 0.5));
-      dR += freqData[di % bufferLength] / 255 * maxR * 0.15;
-      var dAngle = dPhase + Math.sin(visTime * 0.2 + di) * 0.5;
-      var dx = Math.cos(dAngle) * dR;
-      var dy = Math.sin(dAngle) * dR;
-      var dotSize = 1 + (freqData[di % bufferLength] / 255) * 3 + sBass;
-      var dotCol = PALETTE[di % PALETTE.length];
-      ctx.fillStyle = rgba(dotCol, 0.4 + sTotal * 0.4);
-      ctx.beginPath();
-      ctx.arc(dx, dy, dotSize, 0, Math.PI * 2);
-      ctx.fill();
-      // Glow
-      if (dotSize > 2) {
-        ctx.fillStyle = rgba(dotCol, 0.08);
-        ctx.beginPath();
-        ctx.arc(dx, dy, dotSize * 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    ctx.restore();
-
-    // ═══ LAYER 6: CENTER RING — breathing, pulsing ═══
-    var ringR = maxR * (0.14 + sBass * 0.08 + Math.sin(visTime * 0.5) * 0.02);
+    // ═══ LAYER 7: VANISHING POINT — tiny pulsing core ═══
+    var vpR = 2 + sBass * 4 + hit * 12;
     ctx.beginPath();
-    ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
-    ctx.strokeStyle = rgba(COL_GOLD, 0.3 + sBass * 0.3);
-    ctx.lineWidth = 1.5 + sBass * 2;
-    ctx.stroke();
-    ctx.strokeStyle = rgba(COL_GOLD, 0.05 + sBass * 0.05);
-    ctx.lineWidth = 6 + sBass * 6;
-    ctx.stroke();
+    ctx.arc(vpx, vpy, vpR, 0, Math.PI * 2);
+    ctx.fillStyle = rgba(COL_GLOW, 0.3 + sTotal * 0.4);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(vpx, vpy, vpR * 3, 0, Math.PI * 2);
+    ctx.fillStyle = rgba(COL_GLOW, 0.03 + sTotal * 0.03);
+    ctx.fill();
   }
 
   // Resize canvas on window resize

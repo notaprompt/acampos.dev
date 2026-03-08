@@ -1098,75 +1098,6 @@
     ctx.fillStyle = fogGrad;
     ctx.fillRect(0, 0, w, h);
 
-    // ═══ LAYER 4: MIRROR FRAMES — rectangles on the "walls" ═══
-    var frameCount = 8;
-    for (var fi = 0; fi < frameCount; fi++) {
-      var fz = ((fi / frameCount) + hallZ * 0.7 + 0.1) % 1;
-      fz = fz * fz;
-      if (fz < 0.02) continue;
-
-      var fScale = fz;
-      var fParallax = fz * fz;
-      var frameCx = vpx + (w / 2 - vpx) * fParallax;
-      var frameCy = vpy + (h / 2 - vpy) * fParallax;
-      var fSpread = w * fScale * 0.5;
-
-      var freqIdx = Math.floor((fi * 3 + 7) % bufferLength);
-      var ffv = freqData[freqIdx] / 255;
-      var fAlpha = (0.1 + ffv * 0.25) * (0.3 + fz * 0.7);
-      var fColT = (fz + palBlend + 0.3) % 1;
-      ctx.strokeStyle = lerpColorA(colA, colB, fColT, Math.min(fAlpha, 0.5));
-      ctx.lineWidth = 0.5 + fz * 1.5;
-
-      // Frame dimensions
-      var fw = w * fScale * 0.12 + ffv * 10;
-      var fh = h * fScale * 0.15 + ffv * 8;
-
-      // Left wall frame
-      var lfx = frameCx - fSpread - fw * 0.3;
-      var lfy = frameCy - fh / 2 + Math.sin(visTime * 0.3 + fi) * h * fScale * 0.05;
-      ctx.strokeRect(lfx, lfy, fw, fh);
-
-      // Right wall frame
-      var rfx = frameCx + fSpread - fw * 0.7;
-      var rfy = frameCy - fh / 2 + Math.cos(visTime * 0.25 + fi) * h * fScale * 0.05;
-      ctx.strokeRect(rfx, rfy, fw, fh);
-
-      // Inner frame lines — mirror reflections (waveform fragments)
-      if (fz > 0.08) {
-        var waveLen = waveData.length;
-        ctx.save();
-        ctx.globalAlpha = fAlpha * 0.6;
-        // Left mirror — draw a slice of waveform inside
-        ctx.beginPath();
-        for (var mi = 0; mi < 20; mi++) {
-          var mt = mi / 20;
-          var mIdx = Math.floor((fi * 50 + mi * 5) % waveLen);
-          var mSample = (waveData[mIdx] - 128) / 128;
-          var mx = lfx + mt * fw;
-          var my = lfy + fh / 2 + mSample * fh * 0.3;
-          if (mi === 0) ctx.moveTo(mx, my);
-          else ctx.lineTo(mx, my);
-        }
-        ctx.strokeStyle = lerpColorA(colB, colA, fColT, 0.3);
-        ctx.lineWidth = 0.5 + fz;
-        ctx.stroke();
-        // Right mirror
-        ctx.beginPath();
-        for (var mi = 0; mi < 20; mi++) {
-          var mt = mi / 20;
-          var mIdx = Math.floor((fi * 50 + mi * 5 + 30) % waveLen);
-          var mSample = (waveData[mIdx] - 128) / 128;
-          var mx = rfx + mt * fw;
-          var my = rfy + fh / 2 + mSample * fh * 0.3;
-          if (mi === 0) ctx.moveTo(mx, my);
-          else ctx.lineTo(mx, my);
-        }
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
-
     // ═══ LAYER 5: FLOOR GRID — perspective grid beneath ═══
     var gridLines = 10;
     for (var gi = 0; gi < gridLines; gi++) {
@@ -1191,23 +1122,6 @@
       ctx.stroke();
     }
 
-    // ═══ LAYER 6: BASS FLARE — depth pulse on transients ═══
-    if (hit > 0.03) {
-      var flareR = Math.min(w, h) * 0.3 * hit * 6;
-      var grad = ctx.createRadialGradient(vpx, vpy, 0, vpx, vpy, flareR);
-      var flareCol = lerpColor(colA, colB, palBlend);
-      grad.addColorStop(0, rgba(flareCol, hit * 1.5));
-      grad.addColorStop(0.4, rgba(flareCol, hit * 0.3));
-      grad.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, w, h);
-    }
-
-    // ═══ LAYER 7: VOID — dark rectangle at the far end of the hall ═══
-    var voidW = 6 + sBass * 8;
-    var voidH = 4 + sBass * 6;
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-    ctx.fillRect(vpx - voidW / 2, vpy - voidH / 2, voidW, voidH);
   }
 
   // Resize canvas on window resize

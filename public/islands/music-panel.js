@@ -923,8 +923,8 @@
     // The "far wall" is a small rectangle at the VP — lines from each screen
     // edge terminate at the corresponding edge of this rectangle, not all
     // at the same pixel. This is what makes it read as a hall, not an X.
-    var farW = 30 + sBass * 15;  // far wall half-width
-    var farH = 22 + sBass * 10;  // far wall half-height
+    var farW = 12 + sBass * 6;   // tiny — endpoints hidden by depth fog
+    var farH = 8 + sBass * 4;
     var midX = w / 2 + bendX1 * w * 0.25;
     var midY = h / 2 + bendY1 * h * 0.2;
 
@@ -1082,9 +1082,10 @@
     // ═══ LAYER 3e: DEPTH FOG — radial darkening centered on VP ═══
     var fogR = Math.max(w, h) * 0.8;
     var fogGrad = ctx.createRadialGradient(vpx, vpy, 0, vpx, vpy, fogR);
-    fogGrad.addColorStop(0, 'rgba(0,0,0,0.35)');
-    fogGrad.addColorStop(0.08, 'rgba(0,0,0,0.2)');
-    fogGrad.addColorStop(0.3, 'rgba(0,0,0,0.03)');
+    fogGrad.addColorStop(0, 'rgba(0,0,0,0.9)');
+    fogGrad.addColorStop(0.04, 'rgba(0,0,0,0.7)');
+    fogGrad.addColorStop(0.12, 'rgba(0,0,0,0.3)');
+    fogGrad.addColorStop(0.35, 'rgba(0,0,0,0.05)');
     fogGrad.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = fogGrad;
     ctx.fillRect(0, 0, w, h);

@@ -781,26 +781,26 @@
     var forwardDir = reverseTimer > 0 ? -0.6 : 1;
 
     // ── Feedback zoom — centered on VP so you fly TOWARD the target ──
-    var feedbackZoom = 1.006 + sBass * 0.008 + hit * 0.02;
-    if (reverseTimer > 0) feedbackZoom = 1 / (1.006 + sBass * 0.005);
+    var feedbackZoom = 1.012 + sBass * 0.015 + hit * 0.04;
+    if (reverseTimer > 0) feedbackZoom = 1 / (1.012 + sBass * 0.01);
     // Zoom origin = where the VP will be (chase position)
     var zoomCx = w / 2 + chaseX * w * 0.15;
     var zoomCy = h / 2 + chaseY * h * 0.12;
     ctx.save();
-    ctx.globalAlpha = 0.55 - sTotal * 0.1;
+    ctx.globalAlpha = 0.75 - sTotal * 0.08;
     ctx.translate(zoomCx, zoomCy);
     ctx.rotate(flipAngle * 0.8);
     ctx.scale(feedbackZoom, feedbackZoom);
     ctx.translate(-zoomCx, -zoomCy);
     ctx.drawImage(canvas, 0, 0);
     ctx.restore();
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
     ctx.fillRect(0, 0, w, h);
 
     visTime += 0.016;
 
     // Forward motion — speed driven by bass, reversed during reverse
-    hallZ += (0.008 + sBass * 0.025 + hit * 0.15) * forwardDir;
+    hallZ += (0.015 + sBass * 0.04 + hit * 0.25) * forwardDir;
 
     // Palette
     palBlend += 0.003 + sTotal * 0.002;
@@ -813,7 +813,7 @@
     var vpy = h / 2 + chaseY * h * 0.12;
 
     // ═══ LAYER 1: INFINITE HALL — receding rectangles ═══
-    var rectCount = 24;
+    var rectCount = 36;
     for (var ri = 0; ri < rectCount; ri++) {
       // z cycles forward continuously — each rect has a depth slot
       var zRaw = ((ri / rectCount) + hallZ) % 1;
@@ -934,16 +934,7 @@
     var farBR = [vpx + farW, vpy + farH];
     var farBL = [vpx - farW, vpy + farH];
 
-    // Draw the far wall rectangle (the void at the end)
-    ctx.strokeStyle = lerpColorA(colA, colB, palBlend, 0.15 + sTotal * 0.1);
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(farTL[0], farTL[1]);
-    ctx.lineTo(farTR[0], farTR[1]);
-    ctx.lineTo(farBR[0], farBR[1]);
-    ctx.lineTo(farBL[0], farBL[1]);
-    ctx.closePath();
-    ctx.stroke();
+    // Far wall is invisible — the tunnel never ends, only darkness ahead
 
     var wallDefs = [
       // Left wall: screen left edge → far wall left edge

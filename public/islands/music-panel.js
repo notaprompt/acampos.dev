@@ -757,15 +757,18 @@
     if (reverseTimer > 0) reverseTimer--;
     var forwardDir = reverseTimer > 0 ? -0.6 : 1;
 
-    // ── Feedback zoom — falling forward (or backward) into the void ──
+    // ── Feedback zoom — centered on VP so you fly TOWARD the target ──
     var feedbackZoom = 1.006 + sBass * 0.008 + hit * 0.02;
-    if (reverseTimer > 0) feedbackZoom = 1 / (1.006 + sBass * 0.005); // zoom out = reverse
+    if (reverseTimer > 0) feedbackZoom = 1 / (1.006 + sBass * 0.005);
+    // Zoom origin = where the VP will be (chase position)
+    var zoomCx = w / 2 + chaseX * w * 0.35;
+    var zoomCy = h / 2 + chaseY * h * 0.3;
     ctx.save();
     ctx.globalAlpha = 0.94 - sTotal * 0.04;
-    ctx.translate(w / 2, h / 2);
-    ctx.rotate(flipAngle * 0.3); // subtle canvas tilt during flips
+    ctx.translate(zoomCx, zoomCy);
+    ctx.rotate(flipAngle * 0.3);
     ctx.scale(feedbackZoom, feedbackZoom);
-    ctx.translate(-w / 2, -h / 2);
+    ctx.translate(-zoomCx, -zoomCy);
     ctx.drawImage(canvas, 0, 0);
     ctx.restore();
     ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';
@@ -800,9 +803,13 @@
       var rectW = w * scale;
       var rectH = h * scale;
 
-      // Position: lerp from vanishing point to screen edges
-      var rx = vpx - rectW / 2;
-      var ry = vpy - rectH / 2;
+      // Parallax: near rects offset MORE from VP (you pass through them)
+      // At z=0 rect is at VP, at z=1 rect is at screen center
+      var parallax = z * z; // quadratic — near rects barely move, far rects swing hard
+      var rectCx = vpx + (w / 2 - vpx) * parallax;
+      var rectCy = vpy + (h / 2 - vpy) * parallax;
+      var rx = rectCx - rectW / 2;
+      var ry = rectCy - rectH / 2;
 
       // Audio modulation — frequency data warps the rectangle
       var freqIdx = Math.floor(z * bufferLength) % bufferLength;
@@ -840,9 +847,11 @@
       if (cz < 0.005) continue;
 
       var cScale = cz;
+      var cParallax = cz * cz;
+      var colCx = vpx + (w / 2 - vpx) * cParallax;
+      var colCy = vpy + (h / 2 - vpy) * cParallax;
       var spread = w * cScale * 0.55;
 
-      // Left and right columns
       var freqIdx = Math.floor(cz * bufferLength) % bufferLength;
       var cfv = freqData[freqIdx] / 255;
       var colAlpha = (0.1 + cfv * 0.3) * (0.2 + cz * 0.8);
@@ -851,23 +860,23 @@
       ctx.lineWidth = 0.5 + cz * 2;
 
       // Left column
-      var lx = vpx - spread;
+      var lx = colCx - spread;
       ctx.beginPath();
-      ctx.moveTo(lx, vpy - h * cScale * 0.5);
-      ctx.lineTo(lx, vpy + h * cScale * 0.5);
+      ctx.moveTo(lx, colCy - h * cScale * 0.5);
+      ctx.lineTo(lx, colCy + h * cScale * 0.5);
       ctx.stroke();
 
       // Right column
-      var rrx = vpx + spread;
+      var rrx = colCx + spread;
       ctx.beginPath();
-      ctx.moveTo(rrx, vpy - h * cScale * 0.5);
-      ctx.lineTo(rrx, vpy + h * cScale * 0.5);
+      ctx.moveTo(rrx, colCy - h * cScale * 0.5);
+      ctx.lineTo(rrx, colCy + h * cScale * 0.5);
       ctx.stroke();
 
-      // Cross beams — horizontal connections
+      // Cross beams
       if (ci % 3 === 0 && cz > 0.1) {
-        var beamY1 = vpy - h * cScale * 0.35;
-        var beamY2 = vpy + h * cScale * 0.35;
+        var beamY1 = colCy - h * cScale * 0.35;
+        var beamY2 = colCy + h * cScale * 0.35;
         ctx.strokeStyle = lerpColorA(colB, colA, cColT, colAlpha * 0.5);
         ctx.lineWidth = 0.3 + cz;
         ctx.beginPath();
@@ -916,6 +925,9 @@
       if (fz < 0.02) continue;
 
       var fScale = fz;
+      var fParallax = fz * fz;
+      var frameCx = vpx + (w / 2 - vpx) * fParallax;
+      var frameCy = vpy + (h / 2 - vpy) * fParallax;
       var fSpread = w * fScale * 0.5;
 
       var freqIdx = Math.floor((fi * 3 + 7) % bufferLength);
@@ -930,13 +942,13 @@
       var fh = h * fScale * 0.15 + ffv * 8;
 
       // Left wall frame
-      var lfx = vpx - fSpread - fw * 0.3;
-      var lfy = vpy - fh / 2 + Math.sin(visTime * 0.3 + fi) * h * fScale * 0.05;
+      var lfx = frameCx - fSpread - fw * 0.3;
+      var lfy = frameCy - fh / 2 + Math.sin(visTime * 0.3 + fi) * h * fScale * 0.05;
       ctx.strokeRect(lfx, lfy, fw, fh);
 
       // Right wall frame
-      var rfx = vpx + fSpread - fw * 0.7;
-      var rfy = vpy - fh / 2 + Math.cos(visTime * 0.25 + fi) * h * fScale * 0.05;
+      var rfx = frameCx + fSpread - fw * 0.7;
+      var rfy = frameCy - fh / 2 + Math.cos(visTime * 0.25 + fi) * h * fScale * 0.05;
       ctx.strokeRect(rfx, rfy, fw, fh);
 
       // Inner frame lines — mirror reflections (waveform fragments)
@@ -982,7 +994,10 @@
       if (gz < 0.01) continue;
 
       var gScale = gz;
-      var gy = vpy + h * gScale * 0.45;
+      var gParallax = gz * gz;
+      var gridCx = vpx + (w / 2 - vpx) * gParallax;
+      var gridCy = vpy + (h / 2 - vpy) * gParallax;
+      var gy = gridCy + h * gScale * 0.45;
       var gxSpread = w * gScale * 0.55;
       var gfv = freqData[Math.floor(gz * bufferLength) % bufferLength] / 255;
       var gAlpha = (0.05 + gfv * 0.15) * (0.2 + gz * 0.8);
@@ -990,8 +1005,8 @@
       ctx.strokeStyle = lerpColorA(colA, colB, (gz + palBlend) % 1, gAlpha);
       ctx.lineWidth = 0.3 + gz;
       ctx.beginPath();
-      ctx.moveTo(vpx - gxSpread, gy);
-      ctx.lineTo(vpx + gxSpread, gy);
+      ctx.moveTo(gridCx - gxSpread, gy);
+      ctx.lineTo(gridCx + gxSpread, gy);
       ctx.stroke();
     }
 

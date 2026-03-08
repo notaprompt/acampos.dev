@@ -602,13 +602,6 @@
 
   var visTime = 0;
   var waveData = null;
-  var camDriftX = 0, camDriftY = 0;
-  // Story state — accumulates over time, reacts to music arc
-  var energy = 0;         // rolling energy — tracks the song's emotional state
-  var energyPeak = 0;     // highest energy seen — normalizes the story
-  var tension = 0;        // builds during quiet, releases on hits
-  var breathPhase = 0;    // slow inhale/exhale tied to dynamics
-  var storyTime = 0;      // separate clock that speeds/slows with music
 
   // Site palette — no hsl, raw hex/rgba
   var COL_GLOW = '#E8DCC8';       // warm white
@@ -643,6 +636,10 @@
     return 'rgba(' + r + ',' + g + ',' + bl + ',' + alpha + ')';
   }
 
+  // Smoothed audio values for less jitter
+  var sBass = 0, sMid = 0, sHigh = 0, sTotal = 0;
+  var prevBass = 0; // for transient detection
+
   function drawVisualizer() {
     animId = requestAnimationFrame(drawVisualizer);
 
@@ -658,32 +655,7 @@
     var h = canvas.height;
     if (w === 0 || h === 0) { resizeCanvas(); return; }
 
-    // ── Feedback zoom — WMP-style recursive trails ──
-    // Capture current frame, redraw it scaled + rotated for fractal echo
-    var feedbackZoom = 1.012 + bass * 0.008;
-    var feedbackRot = (mid - 0.3) * 0.006;
-    ctx.save();
-    ctx.globalAlpha = 0.92 - total * 0.08;
-    ctx.translate(w / 2, h / 2);
-    ctx.rotate(feedbackRot);
-    ctx.scale(feedbackZoom, feedbackZoom);
-    ctx.translate(-w / 2, -h / 2);
-    ctx.drawImage(canvas, 0, 0);
-    ctx.restore();
-    // Fade — slower than before so trails persist
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
-    ctx.fillRect(0, 0, w, h);
-
-    visTime += 0.014;
-
-    // Slow palette cycle
-    palBlend += 0.003;
-    if (palBlend >= 1) { palBlend = 0; palIdx = (palIdx + 1) % PALETTE.length; }
-    var colA = PALETTE[palIdx];
-    var colB = PALETTE[(palIdx + 1) % PALETTE.length];
-    var curCol = lerpColor(colA, colB, palBlend);
-
-    // Audio
+    // ── Audio analysis ──
     var bass = 0, mid = 0, high = 0, total = 0;
     var third = Math.floor(bufferLength / 3);
     for (var i = 0; i < bufferLength; i++) {
@@ -696,313 +668,194 @@
     bass /= third; mid /= third; high /= Math.max(1, bufferLength - third * 2);
     total /= bufferLength;
 
-    var speed = 0.3 + bass * 0.8 + total * 0.3;
+    // Smooth for less jitter
+    sBass = sBass * 0.7 + bass * 0.3;
+    sMid = sMid * 0.7 + mid * 0.3;
+    sHigh = sHigh * 0.7 + high * 0.3;
+    sTotal = sTotal * 0.7 + total * 0.3;
 
-    // Camera drift
-    camDriftX += 0.003 * Math.sin(visTime * 0.23);
-    camDriftY += 0.004 * Math.cos(visTime * 0.17);
-    var camX = Math.sin(camDriftX) * w * 0.12;
-    var camY = Math.cos(camDriftY) * h * 0.1;
-    var cx = w / 2 + camX;
-    var cy = h / 2 + camY;
-    var maxR = Math.max(w, h) * 1.2;
+    // Transient detection — bass hit
+    var hit = Math.max(0, sBass - prevBass);
+    prevBass = sBass;
 
-    // ═══ TUNNEL RINGS ═══
-    var ringCount = 28;
-    for (var ri = 0; ri < ringCount; ri++) {
-      var zRaw = ((ri / ringCount) + visTime * speed * 0.15) % 1;
-      var z = zRaw * zRaw;
-      var radius = z * maxR;
-      if (radius < 1.5) continue;
+    // ── Feedback zoom — the core WMP trick ──
+    var feedbackZoom = 1.008 + sBass * 0.012 + hit * 0.03;
+    var feedbackRot = (sMid - 0.3) * 0.008 + Math.sin(visTime * 0.1) * 0.002;
+    ctx.save();
+    ctx.globalAlpha = 0.93 - sTotal * 0.06;
+    ctx.translate(w / 2, h / 2);
+    ctx.rotate(feedbackRot);
+    ctx.scale(feedbackZoom, feedbackZoom);
+    ctx.translate(-w / 2, -h / 2);
+    ctx.drawImage(canvas, 0, 0);
+    ctx.restore();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.025)';
+    ctx.fillRect(0, 0, w, h);
 
-      var rot = visTime * (0.6 + z * 2) + ri * 0.73;
-      var segments = 36;
-      ctx.beginPath();
-      for (var s = 0; s <= segments; s++) {
-        var a = (s / segments) * Math.PI * 2 + rot;
-        var freqIdx = Math.floor((s / segments) * bufferLength) % bufferLength;
-        var fv = freqData[freqIdx] / 255;
-        var morph = 1
-          + fv * 0.25 * z
-          + Math.sin(a * 3 + visTime * 1.9) * mid * 0.12
-          + Math.sin(a * 7 + visTime * 3.3 + ri) * high * 0.06;
-        var r = radius * morph;
-        var x = cx + Math.cos(a) * r;
-        var y = cy + Math.sin(a) * r * 0.8;
-        if (s === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
+    visTime += 0.016;
 
-      var ringAlpha = z * (0.25 + total * 0.45);
-      ctx.strokeStyle = lerpColorA(colA, colB, palBlend, Math.min(ringAlpha, 0.55));
-      ctx.lineWidth = 0.3 + z * 2.5;
-      ctx.stroke();
-    }
+    // Palette cycle
+    palBlend += 0.004 + sTotal * 0.003;
+    if (palBlend >= 1) { palBlend = 0; palIdx = (palIdx + 1) % PALETTE.length; }
+    var colA = PALETTE[palIdx];
+    var colB = PALETTE[(palIdx + 1) % PALETTE.length];
 
-    // ═══ STORY SPIRALS — two characters that react to the song's arc ═══
-    // Update story state
-    var prevEnergy = energy;
-    energy = energy * 0.92 + total * 0.08; // slow rolling average
-    if (energy > energyPeak) energyPeak = energy;
-    var normEnergy = energyPeak > 0.01 ? energy / energyPeak : 0;
+    var cx = w / 2;
+    var cy = h / 2;
+    var maxR = Math.min(w, h) * 0.45;
 
-    // Tension builds when energy is low, releases on hits
-    if (total < energy) {
-      tension = Math.min(1, tension + 0.004); // quiet = building
-    } else {
-      tension = Math.max(0, tension - 0.02 * bass); // loud = release
-    }
+    // ── Symmetry count — shifts with energy ──
+    var symCount = 6 + Math.floor(sTotal * 4); // 6 to 10 fold symmetry
+    var symAngle = Math.PI * 2 / symCount;
 
-    // Breath — slow cycle that the music pushes and pulls
-    breathPhase += 0.008 + bass * 0.01;
-    var breath = Math.sin(breathPhase);
-
-    // Story clock — fast during energy, slow during quiet
-    storyTime += 0.005 + normEnergy * 0.012;
-
-    var waveLen = waveData.length;
-
-    // ── Two spirals: one gold (warmth/reach), one glow (retreat/reflection) ──
-    var spiralCols = [COL_GOLD, COL_GLOW];
-    // They orbit each other — distance driven by tension
-    var orbitR = 8 + tension * 25 + breath * 5;
-    var orbitAngle = storyTime * 0.3;
-    var centers = [
-      { x: cx + Math.cos(orbitAngle) * orbitR, y: cy + Math.sin(orbitAngle) * orbitR * 0.7 },
-      { x: cx - Math.cos(orbitAngle) * orbitR, y: cy - Math.sin(orbitAngle) * orbitR * 0.7 }
-    ];
-
-    for (var sp = 0; sp < 2; sp++) {
-      var spiralCx = centers[sp].x;
-      var spiralCy = centers[sp].y;
-      // Rotation: opposite directions, speed tied to energy
-      var dir = sp === 0 ? 1 : -1;
-      var spiralRot = storyTime * dir * (0.3 + normEnergy * 0.4);
-
-      // Reach — how far the spiral extends. Quiet = curled tight, loud = unfurling
-      var reach = 0.15 + normEnergy * 0.65 + breath * 0.05;
-      // Tightness — how wound the spiral is. Tension = tight coil, release = open
-      var coils = 2 + tension * 3 - normEnergy * 1.5;
-
-      var trunkPoints = 90;
-      var trunkPath = [];
-
-      for (var ti = 0; ti < trunkPoints; ti++) {
-        var t = ti / trunkPoints;
-        var zt = t * t;
-
-        // Read the waveform at this point — the spiral literally traces the audio
-        var wIdx = Math.floor(t * waveLen) % waveLen;
-        var sample = (waveData[wIdx] - 128) / 128;
-        // Next sample for direction
-        var wIdx2 = Math.min(wIdx + 4, waveLen - 1);
-        var sample2 = (waveData[wIdx2] - 128) / 128;
-        var sampleDelta = sample2 - sample; // rising or falling
-
-        // Spiral geometry
-        var angle = t * Math.PI * coils * dir + spiralRot;
-        var baseR = zt * maxR * reach;
-
-        // Audio shapes the radius — not just wobble, the waveform IS the shape
-        var audioR = baseR * (1 + sample * 0.3);
-        // Rising audio = reach outward, falling = pull in
-        audioR += sampleDelta * baseR * 0.4;
-        // Breath modulates everything
-        audioR *= (0.9 + breath * 0.1);
-
-        var px = spiralCx + Math.cos(angle) * audioR;
-        var py = spiralCy + Math.sin(angle) * audioR * 0.8;
-
-        trunkPath.push({
-          x: px, y: py, t: t, angle: angle, r: audioR,
-          sample: sample, delta: sampleDelta
-        });
-      }
-
-      // Draw main trunk — thicker when energy is high
-      ctx.beginPath();
-      ctx.moveTo(trunkPath[0].x, trunkPath[0].y);
-      for (var ti = 1; ti < trunkPath.length; ti++) {
-        ctx.lineTo(trunkPath[ti].x, trunkPath[ti].y);
-      }
-      var trunkAlpha = 0.2 + normEnergy * 0.45 + (sp === 0 ? bass : mid) * 0.15;
-      ctx.strokeStyle = rgba(spiralCols[sp], trunkAlpha);
-      ctx.lineWidth = 0.8 + normEnergy * 2 + bass;
-      ctx.stroke();
-
-      // Glow on trunk during high energy
-      if (normEnergy > 0.4) {
-        ctx.strokeStyle = rgba(spiralCols[sp], (normEnergy - 0.4) * 0.15);
-        ctx.lineWidth = 3 + normEnergy * 4;
-        ctx.stroke();
-      }
-
-      // ── Branches — grow during energy, retract during quiet ──
-      // Branch density follows the story
-      for (var ti = 3; ti < trunkPath.length; ti++) {
-        var bp = trunkPath[ti];
-
-        // Branches grow where the waveform has amplitude
-        var branchDrive = Math.abs(bp.sample) * normEnergy;
-        // Rising sections = more branches (crescendo = growth)
-        branchDrive += Math.max(0, bp.delta) * 2;
-        // Tension builds = sparse but long branches (reaching)
-        // Energy = dense short branches (flowering)
-        var branchChance = branchDrive * 0.4 + (ti % 3 === 0 ? 0.05 : 0);
-        if (Math.random() > branchChance) continue;
-
-        // Branch direction influenced by waveform direction
-        var branchAngle = bp.angle + bp.sample * 1.8 + (Math.random() - 0.5) * 1.2;
-        // Length: tension = long reaching, energy = short bushy
-        var branchLen = tension > 0.5
-          ? (10 + bp.t * maxR * 0.2 * tension)
-          : (5 + bp.t * maxR * 0.1 * normEnergy);
-        var branchSegs = 2 + Math.floor(Math.random() * 3) + Math.floor(normEnergy * 2);
-        var bbx = bp.x, bby = bp.y;
-
+    // ═══ LAYER 1: RADIAL FREQUENCY BARS — the foundation ═══
+    ctx.save();
+    ctx.translate(cx, cy);
+    for (var sym = 0; sym < symCount; sym++) {
+      ctx.save();
+      ctx.rotate(sym * symAngle + visTime * 0.15);
+      for (var i = 0; i < bufferLength; i++) {
+        var fv = freqData[i] / 255;
+        if (fv < 0.05) continue;
+        var angle = (i / bufferLength) * symAngle * 0.9;
+        var innerR = maxR * 0.15;
+        var outerR = innerR + fv * maxR * 0.8;
+        var x1 = Math.cos(angle) * innerR;
+        var y1 = Math.sin(angle) * innerR;
+        var x2 = Math.cos(angle) * outerR;
+        var y2 = Math.sin(angle) * outerR;
+        var barAlpha = 0.3 + fv * 0.5;
+        ctx.strokeStyle = lerpColorA(colA, colB, (i / bufferLength + palBlend) % 1, barAlpha);
+        ctx.lineWidth = 1.5 + fv * 3;
         ctx.beginPath();
-        ctx.moveTo(bbx, bby);
-        for (var bs = 0; bs < branchSegs; bs++) {
-          var segLen = branchLen / branchSegs;
-          // Branches curve toward high-energy direction
-          branchAngle += bp.delta * 0.5 + (Math.random() - 0.5) * 0.6;
-          bbx += Math.cos(branchAngle) * segLen;
-          bby += Math.sin(branchAngle) * segLen * 0.8;
-          ctx.lineTo(bbx, bby);
-
-          // Sub-branches during high energy — flowering
-          if (normEnergy > 0.3 && Math.random() < 0.25 + normEnergy * 0.2) {
-            var subAngle = branchAngle + (Math.random() - 0.5) * 2.2;
-            var subLen = segLen * (0.25 + Math.random() * 0.4);
-            var subSegs = 1 + Math.floor(Math.random() * 2);
-            var sbx = bbx, sby = bby;
-            ctx.moveTo(sbx, sby);
-            for (var ss = 0; ss < subSegs; ss++) {
-              subAngle += (Math.random() - 0.5) * 0.7;
-              sbx += Math.cos(subAngle) * subLen;
-              sby += Math.sin(subAngle) * subLen * 0.8;
-              ctx.lineTo(sbx, sby);
-            }
-            ctx.moveTo(bbx, bby);
-          }
-        }
-        var branchAlpha = 0.1 + normEnergy * 0.25 + Math.abs(bp.sample) * 0.1;
-        ctx.strokeStyle = rgba(spiralCols[sp], branchAlpha);
-        ctx.lineWidth = 0.3 + normEnergy * 0.6;
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
         ctx.stroke();
-      }
-    }
-
-    // ── Connection between the two spirals — visible during quiet/tension ──
-    if (tension > 0.3) {
-      var connAlpha = (tension - 0.3) * 0.4;
-      ctx.beginPath();
-      ctx.moveTo(centers[0].x, centers[0].y);
-      // Curved connection, not straight
-      var midX = cx + Math.sin(storyTime) * 10;
-      var midY = cy + Math.cos(storyTime * 0.7) * 8;
-      ctx.quadraticCurveTo(midX, midY, centers[1].x, centers[1].y);
-      ctx.strokeStyle = rgba(COL_GLOW, connAlpha);
-      ctx.lineWidth = 0.5 + tension;
-      ctx.stroke();
-    }
-
-    // ═══ LIGHTNING — slow, branching, fills the space ═══
-    // Use seeded positions that drift slowly instead of random each frame
-    var boltCount = 5 + Math.floor(bass * 6 + high * 3);
-    for (var bi = 0; bi < boltCount; bi++) {
-      // Slow rotating base angles — not random, drifts
-      var boltAngle = (bi / boltCount) * Math.PI * 2 + visTime * 0.2;
-      boltAngle += Math.sin(visTime * 0.4 + bi * 1.7) * 0.6;
-      var boltLen = maxR * (0.55 + total * 0.4);
-
-      // Seeded pseudo-random per bolt — stable between frames, drifts with time
-      var seed = bi * 7919 + Math.floor(visTime * 2);
-
-      function seededRand(s) {
-        s = ((s + seed) * 9301 + 49297) % 233280;
-        return s / 233280;
-      }
-
-      var segments = 18 + Math.floor(bass * 8);
-      var bx = cx, by = cy;
-
-      // Recursive bolt drawing function
-      function drawBolt(startX, startY, angle, len, segs, depth, colIdx) {
-        if (depth > 4 || segs < 2 || len < 3) return;
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-        var bpx = startX, bpy = startY;
-
-        for (var bs = 0; bs < segs; bs++) {
-          var segLen = len / segs;
-          var progress = bs / segs;
-          // Gentle drift, not sharp — slower movement
-          var drift = Math.sin(visTime * 0.8 + bi * 3 + bs * 0.7 + depth) * (0.3 + progress * 0.5);
-          drift += Math.cos(visTime * 0.5 + bs * 1.3 + bi) * 0.2;
-          var segAngle = angle + drift;
-          bpx += Math.cos(segAngle) * segLen;
-          bpy += Math.sin(segAngle) * segLen * 0.8;
-          ctx.lineTo(bpx, bpy);
-
-          // Branch points — heavily branched tree structure
-          var branchChance = 0.2 + progress * 0.35 + bass * 0.1;
-          var branchRoll = seededRand(bs * 13 + depth * 47 + Math.floor(visTime * 1.5));
-          if (branchRoll < branchChance) {
-            var branchDir = (seededRand(bs * 31 + depth * 19) - 0.5) * 2.5;
-            var branchAngle = segAngle + branchDir;
-            var branchLen = len * (0.3 + seededRand(bs * 23 + depth * 7) * 0.3) * (1 - progress * 0.5);
-            var branchSegs = Math.max(2, Math.floor(segs * 0.4));
-            // Draw the branch recursively
-            drawBolt(bpx, bpy, branchAngle, branchLen, branchSegs, depth + 1, colIdx);
-          }
-
-          // Second branch chance for dense forking
-          if (progress > 0.4 && seededRand(bs * 41 + depth * 61 + Math.floor(visTime * 1.2)) < 0.15 + high * 0.15) {
-            var subDir = (seededRand(bs * 53 + depth * 37) - 0.5) * 3;
-            drawBolt(bpx, bpy, segAngle + subDir, len * 0.2, 3, depth + 2, colIdx);
-          }
-        }
-
-        var boltCol = PALETTE[colIdx % PALETTE.length];
-        var alphaBase = depth === 0 ? 0.4 : 0.25;
-        var boltAlpha = alphaBase + total * 0.35 - depth * 0.08;
-        var lineW = depth === 0 ? (1 + bass * 2) : (0.4 + bass * 0.8) / (depth * 0.7);
-        ctx.strokeStyle = rgba(boltCol, Math.max(0.05, Math.min(boltAlpha, 0.8)));
-        ctx.lineWidth = Math.max(0.3, lineW);
-        ctx.stroke();
-
-        // Glow on main bolts
-        if (depth === 0 && (bass > 0.2 || total > 0.25)) {
-          ctx.strokeStyle = rgba(boltCol, 0.04 + bass * 0.08);
-          ctx.lineWidth = 3 + bass * 4;
+        // Glow layer
+        if (fv > 0.4) {
+          ctx.strokeStyle = lerpColorA(colA, colB, (i / bufferLength + palBlend) % 1, fv * 0.15);
+          ctx.lineWidth = 4 + fv * 8;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
           ctx.stroke();
         }
       }
-
-      drawBolt(cx, cy, boltAngle, boltLen, segments, 0, bi);
+      ctx.restore();
     }
+    ctx.restore();
 
-    // ═══ STREAKING STARS ═══
-    var starCount = Math.floor(4 + total * 12);
-    for (var si = 0; si < starCount; si++) {
-      var sa = Math.random() * Math.PI * 2;
-      var sd = Math.random();
-      sd = sd * sd;
-      var sr = sd * maxR * 0.6;
-      var sx = cx + Math.cos(sa) * sr;
-      var sy = cy + Math.sin(sa) * sr * 0.8;
-      var streakLen = 1 + sd * (4 + bass * 6);
-      var dx = Math.cos(sa) * streakLen;
-      var dy = Math.sin(sa) * streakLen * 0.8;
-      var starCol = PALETTE[Math.floor(Math.random() * PALETTE.length)];
-      ctx.strokeStyle = rgba(starCol, 0.08 + sd * 0.3);
-      ctx.lineWidth = 0.5 + sd;
+    // ═══ LAYER 2: WAVEFORM RIBBON — thick, bold, kaleidoscoped ═══
+    var waveLen = waveData.length;
+    ctx.save();
+    ctx.translate(cx, cy);
+    for (var sym = 0; sym < symCount; sym++) {
+      ctx.save();
+      ctx.rotate(sym * symAngle + visTime * -0.08);
+      // Mirror every other
+      if (sym % 2 === 1) ctx.scale(1, -1);
+
       ctx.beginPath();
-      ctx.moveTo(sx, sy);
-      ctx.lineTo(sx + dx, sy + dy);
+      for (var wi = 0; wi < waveLen; wi += 2) {
+        var t = wi / waveLen;
+        var sample = (waveData[wi] - 128) / 128;
+        var angle = t * symAngle * 0.95;
+        var r = maxR * (0.2 + 0.6 * t) + sample * maxR * 0.25;
+        var x = Math.cos(angle) * r;
+        var y = Math.sin(angle) * r;
+        if (wi === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      var waveAlpha = 0.4 + sBass * 0.4;
+      ctx.strokeStyle = lerpColorA(colB, colA, palBlend, waveAlpha);
+      ctx.lineWidth = 2 + sBass * 3;
       ctx.stroke();
+      // Glow
+      ctx.strokeStyle = lerpColorA(colB, colA, palBlend, waveAlpha * 0.2);
+      ctx.lineWidth = 6 + sBass * 8;
+      ctx.stroke();
+
+      ctx.restore();
     }
+    ctx.restore();
+
+    // ═══ LAYER 3: SPINNING LISSAJOUS — the hypnotic center ═══
+    var lissA = 3 + Math.floor(sMid * 4);
+    var lissB = 2 + Math.floor(sHigh * 3);
+    var lissPhase = visTime * 0.7;
+    var lissR = maxR * (0.3 + sTotal * 0.35);
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(visTime * 0.05);
+    ctx.beginPath();
+    for (var li = 0; li <= 360; li++) {
+      var la = (li / 360) * Math.PI * 2;
+      // Read freq data to modulate the curve
+      var freqMod = freqData[li % bufferLength] / 255;
+      var lx = Math.sin(lissA * la + lissPhase) * lissR * (0.8 + freqMod * 0.4);
+      var ly = Math.sin(lissB * la + lissPhase * 1.3) * lissR * (0.8 + freqMod * 0.4);
+      if (li === 0) ctx.moveTo(lx, ly);
+      else ctx.lineTo(lx, ly);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = rgba(COL_GLOW, 0.35 + sTotal * 0.3);
+    ctx.lineWidth = 1.5 + sTotal * 2;
+    ctx.stroke();
+    ctx.strokeStyle = rgba(COL_GLOW, 0.06 + sTotal * 0.06);
+    ctx.lineWidth = 5 + sTotal * 10;
+    ctx.stroke();
+    ctx.restore();
+
+    // ═══ LAYER 4: BASS FLARE — bright burst on transients ═══
+    if (hit > 0.03) {
+      var flareR = maxR * hit * 8;
+      var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, flareR);
+      var flareCol = lerpColor(colA, colB, palBlend);
+      grad.addColorStop(0, rgba(flareCol, hit * 2));
+      grad.addColorStop(0.3, rgba(flareCol, hit * 0.5));
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    // ═══ LAYER 5: ORBITAL DOTS — particles that trace the symmetry ═══
+    var dotCount = 12 + Math.floor(sTotal * 20);
+    ctx.save();
+    ctx.translate(cx, cy);
+    for (var di = 0; di < dotCount; di++) {
+      var dPhase = visTime * (0.3 + di * 0.07) + di * 2.39996;
+      var dR = maxR * (0.2 + 0.7 * ((Math.sin(dPhase * 0.3) + 1) * 0.5));
+      dR += freqData[di % bufferLength] / 255 * maxR * 0.15;
+      var dAngle = dPhase + Math.sin(visTime * 0.2 + di) * 0.5;
+      var dx = Math.cos(dAngle) * dR;
+      var dy = Math.sin(dAngle) * dR;
+      var dotSize = 1 + (freqData[di % bufferLength] / 255) * 3 + sBass;
+      var dotCol = PALETTE[di % PALETTE.length];
+      ctx.fillStyle = rgba(dotCol, 0.4 + sTotal * 0.4);
+      ctx.beginPath();
+      ctx.arc(dx, dy, dotSize, 0, Math.PI * 2);
+      ctx.fill();
+      // Glow
+      if (dotSize > 2) {
+        ctx.fillStyle = rgba(dotCol, 0.08);
+        ctx.beginPath();
+        ctx.arc(dx, dy, dotSize * 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+
+    // ═══ LAYER 6: CENTER RING — breathing, pulsing ═══
+    var ringR = maxR * (0.14 + sBass * 0.08 + Math.sin(visTime * 0.5) * 0.02);
+    ctx.beginPath();
+    ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+    ctx.strokeStyle = rgba(COL_GOLD, 0.3 + sBass * 0.3);
+    ctx.lineWidth = 1.5 + sBass * 2;
+    ctx.stroke();
+    ctx.strokeStyle = rgba(COL_GOLD, 0.05 + sBass * 0.05);
+    ctx.lineWidth = 6 + sBass * 6;
+    ctx.stroke();
   }
 
   // Resize canvas on window resize

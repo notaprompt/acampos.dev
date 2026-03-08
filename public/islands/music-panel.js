@@ -919,59 +919,87 @@
       }
     }
 
-    // ═══ LAYER 3: TUNNEL EDGES — perspective lines selling depth ═══
-    // 4 corner edges (where walls meet ceiling/floor)
-    // Two bend control points — near and far — for S-curve edges
-    var cp1x = w / 2 + bendX1 * w * 0.4;
-    var cp1y = h / 2 + bendY1 * h * 0.3;
-    var cp2x = w / 2 + bendX2 * w * 0.45;
-    var cp2y = h / 2 + bendY2 * h * 0.35;
+    // ═══ LAYER 3: TUNNEL WALLS — four distinct surfaces with own curves ═══
+    // Each wall gets its own control points biased toward that wall,
+    // so left-wall lines curve left, right curves right, etc.
+    // This is what makes it read as a rectangular tunnel, not an X.
+    var midX = w / 2 + bendX1 * w * 0.25;
+    var midY = h / 2 + bendY1 * h * 0.2;
+    var wallDefs = [
+      // [label, edge start generator, cp bias x, cp bias y, color shift]
+      // Left wall — lines from left edge, control points biased left
+      { ex: 0, genY: true, cpBiasX: -0.2, cpBiasY: 0, colShift: 0 },
+      // Right wall — lines from right edge, biased right
+      { ex: w, genY: true, cpBiasX: 0.2, cpBiasY: 0, colShift: 0.25 },
+      // Ceiling — lines from top edge, biased up
+      { ey: 0, genX: true, cpBiasX: 0, cpBiasY: -0.15, colShift: 0.5 },
+      // Floor — lines from bottom edge, biased down
+      { ey: h, genX: true, cpBiasX: 0, cpBiasY: 0.15, colShift: 0.75 },
+    ];
+    var wallSeams = 5;
+    for (var wi = 0; wi < wallDefs.length; wi++) {
+      var wd = wallDefs[wi];
+      // Per-wall control points — global bend + wall bias
+      var wcp1x = midX + wd.cpBiasX * w + bendX2 * w * 0.15;
+      var wcp1y = midY + wd.cpBiasY * h + bendY2 * h * 0.12;
+      var wcp2x = (midX + vpx) / 2 + wd.cpBiasX * w * 0.5;
+      var wcp2y = (midY + vpy) / 2 + wd.cpBiasY * h * 0.4;
 
+      for (var si = 0; si < wallSeams; si++) {
+        var sfrac = (si + 0.5) / wallSeams;
+        var sfv = freqData[(wi * wallSeams + si + 8) % bufferLength] / 255;
+        var sAlpha = 0.06 + sfv * 0.18 + sTotal * 0.08;
+        var sColT = (sfrac * 0.3 + wd.colShift + palBlend) % 1;
+        ctx.strokeStyle = lerpColorA(colA, colB, sColT, sAlpha);
+        ctx.lineWidth = 0.5 + sfv * 1.5;
+
+        var startX, startY;
+        if (wd.genY) {
+          startX = wd.ex;
+          startY = h * sfrac;
+        } else {
+          startX = w * sfrac;
+          startY = wd.ey;
+        }
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.bezierCurveTo(wcp1x, wcp1y, wcp2x, wcp2y, vpx, vpy);
+        ctx.stroke();
+
+        // Glow on loud seams
+        if (sfv > 0.4) {
+          ctx.strokeStyle = lerpColorA(colA, colB, sColT, sfv * 0.05);
+          ctx.lineWidth = 3 + sfv * 4;
+          ctx.stroke();
+        }
+      }
+    }
+    // 4 corner edges — strongest lines, where walls meet
     var corners = [
       [0, 0], [w, 0], [w, h], [0, h]
     ];
+    var cornerCps = [
+      // TL: bias up-left, TR: up-right, BR: down-right, BL: down-left
+      [-0.15, -0.12], [0.15, -0.12], [0.15, 0.12], [-0.15, 0.12]
+    ];
     for (var ci = 0; ci < 4; ci++) {
       var cfv = freqData[(ci * 8) % bufferLength] / 255;
-      var cAlpha = 0.15 + cfv * 0.25 + sTotal * 0.1;
+      var cAlpha = 0.2 + cfv * 0.3 + sTotal * 0.1;
       ctx.strokeStyle = lerpColorA(colA, colB, (ci / 4 + palBlend) % 1, cAlpha);
-      ctx.lineWidth = 1 + cfv * 2;
+      ctx.lineWidth = 1.5 + cfv * 2.5;
+      var ccp1x = midX + cornerCps[ci][0] * w + bendX2 * w * 0.15;
+      var ccp1y = midY + cornerCps[ci][1] * h + bendY2 * h * 0.12;
+      var ccp2x = (midX + vpx) / 2 + cornerCps[ci][0] * w * 0.5;
+      var ccp2y = (midY + vpy) / 2 + cornerCps[ci][1] * h * 0.5;
       ctx.beginPath();
       ctx.moveTo(corners[ci][0], corners[ci][1]);
-      ctx.bezierCurveTo(cp2x, cp2y, cp1x, cp1y, vpx, vpy);
+      ctx.bezierCurveTo(ccp1x, ccp1y, ccp2x, ccp2y, vpx, vpy);
       ctx.stroke();
       if (cfv > 0.3) {
         ctx.strokeStyle = lerpColorA(colA, colB, (ci / 4 + palBlend) % 1, cfv * 0.06);
-        ctx.lineWidth = 4 + cfv * 5;
+        ctx.lineWidth = 5 + cfv * 6;
         ctx.stroke();
       }
-    }
-    // Wall seam lines — S-curved through both bend points
-    var seamCount = 6;
-    for (var si = 0; si < seamCount; si++) {
-      var sfrac = (si + 1) / (seamCount + 1);
-      var sfv = freqData[(si * 6 + 12) % bufferLength] / 255;
-      var sAlphaL = 0.04 + sfv * 0.12 + sTotal * 0.06;
-      ctx.strokeStyle = lerpColorA(colA, colB, (sfrac + palBlend) % 1, sAlphaL);
-      ctx.lineWidth = 0.5 + sfv * 1;
-      // Left wall seam
-      ctx.beginPath();
-      ctx.moveTo(0, h * sfrac);
-      ctx.bezierCurveTo(cp2x, cp2y, cp1x, cp1y, vpx, vpy);
-      ctx.stroke();
-      // Right wall seam
-      ctx.beginPath();
-      ctx.moveTo(w, h * sfrac);
-      ctx.bezierCurveTo(cp2x, cp2y, cp1x, cp1y, vpx, vpy);
-      ctx.stroke();
-      // Top/bottom seams
-      ctx.beginPath();
-      ctx.moveTo(w * sfrac, 0);
-      ctx.bezierCurveTo(cp2x, cp2y, cp1x, cp1y, vpx, vpy);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(w * sfrac, h);
-      ctx.bezierCurveTo(cp2x, cp2y, cp1x, cp1y, vpx, vpy);
-      ctx.stroke();
     }
 
     // ═══ LAYER 4: MIRROR FRAMES — rectangles on the "walls" ═══

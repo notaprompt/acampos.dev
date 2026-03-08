@@ -696,26 +696,24 @@
     prevMid = sMid;
     prevHigh = sHigh;
 
-    // Steering — mid drives smooth curves, high adds erratic dodges
-    steerAngle += midDelta * 8 + Math.sin(visTime * 0.7) * sMid * 0.15;
-    steerAngle += highDelta * 3;
+    // Steering — mid drives smooth arcs, like a figure skater leaning into turns
+    steerAngle += midDelta * 3 + Math.sin(visTime * 0.4) * sMid * 0.1;
 
     // Target velocity — follows a heading that the music steers
-    var steerSpeed = 0.02 + sMid * 0.04 + sHigh * 0.02;
+    var steerSpeed = 0.015 + sMid * 0.025;
     targetVelX += Math.cos(steerAngle) * steerSpeed;
     targetVelY += Math.sin(steerAngle) * steerSpeed;
 
-    // Bass hits = sharp direction changes
-    if (hit > 0.06) {
-      var sharpAngle = steerAngle + (Math.random() - 0.5) * 3;
-      targetVelX += Math.cos(sharpAngle) * hit * 2;
-      targetVelY += Math.sin(sharpAngle) * hit * 2;
+    // Bass hits = gentle nudge in current heading, not random kicks
+    if (hit > 0.08) {
+      targetVelX += Math.cos(steerAngle) * hit * 0.6;
+      targetVelY += Math.sin(steerAngle) * hit * 0.6;
       hitAccum += hit;
     }
 
-    // Damping — velocity decays so it curves instead of flying off
-    targetVelX *= 0.92;
-    targetVelY *= 0.92;
+    // Heavy damping — velocity bleeds off smoothly, long gliding curves
+    targetVelX *= 0.85;
+    targetVelY *= 0.85;
 
     // Move target
     targetX += targetVelX;
@@ -729,8 +727,8 @@
       targetY -= targetY / dist * pull;
     }
 
-    // Chase smoothing — VP follows target with lag (the "chasing" feel)
-    var chaseSpeed = 0.06 + sTotal * 0.04;
+    // Chase smoothing — VP glides after target with heavy lag
+    var chaseSpeed = 0.03 + sTotal * 0.02;
     chaseX += (targetX - chaseX) * chaseSpeed;
     chaseY += (targetY - chaseY) * chaseSpeed;
 

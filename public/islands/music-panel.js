@@ -890,31 +890,53 @@
       }
     }
 
-    // ═══ LAYER 3: CONVERGENCE LINES — diagonals to vanishing point ═══
-    var lineCount = 8;
-    for (var li = 0; li < lineCount; li++) {
-      var la = (li / lineCount) * Math.PI * 2 + visTime * 0.03;
-      // Start from screen edges
-      var edgeX = w / 2 + Math.cos(la) * w * 0.8;
-      var edgeY = h / 2 + Math.sin(la) * h * 0.8;
-
-      var freqIdx = (li * 4) % bufferLength;
-      var lfv = freqData[freqIdx] / 255;
-      var lineAlpha = 0.06 + lfv * 0.2 + sTotal * 0.1;
-
-      ctx.strokeStyle = lerpColorA(colA, colB, (li / lineCount + palBlend) % 1, lineAlpha);
-      ctx.lineWidth = 0.5 + lfv * 1.5;
+    // ═══ LAYER 3: TUNNEL EDGES — perspective lines selling depth ═══
+    // 4 corner edges (where walls meet ceiling/floor)
+    var corners = [
+      [0, 0], [w, 0], [w, h], [0, h]
+    ];
+    for (var ci = 0; ci < 4; ci++) {
+      var cfv = freqData[(ci * 8) % bufferLength] / 255;
+      var cAlpha = 0.15 + cfv * 0.25 + sTotal * 0.1;
+      ctx.strokeStyle = lerpColorA(colA, colB, (ci / 4 + palBlend) % 1, cAlpha);
+      ctx.lineWidth = 1 + cfv * 2;
       ctx.beginPath();
-      ctx.moveTo(edgeX, edgeY);
+      ctx.moveTo(corners[ci][0], corners[ci][1]);
       ctx.lineTo(vpx, vpy);
       ctx.stroke();
-
-      // Glow
-      if (lfv > 0.4) {
-        ctx.strokeStyle = lerpColorA(colA, colB, (li / lineCount + palBlend) % 1, lfv * 0.05);
-        ctx.lineWidth = 3 + lfv * 4;
+      if (cfv > 0.3) {
+        ctx.strokeStyle = lerpColorA(colA, colB, (ci / 4 + palBlend) % 1, cfv * 0.06);
+        ctx.lineWidth = 4 + cfv * 5;
         ctx.stroke();
       }
+    }
+    // Wall seam lines — horizontal edges along left/right walls converging to VP
+    var seamCount = 6;
+    for (var si = 0; si < seamCount; si++) {
+      var sfrac = (si + 1) / (seamCount + 1);
+      var sfv = freqData[(si * 6 + 12) % bufferLength] / 255;
+      var sAlphaL = 0.04 + sfv * 0.12 + sTotal * 0.06;
+      ctx.strokeStyle = lerpColorA(colA, colB, (sfrac + palBlend) % 1, sAlphaL);
+      ctx.lineWidth = 0.5 + sfv * 1;
+      // Left wall seam
+      ctx.beginPath();
+      ctx.moveTo(0, h * sfrac);
+      ctx.lineTo(vpx, vpy);
+      ctx.stroke();
+      // Right wall seam
+      ctx.beginPath();
+      ctx.moveTo(w, h * sfrac);
+      ctx.lineTo(vpx, vpy);
+      ctx.stroke();
+      // Top/bottom seams
+      ctx.beginPath();
+      ctx.moveTo(w * sfrac, 0);
+      ctx.lineTo(vpx, vpy);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(w * sfrac, h);
+      ctx.lineTo(vpx, vpy);
+      ctx.stroke();
     }
 
     // ═══ LAYER 4: MIRROR FRAMES — rectangles on the "walls" ═══

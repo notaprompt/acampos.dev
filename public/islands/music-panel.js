@@ -641,6 +641,17 @@
   var prevBass = 0;
   // Hall forward motion accumulator
   var hallZ = 0;
+  // Chase target — what you're following through the void
+  var targetX = 0, targetY = 0;       // target position (normalized -1 to 1)
+  var chaseX = 0, chaseY = 0;         // current smoothed VP position
+  var targetVelX = 0, targetVelY = 0; // target velocity for smooth curves
+  var steerAngle = 0;                 // current heading
+  var flipAngle = 0;                  // rotation for flips (radians)
+  var flipVel = 0;                    // angular velocity during flip
+  var flipCooldown = 0;               // frames until next flip allowed
+  var reverseTimer = 0;               // frames of reverse motion remaining
+  var prevMid = 0, prevHigh = 0;      // for mid/high transient detection
+  var hitAccum = 0;                   // accumulates hits for flip trigger
 
   function drawVisualizer() {
     animId = requestAnimationFrame(drawVisualizer);
@@ -678,11 +689,81 @@
     var hit = Math.max(0, sBass - prevBass);
     prevBass = sBass;
 
-    // ── Feedback zoom — falling forward into the void ──
+    // ── Chase target movement system ──
+    // Mid frequencies steer smoothly, highs add jitter
+    var midDelta = sMid - prevMid;
+    var highDelta = sHigh - prevHigh;
+    prevMid = sMid;
+    prevHigh = sHigh;
+
+    // Steering — mid drives smooth curves, high adds erratic dodges
+    steerAngle += midDelta * 8 + Math.sin(visTime * 0.7) * sMid * 0.15;
+    steerAngle += highDelta * 3;
+
+    // Target velocity — follows a heading that the music steers
+    var steerSpeed = 0.02 + sMid * 0.04 + sHigh * 0.02;
+    targetVelX += Math.cos(steerAngle) * steerSpeed;
+    targetVelY += Math.sin(steerAngle) * steerSpeed;
+
+    // Bass hits = sharp direction changes
+    if (hit > 0.06) {
+      var sharpAngle = steerAngle + (Math.random() - 0.5) * 3;
+      targetVelX += Math.cos(sharpAngle) * hit * 2;
+      targetVelY += Math.sin(sharpAngle) * hit * 2;
+      hitAccum += hit;
+    }
+
+    // Damping — velocity decays so it curves instead of flying off
+    targetVelX *= 0.92;
+    targetVelY *= 0.92;
+
+    // Move target
+    targetX += targetVelX;
+    targetY += targetVelY;
+
+    // Soft bounds — pull back toward center when far out, rubber band feel
+    var dist = Math.sqrt(targetX * targetX + targetY * targetY);
+    if (dist > 0.6) {
+      var pull = (dist - 0.6) * 0.08;
+      targetX -= targetX / dist * pull;
+      targetY -= targetY / dist * pull;
+    }
+
+    // Chase smoothing — VP follows target with lag (the "chasing" feel)
+    var chaseSpeed = 0.06 + sTotal * 0.04;
+    chaseX += (targetX - chaseX) * chaseSpeed;
+    chaseY += (targetY - chaseY) * chaseSpeed;
+
+    // ── Flip system — rare, triggered by accumulated bass energy ──
+    if (flipCooldown > 0) flipCooldown--;
+    if (hitAccum > 0.8 && flipCooldown <= 0 && Math.random() < 0.3) {
+      // Trigger flip — full rotation
+      flipVel = (Math.random() < 0.5 ? 1 : -1) * (0.15 + Math.random() * 0.1);
+      flipCooldown = 180; // ~3 seconds before another flip
+      hitAccum = 0;
+    }
+    // Decay hit accumulator slowly
+    hitAccum *= 0.98;
+
+    // Flip animation — angular velocity decays
+    flipAngle += flipVel;
+    flipVel *= 0.96;
+    if (Math.abs(flipVel) < 0.003) flipVel = 0;
+
+    // ── Reverse system — occasional backward pull ──
+    if (hit > 0.1 && reverseTimer <= 0 && Math.random() < 0.08) {
+      reverseTimer = 30 + Math.floor(Math.random() * 30); // 0.5-1 sec reverse
+    }
+    if (reverseTimer > 0) reverseTimer--;
+    var forwardDir = reverseTimer > 0 ? -0.6 : 1;
+
+    // ── Feedback zoom — falling forward (or backward) into the void ──
     var feedbackZoom = 1.006 + sBass * 0.008 + hit * 0.02;
+    if (reverseTimer > 0) feedbackZoom = 1 / (1.006 + sBass * 0.005); // zoom out = reverse
     ctx.save();
     ctx.globalAlpha = 0.94 - sTotal * 0.04;
     ctx.translate(w / 2, h / 2);
+    ctx.rotate(flipAngle * 0.3); // subtle canvas tilt during flips
     ctx.scale(feedbackZoom, feedbackZoom);
     ctx.translate(-w / 2, -h / 2);
     ctx.drawImage(canvas, 0, 0);
@@ -692,8 +773,8 @@
 
     visTime += 0.016;
 
-    // Forward motion — speed driven by bass
-    hallZ += 0.008 + sBass * 0.025 + hit * 0.15;
+    // Forward motion — speed driven by bass, reversed during reverse
+    hallZ += (0.008 + sBass * 0.025 + hit * 0.15) * forwardDir;
 
     // Palette
     palBlend += 0.003 + sTotal * 0.002;
@@ -701,9 +782,9 @@
     var colA = PALETTE[palIdx];
     var colB = PALETTE[(palIdx + 1) % PALETTE.length];
 
-    // Vanishing point — drifts slowly with mid frequencies
-    var vpx = w / 2 + Math.sin(visTime * 0.13) * w * 0.06;
-    var vpy = h / 2 + Math.cos(visTime * 0.09) * h * 0.04;
+    // Vanishing point — driven by the chase system
+    var vpx = w / 2 + chaseX * w * 0.35;
+    var vpy = h / 2 + chaseY * h * 0.3;
 
     // ═══ LAYER 1: INFINITE HALL — receding rectangles ═══
     var rectCount = 24;

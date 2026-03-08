@@ -636,6 +636,301 @@
     return 'rgba(' + r + ',' + g + ',' + bl + ',' + alpha + ')';
   }
 
+  // ═══ WALL ARCHITECTURE — objects that fly past on tunnel walls ═══
+  // Each draw function: (ctx, cx, cy, s, col, alpha) where s = scale
+  var wallObjTypes = {
+    // ── DOORS (5 variants) ──
+    door_panel: function(ctx, cx, cy, s, col, a) {
+      // 1800s six-panel door
+      var dw = 18*s, dh = 36*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      ctx.strokeRect(cx-dw/2, cy-dh/2, dw, dh);
+      // panels (3 rows of 2)
+      var pw = dw*0.35, ph = dh*0.25, gap = dw*0.06;
+      for (var pr=0;pr<3;pr++) {
+        var py = cy - dh/2 + dh*0.1 + pr*(ph+gap*1.5);
+        ctx.strokeRect(cx-dw/2+gap, py, pw, ph);
+        ctx.strokeRect(cx+dw/2-gap-pw, py, pw, ph);
+      }
+      // knob
+      ctx.beginPath();
+      ctx.arc(cx+dw*0.3, cy+dh*0.05, 1.5*s, 0, Math.PI*2);
+      ctx.stroke();
+    },
+    door_french: function(ctx, cx, cy, s, col, a) {
+      // French double doors with glass panes
+      var dw = 28*s, dh = 36*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      ctx.strokeRect(cx-dw/2, cy-dh/2, dw, dh);
+      // center divide
+      ctx.beginPath(); ctx.moveTo(cx, cy-dh/2); ctx.lineTo(cx, cy+dh/2); ctx.stroke();
+      // glass panes (4 per side)
+      var pw = dw*0.38, ph = dh*0.18;
+      for (var side=-1;side<=1;side+=2) {
+        for (var pr=0;pr<4;pr++) {
+          var px = cx + side*(dw*0.01 + pw/2);
+          var py = cy - dh/2 + dh*0.08 + pr*(ph+dh*0.04);
+          ctx.strokeRect(px-pw/2, py, pw, ph);
+        }
+      }
+    },
+    door_saloon: function(ctx, cx, cy, s, col, a) {
+      // Saloon swinging half-doors
+      var dw = 26*s, dh = 20*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      // frame top
+      ctx.beginPath(); ctx.moveTo(cx-dw/2, cy-dh/2); ctx.lineTo(cx+dw/2, cy-dh/2); ctx.stroke();
+      // left door
+      ctx.strokeRect(cx-dw/2, cy-dh/2, dw*0.46, dh);
+      // right door
+      ctx.strokeRect(cx+dw*0.04, cy-dh/2, dw*0.46, dh);
+      // louvers
+      for (var li=1;li<4;li++) {
+        var ly = cy - dh/2 + li*dh*0.25;
+        ctx.beginPath(); ctx.moveTo(cx-dw/2+2*s, ly); ctx.lineTo(cx-dw*0.04-2*s, ly); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx+dw*0.04+2*s, ly); ctx.lineTo(cx+dw/2-2*s, ly); ctx.stroke();
+      }
+    },
+    door_front: function(ctx, cx, cy, s, col, a) {
+      // Front door with transom window
+      var dw = 20*s, dh = 38*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      ctx.strokeRect(cx-dw/2, cy-dh/2, dw, dh);
+      // transom
+      ctx.beginPath(); ctx.moveTo(cx-dw/2, cy-dh/2+dh*0.2); ctx.lineTo(cx+dw/2, cy-dh/2+dh*0.2); ctx.stroke();
+      // arch in transom
+      ctx.beginPath(); ctx.arc(cx, cy-dh/2+dh*0.2, dw*0.35, Math.PI, 0); ctx.stroke();
+      // knob
+      ctx.beginPath(); ctx.arc(cx+dw*0.28, cy+dh*0.1, 1.5*s, 0, Math.PI*2); ctx.stroke();
+    },
+    door_garage: function(ctx, cx, cy, s, col, a) {
+      // Garage door with horizontal sections
+      var dw = 40*s, dh = 30*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      ctx.strokeRect(cx-dw/2, cy-dh/2, dw, dh);
+      for (var gi=1;gi<5;gi++) {
+        var gy = cy - dh/2 + gi*dh/5;
+        ctx.beginPath(); ctx.moveTo(cx-dw/2, gy); ctx.lineTo(cx+dw/2, gy); ctx.stroke();
+      }
+      // small windows in top section
+      for (var wi=0;wi<3;wi++) {
+        ctx.strokeRect(cx - dw*0.3 + wi*dw*0.22, cy-dh/2+dh*0.04, dw*0.16, dh/5-dh*0.08);
+      }
+    },
+    // ── WINDOWS (5 variants) ──
+    win_arched: function(ctx, cx, cy, s, col, a) {
+      var ww = 14*s, wh = 22*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      ctx.beginPath();
+      ctx.moveTo(cx-ww/2, cy+wh/2);
+      ctx.lineTo(cx-ww/2, cy-wh*0.1);
+      ctx.arc(cx, cy-wh*0.1, ww/2, Math.PI, 0);
+      ctx.lineTo(cx+ww/2, cy+wh/2);
+      ctx.closePath(); ctx.stroke();
+      // sill
+      ctx.beginPath(); ctx.moveTo(cx-ww*0.6, cy+wh/2); ctx.lineTo(cx+ww*0.6, cy+wh/2); ctx.stroke();
+      // center mullion
+      ctx.beginPath(); ctx.moveTo(cx, cy-wh*0.1-ww/2); ctx.lineTo(cx, cy+wh/2); ctx.stroke();
+    },
+    win_double: function(ctx, cx, cy, s, col, a) {
+      // Double-hung window
+      var ww = 14*s, wh = 20*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      ctx.strokeRect(cx-ww/2, cy-wh/2, ww, wh);
+      // horizontal divide
+      ctx.beginPath(); ctx.moveTo(cx-ww/2, cy); ctx.lineTo(cx+ww/2, cy); ctx.stroke();
+      // sill
+      ctx.beginPath(); ctx.moveTo(cx-ww*0.6, cy+wh/2); ctx.lineTo(cx+ww*0.6, cy+wh/2); ctx.stroke();
+    },
+    win_round: function(ctx, cx, cy, s, col, a) {
+      // Porthole / round window
+      var r = 9*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+      // cross
+      ctx.beginPath(); ctx.moveTo(cx-r, cy); ctx.lineTo(cx+r, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy-r); ctx.lineTo(cx, cy+r); ctx.stroke();
+    },
+    win_gothic: function(ctx, cx, cy, s, col, a) {
+      // Gothic pointed arch window
+      var ww = 12*s, wh = 28*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      ctx.beginPath();
+      ctx.moveTo(cx-ww/2, cy+wh/2);
+      ctx.lineTo(cx-ww/2, cy-wh*0.15);
+      ctx.quadraticCurveTo(cx-ww/2, cy-wh/2, cx, cy-wh/2);
+      ctx.quadraticCurveTo(cx+ww/2, cy-wh/2, cx+ww/2, cy-wh*0.15);
+      ctx.lineTo(cx+ww/2, cy+wh/2);
+      ctx.closePath(); ctx.stroke();
+      // inner tracery
+      ctx.beginPath(); ctx.moveTo(cx, cy-wh/2); ctx.lineTo(cx, cy+wh/2); ctx.stroke();
+    },
+    win_bay: function(ctx, cx, cy, s, col, a) {
+      // Bay window — 3 angled panes
+      var ww = 22*s, wh = 16*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      // center pane
+      ctx.strokeRect(cx-ww*0.22, cy-wh/2, ww*0.44, wh);
+      // left angled
+      ctx.beginPath();
+      ctx.moveTo(cx-ww*0.22, cy-wh/2); ctx.lineTo(cx-ww/2, cy-wh*0.3);
+      ctx.lineTo(cx-ww/2, cy+wh*0.3); ctx.lineTo(cx-ww*0.22, cy+wh/2);
+      ctx.stroke();
+      // right angled
+      ctx.beginPath();
+      ctx.moveTo(cx+ww*0.22, cy-wh/2); ctx.lineTo(cx+ww/2, cy-wh*0.3);
+      ctx.lineTo(cx+ww/2, cy+wh*0.3); ctx.lineTo(cx+ww*0.22, cy+wh/2);
+      ctx.stroke();
+    },
+    // ── PICTURE FRAMES (5 variants) ──
+    frame_portrait: function(ctx, cx, cy, s, col, a) {
+      var fw = 10*s, fh = 14*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s*0.8);
+      ctx.strokeRect(cx-fw/2, cy-fh/2, fw, fh);
+      ctx.strokeRect(cx-fw/2+2*s, cy-fh/2+2*s, fw-4*s, fh-4*s);
+    },
+    frame_landscape: function(ctx, cx, cy, s, col, a) {
+      var fw = 18*s, fh = 11*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s*0.8);
+      ctx.strokeRect(cx-fw/2, cy-fh/2, fw, fh);
+      // inner mat
+      ctx.strokeRect(cx-fw/2+2*s, cy-fh/2+2*s, fw-4*s, fh-4*s);
+    },
+    frame_oval: function(ctx, cx, cy, s, col, a) {
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s*0.8);
+      ctx.beginPath(); ctx.ellipse(cx, cy, 8*s, 11*s, 0, 0, Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(cx, cy, 6*s, 9*s, 0, 0, Math.PI*2); ctx.stroke();
+    },
+    frame_ornate: function(ctx, cx, cy, s, col, a) {
+      var fw = 14*s, fh = 14*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s*0.8);
+      ctx.strokeRect(cx-fw/2, cy-fh/2, fw, fh);
+      // corner ornaments
+      var co = 3*s;
+      for (var ccx=-1;ccx<=1;ccx+=2) for (var ccy=-1;ccy<=1;ccy+=2) {
+        ctx.beginPath();
+        ctx.moveTo(cx+ccx*fw/2, cy+ccy*(fh/2-co));
+        ctx.quadraticCurveTo(cx+ccx*(fw/2-co*0.3), cy+ccy*(fh/2-co*0.3), cx+ccx*(fw/2-co), cy+ccy*fh/2);
+        ctx.stroke();
+      }
+    },
+    frame_triptych: function(ctx, cx, cy, s, col, a) {
+      var fw = 22*s, fh = 10*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s*0.8);
+      // three frames
+      ctx.strokeRect(cx-fw/2, cy-fh/2, fw*0.3, fh);
+      ctx.strokeRect(cx-fw*0.13, cy-fh/2, fw*0.3, fh);
+      ctx.strokeRect(cx+fw*0.2, cy-fh/2, fw*0.3, fh);
+    },
+    // ── SHELVES (5 variants) ──
+    shelf_books: function(ctx, cx, cy, s, col, a) {
+      var sw = 20*s, sh = 3*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s*0.8);
+      // shelf plank
+      ctx.beginPath(); ctx.moveTo(cx-sw/2, cy); ctx.lineTo(cx+sw/2, cy); ctx.stroke();
+      // brackets
+      ctx.beginPath(); ctx.moveTo(cx-sw*0.35, cy); ctx.lineTo(cx-sw*0.35, cy+4*s); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx+sw*0.35, cy); ctx.lineTo(cx+sw*0.35, cy+4*s); ctx.stroke();
+      // books
+      for (var bi=0;bi<5;bi++) {
+        var bx = cx - sw*0.35 + bi*sw*0.15;
+        var bh = (3+bi%3)*s;
+        ctx.strokeRect(bx, cy-bh, sw*0.1, bh);
+      }
+    },
+    shelf_display: function(ctx, cx, cy, s, col, a) {
+      var sw = 16*s, sh = 20*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s*0.8);
+      ctx.strokeRect(cx-sw/2, cy-sh/2, sw, sh);
+      // 3 shelves
+      for (var si=1;si<4;si++) {
+        var sy = cy - sh/2 + si*sh/4;
+        ctx.beginPath(); ctx.moveTo(cx-sw/2, sy); ctx.lineTo(cx+sw/2, sy); ctx.stroke();
+      }
+    },
+    shelf_floating: function(ctx, cx, cy, s, col, a) {
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      // two floating shelves
+      ctx.beginPath(); ctx.moveTo(cx-10*s, cy-4*s); ctx.lineTo(cx+10*s, cy-4*s); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-8*s, cy+4*s); ctx.lineTo(cx+12*s, cy+4*s); ctx.stroke();
+      // small item on each
+      ctx.strokeRect(cx-2*s, cy-4*s-5*s, 4*s, 5*s);
+      ctx.beginPath(); ctx.arc(cx+4*s, cy+4*s-3*s, 2*s, 0, Math.PI*2); ctx.stroke();
+    },
+    shelf_mantle: function(ctx, cx, cy, s, col, a) {
+      // Fireplace mantle
+      var mw = 26*s, mh = 22*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s);
+      // mantle shelf
+      ctx.beginPath(); ctx.moveTo(cx-mw/2, cy-mh*0.3); ctx.lineTo(cx+mw/2, cy-mh*0.3); ctx.stroke();
+      // opening
+      ctx.beginPath();
+      ctx.moveTo(cx-mw*0.3, cy-mh*0.3);
+      ctx.lineTo(cx-mw*0.3, cy+mh/2);
+      ctx.lineTo(cx+mw*0.3, cy+mh/2);
+      ctx.lineTo(cx+mw*0.3, cy-mh*0.3);
+      ctx.stroke();
+      // arch
+      ctx.beginPath(); ctx.arc(cx, cy-mh*0.3, mw*0.3, Math.PI, 0); ctx.stroke();
+    },
+    shelf_clock: function(ctx, cx, cy, s, col, a) {
+      // Wall clock
+      var r = 8*s;
+      ctx.strokeStyle = 'rgba('+col+','+a+')';
+      ctx.lineWidth = Math.max(0.5, s*0.8);
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+      // hour marks
+      for (var hi=0;hi<12;hi++) {
+        var ha = hi*Math.PI/6;
+        ctx.beginPath();
+        ctx.moveTo(cx+Math.cos(ha)*r*0.8, cy+Math.sin(ha)*r*0.8);
+        ctx.lineTo(cx+Math.cos(ha)*r*0.95, cy+Math.sin(ha)*r*0.95);
+        ctx.stroke();
+      }
+      // hands
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx+r*0.5, cy-r*0.2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx-r*0.1, cy-r*0.6); ctx.stroke();
+    }
+  };
+
+  // Build array of type keys for random selection
+  var wallObjKeys = Object.keys(wallObjTypes);
+
+  // Object pool — placed on walls at random depths
+  var wallObjects = [];
+  var wallObjCount = 18;
+  function initWallObj() {
+    return {
+      type: wallObjKeys[Math.floor(Math.random() * wallObjKeys.length)],
+      wall: Math.floor(Math.random() * 4), // 0=left, 1=right, 2=ceiling, 3=floor
+      pos: Math.random(),   // position along wall (0-1)
+      depth: Math.random(), // raw depth slot (0-1)
+      seed: Math.random()   // for per-object variation
+    };
+  }
+  for (var oi = 0; oi < wallObjCount; oi++) {
+    wallObjects.push(initWallObj());
+  }
+
   // Smoothed audio values
   var sBass = 0, sMid = 0, sHigh = 0, sTotal = 0;
   var prevBass = 0;
@@ -821,7 +1116,7 @@
     ];
     for (var ti = 0; ti < wallTraps.length; ti++) {
       var trap = wallTraps[ti];
-      ctx.fillStyle = 'rgba(5, 5, 8, 0.95)';
+      ctx.fillStyle = 'rgba(5, 5, 8, 0.15)';
       ctx.beginPath();
       for (var pi = 0; pi < trap.pts.length; pi++) {
         if (pi === 0) ctx.moveTo(trap.pts[pi][0], trap.pts[pi][1]);

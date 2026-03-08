@@ -808,9 +808,9 @@
     var colA = PALETTE[palIdx];
     var colB = PALETTE[(palIdx + 1) % PALETTE.length];
 
-    // Vanishing point — driven by the chase system
-    var vpx = w / 2 + chaseX * w * 0.15;
-    var vpy = h / 2 + chaseY * h * 0.12;
+    // Vanishing point — chase + lean into the bend (camera pans into the curve)
+    var vpx = w / 2 + chaseX * w * 0.15 + bendX1 * w * 0.06;
+    var vpy = h / 2 + chaseY * h * 0.12 + bendY1 * h * 0.05;
 
     // ═══ LAYER 1: INFINITE HALL — receding rectangles ═══
     var rectCount = 36;
@@ -923,28 +923,18 @@
     // The "far wall" is a small rectangle at the VP — lines from each screen
     // edge terminate at the corresponding edge of this rectangle, not all
     // at the same pixel. This is what makes it read as a hall, not an X.
-    var farW = 12 + sBass * 6;   // tiny — endpoints hidden by depth fog
-    var farH = 8 + sBass * 4;
     var midX = w / 2 + bendX1 * w * 0.25;
     var midY = h / 2 + bendY1 * h * 0.2;
 
-    // Far wall corners
-    var farTL = [vpx - farW, vpy - farH];
-    var farTR = [vpx + farW, vpy - farH];
-    var farBR = [vpx + farW, vpy + farH];
-    var farBL = [vpx - farW, vpy + farH];
-
-    // Far wall is invisible — the tunnel never ends, only darkness ahead
-
     var wallDefs = [
-      // Left wall: screen left edge → far wall left edge
-      { genY: true, ex: 0, farA: farTL, farB: farBL, cpBiasX: -0.2, cpBiasY: 0, colShift: 0 },
-      // Right wall: screen right edge → far wall right edge
-      { genY: true, ex: w, farA: farTR, farB: farBR, cpBiasX: 0.2, cpBiasY: 0, colShift: 0.25 },
-      // Ceiling: screen top edge → far wall top edge
-      { genX: true, ey: 0, farA: farTL, farB: farTR, cpBiasX: 0, cpBiasY: -0.15, colShift: 0.5 },
-      // Floor: screen bottom edge → far wall bottom edge
-      { genX: true, ey: h, farA: farBL, farB: farBR, cpBiasX: 0, cpBiasY: 0.15, colShift: 0.75 },
+      // Left wall — lines from left edge, control points biased left
+      { genY: true, ex: 0, cpBiasX: -0.2, cpBiasY: 0, colShift: 0 },
+      // Right wall
+      { genY: true, ex: w, cpBiasX: 0.2, cpBiasY: 0, colShift: 0.25 },
+      // Ceiling
+      { genX: true, ey: 0, cpBiasX: 0, cpBiasY: -0.15, colShift: 0.5 },
+      // Floor
+      { genX: true, ey: h, cpBiasX: 0, cpBiasY: 0.15, colShift: 0.75 },
     ];
     var wallSeams = 5;
     for (var wi = 0; wi < wallDefs.length; wi++) {
@@ -969,15 +959,13 @@
           startX = w * sfrac;
           startY = wd.ey;
         }
-        // End: interpolate along the far wall edge (not a single point)
-        var endX = wd.farA[0] + (wd.farB[0] - wd.farA[0]) * sfrac;
-        var endY = wd.farA[1] + (wd.farB[1] - wd.farA[1]) * sfrac;
-        var wcp2x = (wcp1x + endX) / 2 + wd.cpBiasX * w * 0.3;
-        var wcp2y = (wcp1y + endY) / 2 + wd.cpBiasY * h * 0.25;
+        // End: all lines vanish into VP (swallowed by depth fog)
+        var wcp2x = (wcp1x + vpx) / 2 + wd.cpBiasX * w * 0.3;
+        var wcp2y = (wcp1y + vpy) / 2 + wd.cpBiasY * h * 0.25;
 
         ctx.beginPath();
         ctx.moveTo(startX, startY);
-        ctx.bezierCurveTo(wcp1x, wcp1y, wcp2x, wcp2y, endX, endY);
+        ctx.bezierCurveTo(wcp1x, wcp1y, wcp2x, wcp2y, vpx, vpy);
         ctx.stroke();
 
         if (sfv > 0.4) {
@@ -987,9 +975,8 @@
         }
       }
     }
-    // 4 corner edges — screen corners to far-wall corners
+    // 4 corner edges — screen corners to VP (vanish into fog)
     var screenCorners = [[0, 0], [w, 0], [w, h], [0, h]];
-    var farCorners = [farTL, farTR, farBR, farBL];
     var cornerBias = [[-0.15, -0.12], [0.15, -0.12], [0.15, 0.12], [-0.15, 0.12]];
     for (var ci = 0; ci < 4; ci++) {
       var cfv = freqData[(ci * 8) % bufferLength] / 255;
@@ -998,11 +985,11 @@
       ctx.lineWidth = 1.5 + cfv * 2.5;
       var ccp1x = midX + cornerBias[ci][0] * w + bendX2 * w * 0.15;
       var ccp1y = midY + cornerBias[ci][1] * h + bendY2 * h * 0.12;
-      var ccp2x = (ccp1x + farCorners[ci][0]) / 2 + cornerBias[ci][0] * w * 0.3;
-      var ccp2y = (ccp1y + farCorners[ci][1]) / 2 + cornerBias[ci][1] * h * 0.3;
+      var ccp2x = (ccp1x + vpx) / 2 + cornerBias[ci][0] * w * 0.3;
+      var ccp2y = (ccp1y + vpy) / 2 + cornerBias[ci][1] * h * 0.3;
       ctx.beginPath();
       ctx.moveTo(screenCorners[ci][0], screenCorners[ci][1]);
-      ctx.bezierCurveTo(ccp1x, ccp1y, ccp2x, ccp2y, farCorners[ci][0], farCorners[ci][1]);
+      ctx.bezierCurveTo(ccp1x, ccp1y, ccp2x, ccp2y, vpx, vpy);
       ctx.stroke();
       if (cfv > 0.3) {
         ctx.strokeStyle = lerpColorA(colA, colB, (ci / 4 + palBlend) % 1, cfv * 0.06);
@@ -1015,14 +1002,14 @@
     // Each wall is a trapezoid from screen edge to far-wall edge, filled
     // with a gradient that darkens toward the VP (far = dark = depth).
     var wallTraps = [
-      // Left wall: TL screen → TL far, BL screen → BL far
-      { pts: [[0, 0], farTL, farBL, [0, h]], gradFrom: [0, h / 2], gradTo: [vpx, vpy], brightness: 0.06 },
+      // Left wall: screen TL → VP → screen BL (triangle to VP)
+      { pts: [[0, 0], [vpx, vpy], [0, h]], gradFrom: [0, h / 2], gradTo: [vpx, vpy], brightness: 0.06 },
       // Right wall
-      { pts: [[w, 0], farTR, farBR, [w, h]], gradFrom: [w, h / 2], gradTo: [vpx, vpy], brightness: 0.06 },
+      { pts: [[w, 0], [vpx, vpy], [w, h]], gradFrom: [w, h / 2], gradTo: [vpx, vpy], brightness: 0.06 },
       // Ceiling
-      { pts: [[0, 0], farTL, farTR, [w, 0]], gradFrom: [w / 2, 0], gradTo: [vpx, vpy], brightness: 0.08 },
+      { pts: [[0, 0], [vpx, vpy], [w, 0]], gradFrom: [w / 2, 0], gradTo: [vpx, vpy], brightness: 0.08 },
       // Floor
-      { pts: [[0, h], farBL, farBR, [w, h]], gradFrom: [w / 2, h], gradTo: [vpx, vpy], brightness: 0.05 },
+      { pts: [[0, h], [vpx, vpy], [w, h]], gradFrom: [w / 2, h], gradTo: [vpx, vpy], brightness: 0.05 },
     ];
     for (var ti = 0; ti < wallTraps.length; ti++) {
       var trap = wallTraps[ti];
@@ -1036,10 +1023,10 @@
       trapGrad.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = trapGrad;
       ctx.beginPath();
-      ctx.moveTo(trap.pts[0][0], trap.pts[0][1]);
-      ctx.lineTo(trap.pts[1][0], trap.pts[1][1]);
-      ctx.lineTo(trap.pts[2][0], trap.pts[2][1]);
-      ctx.lineTo(trap.pts[3][0], trap.pts[3][1]);
+      for (var pi = 0; pi < trap.pts.length; pi++) {
+        if (pi === 0) ctx.moveTo(trap.pts[pi][0], trap.pts[pi][1]);
+        else ctx.lineTo(trap.pts[pi][0], trap.pts[pi][1]);
+      }
       ctx.closePath();
       ctx.fill();
     }
@@ -1049,7 +1036,6 @@
     ctx.globalCompositeOperation = 'multiply';
     for (var ai = 0; ai < 4; ai++) {
       var sc = screenCorners[ai];
-      var fc = farCorners[ai];
       // Radial gradient along each corner edge — darkest at the seam
       var aoR = Math.max(w, h) * 0.25;
       var aoGrad = ctx.createRadialGradient(sc[0], sc[1], 0, sc[0], sc[1], aoR);
@@ -1064,18 +1050,17 @@
     // ═══ LAYER 3d: EDGE HIGHLIGHTS — thin bright lines at wall seams ═══
     for (var ei = 0; ei < 4; ei++) {
       var esc = screenCorners[ei];
-      var efc = farCorners[ei];
       var efv = freqData[(ei * 12) % bufferLength] / 255;
       // Bright thin line — specular rim catching light at each corner edge
       ctx.strokeStyle = 'rgba(255, 255, 255,' + (0.03 + efv * 0.06 + sTotal * 0.02) + ')';
       ctx.lineWidth = 0.5;
       var ecp1x = midX + cornerBias[ei][0] * w + bendX2 * w * 0.15;
       var ecp1y = midY + cornerBias[ei][1] * h + bendY2 * h * 0.12;
-      var ecp2x = (ecp1x + efc[0]) / 2 + cornerBias[ei][0] * w * 0.3;
-      var ecp2y = (ecp1y + efc[1]) / 2 + cornerBias[ei][1] * h * 0.3;
+      var ecp2x = (ecp1x + vpx) / 2 + cornerBias[ei][0] * w * 0.3;
+      var ecp2y = (ecp1y + vpy) / 2 + cornerBias[ei][1] * h * 0.3;
       ctx.beginPath();
       ctx.moveTo(esc[0], esc[1]);
-      ctx.bezierCurveTo(ecp1x, ecp1y, ecp2x, ecp2y, efc[0], efc[1]);
+      ctx.bezierCurveTo(ecp1x, ecp1y, ecp2x, ecp2y, vpx, vpy);
       ctx.stroke();
     }
 

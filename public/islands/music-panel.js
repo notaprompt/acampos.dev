@@ -1249,6 +1249,58 @@
       }
     }
 
+    // ═══ LAYER 2b: WALL ARCHITECTURE — doors, windows, frames, shelves ═══
+    for (var oi = 0; oi < wallObjCount; oi++) {
+      var obj = wallObjects[oi];
+      // Depth cycles like hall rects
+      var ozRaw = (obj.depth + hallZ * 0.9) % 1;
+      var oz = ozRaw * ozRaw * ozRaw;
+      if (oz < 0.01 || oz > 0.85) continue; // skip too far or too near
+
+      var oScale = oz;
+      var oParallax = oz * oz;
+      var oCx = vpx + (w / 2 - vpx) * oParallax;
+      var oCy = vpy + (h / 2 - vpy) * oParallax;
+      // S-curve bend like hall rects
+      var ob1 = Math.sin(oz * Math.PI * 1.2);
+      var ob2 = Math.sin((oz - 0.3) * Math.PI * 1.1);
+      oCx += (bendX1 * ob1 + bendX2 * ob2) * w * 0.25;
+      oCy += (bendY1 * ob1 + bendY2 * ob2) * h * 0.2;
+
+      // Position on wall surface
+      var halfW = w * oScale * 0.5;
+      var halfH = h * oScale * 0.5;
+      var objX, objY;
+      if (obj.wall === 0) {        // left wall
+        objX = oCx - halfW * (0.6 + obj.pos * 0.3);
+        objY = oCy + (obj.pos - 0.5) * halfH * 0.8;
+      } else if (obj.wall === 1) { // right wall
+        objX = oCx + halfW * (0.6 + obj.pos * 0.3);
+        objY = oCy + (obj.pos - 0.5) * halfH * 0.8;
+      } else if (obj.wall === 2) { // ceiling
+        objX = oCx + (obj.pos - 0.5) * halfW * 1.2;
+        objY = oCy - halfH * (0.5 + obj.pos * 0.2);
+      } else {                     // floor
+        objX = oCx + (obj.pos - 0.5) * halfW * 1.2;
+        objY = oCy + halfH * (0.5 + obj.pos * 0.2);
+      }
+
+      // Alpha fades with distance, brightens when near
+      var oAlpha = (0.12 + oz * 0.4) * (0.4 + sTotal * 0.2);
+      var oColT = (oz + palBlend + obj.seed) % 1;
+      var oCol = lerpColor(colA, colB, oColT);
+      var oRgb = parseInt(oCol.slice(1,3),16)+','+parseInt(oCol.slice(3,5),16)+','+parseInt(oCol.slice(5,7),16);
+
+      // Draw the object
+      wallObjTypes[obj.type](ctx, objX, objY, oScale, oRgb, oAlpha);
+
+      // Recycle when passed camera
+      if (ozRaw < 0.02) {
+        wallObjects[oi] = initWallObj();
+        wallObjects[oi].depth = 0.8 + Math.random() * 0.2;
+      }
+    }
+
     // ═══ LAYER 3b: WALL SEAM LINES — fade out before center (no X convergence) ═══
     var midX = w / 2 + bendX1 * w * 0.25;
     var midY = h / 2 + bendY1 * h * 0.2;

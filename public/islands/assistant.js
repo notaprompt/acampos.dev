@@ -768,7 +768,7 @@
       bubbleEl.style.opacity = '1';
       setTimeout(function () {
         bubbleEl.style.opacity = '0';
-      }, 7000);
+      }, 9000);
     }
 
     // ── Feature 3: Treat button handler ──
@@ -922,7 +922,7 @@
         if (interactionActive) return;
         if (bubbleEl.style.opacity === '1') return;
         showBubble(nextSpeech());
-      }, 11000);
+      }, 13000);
     }, 3000);
 
   }

@@ -624,8 +624,11 @@
   // ── Visualizer ────────────────────────────────────────────
   function resizeCanvas() {
     var wrap = canvas.parentElement;
-    canvas.width = wrap.clientWidth;
-    canvas.height = wrap.clientHeight || 400;
+    var w = wrap.clientWidth || panel.clientWidth || Math.round(window.innerWidth * 0.19);
+    var h = wrap.clientHeight || 400;
+    if (w < 10) w = Math.round(window.innerWidth * 0.19);
+    canvas.width = w;
+    canvas.height = h;
   }
 
   function startVisualizer() {

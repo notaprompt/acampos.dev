@@ -16,13 +16,13 @@
     { artist: 'Shigeo Sekito', title: 'the word II', url: '/audio/the-word-ii.mp3',
       profile: { hitThresh: 0.08, bendAmp: 1.0, steerSens: 1.0, midSnap: 1.0, flipThresh: 0.5, smoothing: 0.8 } },
     { artist: 'Aphex Twin', title: 'Avril 14th', url: '/audio/avril-14th.mp3',
-      profile: { hitThresh: 0.02, bendAmp: 1.8, steerSens: 2.5, midSnap: 4.0, flipThresh: 0.15, smoothing: 0.55 } },
+      profile: { hitThresh: 0.02, bendAmp: 1.8, steerSens: 2.5, midSnap: 4.0, flipThresh: 0.6, smoothing: 0.55 } },
     { artist: 'Brent Faiyaz', title: 'white noise.', url: '/audio/white-noise.mp3',
-      profile: { hitThresh: 0.03, bendAmp: 1.4, steerSens: 2.0, midSnap: 3.5, flipThresh: 0.2, smoothing: 0.6 } },
+      profile: { hitThresh: 0.03, bendAmp: 1.4, steerSens: 2.0, midSnap: 3.5, flipThresh: 0.6, smoothing: 0.6 } },
     { artist: 'Piero Piccioni', title: 'Easy Lovers', url: '/audio/easy-lovers.mp3',
-      profile: { hitThresh: 0.05, bendAmp: 1.2, steerSens: 1.5, midSnap: 2.5, flipThresh: 0.35, smoothing: 0.7 } },
+      profile: { hitThresh: 0.05, bendAmp: 1.2, steerSens: 1.5, midSnap: 2.5, flipThresh: 0.55, smoothing: 0.7 } },
     { artist: 'Maison Music', title: "l'histoire de ta vie", url: '/audio/lhistoire-de-ta-vie.mp3',
-      profile: { hitThresh: 0.03, bendAmp: 1.6, steerSens: 2.2, midSnap: 3.0, flipThresh: 0.2, smoothing: 0.6 } },
+      profile: { hitThresh: 0.03, bendAmp: 1.6, steerSens: 2.2, midSnap: 3.0, flipThresh: 0.6, smoothing: 0.6 } },
   ];
 
   // Active profile — defaults to The Word II
@@ -966,7 +966,7 @@
   var bendAngle1 = Math.random() * Math.PI * 2;
   var bendAngle2 = Math.random() * Math.PI * 2;
   var flipVel = 0;                    // angular velocity during flip
-  var flipCooldown = 0;               // frames until next flip allowed
+  var flipCooldown = 180;             // frames until next flip allowed (starts with 3s warmup)
   var reverseTimer = 0;               // frames of reverse motion remaining
   var prevMid = 0, prevHigh = 0;      // for mid/high transient detection
   var hitAccum = 0;                   // accumulates hits for flip trigger
@@ -1067,6 +1067,7 @@
 
     // Flip animation — carries momentum, decays into next movement
     flipAngle += flipVel;
+    flipAngle = ((flipAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2); // wrap 0-2π, no accumulation
     flipVel *= 0.94;
     if (Math.abs(flipVel) < 0.002) flipVel = 0;
 

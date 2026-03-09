@@ -405,6 +405,62 @@
     ],
   ];
 
+  // ── Feature 1: Page-specific quotes ─────────────────────────
+  var PAGE_SPEECH = {
+    '/projects': [
+      'oh we\'re looking at the projects. he has... a lot of projects. *pant*',
+      'this one\'s my favorite. wait no. that one. actually i don\'t understand any of them.',
+      'he builds things like i chew things. with full commitment and no exit strategy.',
+      'the projects page. where ambition goes to become real. sometimes.',
+    ],
+    '/about': [
+      'ah the about page. the part where you pretend you\'re one thing.',
+      'identity is a funny word for something that keeps changing.',
+      'he wrote this about himself. i would have written it differently. more bones.',
+      'you\'re reading about him. he\'s probably refactoring something right now.',
+    ],
+    '/writing': [
+      'he writes about what he builds. i write about nothing. we\'re both published.',
+      'words are tricky. they hold still on the page but they move inside you.',
+      'the writing page. where thoughts go when they\'re ready to leave the building.',
+    ],
+    '/links': [
+      'the influences list. big names. none of them had a dog though. just saying.',
+      'he reads a lot. i sniff a lot. same energy honestly.',
+      'hofstadter, jung, friston. none of these people would pet me.',
+    ],
+  };
+
+  // ── Feature 2: Time-specific quotes ─────────────────────────
+  var TIME_SPEECH = {
+    late: [
+      'it\'s late. the good ideas and the bad ones look the same at this hour.',
+      'the quiet hours. when the real work happens. or the real mistakes. hard to tell.',
+      'still here? me too. the rug doesn\'t have a bedtime.',
+      'the screen is the only light on. i find that poetic. also bright. too bright.',
+    ],
+    morning: [
+      '*yawn* ...oh you\'re here early. or late. i lost track.',
+      'morning light. everything feels possible before noon.',
+      'the coffee hasn\'t kicked in yet. i can tell. the typing is gentle.',
+    ],
+    afternoon: [
+      'afternoon. the gap between ambition and reality. also nap time.',
+      'the sun moved. i noticed. nobody else noticed. this is my role.',
+    ],
+  };
+
+  // ── Feature 7: Secret quotes (unlocked via easter egg) ──────
+  var SECRET_SPEECH = [
+    'the self is not the loop. the self is what\'s left when the loop stops. ...i think.',
+    'he built a system to watch himself watching himself. i just watch the rug.',
+    'the thing about patterns is they don\'t care if you see them. they\'re already there.',
+    'between the observation and the response there\'s a gap. everything important lives in that gap.',
+    'you can automate anything except the decision to stop automating.',
+    'the most honest thing in this room is the plant. it just grows toward light. no strategy.',
+    'he models everything. i model nothing. one of us sleeps better.',
+  ];
+
   // Build interleaved queue — round-robin across groups, shuffled within each
   function shuffle(arr) {
     for (var i = arr.length - 1; i > 0; i--) {
@@ -412,6 +468,47 @@
       var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
     }
     return arr;
+  }
+
+  // Insert items at random positions in an array
+  function mixIn(queue, items) {
+    for (var i = 0; i < items.length; i++) {
+      var pos = Math.floor(Math.random() * (queue.length + 1));
+      queue.splice(pos, 0, items[i]);
+    }
+  }
+
+  // Get current time period
+  function getTimePeriod() {
+    var h = new Date().getHours();
+    if (h >= 23 || h <= 4) return 'late';
+    if (h >= 5 && h <= 11) return 'morning';
+    if (h >= 12 && h <= 17) return 'afternoon';
+    return null;
+  }
+
+  // Get page quotes for current path
+  function getPageQuotes() {
+    var path = window.location.pathname;
+    var keys = Object.keys(PAGE_SPEECH);
+    for (var i = 0; i < keys.length; i++) {
+      if (path.indexOf(keys[i]) === 0) {
+        // Pick 2-3 random quotes from the pool
+        var pool = shuffle(PAGE_SPEECH[keys[i]].slice());
+        var count = Math.min(pool.length, 2 + Math.floor(Math.random() * 2)); // 2 or 3
+        return pool.slice(0, count);
+      }
+    }
+    return [];
+  }
+
+  // Get time quotes
+  function getTimeQuotes() {
+    var period = getTimePeriod();
+    if (!period || !TIME_SPEECH[period]) return [];
+    var pool = shuffle(TIME_SPEECH[period].slice());
+    var count = Math.min(pool.length, 1 + Math.floor(Math.random() * 2)); // 1 or 2
+    return pool.slice(0, count);
   }
 
   var speechQueue = [];
@@ -424,12 +521,44 @@
         if (i < buckets[g].length) speechQueue.push(buckets[g][i]);
       }
     }
+
+    // Mix in page-specific quotes
+    var pageQ = getPageQuotes();
+    if (pageQ.length > 0) mixIn(speechQueue, pageQ);
+
+    // Mix in time-specific quotes
+    var timeQ = getTimeQuotes();
+    if (timeQ.length > 0) mixIn(speechQueue, timeQ);
+
+    // Mix in secret quotes if unlocked
+    if (localStorage.getItem('oliver_secret_unlocked') === 'true') {
+      var secretQ = shuffle(SECRET_SPEECH.slice());
+      var secretCount = Math.min(secretQ.length, 2 + Math.floor(Math.random() * 2));
+      mixIn(speechQueue, secretQ.slice(0, secretCount));
+    }
   }
   refillSpeech();
 
   function nextSpeech() {
     if (speechQueue.length === 0) refillSpeech();
     return speechQueue.shift();
+  }
+
+  // ── Feature 5: Visitor Memory ───────────────────────────────
+  var visitCount = parseInt(localStorage.getItem('oliver_visits') || '0', 10);
+  if (!sessionStorage.getItem('oliver_counted')) {
+    visitCount++;
+    localStorage.setItem('oliver_visits', String(visitCount));
+    sessionStorage.setItem('oliver_counted', 'true');
+  }
+
+  function getGreeting() {
+    if (visitCount <= 1) return 'woof! welcome to my room!';
+    if (visitCount <= 4) return 'oh hey. you came back. *tail wag*';
+    if (visitCount <= 9) return 'you again. good. the rug missed you.';
+    if (visitCount <= 19) return 'at this point we\'re in a relationship. i\'m comfortable with that.';
+    if (visitCount <= 49) return 'you\'re a regular. i\'ve started saving your spot on the rug.';
+    return 'i\'ve known you longer than most of his repos have survived. that means something.';
   }
 
   // ── Auto-spawn ────────────────────────────────────────────
@@ -446,6 +575,9 @@
   function spawnInRoom(name) {
     var isOliver = name.toLowerCase() === 'oliver';
     var roomOpen = true;
+
+    // ── Interaction state flag ──
+    var interactionActive = false;
 
     // ── Room panel ──
     var panel = document.createElement('div');
@@ -527,6 +659,17 @@
     nameLabel.textContent = esc(name);
     stage.appendChild(nameLabel);
 
+    // ── Feature 3: Treat button ──
+    var treatBtn = document.createElement('button');
+    treatBtn.className = 'or-treat';
+    treatBtn.textContent = '~';
+    // If secret already unlocked, apply glow style
+    if (localStorage.getItem('oliver_secret_unlocked') === 'true') {
+      treatBtn.classList.add('or-treat-glow');
+    }
+    treatBtn.setAttribute('aria-label', 'Give Oliver a treat');
+    stage.appendChild(treatBtn);
+
     var rows = FRAMES[0].length;
     var cols = FRAMES[0][0].length;
     var pixels = [];
@@ -576,9 +719,47 @@
     // ── Dance sequence ──
     var SEQUENCE = [0,0,1,2,0,0,3,0,1,2,0,8,9,8,9,0,0,5,0,4,0,6,0,0,10,0,7,0,11,0,0,1,2,3,0];
     var seqIdx = 0;
+
+    // ── Feature 6: Cursor tracking state ──
+    var lastMouseX = -1;
+    var panelRect = null;
+
+    panel.addEventListener('mousemove', function (e) {
+      lastMouseX = e.clientX;
+      panelRect = panel.getBoundingClientRect();
+    });
+
+    panel.addEventListener('mouseleave', function () {
+      lastMouseX = -1;
+    });
+
+    var cursorTrackReady = false;
     setInterval(function () {
+      cursorTrackReady = true;
+    }, 2000);
+
+    setInterval(function () {
+      if (interactionActive) return;
+
+      var currentFrame = SEQUENCE[seqIdx];
       seqIdx = (seqIdx + 1) % SEQUENCE.length;
-      renderFrame(FRAMES[SEQUENCE[seqIdx]]);
+      var nextFrame = SEQUENCE[seqIdx];
+
+      // Feature 6: Cursor tracking — only override idle frames
+      if (nextFrame === 0 && cursorTrackReady && lastMouseX >= 0 && panelRect) {
+        var spriteBounds = spriteWrap.getBoundingClientRect();
+        var spriteCenterX = spriteBounds.left + spriteBounds.width / 2;
+        cursorTrackReady = false;
+        if (lastMouseX < spriteCenterX - 10) {
+          renderFrame(FRAMES[8]); // wiggle left
+          return;
+        } else if (lastMouseX > spriteCenterX + 10) {
+          renderFrame(FRAMES[4]); // head tilt right
+          return;
+        }
+      }
+
+      renderFrame(FRAMES[nextFrame]);
     }, 350);
 
     // ── Speech bubbles ──
@@ -590,12 +771,145 @@
       }, 4500);
     }
 
+    // ── Feature 3: Treat button handler ──
+    var TREAT_QUOTES = [
+      'thank you. this is all any of us want. sustenance and someone who showed up.',
+      'a treat. you are a good human. the best data point i have.',
+      '*monch* ...where was i. oh right. the nature of consciousness. *monch*',
+      'you fed me. therefore you exist. this is my ontology.',
+      'i will remember this. unlike your browser. i will remember.',
+    ];
+
+    var treatDisabled = false;
+
+    treatBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (treatDisabled) return;
+
+      // Disable for 30 seconds
+      treatDisabled = true;
+      treatBtn.classList.add('or-treat-disabled');
+      setTimeout(function () {
+        treatDisabled = false;
+        treatBtn.classList.remove('or-treat-disabled');
+      }, 30000);
+
+      // Track treats
+      var totalTreats = parseInt(localStorage.getItem('oliver_treats') || '0', 10);
+      totalTreats++;
+      localStorage.setItem('oliver_treats', String(totalTreats));
+
+      // Play treat animation: bounce(11) -> tongue(6) -> wiggle left(8) -> wiggle right(9) -> happy squint(3) -> bounce(11) -> idle(0)
+      var treatFrames = [11, 6, 8, 9, 3, 11, 0];
+      var frameIdx = 0;
+      interactionActive = true;
+
+      var treatAnim = setInterval(function () {
+        if (frameIdx < treatFrames.length) {
+          renderFrame(FRAMES[treatFrames[frameIdx]]);
+          frameIdx++;
+        } else {
+          clearInterval(treatAnim);
+          interactionActive = false;
+
+          // Show quote
+          if (totalTreats === 10) {
+            showBubble('you\'ve fed me ten times. i think this means we\'re family now.');
+          } else {
+            var q = TREAT_QUOTES[Math.floor(Math.random() * TREAT_QUOTES.length)];
+            showBubble(q);
+          }
+        }
+      }, 200);
+    });
+
+    // ── Feature 4: Pet mechanic ──
+    var hoverTimer = null;
+    var isPetting = false;
+
+    spriteWrap.addEventListener('mouseenter', function () {
+      hoverTimer = setTimeout(function () {
+        if (interactionActive) return;
+        isPetting = true;
+        interactionActive = true;
+        renderFrame(FRAMES[3]); // happy squint
+
+        var petQuotes = [
+          '*happy squint* ...yeah. that\'s the spot.',
+          'oh. oh this is nice. ok i forgive you for not feeding me.',
+          'the body knows before language does. right now the body says: more of this.',
+          '*leans in* i am a simple creature with complex needs. this meets one of them.',
+        ];
+        showBubble(petQuotes[Math.floor(Math.random() * petQuotes.length)]);
+      }, 2000);
+    });
+
+    spriteWrap.addEventListener('mouseleave', function () {
+      if (hoverTimer) {
+        clearTimeout(hoverTimer);
+        hoverTimer = null;
+      }
+      if (isPetting) {
+        isPetting = false;
+        // Return to normal after 1 second
+        setTimeout(function () {
+          interactionActive = false;
+        }, 1000);
+      }
+    });
+
+    // ── Feature 7: Easter egg — rapid click ──
+    var clickTimestamps = [];
+    var secretUnlocked = localStorage.getItem('oliver_secret_unlocked') === 'true';
+
+    spriteWrap.addEventListener('click', function () {
+      var now = Date.now();
+      clickTimestamps.push(now);
+      // Keep only clicks within last 2 seconds
+      clickTimestamps = clickTimestamps.filter(function (t) {
+        return now - t < 2000;
+      });
+
+      if (clickTimestamps.length >= 7 && !interactionActive) {
+        clickTimestamps = [];
+
+        if (secretUnlocked) return; // Already unlocked, no repeat
+
+        // Play special animation: wiggle left(8) -> wiggle right(9) -> wiggle left(8) -> wiggle right(9) -> bounce(11) -> tongue(6) -> idle(0)
+        var eggFrames = [8, 9, 8, 9, 11, 6, 0];
+        var eggIdx = 0;
+        interactionActive = true;
+
+        var eggAnim = setInterval(function () {
+          if (eggIdx < eggFrames.length) {
+            renderFrame(FRAMES[eggFrames[eggIdx]]);
+            eggIdx++;
+          } else {
+            clearInterval(eggAnim);
+            interactionActive = false;
+
+            // Unlock secret
+            secretUnlocked = true;
+            localStorage.setItem('oliver_secret_unlocked', 'true');
+
+            // Change treat button style
+            treatBtn.classList.add('or-treat-glow');
+
+            // Refill speech with secret quotes now available
+            refillSpeech();
+
+            showBubble('ok ok ok. you found it. fine. i\'ll tell you the real ones.');
+          }
+        }, 150);
+      }
+    });
+
     // Greeting — once only, skip if already greeted (hot-reload guard)
     if (!window.__oliverGreeted) {
       window.__oliverGreeted = true;
       setTimeout(function () {
         if (isOliver) {
-          showBubble('woof! welcome to my room!');
+          showBubble(getGreeting());
         } else {
           showBubble('woof! i\'m ' + name + ' and this is my room');
         }
@@ -689,6 +1003,25 @@
       '.or-name {',
       '  font-size: 0.55rem; color: rgba(255,255,255,0.2); margin-top: 6px;',
       '  letter-spacing: 0.05em;',
+      '}',
+      '',
+      '/* Treat button */',
+      '.or-treat {',
+      '  font-family: var(--mono); font-size: 0.6rem; color: var(--gold-accent);',
+      '  background: none; border: 1px solid rgba(184,150,90,0.3);',
+      '  padding: 2px 8px; margin-top: 4px; cursor: pointer;',
+      '  border-radius: 2px; transition: all 0.2s;',
+      '  letter-spacing: 0.1em;',
+      '}',
+      '.or-treat:hover { border-color: var(--gold-accent); background: rgba(184,150,90,0.08); }',
+      '.or-treat-disabled {',
+      '  color: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.06);',
+      '  cursor: default;',
+      '}',
+      '.or-treat-disabled:hover { border-color: rgba(255,255,255,0.06); background: none; }',
+      '.or-treat-glow {',
+      '  color: #d4a843; text-shadow: 0 0 6px rgba(212,168,67,0.4);',
+      '  border-color: rgba(212,168,67,0.4);',
       '}',
       '',
       '.or-bubble {',

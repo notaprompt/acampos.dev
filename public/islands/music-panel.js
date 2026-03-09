@@ -1436,21 +1436,17 @@
   }
 
   function fetchStock() {
-    var url = 'https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=2d';
-    fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url))
+    fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true')
       .then(function (r) { return r.json(); })
       .then(function (data) {
-        var meta = data.chart && data.chart.result && data.chart.result[0] && data.chart.result[0].meta;
-        if (!meta) return;
-        var price = meta.regularMarketPrice;
-        var prev = meta.chartPreviousClose;
-        var change = price - prev;
-        var pct = ((change / prev) * 100).toFixed(2);
-        var arrow = change >= 0 ? '\u25B2' : '\u25BC';
-        var sign = change >= 0 ? '+' : '';
-        var color = change >= 0 ? 'rgba(100,220,120,0.6)' : 'rgba(220,100,100,0.6)';
-        var html = '<span style="opacity:0.4">AAPL</span> ' +
-          '<span style="color:rgba(255,255,255,0.6)">$' + price.toFixed(2) + '</span> ' +
+        if (!data.bitcoin) return;
+        var price = data.bitcoin.usd;
+        var pct = data.bitcoin.usd_24h_change.toFixed(2);
+        var arrow = pct >= 0 ? '\u25B2' : '\u25BC';
+        var sign = pct >= 0 ? '+' : '';
+        var color = pct >= 0 ? 'rgba(100,220,120,0.6)' : 'rgba(220,100,100,0.6)';
+        var html = '<span style="opacity:0.4">BTC</span> ' +
+          '<span style="color:rgba(255,255,255,0.6)">$' + price.toLocaleString() + '</span> ' +
           '<span style="color:' + color + '">' + arrow + ' ' + sign + pct + '%</span>';
         var slots = banner.querySelectorAll('.np-stock');
         for (var i = 0; i < slots.length; i++) slots[i].innerHTML = html;

@@ -16,7 +16,6 @@ Guardian's routing, memory, and session management extracted into standalone inf
 Monorepo with three packages: `@forgeframe/memory` (MIT), `@forgeframe/core` (AGPL), and vertical configurations for domain-specific deployments.
 
 ```
-L4  Guardian Pro / ForgeFrame Enterprise    PROPRIETARY
 L3  ForgeFrame Core (routing, sessions)     AGPL
 L2  MCP Memory Server (the primitive)       MIT
 L1  MCP Protocol (Anthropic's standard)     OPEN

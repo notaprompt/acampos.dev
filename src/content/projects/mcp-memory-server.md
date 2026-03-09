@@ -1,6 +1,6 @@
 ---
 title: "MCP Memory Server"
-tagline: "The memory primitive — strength decay, retrieval reinforcement, sovereign storage"
+tagline: "The memory primitive — strength decay, retrieval reinforcement, local-first storage"
 status: "active"
 stack: ["TypeScript", "MCP Protocol", "SQLite", "MIT License"]
 repo: "https://github.com/notaprompt"
@@ -9,7 +9,7 @@ order: 3
 
 ## Goals
 
-Build the smallest useful memory primitive for AI systems and give it away. MIT license, zero vendor lock-in, one SQLite file you can move or delete. Memory should be a protocol-level capability, not something a company holds hostage.
+Build the smallest useful memory primitive for AI systems and give it away. MIT license, one SQLite file you can move or delete. Memory should be a protocol-level capability, not something locked to a platform.
 
 ## Process
 
@@ -23,7 +23,7 @@ The core mechanics:
 
 The result is an emergent forgetting curve. No explicit garbage collection. No manual curation. The system's memory landscape shapes itself around what is actually used.
 
-Storage is SQLite — single-file, portable, zero-configuration. A memory server is a file you can move, back up, or delete. Sovereign by default.
+Storage is SQLite — single-file, portable, zero-configuration. A memory server is a file you can move, back up, or delete. Local by default.
 
 ## Limitations
 
@@ -35,4 +35,4 @@ Storage is SQLite — single-file, portable, zero-configuration. A memory server
 
 The most important design decision was what to leave out. Every feature request -- vector embeddings, graph relationships, encryption, multi-user sync -- would have made it more capable and less useful as a primitive. A primitive that does one thing well gets composed into systems. A server that does everything gets replaced. I have to keep reminding myself of this.
 
-MCP taught me the difference between tools and intercept. MCP is excellent for exposing capabilities. It is not designed for observing conversations. Both are necessary for sovereignty, but they're different mechanisms. That distinction shaped all of ForgeFrame's architecture.
+MCP taught me the difference between tools and intercept. MCP is excellent for exposing capabilities. It is not designed for observing conversations. Both are necessary for local control, but they're different mechanisms. That distinction shaped all of ForgeFrame's architecture.

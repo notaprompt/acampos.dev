@@ -630,10 +630,11 @@
     var b = parseInt(hex.slice(5,7), 16);
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
   }
-  // Color cycle through the palette — not rainbow, just the 4 site colors
+  // Color cycle — 4 site colors, hit-driven jumps + energy saturation
   var PALETTE = [COL_GOLD, COL_GLOW, COL_ALIVE, COL_DANGER];
   var palIdx = 0;
   var palBlend = 0;
+  var flashEnergy = 0;  // decays from bass hits, drives color intensity
   function lerpColor(a, b, t) {
     var ar = parseInt(a.slice(1,3),16), ag = parseInt(a.slice(3,5),16), ab = parseInt(a.slice(5,7),16);
     var br = parseInt(b.slice(1,3),16), bg = parseInt(b.slice(3,5),16), bb = parseInt(b.slice(5,7),16);
@@ -1119,11 +1120,20 @@
     // Forward motion — speed driven by bass, reversed during reverse
     hallZ += (0.015 + sBass * 0.04 + hit * 0.25) * forwardDir;
 
-    // Palette
-    palBlend += 0.003 + sTotal * 0.002;
+    // Palette — slow drift baseline, hard jump on strong bass hit
+    palBlend += 0.003 + sTotal * 0.004;
+    if (hit > p.hitThresh * 1.2 && Math.random() < 0.4) {
+      // Hard cut to next color on a strong hit
+      palIdx = (palIdx + 1) % PALETTE.length;
+      palBlend = 0;
+    }
     if (palBlend >= 1) { palBlend = 0; palIdx = (palIdx + 1) % PALETTE.length; }
     var colA = PALETTE[palIdx];
     var colB = PALETTE[(palIdx + 1) % PALETTE.length];
+
+    // Flash energy — spikes on hit, drives opacity/saturation boost
+    flashEnergy = Math.min(1, flashEnergy + hit * 3);
+    flashEnergy *= 0.88;
 
     // G-force tilt — spring physics, tilts opposite to lateral acceleration
     // When thrown left (targetVelX < 0) you lean right, like a rollercoaster seat
@@ -1175,11 +1185,11 @@
       if (sweepDist > 0.5) sweepDist = 1 - sweepDist;
       var sweepBoost = Math.max(0, 1 - sweepDist * 8) * (0.4 + sTotal * 0.3);
 
-      // Color cycles through palette based on depth
-      var rectAlpha = (0.15 + fv * 0.35 + sweepBoost) * (0.3 + z * 0.7);
+      // Color — depth-mapped, flash-boosted on hits
+      var rectAlpha = (0.2 + fv * 0.45 + sweepBoost + flashEnergy * 0.4) * (0.3 + z * 0.7);
       var colT = (z + palBlend) % 1;
-      ctx.strokeStyle = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 0.85));
-      ctx.lineWidth = 0.5 + z * 2.5 + fv * 1.5 + sweepBoost * 2;
+      ctx.strokeStyle = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 1.0));
+      ctx.lineWidth = 0.5 + z * 2.5 + fv * 1.5 + sweepBoost * 2 + flashEnergy * 2;
 
       // Draw warped rectangle — not a perfect rect, audio bends it
       ctx.beginPath();
@@ -1190,10 +1200,10 @@
       ctx.closePath();
       ctx.stroke();
 
-      // Glow on close / loud rects
-      if (z > 0.3 && fv > 0.3) {
-        ctx.strokeStyle = lerpColorA(colA, colB, colT, fv * 0.08);
-        ctx.lineWidth = 3 + z * 6;
+      // Glow on close / loud rects — amplified by flash energy
+      if (z > 0.3 && (fv > 0.3 || flashEnergy > 0.2)) {
+        ctx.strokeStyle = lerpColorA(colA, colB, colT, (fv + flashEnergy * 0.5) * 0.18);
+        ctx.lineWidth = 3 + z * 6 + flashEnergy * 8;
         ctx.stroke();
       }
     }

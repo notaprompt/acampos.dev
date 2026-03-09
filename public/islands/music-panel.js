@@ -1119,13 +1119,14 @@
     var colA = PALETTE[palIdx];
     var colB = PALETTE[(palIdx + 1) % PALETTE.length];
 
-    // Camera lean — rolls into the horizontal bend direction, smooth chase
-    var leanTarget = -bendX1 * 0.18 + -bendX2 * 0.08;
-    leanAngle += (leanTarget - leanAngle) * 0.04;
+    // Camera lean — pure rotation around center, no lateral pan
+    // bendX1/bendX2 drive tilt, bendY adds subtle up/down for trippy feel
+    var leanTarget = -(bendX1 * 0.32 + bendX2 * 0.14) + bendY1 * 0.06;
+    leanAngle += (leanTarget - leanAngle) * 0.035;
 
-    // Vanishing point — chase + lean into the bend (camera pans into the curve)
-    var vpx = w / 2 + chaseX * w * 0.15 + bendX1 * w * 0.06;
-    var vpy = h / 2 + chaseY * h * 0.12 + bendY1 * h * 0.05;
+    // Vanishing point — stays near center, only slight drift so it doesn't pan
+    var vpx = w / 2 + chaseX * w * 0.03;
+    var vpy = h / 2 + chaseY * h * 0.03;
 
     // ── Camera lean transform — rolls into the bend, wraps all scene layers ──
     ctx.save();

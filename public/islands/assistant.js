@@ -833,6 +833,7 @@
         isPetting = true;
         interactionActive = true;
         renderFrame(FRAMES[3]); // happy squint
+        emitHearts(spriteWrap, 3);
 
         var petQuotes = [
           '*happy squint* ...yeah. that\'s the spot.',
@@ -928,6 +929,28 @@
       }, 13000);
     }, 10500);
 
+  }
+
+  // ── Pixel heart emitter ──────────────────────────────────
+  function emitHearts(anchor, count) {
+    for (var i = 0; i < count; i++) {
+      (function (delay) {
+        setTimeout(function () {
+          var heart = document.createElement('div');
+          heart.className = 'ol-heart';
+          heart.textContent = '\u2665';
+          // Random horizontal offset around the sprite
+          var offsetX = Math.floor(Math.random() * 40) - 20;
+          heart.style.left = (anchor.offsetWidth / 2 + offsetX) + 'px';
+          heart.style.bottom = anchor.offsetHeight + 'px';
+          anchor.style.position = 'relative';
+          anchor.appendChild(heart);
+          setTimeout(function () {
+            if (heart.parentNode) heart.parentNode.removeChild(heart);
+          }, 1200);
+        }, delay * 250);
+      })(i);
+    }
   }
 
   // ── Helpers ────────────────────────────────────────────────
@@ -1033,6 +1056,19 @@
       '  opacity: 0; transition: opacity 0.6s ease-in-out;',
       '  text-shadow: 0 0 12px rgba(184,150,90,0.3);',
       '  letter-spacing: 0.06em; margin-top: 16px;',
+      '}',
+      '',
+      '/* Pixel hearts */',
+      '.ol-heart {',
+      '  position: absolute; font-size: 10px; color: #c75050;',
+      '  pointer-events: none; z-index: 2;',
+      '  animation: ol-heart-rise 1.2s ease-out forwards;',
+      '  text-shadow: 0 0 4px rgba(199,80,80,0.4);',
+      '}',
+      '@keyframes ol-heart-rise {',
+      '  0% { opacity: 1; transform: translateY(0) scale(1); }',
+      '  60% { opacity: 0.8; transform: translateY(-24px) scale(1.1); }',
+      '  100% { opacity: 0; transform: translateY(-40px) scale(0.7); }',
       '}',
       '',
       '/* Hide on mobile */',

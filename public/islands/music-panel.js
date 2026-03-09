@@ -8,13 +8,24 @@
   window.__musicPanelInit = true;
 
   // ── Playlist ──────────────────────────────────────────────
+  // profile: hitThresh (bass transient sensitivity), bendAmp (how hard turns are),
+  //          steerSens (mid freq steering force), flipThresh (hit accumulation to flip),
+  //          smoothing (analyser time constant — lower = snappier response)
   var PLAYLIST = [
-    { artist: 'Shigeo Sekito', title: 'the word II', url: '/audio/the-word-ii.mp3' },
-    { artist: 'Aphex Twin', title: 'Avril 14th', url: '/audio/avril-14th.mp3' },
-    { artist: 'Brent Faiyaz', title: 'white noise.', url: '/audio/white-noise.mp3' },
-    { artist: 'Piero Piccioni', title: 'Easy Lovers', url: '/audio/easy-lovers.mp3' },
-    { artist: 'Maison Music', title: "l'histoire de ta vie", url: '/audio/lhistoire-de-ta-vie.mp3' },
+    { artist: 'Shigeo Sekito', title: 'the word II', url: '/audio/the-word-ii.mp3',
+      profile: { hitThresh: 0.08, bendAmp: 1.0, steerSens: 1.0, flipThresh: 0.5, smoothing: 0.8 } },
+    { artist: 'Aphex Twin', title: 'Avril 14th', url: '/audio/avril-14th.mp3',
+      profile: { hitThresh: 0.02, bendAmp: 1.8, steerSens: 2.5, flipThresh: 0.15, smoothing: 0.6 } },
+    { artist: 'Brent Faiyaz', title: 'white noise.', url: '/audio/white-noise.mp3',
+      profile: { hitThresh: 0.03, bendAmp: 1.4, steerSens: 2.0, flipThresh: 0.2, smoothing: 0.65 } },
+    { artist: 'Piero Piccioni', title: 'Easy Lovers', url: '/audio/easy-lovers.mp3',
+      profile: { hitThresh: 0.05, bendAmp: 1.2, steerSens: 1.5, flipThresh: 0.35, smoothing: 0.75 } },
+    { artist: 'Maison Music', title: "l'histoire de ta vie", url: '/audio/lhistoire-de-ta-vie.mp3',
+      profile: { hitThresh: 0.03, bendAmp: 1.6, steerSens: 2.2, flipThresh: 0.2, smoothing: 0.65 } },
   ];
+
+  // Active profile — defaults to The Word II
+  var activeProfile = PLAYLIST[0].profile;
 
   // ── State (restore from localStorage if available) ────────
   var saved = null;
@@ -98,6 +109,11 @@
     if (!track) return;
     currentIndex = index;
     audio.src = track.url;
+    // Apply song-specific visualizer profile
+    if (track.profile) {
+      activeProfile = track.profile;
+      if (analyser) analyser.smoothingTimeConstant = track.profile.smoothing;
+    }
     updateNowPlaying(track);
     updatePlaylistHighlight();
     updateProgressDisplay();
@@ -996,17 +1012,18 @@
     prevHigh = sHigh;
 
     // Steering — mid drives smooth arcs, like a figure skater leaning into turns
-    steerAngle += midDelta * 3 + Math.sin(visTime * 0.4) * sMid * 0.1;
+    var p = activeProfile;
+    steerAngle += midDelta * 3 * p.steerSens + Math.sin(visTime * 0.4) * sMid * 0.1;
 
     // Target velocity — follows a heading that the music steers
-    var steerSpeed = 0.015 + sMid * 0.025;
+    var steerSpeed = (0.015 + sMid * 0.025) * p.steerSens;
     targetVelX += Math.cos(steerAngle) * steerSpeed;
     targetVelY += Math.sin(steerAngle) * steerSpeed;
 
     // Bass hits = gentle nudge in current heading, not random kicks
-    if (hit > 0.08) {
-      targetVelX += Math.cos(steerAngle) * hit * 0.6;
-      targetVelY += Math.sin(steerAngle) * hit * 0.6;
+    if (hit > p.hitThresh) {
+      targetVelX += Math.cos(steerAngle) * hit * 0.6 * p.bendAmp;
+      targetVelY += Math.sin(steerAngle) * hit * 0.6 * p.bendAmp;
       hitAccum += hit;
     }
 
@@ -1033,7 +1050,7 @@
 
     // ── Flip system — rollercoaster backflips on bass accumulation ──
     if (flipCooldown > 0) flipCooldown--;
-    if (hitAccum > 0.5 && flipCooldown <= 0 && Math.random() < 0.5) {
+    if (hitAccum > p.flipThresh && flipCooldown <= 0 && Math.random() < 0.5) {
       // Full rotation — fast enough to feel like a backflip
       flipVel = (Math.random() < 0.5 ? 1 : -1) * (0.25 + Math.random() * 0.15);
       flipCooldown = 90; // ~1.5 seconds cooldown — more frequent
@@ -1056,10 +1073,10 @@
       bendAngle2 += (Math.random() - 0.5) * 3.0;
     }
     // Targets orbit widely — big amplitude = real turns
-    bendTX1 = Math.cos(bendAngle1) * (0.7 + sBass * 0.4);
-    bendTY1 = Math.sin(bendAngle1) * (0.6 + sBass * 0.3);
-    bendTX2 = Math.cos(bendAngle2) * (0.8 + sMid * 0.5);
-    bendTY2 = Math.sin(bendAngle2) * (0.5 + sMid * 0.4);
+    bendTX1 = Math.cos(bendAngle1) * (0.7 + sBass * 0.4) * p.bendAmp;
+    bendTY1 = Math.sin(bendAngle1) * (0.6 + sBass * 0.3) * p.bendAmp;
+    bendTX2 = Math.cos(bendAngle2) * (0.8 + sMid * 0.5) * p.bendAmp;
+    bendTY2 = Math.sin(bendAngle2) * (0.5 + sMid * 0.4) * p.bendAmp;
     // Smooth chase — fast enough to feel dramatic, slow enough to flow
     bendX1 += (bendTX1 - bendX1) * 0.025;
     bendY1 += (bendTY1 - bendY1) * 0.025;

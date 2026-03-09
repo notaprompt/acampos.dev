@@ -1122,23 +1122,27 @@
     // Forward motion — speed driven by bass, reversed during reverse
     hallZ += (0.015 + sBass * 0.04 + hit * 0.25) * forwardDir;
 
-    // Melody color — find dominant frequency bin in mid range (melody lives here)
-    var midStart = Math.floor(bufferLength * 0.08);  // ~200Hz
-    var midEnd   = Math.floor(bufferLength * 0.45);  // ~4kHz
-    var peakBin = midStart, peakVal = 0;
+    // Melody color — spectral centroid of mid range, normalized to spread all 4 colors
+    var midStart = Math.floor(bufferLength * 0.05);
+    var midEnd   = Math.floor(bufferLength * 0.55);
+    var weightedSum = 0, weightTotal = 0;
     for (var mi = midStart; mi < midEnd; mi++) {
-      if (freqData[mi] > peakVal) { peakVal = freqData[mi]; peakBin = mi; }
+      var w = freqData[mi] / 255;
+      weightedSum += mi * w;
+      weightTotal += w;
     }
-    // Map peak bin to 0-1 across mid range → palette position
-    var rawMelodyColor = (peakBin - midStart) / (midEnd - midStart);
+    // Spectral centroid — center of mass of mid spectrum
+    var centroid = weightTotal > 0.1 ? (weightedSum / weightTotal) : midStart;
+    var rawMelodyColor = Math.pow((centroid - midStart) / (midEnd - midStart), 0.5); // sqrt spread = more range
     // Slow smooth — note changes drift color, sustained notes hold it
-    var melodyLag = peakVal > 60 ? 0.04 : 0.008; // faster when melody is loud
+    var melodyLag = weightTotal > 2 ? 0.05 : 0.01;
     melodyColorSmooth += (rawMelodyColor - melodyColorSmooth) * melodyLag;
-    melodyColor = melodyColorSmooth;
+    melodyColor = Math.max(0, Math.min(0.999, melodyColorSmooth));
 
-    // palBlend driven by melody position — color is WHERE the melody is, not time
-    palBlend = melodyColor;
-    palIdx = Math.floor(melodyColor * PALETTE.length) % PALETTE.length;
+    // Continuous palette position — spans all 4 colors
+    var palPos = melodyColor * PALETTE.length;
+    palIdx = Math.floor(palPos) % PALETTE.length;
+    palBlend = palPos % 1;
     var colA = PALETTE[palIdx];
     var colB = PALETTE[(palIdx + 1) % PALETTE.length];
 

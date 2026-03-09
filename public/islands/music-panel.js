@@ -1105,7 +1105,7 @@
     ctx.save();
     ctx.globalAlpha = 0.75 - sTotal * 0.08;
     ctx.translate(zoomCx, zoomCy);
-    ctx.rotate(flipAngle * 0.8 + leanAngle);
+    ctx.rotate(flipAngle * 0.8);
     ctx.scale(feedbackZoom, feedbackZoom);
     ctx.translate(-zoomCx, -zoomCy);
     ctx.drawImage(canvas, 0, 0);

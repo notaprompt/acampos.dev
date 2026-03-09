@@ -11,17 +11,18 @@
   // profile: hitThresh (bass transient sensitivity), bendAmp (how hard turns are),
   //          steerSens (mid freq steering force), flipThresh (hit accumulation to flip),
   //          smoothing (analyser time constant — lower = snappier response)
+  // midSnap: amplifies mid-frequency transient (delta) response — what makes snares/attacks snap
   var PLAYLIST = [
     { artist: 'Shigeo Sekito', title: 'the word II', url: '/audio/the-word-ii.mp3',
-      profile: { hitThresh: 0.08, bendAmp: 1.0, steerSens: 1.0, flipThresh: 0.5, smoothing: 0.8 } },
+      profile: { hitThresh: 0.08, bendAmp: 1.0, steerSens: 1.0, midSnap: 1.0, flipThresh: 0.5, smoothing: 0.8 } },
     { artist: 'Aphex Twin', title: 'Avril 14th', url: '/audio/avril-14th.mp3',
-      profile: { hitThresh: 0.02, bendAmp: 1.8, steerSens: 2.5, flipThresh: 0.15, smoothing: 0.6 } },
+      profile: { hitThresh: 0.02, bendAmp: 1.8, steerSens: 2.5, midSnap: 4.0, flipThresh: 0.15, smoothing: 0.55 } },
     { artist: 'Brent Faiyaz', title: 'white noise.', url: '/audio/white-noise.mp3',
-      profile: { hitThresh: 0.03, bendAmp: 1.4, steerSens: 2.0, flipThresh: 0.2, smoothing: 0.65 } },
+      profile: { hitThresh: 0.03, bendAmp: 1.4, steerSens: 2.0, midSnap: 3.5, flipThresh: 0.2, smoothing: 0.6 } },
     { artist: 'Piero Piccioni', title: 'Easy Lovers', url: '/audio/easy-lovers.mp3',
-      profile: { hitThresh: 0.05, bendAmp: 1.2, steerSens: 1.5, flipThresh: 0.35, smoothing: 0.75 } },
+      profile: { hitThresh: 0.05, bendAmp: 1.2, steerSens: 1.5, midSnap: 2.5, flipThresh: 0.35, smoothing: 0.7 } },
     { artist: 'Maison Music', title: "l'histoire de ta vie", url: '/audio/lhistoire-de-ta-vie.mp3',
-      profile: { hitThresh: 0.03, bendAmp: 1.6, steerSens: 2.2, flipThresh: 0.2, smoothing: 0.65 } },
+      profile: { hitThresh: 0.03, bendAmp: 1.6, steerSens: 2.2, midSnap: 3.0, flipThresh: 0.2, smoothing: 0.6 } },
   ];
 
   // Active profile — defaults to The Word II
@@ -1012,9 +1013,11 @@
     prevMid = sMid;
     prevHigh = sHigh;
 
-    // Steering — mid drives smooth arcs, like a figure skater leaning into turns
+    // Steering — mid delta (transient snap) + continuous arc from sMid
     var p = activeProfile;
-    steerAngle += midDelta * 3 * p.steerSens + Math.sin(visTime * 0.4) * sMid * 0.1;
+    steerAngle += midDelta * 3 * p.midSnap          // transient snap — what makes snares jolt
+               + sMid * 0.08 * p.steerSens          // continuous arc from sustained mids
+               + Math.sin(visTime * 0.4) * sMid * 0.05;
 
     // Target velocity — follows a heading that the music steers
     var steerSpeed = (0.015 + sMid * 0.025) * p.steerSens;

@@ -336,6 +336,17 @@
     '.np-sep { color: rgba(255,255,255,0.12); }',
     '.np-spacer { display: inline-block; width: 60px; }',
     '.np-weather { color: rgba(255,255,255,0.3); }',
+    '/* Spotify bar */',
+    '#mp-spotify-bar { padding: 8px 10px; border-top: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }',
+    '#sp-connect-btn { background: none; border: 1px solid rgba(30,215,96,0.4); color: rgba(30,215,96,0.8); font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.08em; padding: 4px 10px; cursor: pointer; width: 100%; }',
+    '#sp-connect-btn:hover { border-color: #1ed760; color: #1ed760; }',
+    '#sp-search { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); font-family: var(--mono); font-size: 0.65rem; padding: 5px 8px; margin-top: 6px; outline: none; }',
+    '#sp-results { max-height: 160px; overflow-y: auto; margin-top: 4px; }',
+    '.sp-result { padding: 5px 6px; font-size: 0.62rem; color: rgba(255,255,255,0.6); cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.04); }',
+    '.sp-result:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.9); }',
+    '.sp-result .sp-r-title { color: rgba(255,255,255,0.85); }',
+    '.sp-result .sp-r-artist { color: rgba(184,150,90,0.6); font-size: 0.58rem; }',
+    '#sp-status { font-size: 0.58rem; color: rgba(30,215,96,0.5); margin-top: 4px; min-height: 14px; }',
     '.wx-temp { color: rgba(255,255,255,0.5); }',
     '.wx-desc { color: rgba(255,255,255,0.25); }',
     '.wx-loc { color: rgba(184,150,90,0.4); }',
@@ -423,6 +434,14 @@
     '  <input type="range" id="mp-volume" min="0" max="1" step="0.01" value="0.7" />',
     '</div>',
     '<div id="mp-playlist"></div>',
+    '<div id="mp-spotify-bar">',
+    '  <button id="sp-connect-btn">connect spotify</button>',
+    '  <div id="sp-search-wrap" style="display:none">',
+    '    <input id="sp-search" type="text" placeholder="search spotify..." autocomplete="off" />',
+    '    <div id="sp-results"></div>',
+    '  </div>',
+    '  <div id="sp-status"></div>',
+    '</div>',
   ].join('\n');
   document.body.appendChild(panel);
 
@@ -1584,6 +1603,103 @@
       });
     }
     tryAutoPlay();
+  }
+
+  // ── Spotify integration ────────────────────────────────────
+  var spConnectBtn = panel.querySelector('#sp-connect-btn');
+  var spSearchWrap = panel.querySelector('#sp-search-wrap');
+  var spSearchInput = panel.querySelector('#sp-search');
+  var spResults = panel.querySelector('#sp-results');
+  var spStatus = panel.querySelector('#sp-status');
+  var activeBeatChart = null;
+  var spotifyPlayer = null;
+
+  function spSetStatus(msg) {
+    if (spStatus) spStatus.textContent = msg;
+  }
+
+  function initSpotify() {
+    if (!window.SpotifyBridge) return;
+    var sp = window.SpotifyBridge;
+
+    if (sp.isLoggedIn()) {
+      spConnectBtn.textContent = 'spotify connected';
+      spConnectBtn.style.borderColor = 'rgba(30,215,96,0.7)';
+      spSearchWrap.style.display = 'block';
+      initSpotifyPlayer();
+    } else {
+      spConnectBtn.addEventListener('click', function () { sp.login(); });
+    }
+  }
+
+  function initSpotifyPlayer() {
+    var sp = window.SpotifyBridge;
+    sp.initPlayer({
+      onReady: function (deviceId) {
+        spSetStatus('player ready');
+      },
+      onStateChange: function (state) {
+        if (!state) return;
+        var track = state.track_window && state.track_window.current_track;
+        if (!track) return;
+        var position = state.position / 1000; // ms to seconds
+        // Update beat chart position
+        if (activeBeatChart) {
+          window.__spPosition = position;
+        }
+        // Load analysis when track changes
+        if (!window.__spCurrentId || window.__spCurrentId !== track.id) {
+          window.__spCurrentId = track.id;
+          spSetStatus('analyzing ' + track.name + '...');
+          sp.getAudioAnalysis(track.id).then(function (analysis) {
+            activeBeatChart = sp.buildBeatChart(analysis);
+            spSetStatus(track.name);
+          });
+        }
+      },
+    });
+  }
+
+  // Expose beat chart to visualizer via global
+  window.__getSpBeatChart = function () { return activeBeatChart; };
+  window.__getSpPosition = function () { return window.__spPosition || 0; };
+
+  // Search
+  var searchTimer = null;
+  if (spSearchInput) {
+    spSearchInput.addEventListener('input', function () {
+      clearTimeout(searchTimer);
+      var q = spSearchInput.value.trim();
+      if (q.length < 2) { spResults.innerHTML = ''; return; }
+      searchTimer = setTimeout(function () {
+        window.SpotifyBridge && window.SpotifyBridge.search(q).then(function (data) {
+          if (!data || !data.tracks) return;
+          spResults.innerHTML = '';
+          data.tracks.items.forEach(function (track) {
+            var div = document.createElement('div');
+            div.className = 'sp-result';
+            div.innerHTML = '<div class="sp-r-title">' + track.name + '</div>' +
+              '<div class="sp-r-artist">' + (track.artists[0] ? track.artists[0].name : '') + '</div>';
+            div.addEventListener('click', function () {
+              window.SpotifyBridge.playTrack(track.uri);
+              spResults.innerHTML = '';
+              spSearchInput.value = '';
+              spSetStatus('loading ' + track.name + '...');
+            });
+            spResults.appendChild(div);
+          });
+        });
+      }, 400);
+    });
+  }
+
+  // Init after spotify.js loads
+  if (window.SpotifyBridge) {
+    initSpotify();
+  } else {
+    window.addEventListener('load', function () {
+      setTimeout(initSpotify, 500);
+    });
   }
 
   // Expose cleanup for navigation re-init

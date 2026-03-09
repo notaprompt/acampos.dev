@@ -917,13 +917,16 @@
     }
 
     // Random speech — speak whenever the bubble is free
+    // First speech after greeting fades (~9s greeting display + 1.5s gap)
     setTimeout(function () {
+      showBubble(nextSpeech());
+      // Then settle into regular cadence
       setInterval(function () {
         if (interactionActive) return;
         if (bubbleEl.style.opacity === '1') return;
         showBubble(nextSpeech());
       }, 13000);
-    }, 3000);
+    }, 10500);
 
   }
 

@@ -9,11 +9,11 @@
 
   // ── Playlist ──────────────────────────────────────────────
   var PLAYLIST = [
+    { artist: 'Shigeo Sekito', title: 'the word II', url: '/audio/the-word-ii.mp3' },
     { artist: 'Aphex Twin', title: 'Avril 14th', url: '/audio/avril-14th.mp3' },
     { artist: 'Brent Faiyaz', title: 'white noise.', url: '/audio/white-noise.mp3' },
     { artist: 'Piero Piccioni', title: 'Easy Lovers', url: '/audio/easy-lovers.mp3' },
     { artist: 'Maison Music', title: "l'histoire de ta vie", url: '/audio/lhistoire-de-ta-vie.mp3' },
-    { artist: 'Shigeo Sekito', title: 'the word II', url: '/audio/the-word-ii.mp3' },
   ];
 
   // ── State (restore from localStorage if available) ────────

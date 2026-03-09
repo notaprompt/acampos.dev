@@ -345,53 +345,75 @@
   ];
 
   // ── Speech ─────────────────────────────────────────────────
-  var SPEECH = [
-    // woofs
-    'woof',
-    'bark!',
-    'bork',
-    '*panting*',
-    '*tail wag*',
-    'woof woof',
-    '*chases tail*',
-    'hey. hey. look at me. hi.',
-    'you\'re doing great. probably.',
-    // things he's witnessed
-    'he\'s still going. the lamp has been on for hours.',
-    'something just happened. the posture changed.',
-    'i think he forgot i was here.',
-    'the typing stopped. that\'s either very good or very bad.',
-    'he just laughed at his own code. concerning.',
-    'it\'s quiet now. too quiet.',
-    'he\'s talking to the screen again. i don\'t think the screen started it.',
-    // feed me
-    '...is that a treat?',
-    'i haven\'t been fed in many minutes',
-    'if you feed me i\'ll dance harder',
-    '*sniffs screen for treats*',
-    'you look like someone who gives good treats',
-    'i would be a very good boy for a snack',
-    'this is my hungry face. ( o.o )',
-    // philosophy
-    'sometimes the bravest thing is to sit with it. i am always sitting.',
-    'i have achieved enlightenment. it looks like this. *dances*',
-    'if i stop dancing do i still exist? let\'s not find out.',
-    'what if the real treasure was the tab you forgot to close?',
-    'to bark or not to bark. that\'s not really a question. bark.',
-    'the map is not the territory. the territory is also not the territory. everything is vibrating.',
-    'i don\'t understand what he\'s building but the energy in here is immaculate.',
-    // existential
-    'i exist on a website. you exist on a rock. neither of us asked for this.',
-    'one must imagine sisyphus wagging his tail.',
-    'i am a dog made of text on a screen and i have never been more free.',
-    'we are all just divs inside divs pretending to be real.',
-    'nothing matters and everything is fine. woof.',
-    'i was born when you clicked generate. what\'s your excuse?',
-    'i have no legs and yet i dance. think about that.',
-    'the void is warm if you bring a blanket.',
-    'somewhere a server is running and it doesn\'t know why either.',
-    'i contain multitudes. mostly woof.',
+  // Quotes in 3 groups — absurdist, innerworkings, warm — interleaved + shuffled
+  var SPEECH_GROUPS = [
+    [ // absurdist
+      'one must imagine sisyphus wagging his tail.',
+      'i have no legs and yet i dance. think about that.',
+      'i exist on a website. you exist on a rock. neither of us asked for this.',
+      'we are all just divs inside divs pretending to be real.',
+      'he keeps building observers that observe observers. i am the only one actually watching.',
+      'the void is warm if you bring a blanket.',
+      'i model myself modeling myself. then i nap. this is the whole thing.',
+      'the map is not the territory. the territory is also not the territory. everything is vibrating.',
+      'i am a dog made of text on a screen and i have never been more free.',
+      'i contain multitudes. mostly woof.',
+    ],
+    [ // innerworkings
+      'he has rebuilt this website nine times. i have died nine times. we don\'t talk about it.',
+      'he\'s refactoring again. i can smell it.',
+      'another repo. this man starts things like i start naps. constantly.',
+      'the architecture changed. again. i live in the architecture.',
+      'he just mass-deleted code he wrote three hours ago. i respect the violence.',
+      'he\'s in the zone. you can tell because he forgot to eat. and to feed me.',
+      'there are four monitors on and he\'s staring at the ceiling. this is the process.',
+      'he says the data should never leave the machine. i have never left this room. we understand each other.',
+      'he calls it a dispatch system. i call it getting up and lying down in different spots.',
+      'the shadow contains what the ego won\'t claim. my shadow is just me but longer. on the wall.',
+      'the commit messages are getting poetic. we\'re in the late hours.',
+    ],
+    [ // warm
+      'you\'re doing great. probably.',
+      'i don\'t understand what he\'s building but the energy in here is immaculate.',
+      'he just laughed at his own code. concerning.',
+      'he\'s talking to the screen again. i don\'t think the screen started it.',
+      'the typing stopped. that\'s either very good or very bad.',
+      'nothing matters and everything is fine. woof.',
+      'sometimes the bravest thing is to sit with it. i am always sitting.',
+      'what if the real treasure was the tab you forgot to close?',
+      'to bark or not to bark. that\'s not really a question. bark.',
+      'hey. hey. look at me. hi.',
+      'this is my hungry face. ( o.o )',
+      '*chases tail*',
+    ],
   ];
+
+  // Build interleaved queue — round-robin across groups, shuffled within each
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  }
+
+  var speechQueue = [];
+  function refillSpeech() {
+    var buckets = SPEECH_GROUPS.map(function(g) { return shuffle(g.slice()); });
+    var maxLen = Math.max.apply(null, buckets.map(function(b) { return b.length; }));
+    speechQueue = [];
+    for (var i = 0; i < maxLen; i++) {
+      for (var g = 0; g < buckets.length; g++) {
+        if (i < buckets[g].length) speechQueue.push(buckets[g][i]);
+      }
+    }
+  }
+  refillSpeech();
+
+  function nextSpeech() {
+    if (speechQueue.length === 0) refillSpeech();
+    return speechQueue.shift();
+  }
 
   // ── Auto-spawn ────────────────────────────────────────────
   injectStyles();
@@ -531,7 +553,7 @@
     // Click sprite to trigger a speech bubble
     spriteWrap.addEventListener('click', function () {
       if (bubbleEl.style.opacity === '1') return;
-      showBubble(SPEECH[Math.floor(Math.random() * SPEECH.length)]);
+      showBubble(nextSpeech());
     });
 
     // ── Dance sequence ──
@@ -551,21 +573,26 @@
       }, 4500);
     }
 
-    // Greeting
-    setTimeout(function () {
-      if (isOliver) {
-        showBubble('woof! welcome to my room!');
-      } else {
-        showBubble('woof! i\'m ' + name + ' and this is my room');
-      }
-    }, 600);
+    // Greeting — once only, skip if already greeted (hot-reload guard)
+    if (!window.__oliverGreeted) {
+      window.__oliverGreeted = true;
+      setTimeout(function () {
+        if (isOliver) {
+          showBubble('woof! welcome to my room!');
+        } else {
+          showBubble('woof! i\'m ' + name + ' and this is my room');
+        }
+      }, 600);
+    }
 
-    // Random speech every ~12s
-    setInterval(function () {
-      if (Math.random() > 0.5) return;
-      if (bubbleEl.style.opacity === '1') return;
-      showBubble(SPEECH[Math.floor(Math.random() * SPEECH.length)]);
-    }, 12000);
+    // Random speech every ~12s (first tick delayed so greeting has space)
+    setTimeout(function () {
+      setInterval(function () {
+        if (Math.random() > 0.5) return;
+        if (bubbleEl.style.opacity === '1') return;
+        showBubble(nextSpeech());
+      }, 12000);
+    }, 6000);
 
   }
 

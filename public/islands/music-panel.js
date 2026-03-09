@@ -630,11 +630,13 @@
     var b = parseInt(hex.slice(5,7), 16);
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
   }
-  // Color cycle — 4 site colors, hit-driven jumps + energy saturation
+  // Color cycle — melody-driven. dominant mid-freq bin steers hue position.
   var PALETTE = [COL_GOLD, COL_GLOW, COL_ALIVE, COL_DANGER];
   var palIdx = 0;
   var palBlend = 0;
-  var flashEnergy = 0;  // decays from bass hits, drives color intensity
+  var flashEnergy = 0;   // decays from bass hits, drives intensity
+  var melodyColor = 0;   // 0-1, smoothed dominant mid-freq position → palette position
+  var melodyColorSmooth = 0;
   function lerpColor(a, b, t) {
     var ar = parseInt(a.slice(1,3),16), ag = parseInt(a.slice(3,5),16), ab = parseInt(a.slice(5,7),16);
     var br = parseInt(b.slice(1,3),16), bg = parseInt(b.slice(3,5),16), bb = parseInt(b.slice(5,7),16);
@@ -1120,18 +1122,27 @@
     // Forward motion — speed driven by bass, reversed during reverse
     hallZ += (0.015 + sBass * 0.04 + hit * 0.25) * forwardDir;
 
-    // Palette — slow drift baseline, hard jump on strong bass hit
-    palBlend += 0.003 + sTotal * 0.004;
-    if (hit > p.hitThresh * 1.2 && Math.random() < 0.4) {
-      // Hard cut to next color on a strong hit
-      palIdx = (palIdx + 1) % PALETTE.length;
-      palBlend = 0;
+    // Melody color — find dominant frequency bin in mid range (melody lives here)
+    var midStart = Math.floor(bufferLength * 0.08);  // ~200Hz
+    var midEnd   = Math.floor(bufferLength * 0.45);  // ~4kHz
+    var peakBin = midStart, peakVal = 0;
+    for (var mi = midStart; mi < midEnd; mi++) {
+      if (freqData[mi] > peakVal) { peakVal = freqData[mi]; peakBin = mi; }
     }
-    if (palBlend >= 1) { palBlend = 0; palIdx = (palIdx + 1) % PALETTE.length; }
+    // Map peak bin to 0-1 across mid range → palette position
+    var rawMelodyColor = (peakBin - midStart) / (midEnd - midStart);
+    // Slow smooth — note changes drift color, sustained notes hold it
+    var melodyLag = peakVal > 60 ? 0.04 : 0.008; // faster when melody is loud
+    melodyColorSmooth += (rawMelodyColor - melodyColorSmooth) * melodyLag;
+    melodyColor = melodyColorSmooth;
+
+    // palBlend driven by melody position — color is WHERE the melody is, not time
+    palBlend = melodyColor;
+    palIdx = Math.floor(melodyColor * PALETTE.length) % PALETTE.length;
     var colA = PALETTE[palIdx];
     var colB = PALETTE[(palIdx + 1) % PALETTE.length];
 
-    // Flash energy — spikes on hit, drives opacity/saturation boost
+    // Flash energy — spikes on hit, drives intensity (percussion layer on top)
     flashEnergy = Math.min(1, flashEnergy + hit * 3);
     flashEnergy *= 0.88;
 

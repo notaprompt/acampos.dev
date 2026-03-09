@@ -957,7 +957,8 @@
   var targetVelX = 0, targetVelY = 0; // target velocity for smooth curves
   var steerAngle = 0;                 // current heading
   var flipAngle = 0;                  // rotation for flips (radians)
-  var leanAngle = 0;                  // continuous camera lean into bends
+  var leanAngle = 0;                  // g-force tilt — lags VP, springs back
+  var leanVel = 0;                    // angular velocity for spring physics
   // Bend system — makes the tunnel curve like a bendy straw
   // Bend system — two control points for S-curves and U-turns
   var bendX1 = 0, bendY1 = 0, bendTX1 = 0, bendTY1 = 0;
@@ -1104,6 +1105,7 @@
     ctx.save();
     ctx.globalAlpha = 0.75 - sTotal * 0.08;
     ctx.translate(zoomCx, zoomCy);
+    ctx.rotate(flipAngle * 0.8 + leanAngle);
     ctx.scale(feedbackZoom, feedbackZoom);
     ctx.translate(-zoomCx, -zoomCy);
     ctx.drawImage(canvas, 0, 0);
@@ -1122,20 +1124,16 @@
     var colA = PALETTE[palIdx];
     var colB = PALETTE[(palIdx + 1) % PALETTE.length];
 
-    // Camera lean — pure rotation around center, no lateral pan
-    // bendX1/bendX2 drive tilt, bendY adds subtle up/down for trippy feel
-    var leanTarget = -(bendX1 * 0.32 + bendX2 * 0.14) + bendY1 * 0.06;
-    leanAngle += (leanTarget - leanAngle) * 0.035;
+    // G-force tilt — spring physics, tilts opposite to lateral acceleration
+    // When thrown left (targetVelX < 0) you lean right, like a rollercoaster seat
+    var leanForce = -targetVelX * 1.8;
+    leanVel += (leanForce - leanAngle) * 0.06 - leanVel * 0.88;
+    leanAngle += leanVel;
+    leanAngle = Math.max(-0.18, Math.min(0.18, leanAngle)); // max ~10 degrees
 
-    // Vanishing point — stays near center, only slight drift so it doesn't pan
-    var vpx = w / 2 + chaseX * w * 0.03;
-    var vpy = h / 2 + chaseY * h * 0.03;
-
-    // ── Camera lean transform — rolls into the bend, wraps all scene layers ──
-    ctx.save();
-    ctx.translate(w / 2, h / 2);
-    ctx.rotate(leanAngle + flipAngle * 0.8);
-    ctx.translate(-w / 2, -h / 2);
+    // Vanishing point — chase + lean into the bend
+    var vpx = w / 2 + chaseX * w * 0.15 + bendX1 * w * 0.06;
+    var vpy = h / 2 + chaseY * h * 0.12 + bendY1 * h * 0.05;
 
     // ═══ LAYER 1: INFINITE HALL — receding rectangles ═══
     var rectCount = 36;
@@ -1424,8 +1422,6 @@
       ctx.lineTo(gridCx + gxSpread, gy);
       ctx.stroke();
     }
-
-    ctx.restore(); // end camera lean
 
   }
 

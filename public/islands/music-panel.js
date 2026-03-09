@@ -356,7 +356,7 @@
   // Now-playing banner — marquee ticker
   var banner = document.createElement('div');
   banner.id = 'now-playing';
-  banner.innerHTML = '<span class="np-scroll"><span class="np-label">now playing:</span> <span class="np-track">--</span><span class="np-spacer"></span><span class="np-weather"></span><span class="np-spacer"></span><span class="np-label">now playing:</span> <span class="np-track np-track-2">--</span><span class="np-spacer"></span></span>';
+  banner.innerHTML = '<span class="np-scroll"><span class="np-label">now playing:</span> <span class="np-track">--</span><span class="np-spacer"></span><span class="np-weather"></span><span class="np-spacer"></span><span class="np-stock"></span><span class="np-spacer"></span></span>';
   document.body.appendChild(banner);
   var npWeatherEl = banner.querySelector('.np-weather');
 
@@ -553,17 +553,15 @@
     titleEl.textContent = track.title;
     artistEl.textContent = track.artist;
 
-    // Update both marquee track slots
+    // Update marquee track
     var trackHtml = '';
     if (track.artist) {
       trackHtml += '<span class="np-artist">' + track.artist + '</span>';
       trackHtml += '<span class="np-sep"> // </span>';
     }
     trackHtml += track.title;
-    var npTracks = banner.querySelectorAll('.np-track');
-    for (var i = 0; i < npTracks.length; i++) {
-      npTracks[i].innerHTML = trackHtml;
-    }
+    var npTrack = banner.querySelector('.np-track');
+    if (npTrack) npTrack.innerHTML = trackHtml;
   }
 
   // Update weather in the marquee banner
@@ -1437,6 +1435,28 @@
       .catch(function () {});
   }
 
+  function fetchStock() {
+    fetch('https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=2d')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var meta = data.chart && data.chart.result && data.chart.result[0] && data.chart.result[0].meta;
+        if (!meta) return;
+        var price = meta.regularMarketPrice;
+        var prev = meta.chartPreviousClose;
+        var change = price - prev;
+        var pct = ((change / prev) * 100).toFixed(2);
+        var arrow = change >= 0 ? '\u25B2' : '\u25BC';
+        var sign = change >= 0 ? '+' : '';
+        var color = change >= 0 ? 'rgba(100,220,120,0.6)' : 'rgba(220,100,100,0.6)';
+        var html = '<span style="opacity:0.4"> AAPL</span> ' +
+          '<span style="color:rgba(255,255,255,0.6)">$' + price.toFixed(2) + '</span> ' +
+          '<span style="color:' + color + '">' + arrow + ' ' + sign + pct + '%</span>';
+        var slots = banner.querySelectorAll('.np-stock');
+        for (var i = 0; i < slots.length; i++) slots[i].innerHTML = html;
+      })
+      .catch(function () {});
+  }
+
   function weatherDesc(code) {
     if (code === 0) return 'clear';
     if (code <= 3) return 'cloudy';
@@ -1451,6 +1471,8 @@
   }
 
   fetchWeather();
+  fetchStock();
+  setInterval(fetchStock, 60000);
 
   // ── Init — never interrupt audio that's already playing ──
   // Detect if audio is already loaded with a src (playing OR paused mid-track)

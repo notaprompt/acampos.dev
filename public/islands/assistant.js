@@ -768,7 +768,7 @@
       bubbleEl.style.opacity = '1';
       setTimeout(function () {
         bubbleEl.style.opacity = '0';
-      }, 4500);
+      }, 5500);
     }
 
     // ── Feature 3: Treat button handler ──
@@ -916,13 +916,14 @@
       }, 600);
     }
 
-    // Random speech every ~12s (first tick delayed so greeting has space)
+    // Random speech every ~8s (first tick delayed so greeting has space)
     setTimeout(function () {
       setInterval(function () {
-        if (Math.random() > 0.5) return;
+        if (interactionActive) return;
         if (bubbleEl.style.opacity === '1') return;
+        if (Math.random() > 0.65) return;
         showBubble(nextSpeech());
-      }, 12000);
+      }, 8000);
     }, 6000);
 
   }

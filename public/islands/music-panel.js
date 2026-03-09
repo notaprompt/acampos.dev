@@ -1035,10 +1035,11 @@
     targetX += targetVelX;
     targetY += targetVelY;
 
-    // Soft bounds — pull back toward center when far out, rubber band feel
+    // Soft bounds — tighter leash, VP never drifts too far from center
     var dist = Math.sqrt(targetX * targetX + targetY * targetY);
-    if (dist > 0.6) {
-      var pull = (dist - 0.6) * 0.08;
+    var bound = 0.35 / p.bendAmp; // profiles with high bendAmp get tighter bounds
+    if (dist > bound) {
+      var pull = (dist - bound) * 0.12;
       targetX -= targetX / dist * pull;
       targetY -= targetY / dist * pull;
     }
@@ -1083,9 +1084,9 @@
     bendX2 += (bendTX2 - bendX2) * 0.02;
     bendY2 += (bendTY2 - bendY2) * 0.02;
 
-    // ── Reverse system — occasional backward pull ──
-    if (hit > 0.1 && reverseTimer <= 0 && Math.random() < 0.08) {
-      reverseTimer = 30 + Math.floor(Math.random() * 30); // 0.5-1 sec reverse
+    // ── Reverse system — beat bounce, threshold scaled to song profile ──
+    if (hit > Math.max(p.hitThresh * 1.5, 0.06) && reverseTimer <= 0 && Math.random() < 0.08) {
+      reverseTimer = 30 + Math.floor(Math.random() * 30);
     }
     if (reverseTimer > 0) reverseTimer--;
     var forwardDir = reverseTimer > 0 ? -0.6 : 1;

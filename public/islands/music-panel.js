@@ -1149,9 +1149,9 @@
     var midEnd   = Math.floor(bufferLength * 0.55);
     var weightedSum = 0, weightTotal = 0;
     for (var mi = midStart; mi < midEnd; mi++) {
-      var w = freqData[mi] / 255;
-      weightedSum += mi * w;
-      weightTotal += w;
+      var mw = freqData[mi] / 255;
+      weightedSum += mi * mw;
+      weightTotal += mw;
     }
     // Spectral centroid — center of mass of mid spectrum
     var centroid = weightTotal > 0.1 ? (weightedSum / weightTotal) : midStart;

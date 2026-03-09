@@ -5,7 +5,7 @@
 
 (function () {
   var CLIENT_ID = '117146db638c4bf6b0fdb5879ea50502';
-  var REDIRECT_URI = window.location.origin;
+  var REDIRECT_URI = window.location.origin; // must match Spotify Dashboard — set to https://acampos-dev.vercel.app
   var SCOPES = [
     'streaming',
     'user-read-email',

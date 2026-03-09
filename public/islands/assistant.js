@@ -916,15 +916,14 @@
       }, 600);
     }
 
-    // Random speech every ~8s (first tick delayed so greeting has space)
+    // Random speech — speak whenever the bubble is free
     setTimeout(function () {
       setInterval(function () {
         if (interactionActive) return;
         if (bubbleEl.style.opacity === '1') return;
-        if (Math.random() > 0.65) return;
         showBubble(nextSpeech());
-      }, 8000);
-    }, 6000);
+      }, 9000);
+    }, 3000);
 
   }
 

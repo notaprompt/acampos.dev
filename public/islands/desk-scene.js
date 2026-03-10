@@ -984,45 +984,41 @@
   function drawChair() {
     var A = 32, S = 33, L = 30, H = 31;
 
-    // Eames Aluminum Group — 3/4 rear (~10-11 o'clock)
-    // Mostly back visible, left arm just a sliver on near edge
+    // Eames Aluminum Group — 3/4 rear (~9-10 o'clock)
+    // Back dominant, more arm visible, sliver of seat from left
 
-    // ── BACK — dominant, 10px wide, slight recline ──
-    // top chrome arch
-    fillRect(CHAIR_X + 2, CHAIR_Y, 12, 1, A);
-    // left chrome rail (near side)
-    fillRect(CHAIR_X + 1, CHAIR_Y + 1, 1, 9, A);
-    fillRect(CHAIR_X, CHAIR_Y + 2, 1, 7, S);          // shadow
-    // right chrome rail (far side)
-    fillRect(CHAIR_X + 14, CHAIR_Y + 1, 1, 9, A);
-    // leather back panel
-    fillRect(CHAIR_X + 2, CHAIR_Y + 1, 12, 9, L);
-    // horizontal ribs
-    fillRect(CHAIR_X + 2, CHAIR_Y + 2, 12, 1, H);
-    fillRect(CHAIR_X + 2, CHAIR_Y + 4, 12, 1, H);
-    fillRect(CHAIR_X + 2, CHAIR_Y + 6, 12, 1, H);
-    fillRect(CHAIR_X + 2, CHAIR_Y + 8, 12, 1, H);
-    // aluminum back brace
-    fillRect(CHAIR_X + 1, CHAIR_Y + 5, 14, 1, A);
-    // bottom of back
-    fillRect(CHAIR_X + 1, CHAIR_Y + 10, 14, 1, A);
+    // ── BACK — 11px wide leather ──
+    fillRect(CHAIR_X + 3, CHAIR_Y, 11, 1, A);         // top chrome arch
+    fillRect(CHAIR_X + 2, CHAIR_Y + 1, 1, 9, A);     // left rail (near)
+    fillRect(CHAIR_X + 1, CHAIR_Y + 2, 1, 7, S);     // left rail shadow
+    fillRect(CHAIR_X + 14, CHAIR_Y + 1, 1, 9, A);    // right rail (far)
+    fillRect(CHAIR_X + 3, CHAIR_Y + 1, 11, 9, L);    // leather
+    fillRect(CHAIR_X + 3, CHAIR_Y + 2, 11, 1, H);    // rib
+    fillRect(CHAIR_X + 3, CHAIR_Y + 4, 11, 1, H);    // rib
+    fillRect(CHAIR_X + 3, CHAIR_Y + 6, 11, 1, H);    // rib
+    fillRect(CHAIR_X + 3, CHAIR_Y + 8, 11, 1, H);    // rib
+    fillRect(CHAIR_X + 2, CHAIR_Y + 5, 13, 1, A);    // back brace
+    fillRect(CHAIR_X + 2, CHAIR_Y + 10, 13, 1, A);   // bottom rail
 
-    // ── LEFT ARM — just visible: short horizontal + drop ──
-    fillRect(CHAIR_X - 1, CHAIR_Y + 5, 2, 1, A);     // arm pad peeking left
-    fillRect(CHAIR_X - 1, CHAIR_Y + 6, 1, 5, A);     // vertical drop
-    fillRect(CHAIR_X - 2, CHAIR_Y + 6, 1, 4, S);     // shadow
+    // ── LEFT ARM — 3px horizontal pad + vertical drop ──
+    fillRect(CHAIR_X - 1, CHAIR_Y + 5, 3, 1, A);     // arm pad
+    fillRect(CHAIR_X - 1, CHAIR_Y + 6, 1, 6, A);     // vertical drop
+    fillRect(CHAIR_X - 2, CHAIR_Y + 6, 1, 5, S);     // shadow
 
-    // ── RIGHT ARM — foreshortened, barely there ──
+    // ── RIGHT ARM — stub ──
     fillRect(CHAIR_X + 14, CHAIR_Y + 5, 1, 1, S);
 
     // ── GAP + hinge ──
-    fillRect(CHAIR_X + 1, CHAIR_Y + 11, 1, 1, A);    // hinge bracket
+    fillRect(CHAIR_X + 2, CHAIR_Y + 11, 1, 1, A);
 
-    // ── SEAT — slightly narrower from rear view ──
+    // ── SEAT — sliver visible from left, angled ──
     fillRect(CHAIR_X, CHAIR_Y + 12, 14, 1, A);        // front rail
-    fillRect(CHAIR_X + 1, CHAIR_Y + 13, 12, 2, L);   // leather
-    fillRect(CHAIR_X + 1, CHAIR_Y + 14, 12, 1, H);   // rib
+    fillRect(CHAIR_X + 1, CHAIR_Y + 13, 13, 2, L);   // leather
+    fillRect(CHAIR_X + 1, CHAIR_Y + 14, 13, 1, H);   // rib
     fillRect(CHAIR_X, CHAIR_Y + 15, 14, 1, A);        // rear rail
+    // seat edge visible from left (the sliver)
+    fillRect(CHAIR_X - 1, CHAIR_Y + 12, 1, 4, A);    // left seat edge chrome
+    fillRect(CHAIR_X - 2, CHAIR_Y + 13, 1, 2, S);    // seat edge shadow
 
     // ── PEDESTAL ──
     fillRect(CHAIR_X + 6, CHAIR_Y + 16, 2, 2, A);

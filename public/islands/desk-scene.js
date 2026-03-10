@@ -977,42 +977,49 @@
     registerObject('art', ART1_X, ART1_Y, ART1_W, ART1_H, 'https://instagram.com/notaprompt', 'instagram', true);
   }
 
-  // ── Eames Aluminum Group desk chair (3/4 facing left, chrome frame visible) ──
-  var CHAIR_X = 128, CHAIR_Y = 70;
+  // ── Eames Aluminum Group desk chair (3/4 facing left) ──
+  var CHAIR_X = 126, CHAIR_Y = 70;
   function drawChair() {
-    // Chrome frame rails arch over back with leather slung between
-    // 3/4 view: near-side rail on left, back frame visible on right
+    // Aluminum Group: thin chrome frame is the structure, leather panels slung between
+    // 3/4 view facing left — back frame rail visible, near arm in front
     var A = 32, S = 33, L = 30, H = 31;
-    var ch = [
-      // back top — chrome rail arcs over
-      [_,_,_,_,_,_,_,_,_,_,_,A,A,A,A,A,_,_,_,_],
-      [_,_,_,_,_,_,_,_,_,_,A,S,L,L,L,S,A,_,_,_],
-      [_,_,_,_,_,_,_,_,_,A,S,L,H,H,L,L,S,A,_,_],
-      [_,_,_,_,_,_,_,_,_,A,S,L,H,H,H,L,S,A,_,_],
-      [_,_,_,_,_,_,_,_,A,S,L,L,H,H,L,L,S,A,_,_],
-      [_,_,_,_,_,_,_,_,A,S,L,L,L,L,L,L,S,A,_,_],
-      [_,_,_,_,_,_,_,A,S,L,L,L,L,L,L,L,S,A,_,_],
-      // chrome arm rail curves forward and down
-      [_,_,_,_,_,_,A,S,L,L,L,L,L,L,L,S,A,_,_,_],
-      [_,_,_,_,_,A,S,L,L,L,L,L,L,L,S,A,_,_,_,_],
-      [_,_,_,_,A,S,L,L,L,L,L,L,L,L,S,A,_,_,_,_],
-      // seat — wider, cushioned
-      [_,_,_,A,S,L,H,H,H,H,H,H,H,L,S,A,_,_,_,_],
-      [_,_,A,S,L,H,H,H,H,H,H,H,H,H,S,A,_,_,_,_],
-      [_,_,A,L,L,L,L,L,L,L,L,L,L,L,L,A,_,_,_,_],
-      [_,_,_,A,A,L,L,L,L,L,L,L,L,A,A,_,_,_,_,_],
-      // chrome supports converge to pedestal
-      [_,_,_,_,_,A,A,_,_,_,_,_,A,A,_,_,_,_,_,_],
-      [_,_,_,_,_,_,A,_,_,_,_,_,A,_,_,_,_,_,_,_],
-      [_,_,_,_,_,_,_,A,_,_,_,A,_,_,_,_,_,_,_,_],
-      [_,_,_,_,_,_,_,_,A,A,A,_,_,_,_,_,_,_,_,_],
-      // gas cylinder
-      [_,_,_,_,_,_,_,_,A,S,A,_,_,_,_,_,_,_,_,_],
-      // 5-star aluminum base with casters
-      [_,_,A,A,A,A,A,A,A,A,A,A,A,A,A,A,_,_,_,_],
-      [_,A,S,_,_,_,_,_,_,_,_,_,_,_,S,A,_,_,_,_],
-    ];
-    placeSprite(ch, CHAIR_X, CHAIR_Y);
+    // back — chrome frame dominates, thin leather panel inside
+    //   top rail
+    fillRect(CHAIR_X + 10, CHAIR_Y, 8, 1, A);      // top chrome bar
+    fillRect(CHAIR_X + 11, CHAIR_Y + 1, 6, 1, S);  // bar shadow
+    //   right rail (back frame, visible in 3/4)
+    fillRect(CHAIR_X + 17, CHAIR_Y + 1, 1, 12, A);  // back right rail
+    fillRect(CHAIR_X + 18, CHAIR_Y + 2, 1, 10, S);  // rail shadow
+    //   left rail (near side, curves forward)
+    fillRect(CHAIR_X + 10, CHAIR_Y + 1, 1, 5, A);
+    fillRect(CHAIR_X + 9, CHAIR_Y + 6, 1, 3, A);
+    fillRect(CHAIR_X + 8, CHAIR_Y + 9, 1, 2, A);
+    fillRect(CHAIR_X + 7, CHAIR_Y + 11, 1, 2, A);   // arm curves forward
+    //   leather back panel between rails
+    fillRect(CHAIR_X + 11, CHAIR_Y + 2, 6, 9, L);
+    fillRect(CHAIR_X + 12, CHAIR_Y + 3, 4, 7, H);   // highlight strip
+    // seat — leather panel slung between lower frame
+    fillRect(CHAIR_X + 5, CHAIR_Y + 11, 12, 1, A);   // seat frame front edge (chrome)
+    fillRect(CHAIR_X + 6, CHAIR_Y + 12, 11, 3, L);   // leather seat
+    fillRect(CHAIR_X + 7, CHAIR_Y + 12, 9, 1, H);    // seat highlight
+    fillRect(CHAIR_X + 17, CHAIR_Y + 12, 1, 3, A);   // seat frame back
+    fillRect(CHAIR_X + 5, CHAIR_Y + 15, 13, 1, A);   // seat frame bottom (chrome)
+    // armrest — chrome, visible on near side
+    fillRect(CHAIR_X + 5, CHAIR_Y + 10, 3, 1, A);    // arm pad
+    fillRect(CHAIR_X + 4, CHAIR_Y + 10, 1, 1, S);    // arm tip
+    // chrome supports — two angled legs converge to pedestal
+    fillRect(CHAIR_X + 8, CHAIR_Y + 16, 1, 2, A);
+    fillRect(CHAIR_X + 14, CHAIR_Y + 16, 1, 2, A);
+    fillRect(CHAIR_X + 9, CHAIR_Y + 18, 1, 1, A);
+    fillRect(CHAIR_X + 13, CHAIR_Y + 18, 1, 1, A);
+    fillRect(CHAIR_X + 10, CHAIR_Y + 19, 3, 1, A);   // hub
+    // gas cylinder
+    fillRect(CHAIR_X + 11, CHAIR_Y + 20, 1, 2, S);
+    // 5-star aluminum base
+    fillRect(CHAIR_X + 4, CHAIR_Y + 22, 15, 1, A);
+    fillRect(CHAIR_X + 3, CHAIR_Y + 23, 1, 1, S);    // caster L
+    fillRect(CHAIR_X + 11, CHAIR_Y + 23, 1, 1, S);   // caster C
+    fillRect(CHAIR_X + 18, CHAIR_Y + 23, 1, 1, S);   // caster R
   }
 
   // ── Subwoofer under desk ──
@@ -1333,24 +1340,27 @@
     portalGlowG += (gg - portalGlowG) * 0.03;
     portalGlowB += (gb - portalGlowB) * 0.03;
 
-    // fill portal — deep gradient with slow drifting concentric rings
+    // fill portal — slow rotating spiral (Rick and Morty style)
+    var spiralSpeed = 0.012 + energy * 0.008; // music energy speeds rotation slightly
     for (var py = 0; py < VH; py++) {
       for (var px = 0; px < VW; px++) {
         var dx = (px - cx) / (VW / 2);
         var dy = (py - cy) / (VH / 2);
         var dist = Math.sqrt(dx * dx + dy * dy);
-        // slow concentric rings drifting inward — mesmerizing
-        var ring = Math.sin((dist * 4 - phase * ringSpeed) * Math.PI) * 0.08 + 0.92;
+        // spiral: angle + distance creates rotating arms
+        var angle = Math.atan2(dy, dx);
+        var spiral = Math.sin(angle * 2 + dist * 5 - phase * spiralSpeed) * 0.5 + 0.5;
         // smooth gradient falloff — deep at edges, bright at center
-        var gradient = Math.pow(Math.max(0, 1 - dist * 0.7), 1.8);
-        var intensity = gradient * breath * ring;
-        // neon core glow — intensifies smoothly toward center
+        var gradient = Math.pow(Math.max(0, 1 - dist * 0.7), 1.6);
+        // spiral modulates intensity — creates visible arms
+        var intensity = gradient * breath * (0.6 + spiral * 0.4);
+        // neon core glow
         var neonBoost = Math.pow(Math.max(0, 1 - dist), 4) * (1.0 + energy * 0.8);
-        // color with hue shift across gradient for depth
-        var hueShift = dist * 0.3; // outer ring shifts hue slightly
-        var r = Math.min(255, Math.round(portalGlowR * intensity * (1 - hueShift * 0.2) + 180 * neonBoost * 0.3));
-        var g = Math.min(255, Math.round(portalGlowG * intensity * (1 + hueShift * 0.15) + 160 * neonBoost * 0.15));
-        var b = Math.min(255, Math.round(portalGlowB * intensity * (1 + hueShift * 0.3) + 180 * neonBoost * 0.25));
+        // color with hue shift along spiral arms for depth
+        var hueShift = spiral * 0.25;
+        var r = Math.min(255, Math.round(portalGlowR * intensity * (1 + hueShift * 0.3) + 180 * neonBoost * 0.3));
+        var g = Math.min(255, Math.round(portalGlowG * intensity * (1 - hueShift * 0.1) + 160 * neonBoost * 0.15));
+        var b = Math.min(255, Math.round(portalGlowB * intensity * (1 + hueShift * 0.2) + 180 * neonBoost * 0.25));
         var key = VAULT_DYN_START + Math.min(8, Math.floor(gradient * 9));
         if (C[key]) delete rgbCache[C[key]];
         C[key] = 'rgb(' + r + ',' + g + ',' + b + ')';
@@ -1549,13 +1559,13 @@
   var sparkleDir = 1;
   var sparkleTick = 0;
   setInterval(function () {
+    // stop shimmer entirely when vault is open — don't write book pixels into void
+    if (vaultOpen || vaultAnimating) return;
     // restore all pixels to original first
     for (var si2 = 0; si2 < shimmerBookH; si2++) {
       scene[(shimmerBookY + si2) * COLS + shimmerBookX] = shimmerOriginal[si2 * 2];
       scene[(shimmerBookY + si2) * COLS + shimmerBookX + 1] = shimmerOriginal[si2 * 2 + 1];
     }
-    // stop shimmer when vault is open
-    if (vaultOpen) return;
     // advance sparkle position every 3 ticks
     sparkleTick++;
     if (sparkleTick % 3 === 0) {

@@ -1135,12 +1135,14 @@
     ctx.save();
     ctx.globalAlpha = 0.75 - sTotal * 0.08;
     ctx.translate(zoomCx, zoomCy);
-    ctx.rotate(flipAngle * 0.8);
+    ctx.rotate(flipAngle * 0.8 + visTime * 0.015);
     ctx.scale(feedbackZoom, feedbackZoom);
     ctx.translate(-zoomCx, -zoomCy);
     ctx.drawImage(canvas, 0, 0);
     ctx.restore();
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+    var isDark = document.documentElement.dataset.theme !== 'light';
+    var voidBg = isDark ? '0,0,0' : '240,235,225';
+    ctx.fillStyle = 'rgba(' + voidBg + ', 0.18)';
     ctx.fillRect(0, 0, w, h);
 
     visTime += 0.016;
@@ -1415,9 +1417,10 @@
       // Radial gradient along each corner edge — darkest at the seam
       var aoR = Math.max(w, h) * 0.25;
       var aoGrad = ctx.createRadialGradient(sc[0], sc[1], 0, sc[0], sc[1], aoR);
-      aoGrad.addColorStop(0, 'rgba(0,0,0,0.25)');
-      aoGrad.addColorStop(0.3, 'rgba(0,0,0,0.1)');
-      aoGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      var aoBase = isDark ? '0,0,0' : '80,70,55';
+      aoGrad.addColorStop(0, 'rgba(' + aoBase + ',0.25)');
+      aoGrad.addColorStop(0.3, 'rgba(' + aoBase + ',0.1)');
+      aoGrad.addColorStop(1, 'rgba(' + aoBase + ',0)');
       ctx.fillStyle = aoGrad;
       ctx.fillRect(0, 0, w, h);
     }
@@ -1447,11 +1450,12 @@
     // ═══ LAYER 3e: DEPTH FOG — radial darkening centered on VP ═══
     var fogR = Math.max(w, h) * 0.8;
     var fogGrad = ctx.createRadialGradient(vpx, vpy, 0, vpx, vpy, fogR);
-    fogGrad.addColorStop(0, 'rgba(0,0,0,0.9)');
-    fogGrad.addColorStop(0.04, 'rgba(0,0,0,0.7)');
-    fogGrad.addColorStop(0.12, 'rgba(0,0,0,0.3)');
-    fogGrad.addColorStop(0.35, 'rgba(0,0,0,0.05)');
-    fogGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    var fogBase = isDark ? '0,0,0' : '240,235,225';
+    fogGrad.addColorStop(0, 'rgba(' + fogBase + ',0.9)');
+    fogGrad.addColorStop(0.04, 'rgba(' + fogBase + ',0.7)');
+    fogGrad.addColorStop(0.12, 'rgba(' + fogBase + ',0.3)');
+    fogGrad.addColorStop(0.35, 'rgba(' + fogBase + ',0.05)');
+    fogGrad.addColorStop(1, 'rgba(' + fogBase + ',0)');
     ctx.fillStyle = fogGrad;
     ctx.fillRect(0, 0, w, h);
 

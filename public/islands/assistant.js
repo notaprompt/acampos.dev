@@ -32,6 +32,8 @@
     21: '#5a8a3a',      // plant — light green edge
     22: '#a85030',      // plant — terracotta pot
     23: '#7a3820',      // plant — pot shadow
+    24: '#e8dcc8',      // bone — light ivory
+    25: '#c8b8a0',      // bone — shadow
   };
   var PX = 4; // pixel size — 4px x 20cols = 80px wide
   // 20 wide x 18 tall — detailed blue brindle frenchie
@@ -635,6 +637,33 @@
     }
     sceneRow.appendChild(plantWrap);
 
+    // Bone — pixel bone on the rug near Oliver's paws
+    var BONE = [
+      [_,24,24,_,_,_,_,_,_,24,24,_],
+      [24,25,24,24,24,24,24,24,25,24,25,24],
+      [_,24,24,_,_,_,_,_,_,24,24,_],
+    ];
+    var BONE_COLS = 12;
+    var boneWrap = document.createElement('div');
+    boneWrap.className = 'ol-bone';
+    boneWrap.style.display = 'grid';
+    boneWrap.style.gridTemplateColumns = 'repeat(' + BONE_COLS + ', ' + PX + 'px)';
+    boneWrap.style.gridTemplateRows = 'repeat(' + BONE.length + ', ' + PX + 'px)';
+    boneWrap.style.marginTop = '2px';
+    boneWrap.style.marginBottom = '2px';
+    boneWrap.style.transform = 'rotate(-12deg)';
+    boneWrap.style.alignSelf = 'center';
+    for (var br = 0; br < BONE.length; br++) {
+      for (var bc = 0; bc < BONE_COLS; bc++) {
+        var bp = document.createElement('div');
+        bp.style.gridRow = (br + 1);
+        bp.style.gridColumn = (bc + 1);
+        bp.style.width = PX + 'px';
+        bp.style.height = PX + 'px';
+        bp.style.background = C[BONE[br][bc]] || 'transparent';
+        boneWrap.appendChild(bp);
+      }
+    }
     // Rug below both
     var rugWrap = document.createElement('div');
     rugWrap.className = 'ol-rug';
@@ -658,6 +687,9 @@
     nameLabel.className = 'or-name';
     nameLabel.textContent = esc(name);
     stage.appendChild(nameLabel);
+
+    // Bone sits right above the treat button
+    stage.appendChild(boneWrap);
 
     // ── Feature 3: Treat button ──
     var treatBtn = document.createElement('button');

@@ -1562,45 +1562,67 @@
     render();
   }, 530);
 
-  // Shimmering book — traveling sparkle pixel, video game twinkle
-  var shimmerBookX = SHELF_X + 2 + 18; // ~middle of row 1
-  var shimmerBookY = SHELF_Y + 6; // top of books area
-  var shimmerBookH = 10; // book height
+  // Enchanted book — golden pulse + star sparkles across the spine
+  var shimmerBookX = SHELF_X + 2 + 17; // book position
+  var shimmerBookY = SHELF_Y + 6;
+  var shimmerBookW = 4; // 4 pixels wide (a thick book)
+  var shimmerBookH = 10;
   var shimmerOriginal = [];
   for (var si = 0; si < shimmerBookH; si++) {
-    shimmerOriginal.push(scene[(shimmerBookY + si) * COLS + shimmerBookX]);
-    shimmerOriginal.push(scene[(shimmerBookY + si) * COLS + shimmerBookX + 1]);
+    for (var sw = 0; sw < shimmerBookW; sw++) {
+      shimmerOriginal.push(scene[(shimmerBookY + si) * COLS + shimmerBookX + sw]);
+    }
   }
-  var sparklePos = 0;
-  var sparkleDir = 1;
-  var sparkleTick = 0;
+  var enchantTick = 0;
+  var sparkleSlots = []; // active sparkle positions
   setInterval(function () {
-    // stop shimmer entirely when vault is open — don't write book pixels into void
     if (vaultOpen || vaultAnimating) return;
-    // restore all pixels to original first
+    enchantTick++;
+    // restore all to original
     for (var si2 = 0; si2 < shimmerBookH; si2++) {
-      scene[(shimmerBookY + si2) * COLS + shimmerBookX] = shimmerOriginal[si2 * 2];
-      scene[(shimmerBookY + si2) * COLS + shimmerBookX + 1] = shimmerOriginal[si2 * 2 + 1];
+      for (var sw2 = 0; sw2 < shimmerBookW; sw2++) {
+        scene[(shimmerBookY + si2) * COLS + shimmerBookX + sw2] = shimmerOriginal[si2 * shimmerBookW + sw2];
+      }
     }
-    // advance sparkle position every 3 ticks
-    sparkleTick++;
-    if (sparkleTick % 3 === 0) {
-      sparklePos += sparkleDir;
-      if (sparklePos >= shimmerBookH - 1 || sparklePos <= 0) sparkleDir *= -1;
+    // golden pulse — whole book pulses between original and gold
+    var pulse = Math.sin(enchantTick * 0.06) * 0.5 + 0.5;
+    if (pulse > 0.65) {
+      // book glows gold when pulse is high
+      for (var si3 = 0; si3 < shimmerBookH; si3++) {
+        for (var sw3 = 0; sw3 < shimmerBookW; sw3++) {
+          if (pulse > 0.8) {
+            scene[(shimmerBookY + si3) * COLS + shimmerBookX + sw3] = 21; // full gold
+          } else {
+            scene[(shimmerBookY + si3) * COLS + shimmerBookX + sw3] = 22; // dim gold
+          }
+        }
+      }
     }
-    // main sparkle — bright white flash pixel
-    var spIdx = (shimmerBookY + sparklePos) * COLS + shimmerBookX;
-    scene[spIdx] = 104; // warm white
-    scene[spIdx + 1] = 21; // gold adjacent
-    // trail above — dimmer gold
-    if (sparklePos > 0) {
-      scene[(shimmerBookY + sparklePos - 1) * COLS + shimmerBookX] = 21;
+    // spawn new sparkle every ~8 ticks
+    if (enchantTick % 8 === 0) {
+      sparkleSlots.push({
+        x: Math.floor(Math.random() * shimmerBookW),
+        y: Math.floor(Math.random() * shimmerBookH),
+        life: 5
+      });
     }
-    // trail below — dim gold
-    if (sparklePos < shimmerBookH - 1) {
-      scene[(shimmerBookY + sparklePos + 1) * COLS + shimmerBookX] = 22;
+    // draw active sparkles — bright white star pixels
+    for (var sp = sparkleSlots.length - 1; sp >= 0; sp--) {
+      var s = sparkleSlots[sp];
+      s.life--;
+      if (s.life <= 0) { sparkleSlots.splice(sp, 1); continue; }
+      var sx = shimmerBookX + s.x, sy = shimmerBookY + s.y;
+      // center bright pixel
+      scene[sy * COLS + sx] = s.life > 2 ? 104 : 21; // white flash -> gold fade
+      // cross pattern for star effect (if in bounds)
+      if (s.life > 3) {
+        if (sy > shimmerBookY) scene[(sy - 1) * COLS + sx] = 21;
+        if (sy < shimmerBookY + shimmerBookH - 1) scene[(sy + 1) * COLS + sx] = 21;
+        if (sx > shimmerBookX) scene[sy * COLS + sx - 1] = 21;
+        if (sx < shimmerBookX + shimmerBookW - 1) scene[sy * COLS + sx + 1] = 21;
+      }
     }
-  }, 90);
+  }, 80);
 
   // ══════════════════════════════════════════════════════════════
   //  INTERACTION

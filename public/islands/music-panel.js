@@ -1537,9 +1537,11 @@
       }
     }
 
-    // ═══ LAYER 3e: BLACK HOLE — hard dark point at VP sells infinite depth ═══
+    // ═══ LAYER 3e: BLACK HOLE — follows tunnel endpoint (VP + bend offset) ═══
+    var bpX = vpx + bendX1 * w * 0.15 + bendX2 * w * 0.1;
+    var bpY = vpy + bendY1 * h * 0.12 + bendY2 * h * 0.08;
     var bpR = Math.min(w, h) * 0.12;
-    var bpGrad = ctx.createRadialGradient(vpx, vpy, 0, vpx, vpy, bpR);
+    var bpGrad = ctx.createRadialGradient(bpX, bpY, 0, bpX, bpY, bpR);
     bpGrad.addColorStop(0, 'rgba(0,0,0,0.9)');
     bpGrad.addColorStop(0.15, 'rgba(0,0,0,0.5)');
     bpGrad.addColorStop(0.4, 'rgba(0,0,0,0.12)');

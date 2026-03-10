@@ -27,7 +27,7 @@ Storage is SQLite — single-file, portable, zero-configuration. A memory server
 
 ## Limitations
 
-- Search is keyword-based (FTS5), not semantic embedding. True semantic similarity requires a vector store or embedding model, which adds complexity and dependencies that conflict with the "smallest useful primitive" goal.
+- Search is keyword-based (FTS5), not semantic embedding. (yet)
 - The decay model is simple exponential. Human memory consolidation is more complex (sleep-dependent, emotion-weighted, context-dependent). This is a useful approximation, not a faithful model.
 - No built-in encryption. Sovereign storage means the user owns the file, but the file is plaintext SQLite. Encryption at rest is the user's responsibility.
 

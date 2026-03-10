@@ -42,8 +42,8 @@
     left: 20px;
     z-index: 9000;
     background: var(--depth-2, #0C0C0C);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.45);
+    border: 1px solid var(--white-08);
+    color: var(--white-45);
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
     padding: 0.3rem 0.6rem;
@@ -56,15 +56,15 @@
     btn.style.borderColor = '#b8965a';
   });
   btn.addEventListener('mouseleave', function () {
-    btn.style.color = started ? '#5BF29B' : 'rgba(255,255,255,0.45)';
-    btn.style.borderColor = started ? '#5BF29B' : 'rgba(255,255,255,0.08)';
+    btn.style.color = started ? '#5BF29B' : 'var(--white-45)';
+    btn.style.borderColor = started ? '#5BF29B' : 'var(--white-08)';
   });
 
   btn.addEventListener('click', function () {
     window.__toggleAmbient();
     setTimeout(function () {
-      btn.style.color = started ? '#5BF29B' : 'rgba(255,255,255,0.45)';
-      btn.style.borderColor = started ? '#5BF29B' : 'rgba(255,255,255,0.08)';
+      btn.style.color = started ? '#5BF29B' : 'var(--white-45)';
+      btn.style.borderColor = started ? '#5BF29B' : 'var(--white-08)';
     }, 100);
   });
 

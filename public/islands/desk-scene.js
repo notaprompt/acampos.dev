@@ -201,10 +201,10 @@
       return '#' + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
     }
 
-    // walls — much darker, slight amber cast
-    C_NIGHT[1] = amber('#4a5a3a', 0.35, 0.4);
-    C_NIGHT[2] = amber('#3f4f32', 0.30, 0.3);
-    C_NIGHT[3] = amber('#354528', 0.25, 0.3);
+    // walls — dark, warm amber wash (not green-tinted)
+    C_NIGHT[1] = '#2a2218';
+    C_NIGHT[2] = '#231c14';
+    C_NIGHT[3] = '#1c1610';
     // floor — dark, warm
     C_NIGHT[4] = amber('#3a2a1a', 0.45, 0.3);
     C_NIGHT[5] = amber('#2e2015', 0.40, 0.2);
@@ -252,11 +252,11 @@
     // 3D printer — dimmed
     C_NIGHT[55] = '#181818';
     C_NIGHT[56] = '#202020';
-    // lamp/pendant — these GLOW brighter at night (light sources)
-    C_NIGHT[64] = '#e8a040'; // lamp amber — brighter
-    C_NIGHT[65] = '#f0c878'; // lamp glow — brighter
-    C_NIGHT[67] = '#e8a040'; // pendant glow
-    C_NIGHT[68] = '#f0c878'; // pendant bright
+    // lamp/pendant — GLOW warm and bright at night, cozy radiating light
+    C_NIGHT[64] = '#f0b050'; // lamp amber — warm bright
+    C_NIGHT[65] = '#f8d898'; // lamp glow — hot warm white
+    C_NIGHT[67] = '#f0b050'; // pendant glow — warm
+    C_NIGHT[68] = '#f8d898'; // pendant bright — hot
     // window — night sky
     C_NIGHT[75] = '#0a1018'; // deep night
     C_NIGHT[76] = '#141e30'; // moonlight blue
@@ -390,6 +390,31 @@
             d[pi2] = Math.min(255, d[pi2] + 12);
             d[pi2 + 1] = Math.min(255, d[pi2 + 1] + 10);
             d[pi2 + 2] = Math.min(255, d[pi2 + 2] + 6);
+          }
+        }
+      }
+    }
+
+    // night mode lamp glow — warm amber radiating from light sources
+    if (sceneTheme === 'dark') {
+      var lampSources = [
+        { x: LAMP_X + 4, y: LAMP_Y + 3, r: 25, strength: 0.18 },  // desk lamp
+        { x: 120, y: 10, r: 35, strength: 0.14 },                   // pendant
+      ];
+      for (var ls = 0; ls < lampSources.length; ls++) {
+        var src = lampSources[ls];
+        for (var ly = src.y - src.r; ly <= src.y + src.r; ly++) {
+          for (var lx = src.x - src.r; lx <= src.x + src.r; lx++) {
+            if (lx < 0 || lx >= COLS || ly < 0 || ly >= ROWS) continue;
+            var ldx = (lx - src.x) / src.r;
+            var ldy = (ly - src.y) / src.r;
+            var ld = Math.sqrt(ldx * ldx + ldy * ldy);
+            if (ld > 1) continue;
+            var lf = Math.pow(1 - ld, 2) * src.strength;
+            var lpi = (ly * COLS + lx) * 4;
+            d[lpi]     = Math.min(255, d[lpi]     + Math.round(240 * lf));
+            d[lpi + 1] = Math.min(255, d[lpi + 1] + Math.round(176 * lf));
+            d[lpi + 2] = Math.min(255, d[lpi + 2] + Math.round(80 * lf));
           }
         }
       }
@@ -1481,6 +1506,28 @@
     scene[idx + 1] = cursorOn ? 21 : 20;
     render();
   }, 530);
+
+  // Shimmering book — one book spine pulses with a subtle gold glow
+  var shimmerBookX = SHELF_X + 2 + 18; // ~middle of row 1
+  var shimmerBookY = SHELF_Y + 6; // top of books area
+  var shimmerBookH = 10; // book height
+  var shimmerPhase = 0;
+  var shimmerOriginal = [];
+  for (var si = 0; si < shimmerBookH; si++) {
+    shimmerOriginal.push(scene[(shimmerBookY + si) * COLS + shimmerBookX]);
+    shimmerOriginal.push(scene[(shimmerBookY + si) * COLS + shimmerBookX + 1]);
+  }
+  setInterval(function () {
+    shimmerPhase += 0.08;
+    var glow = Math.sin(shimmerPhase) * 0.5 + 0.5; // 0 to 1
+    for (var si2 = 0; si2 < shimmerBookH; si2++) {
+      // alternate between original color and gold accent (21)
+      var idx1 = (shimmerBookY + si2) * COLS + shimmerBookX;
+      var idx2 = idx1 + 1;
+      scene[idx1] = glow > 0.6 ? 21 : shimmerOriginal[si2 * 2];
+      scene[idx2] = glow > 0.6 ? 21 : shimmerOriginal[si2 * 2 + 1];
+    }
+  }, 120);
 
   // ══════════════════════════════════════════════════════════════
   //  INTERACTION

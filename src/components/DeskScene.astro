@@ -70,23 +70,24 @@
 
   .theme-toggle {
     position: absolute;
-    top: 6px;
+    bottom: 6px;
     right: 6px;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     background: transparent;
-    border: none;
-    padding: 4px;
+    border: 1px solid var(--white-15);
+    padding: 5px;
     z-index: 2;
     color: var(--gold-accent);
-    opacity: 0.3;
-    transition: opacity 0.25s;
+    opacity: 0.6;
+    transition: opacity 0.25s, border-color 0.25s;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 2px;
   }
-  .theme-toggle:hover { opacity: 0.9; }
+  .theme-toggle:hover { opacity: 1; border-color: var(--gold-accent); }
 
   /* day mode: show moon (click to go night), hide sun */
   .theme-icon--moon { display: none; }

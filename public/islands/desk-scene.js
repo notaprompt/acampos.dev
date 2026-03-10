@@ -984,51 +984,55 @@
   function drawChair() {
     var A = 32, S = 33, L = 30, H = 31;
 
-    // ── Chrome arch over top of back ──
-    fillRect(CHAIR_X + 4, CHAIR_Y, 12, 1, A);
-    fillRect(CHAIR_X + 5, CHAIR_Y, 10, 1, S);        // highlight
+    // Rear 3/4 turned ~9 o'clock — left side exposed, right foreshortened
+    // Back is angled: left edge further out, right edge compressed
 
-    // ── Side rails from arch down ──
-    // left rail (near side — taller, more visible)
-    fillRect(CHAIR_X + 3, CHAIR_Y + 1, 1, 10, A);
-    fillRect(CHAIR_X + 2, CHAIR_Y + 2, 1, 8, S);     // shadow
-    // right rail (far side — shorter due to perspective)
-    fillRect(CHAIR_X + 16, CHAIR_Y + 1, 1, 9, A);
+    // ── Chrome arch over top of back (angled — wider left) ──
+    fillRect(CHAIR_X + 2, CHAIR_Y, 13, 1, A);
+    fillRect(CHAIR_X + 3, CHAIR_Y, 11, 1, S);        // highlight
 
-    // ── Leather back panel ──
-    fillRect(CHAIR_X + 4, CHAIR_Y + 1, 12, 10, L);
-    fillRect(CHAIR_X + 5, CHAIR_Y + 2, 10, 8, H);    // lighter center
+    // ── Side rails ──
+    // left rail (near side — prominent, 2px wide for depth)
+    fillRect(CHAIR_X + 1, CHAIR_Y + 1, 2, 10, A);
+    fillRect(CHAIR_X, CHAIR_Y + 2, 1, 8, S);          // outer shadow
+    // right rail (far side — thin, compressed)
+    fillRect(CHAIR_X + 15, CHAIR_Y + 1, 1, 9, A);
 
-    // ── Aluminum back brace (horizontal crossbar across upper back) ──
-    fillRect(CHAIR_X + 3, CHAIR_Y + 4, 14, 1, A);
-    fillRect(CHAIR_X + 4, CHAIR_Y + 4, 12, 1, S);    // brace highlight
+    // ── Leather back panel (shifted left, narrower right) ──
+    fillRect(CHAIR_X + 3, CHAIR_Y + 1, 12, 10, L);
+    fillRect(CHAIR_X + 4, CHAIR_Y + 2, 10, 8, H);    // lighter center
 
-    // ── Left armrest — visible, curves 90deg downward ──
-    fillRect(CHAIR_X + 2, CHAIR_Y + 11, 2, 1, A);    // arm pad (horizontal)
-    fillRect(CHAIR_X + 2, CHAIR_Y + 12, 1, 4, A);    // arm drops straight down
-    fillRect(CHAIR_X + 1, CHAIR_Y + 12, 1, 3, S);    // arm shadow
+    // ── Aluminum back brace (horizontal crossbar) ──
+    fillRect(CHAIR_X + 1, CHAIR_Y + 4, 15, 1, A);
+    fillRect(CHAIR_X + 2, CHAIR_Y + 4, 13, 1, S);    // brace highlight
 
-    // ── Right arm — barely visible (foreshortened, receding) ──
-    fillRect(CHAIR_X + 16, CHAIR_Y + 10, 1, 1, A);   // tiny stub
+    // ── Left armrest — exposed, pad + 90deg drop ──
+    fillRect(CHAIR_X - 1, CHAIR_Y + 11, 3, 1, A);    // arm pad (extends left of back)
+    fillRect(CHAIR_X, CHAIR_Y + 11, 1, 1, S);         // pad highlight
+    fillRect(CHAIR_X - 1, CHAIR_Y + 12, 1, 4, A);    // arm drops 90deg straight down
+    fillRect(CHAIR_X - 2, CHAIR_Y + 12, 1, 3, S);    // arm shadow
+
+    // ── Right arm — barely a stub (receding into perspective) ──
+    fillRect(CHAIR_X + 15, CHAIR_Y + 10, 1, 2, A);
 
     // ── Seat frame + leather ──
-    fillRect(CHAIR_X + 3, CHAIR_Y + 12, 13, 1, A);   // seat frame top
-    fillRect(CHAIR_X + 4, CHAIR_Y + 13, 11, 2, L);   // leather seat
-    fillRect(CHAIR_X + 5, CHAIR_Y + 13, 9, 1, H);    // seat highlight
-    fillRect(CHAIR_X + 3, CHAIR_Y + 15, 13, 1, A);   // seat frame bottom
+    fillRect(CHAIR_X + 1, CHAIR_Y + 12, 14, 1, A);   // seat frame top
+    fillRect(CHAIR_X + 2, CHAIR_Y + 13, 12, 2, L);   // leather seat
+    fillRect(CHAIR_X + 3, CHAIR_Y + 13, 10, 1, H);   // seat highlight
+    fillRect(CHAIR_X + 1, CHAIR_Y + 15, 14, 1, A);   // seat frame bottom
 
     // ── Pedestal ──
-    fillRect(CHAIR_X + 9, CHAIR_Y + 16, 2, 2, A);
-    fillRect(CHAIR_X + 9, CHAIR_Y + 18, 2, 1, S);    // cylinder
+    fillRect(CHAIR_X + 7, CHAIR_Y + 16, 2, 2, A);
+    fillRect(CHAIR_X + 7, CHAIR_Y + 18, 2, 1, S);    // cylinder
 
     // ── 5-star aluminum base ──
-    fillRect(CHAIR_X + 3, CHAIR_Y + 19, 14, 1, A);
+    fillRect(CHAIR_X + 1, CHAIR_Y + 19, 14, 1, A);
     // spokes
-    fillRect(CHAIR_X + 9, CHAIR_Y + 20, 2, 1, A);    // front spoke
+    fillRect(CHAIR_X + 7, CHAIR_Y + 20, 2, 1, A);    // front spoke
     // casters
-    fillRect(CHAIR_X + 2, CHAIR_Y + 20, 1, 1, S);
-    fillRect(CHAIR_X + 9, CHAIR_Y + 21, 2, 1, S);
-    fillRect(CHAIR_X + 17, CHAIR_Y + 20, 1, 1, S);
+    fillRect(CHAIR_X, CHAIR_Y + 20, 1, 1, S);
+    fillRect(CHAIR_X + 7, CHAIR_Y + 21, 2, 1, S);
+    fillRect(CHAIR_X + 15, CHAIR_Y + 20, 1, 1, S);
   }
 
   // ── Subwoofer under desk ──

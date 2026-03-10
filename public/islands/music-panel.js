@@ -1176,8 +1176,8 @@
     // Forward motion — speed driven by bass, reversed during reverse
     hallZ += (0.015 + sBass * 0.04 + hit * 0.25) * forwardDir;
 
-    // Melody color — spectral centroid across full spectrum, normalized across palette
-    // Wider range (0.02 - 0.75) so centroid sweeps more of the 12-color gradient
+    // Melody color — multi-feature spectral analysis drives palette position
+    // Feature 1: spectral centroid (which frequencies dominate)
     var midStart = Math.floor(bufferLength * 0.02);
     var midEnd   = Math.floor(bufferLength * 0.75);
     var weightedSum = 0, weightTotal = 0;
@@ -1186,16 +1186,34 @@
       weightedSum += mi * mw;
       weightTotal += mw;
     }
-    // Spectral centroid — center of mass
     var centroid = weightTotal > 0.1 ? (weightedSum / weightTotal) : midStart;
-    var rawMelodyColor = (centroid - midStart) / (midEnd - midStart);
-    // Bass-heavy = warm shift (toward golds/reds), treble-heavy = cool shift (blues/greens)
-    var warmCool = (sBass - sHigh) * 0.15; // subtle mood bias
-    rawMelodyColor = Math.max(0, Math.min(1, rawMelodyColor - warmCool));
-    // Slow smooth — note changes drift color, sustained notes hold it
-    var melodyLag = weightTotal > 2 ? 0.04 : 0.008;
+    var normCentroid = (centroid - midStart) / (midEnd - midStart);
+    // Cube root spread — maps the typical 0.2-0.4 centroid range across more palette
+    normCentroid = Math.pow(normCentroid, 0.33);
+
+    // Feature 2: spectral flux (how much the spectrum is changing — movement = color shift)
+    var flux = Math.abs(midDelta) + Math.abs(highDelta) * 1.5;
+
+    // Feature 3: slow drift — time-based wander so sustained passages still move
+    var drift = Math.sin(visTime * 0.12) * 0.15 + Math.sin(visTime * 0.07) * 0.1;
+
+    // Feature 4: energy ratio — treble-dominant moments push cool, bass pushes warm
+    var energyRatio = sHigh > 0.01 ? (sHigh / (sBass + 0.01)) : 0;
+    var ratioShift = Math.min(0.2, energyRatio * 0.15);
+
+    // Combine: centroid is base position, flux adds jitter, drift adds wander
+    var rawMelodyColor = normCentroid + drift + flux * 0.3 + ratioShift;
+    rawMelodyColor = ((rawMelodyColor % 1) + 1) % 1; // wrap around palette
+
+    // Smooth — fast enough to react, slow enough to feel like mood
+    var melodyLag = weightTotal > 2 ? 0.05 : 0.015;
     melodyColorSmooth += (rawMelodyColor - melodyColorSmooth) * melodyLag;
-    melodyColor = Math.max(0, Math.min(0.999, melodyColorSmooth));
+    // Allow wrapping — if smooth is at 0.9 and target is 0.1, go through 1.0
+    var diff = rawMelodyColor - melodyColorSmooth;
+    if (diff > 0.5) melodyColorSmooth += 1;
+    else if (diff < -0.5) melodyColorSmooth -= 1;
+    melodyColorSmooth = ((melodyColorSmooth % 1) + 1) % 1;
+    melodyColor = melodyColorSmooth;
 
     // Continuous palette position — spectral centroid sweeps full gradient
     var palPos = melodyColor * PALETTE.length;

@@ -1128,27 +1128,32 @@
     flipVel *= 0.94;
     if (Math.abs(flipVel) < 0.002) flipVel = 0;
 
-    // ── Tunnel curves — long sweeping arcs, not twitchy bends ──
-    // Slow continuous sweep — like a highway curve, not a shaking hose
-    var bendDrive = isSilent ? 0.002 : (0.004 + sVocal * 0.008);
+    // ── Tunnel curves — sweeping S-curves that follow the song ──
+    // Two bend points at different rates create winding narrative path
+    var bendDrive = isSilent ? 0.003 : (0.006 + sVocal * 0.02 + loudness * 0.01);
     bendAngle1 += bendDrive;
-    bendAngle2 -= bendDrive * 0.6;
-    // Bass hits = gentle nudge, not a jolt
-    if (hit > 0.08) {
-      bendAngle1 += (Math.random() - 0.5) * 0.8;
-      bendAngle2 += (Math.random() - 0.5) * 0.6;
+    bendAngle2 -= bendDrive * 0.7 + Math.sin(visTime * 0.15) * 0.003;
+    // Bass hits = the road bends harder
+    if (hit > 0.06) {
+      bendAngle1 += (Math.random() - 0.5) * 1.8;
+      bendAngle2 += (Math.random() - 0.5) * 1.5;
     }
-    // Low amplitude — sweeping, not snaking
-    var bendAmp = (0.25 + loudness * 0.35) * p.bendAmp;
+    // Vocal onset = new chapter, new direction
+    if (vocalDelta > 0.03) {
+      bendAngle1 += vocalDelta * 4;
+      bendAngle2 -= vocalDelta * 3;
+    }
+    // Generous amplitude — the tunnel winds and sweeps
+    var bendAmp = (0.5 + loudness * 0.8) * p.bendAmp;
     bendTX1 = Math.cos(bendAngle1) * bendAmp;
-    bendTY1 = Math.sin(bendAngle1) * bendAmp * 0.7;
-    bendTX2 = Math.cos(bendAngle2) * bendAmp * 0.8;
-    bendTY2 = Math.sin(bendAngle2) * bendAmp * 0.5;
-    // Slow chase — curves ease in gradually
-    bendX1 += (bendTX1 - bendX1) * 0.015;
-    bendY1 += (bendTY1 - bendY1) * 0.015;
-    bendX2 += (bendTX2 - bendX2) * 0.012;
-    bendY2 += (bendTY2 - bendY2) * 0.012;
+    bendTY1 = Math.sin(bendAngle1) * bendAmp * 0.85;
+    bendTX2 = Math.cos(bendAngle2) * bendAmp * 1.0;
+    bendTY2 = Math.sin(bendAngle2) * bendAmp * 0.7;
+    // Chase: smooth enough for sweeps, responsive enough for drama
+    bendX1 += (bendTX1 - bendX1) * 0.025;
+    bendY1 += (bendTY1 - bendY1) * 0.025;
+    bendX2 += (bendTX2 - bendX2) * 0.02;
+    bendY2 += (bendTY2 - bendY2) * 0.02;
 
     // ── Reverse system — beat bounce, threshold scaled to song profile ──
     if (hit > Math.max(p.hitThresh * 1.5, 0.06) && reverseTimer <= 0 && Math.random() < 0.08) {

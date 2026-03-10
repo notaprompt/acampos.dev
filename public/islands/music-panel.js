@@ -1469,71 +1469,52 @@
       return [cx + cornerSx * w * scale * 0.5, cy + cornerSy * h * scale * 0.5];
     }
 
-    // ── 4 CORNER SEAM LINES — thick at edge, vanish toward VP (sells inward) ──
-    var cSigns = [[-1,-1], [1,-1], [1,1], [-1,1]];
-    for (var cs = 0; cs < 4; cs++) {
-      var csColT = (cs * 0.25 + palBlend) % 1;
-      var segs = 20;
-      for (var sg = 0; sg < segs; sg++) {
-        var t0 = sg / segs;
-        var t1 = (sg + 1) / segs;
-        // Fade: gone by 55% depth — no convergence clutter
-        var segAlpha = (1 - t0 / 0.55);
-        if (segAlpha <= 0) break;
-        // Cubic falloff — visible near edge, gone fast
-        segAlpha = segAlpha * segAlpha * segAlpha * (0.18 + sTotal * 0.08);
+    // ── WALL JOINT TICKS — short marks at rect corners, rush past like panel seams ──
+    // Only near camera (z > 0.15). Bold when close, invisible when far.
+    // Draws small perpendicular tick marks at each corner of the hall rects.
+    var tickCount = 10;
+    for (var ti = 0; ti < tickCount; ti++) {
+      var tRaw = ((ti / tickCount) + hallZ * 1.1) % 1;
+      var tz = tRaw * tRaw * tRaw;
+      if (tz < 0.12 || tz > 0.95) continue; // skip near-VP and off-screen
 
-        var p0 = hallPos(t0, cSigns[cs][0], cSigns[cs][1]);
-        var p1 = hallPos(t1, cSigns[cs][0], cSigns[cs][1]);
+      var tScale = tz;
+      var tParallax = tz * tz;
+      var tcx = vpx + (w / 2 - vpx) * tParallax;
+      var tcy = vpy + (h / 2 - vpy) * tParallax;
+      var tb1 = Math.sin(tz * Math.PI * 1.2);
+      var tb2 = Math.sin((tz - 0.3) * Math.PI * 1.1);
+      tcx += (bendX1 * tb1 + bendX2 * tb2) * w * 0.25;
+      tcy += (bendY1 * tb1 + bendY2 * tb2) * h * 0.2;
 
-        ctx.strokeStyle = lerpColorA(colA, colB, csColT, Math.min(segAlpha, 0.25));
-        ctx.lineWidth = (1.2 + sTotal * 0.8) * (1 - t0) * (1 - t0);
+      var halfW = w * tScale * 0.5;
+      var halfH = h * tScale * 0.5;
+      // Alpha: strong near camera, fades with depth
+      var tickAlpha = tz * tz * (0.3 + sTotal * 0.15);
+      var tickLen = 4 + tz * 12; // longer ticks when closer
+      var tColT = (tz + palBlend) % 1;
+      ctx.strokeStyle = lerpColorA(colA, colB, tColT, Math.min(tickAlpha, 0.4));
+      ctx.lineWidth = 0.5 + tz * 1.5;
+
+      // 4 corners: short ticks along wall edges
+      var corners = [
+        [tcx - halfW, tcy - halfH, 1, 0,  0, 1],  // TL: tick right + down
+        [tcx + halfW, tcy - halfH, -1, 0, 0, 1],  // TR: tick left + down
+        [tcx + halfW, tcy + halfH, -1, 0, 0, -1], // BR: tick left + up
+        [tcx - halfW, tcy + halfH, 1, 0,  0, -1], // BL: tick right + up
+      ];
+      for (var ci = 0; ci < 4; ci++) {
+        var cc = corners[ci];
+        // Horizontal tick along wall
         ctx.beginPath();
-        ctx.moveTo(p0[0], p0[1]);
-        ctx.lineTo(p1[0], p1[1]);
+        ctx.moveTo(cc[0], cc[1]);
+        ctx.lineTo(cc[0] + cc[2] * tickLen, cc[1]);
         ctx.stroke();
-      }
-    }
-
-    // ── WALL SUBDIVISION SEAMS — trace rect edge midpoints through depth ──
-    // Left wall seams: sx=-1, sy=fractional; Right: sx=1; Top: sy=-1, sx=frac; Bottom: sy=1
-    var wallSeamDefs = [
-      { sx: -1, syBase: true, colShift: 0 },      // left wall
-      { sx: 1, syBase: true, colShift: 0.25 },     // right wall
-      { sxBase: true, sy: -1, colShift: 0.5 },     // ceiling
-      { sxBase: true, sy: 1, colShift: 0.75 },     // floor
-    ];
-    var wallSeams = 2;
-    for (var wi = 0; wi < wallSeamDefs.length; wi++) {
-      var wd = wallSeamDefs[wi];
-      for (var si = 0; si < wallSeams; si++) {
-        var sfrac = (si + 0.5) / wallSeams;
-        // Convert fraction to -1..1 range for hallPos
-        var seamFrac = sfrac * 2 - 1;
-        var sfv = freqData[(wi * wallSeams + si + 8) % bufferLength] / 255;
-        var sColT = (sfrac * 0.3 + wd.colShift + palBlend) % 1;
-
-        var seamSx = wd.sxBase ? seamFrac : wd.sx;
-        var seamSy = wd.syBase ? seamFrac : wd.sy;
-
-        var segs = 12;
-        for (var sg = 0; sg < segs; sg++) {
-          var t0 = sg / segs;
-          var t1 = (sg + 1) / segs;
-          var segAlpha = (1 - t0 / 0.45);
-          if (segAlpha <= 0) break;
-          segAlpha = segAlpha * segAlpha * segAlpha * (0.08 + sfv * 0.06);
-
-          var sp0 = hallPos(t0, seamSx, seamSy);
-          var sp1 = hallPos(t1, seamSx, seamSy);
-
-          ctx.strokeStyle = lerpColorA(colA, colB, sColT, Math.min(segAlpha, 0.15));
-          ctx.lineWidth = (0.6 + sfv * 0.5) * (1 - t0) * (1 - t0);
-          ctx.beginPath();
-          ctx.moveTo(sp0[0], sp0[1]);
-          ctx.lineTo(sp1[0], sp1[1]);
-          ctx.stroke();
-        }
+        // Vertical tick along wall
+        ctx.beginPath();
+        ctx.moveTo(cc[0], cc[1]);
+        ctx.lineTo(cc[0], cc[1] + cc[3] * tickLen + cc[5] * tickLen);
+        ctx.stroke();
       }
     }
 

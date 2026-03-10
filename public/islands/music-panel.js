@@ -1589,15 +1589,17 @@
       }
     }
 
-    // ═══ TUNNEL VIGNETTE — dark edges sell cylindrical depth ═══
-    var vigR = Math.max(w, h) * 0.75;
-    var vigGrad = ctx.createRadialGradient(vpx, vpy, vigR * 0.3, vpx, vpy, vigR);
-    vigGrad.addColorStop(0, 'rgba(0,0,0,0)');
-    vigGrad.addColorStop(0.6, 'rgba(0,0,0,0)');
-    vigGrad.addColorStop(0.85, 'rgba(0,0,0,' + (0.15 + loudness * 0.1) + ')');
-    vigGrad.addColorStop(1, 'rgba(0,0,0,' + (0.35 + loudness * 0.15) + ')');
-    ctx.fillStyle = vigGrad;
-    ctx.fillRect(0, 0, w, h);
+    // ═══ TUNNEL VIGNETTE — dark edges sell cylindrical depth (dark mode only) ═══
+    if (isDark) {
+      var vigR = Math.max(w, h) * 0.75;
+      var vigGrad = ctx.createRadialGradient(vpx, vpy, vigR * 0.3, vpx, vpy, vigR);
+      vigGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      vigGrad.addColorStop(0.6, 'rgba(0,0,0,0)');
+      vigGrad.addColorStop(0.85, 'rgba(0,0,0,' + (0.15 + loudness * 0.1) + ')');
+      vigGrad.addColorStop(1, 'rgba(0,0,0,' + (0.35 + loudness * 0.15) + ')');
+      ctx.fillStyle = vigGrad;
+      ctx.fillRect(0, 0, w, h);
+    }
 
   }
 

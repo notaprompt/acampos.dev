@@ -977,37 +977,42 @@
     registerObject('art', ART1_X, ART1_Y, ART1_W, ART1_H, 'https://instagram.com/notaprompt', 'instagram', true);
   }
 
-  // ── Eames chair (center-right of rug, turned facing left — nobody's home) ──
-  var CHAIR_X = 128, CHAIR_Y = 72;
+  // ── Eames Aluminum Group desk chair (3/4 facing left, chrome frame visible) ──
+  var CHAIR_X = 128, CHAIR_Y = 70;
   function drawChair() {
-    // Eames-style lounge chair, facing left (back on right side)
-    // chrome base star (5-point)
-    fillRect(CHAIR_X + 5, CHAIR_Y + 18, 8, 1, 32);
-    fillRect(CHAIR_X + 8, CHAIR_Y + 19, 2, 2, 33);
-    // chrome pedestal
-    fillRect(CHAIR_X + 8, CHAIR_Y + 16, 2, 2, 32);
-    // seat cushion — wide, low, plush leather
-    fillRect(CHAIR_X, CHAIR_Y + 10, 18, 6, 30);
-    fillRect(CHAIR_X + 1, CHAIR_Y + 10, 16, 1, 31); // top highlight
-    fillRect(CHAIR_X + 1, CHAIR_Y + 11, 16, 4, 30); // leather body
-    // seat cushion tufting lines
-    fillRect(CHAIR_X + 5, CHAIR_Y + 12, 1, 3, 7);
-    fillRect(CHAIR_X + 11, CHAIR_Y + 12, 1, 3, 7);
-    // back shell — on the right side (chair faces left)
-    fillRect(CHAIR_X + 14, CHAIR_Y + 2, 4, 14, 30); // shell
-    fillRect(CHAIR_X + 15, CHAIR_Y + 3, 2, 12, 31); // leather highlight
-    // headrest curve (top of back)
-    fillRect(CHAIR_X + 13, CHAIR_Y + 2, 6, 2, 30);
-    fillRect(CHAIR_X + 14, CHAIR_Y + 1, 4, 1, 31);
-    // chrome shell edge
-    fillRect(CHAIR_X + 18, CHAIR_Y + 2, 1, 14, 32);
-    // armrest (left side, facing out)
-    fillRect(CHAIR_X, CHAIR_Y + 9, 2, 2, 32);
-    fillRect(CHAIR_X + 1, CHAIR_Y + 9, 1, 1, 33);
-    // wheels (5 casters)
-    fillRect(CHAIR_X + 3, CHAIR_Y + 21, 2, 1, 33);
-    fillRect(CHAIR_X + 13, CHAIR_Y + 21, 2, 1, 33);
-    fillRect(CHAIR_X + 8, CHAIR_Y + 21, 2, 1, 33);
+    // Chrome frame rails arch over back with leather slung between
+    // 3/4 view: near-side rail on left, back frame visible on right
+    var A = 32, S = 33, L = 30, H = 31;
+    var ch = [
+      // back top — chrome rail arcs over
+      [_,_,_,_,_,_,_,_,_,_,_,A,A,A,A,A,_,_,_,_],
+      [_,_,_,_,_,_,_,_,_,_,A,S,L,L,L,S,A,_,_,_],
+      [_,_,_,_,_,_,_,_,_,A,S,L,H,H,L,L,S,A,_,_],
+      [_,_,_,_,_,_,_,_,_,A,S,L,H,H,H,L,S,A,_,_],
+      [_,_,_,_,_,_,_,_,A,S,L,L,H,H,L,L,S,A,_,_],
+      [_,_,_,_,_,_,_,_,A,S,L,L,L,L,L,L,S,A,_,_],
+      [_,_,_,_,_,_,_,A,S,L,L,L,L,L,L,L,S,A,_,_],
+      // chrome arm rail curves forward and down
+      [_,_,_,_,_,_,A,S,L,L,L,L,L,L,L,S,A,_,_,_],
+      [_,_,_,_,_,A,S,L,L,L,L,L,L,L,S,A,_,_,_,_],
+      [_,_,_,_,A,S,L,L,L,L,L,L,L,L,S,A,_,_,_,_],
+      // seat — wider, cushioned
+      [_,_,_,A,S,L,H,H,H,H,H,H,H,L,S,A,_,_,_,_],
+      [_,_,A,S,L,H,H,H,H,H,H,H,H,H,S,A,_,_,_,_],
+      [_,_,A,L,L,L,L,L,L,L,L,L,L,L,L,A,_,_,_,_],
+      [_,_,_,A,A,L,L,L,L,L,L,L,L,A,A,_,_,_,_,_],
+      // chrome supports converge to pedestal
+      [_,_,_,_,_,A,A,_,_,_,_,_,A,A,_,_,_,_,_,_],
+      [_,_,_,_,_,_,A,_,_,_,_,_,A,_,_,_,_,_,_,_],
+      [_,_,_,_,_,_,_,A,_,_,_,A,_,_,_,_,_,_,_,_],
+      [_,_,_,_,_,_,_,_,A,A,A,_,_,_,_,_,_,_,_,_],
+      // gas cylinder
+      [_,_,_,_,_,_,_,_,A,S,A,_,_,_,_,_,_,_,_,_],
+      // 5-star aluminum base with casters
+      [_,_,A,A,A,A,A,A,A,A,A,A,A,A,A,A,_,_,_,_],
+      [_,A,S,_,_,_,_,_,_,_,_,_,_,_,S,A,_,_,_,_],
+    ];
+    placeSprite(ch, CHAIR_X, CHAIR_Y);
   }
 
   // ── Subwoofer under desk ──
@@ -1039,28 +1044,6 @@
     }
   }
 
-  // ── French Bulldog (curled on rug) ──
-  var DOG_X = 90, DOG_Y = 82;
-  function drawDog() {
-    var dog = [
-      [_,_,_,_,91,91,_,_,_,_,_,_,_,_,_,_],
-      [_,_,_,91,88,88,91,_,_,_,_,_,_,_,_,_],
-      [_,_,91,88,91,88,88,91,_,_,_,_,_,_,_,_],
-      [_,91,88,88,88,88,88,89,_,_,_,_,_,_,_,_],
-      [_,91,88,91,88,91,88,89,90,_,_,_,_,_,_,_],
-      [_,_,89,88,88,88,89,89,90,_,_,_,_,_,_,_],
-      [_,_,_,89,88,89,89,90,90,90,_,_,_,_,_,_],
-      [_,_,_,90,89,88,88,88,89,90,90,_,_,_,_,_],
-      [_,_,90,89,88,88,92,88,88,89,90,90,_,_,_,_],
-      [_,90,89,88,88,92,92,92,88,88,89,90,90,_,_,_],
-      [90,89,88,88,92,92,92,92,92,88,88,89,90,_,_,_],
-      [90,89,88,88,92,92,88,88,92,88,88,89,90,_,_,_],
-      [_,90,89,88,88,88,88,88,88,88,89,90,_,_,_,_],
-      [_,_,90,89,89,88,88,88,89,89,90,_,_,_,_,_],
-      [_,_,_,90,90,89,89,89,90,90,_,_,_,_,_,_],
-    ];
-    placeSprite(dog, DOG_X, DOG_Y);
-  }
 
   // ── Desk plant (right side) ──
   function drawDeskPlant() {
@@ -1245,7 +1228,6 @@
   drawCRT();
   drawUltrawide();
   drawChair();
-  drawDog();
   drawKeyboard();
   drawMug();
   drawLamp();
@@ -1329,12 +1311,14 @@
   function drawPortal(phase) {
     updateVaultPalette();
     var cx = VW / 2, cy = VH / 2;
-    // slow breathing pulse
-    var breath = Math.sin(phase * 0.03) * 0.2 + 0.8; // 0.6 to 1.0, slower
     var energy = window.__musicEnergy || 0;
     var bass = window.__musicBass || 0;
+    // very slow breathing — mesmerizing, not chaotic
+    var breath = Math.sin(phase * 0.015) * 0.15 + 0.85;
+    // music tempo modulates the ring drift speed subtly
+    var ringSpeed = 0.02 + energy * 0.015;
 
-    // get color — music sync or neon purple/cyan default
+    // get color — music sync or neon purple default
     var gr, gg, gb;
     if (vaultMusicSync) {
       var mc = window.__musicColor;
@@ -1344,39 +1328,43 @@
     } else {
       gr = 120; gg = 50; gb = 230; // neon electric purple
     }
-    // smooth the glow color
-    portalGlowR += (gr - portalGlowR) * 0.08;
-    portalGlowG += (gg - portalGlowG) * 0.08;
-    portalGlowB += (gb - portalGlowB) * 0.08;
+    // very smooth color transitions
+    portalGlowR += (gr - portalGlowR) * 0.03;
+    portalGlowG += (gg - portalGlowG) * 0.03;
+    portalGlowB += (gb - portalGlowB) * 0.03;
 
-    // fill portal — intense neon radial with concentric ring pulses
+    // fill portal — deep gradient with slow drifting concentric rings
     for (var py = 0; py < VH; py++) {
       for (var px = 0; px < VW; px++) {
         var dx = (px - cx) / (VW / 2);
         var dy = (py - cy) / (VH / 2);
         var dist = Math.sqrt(dx * dx + dy * dy);
-        // concentric ring pulse — subtle rings radiating outward
-        var ring = Math.sin((dist * 6 - phase * 0.05) * Math.PI) * 0.12 + 0.88;
-        var intensity = Math.max(0, 1 - dist * 0.75) * breath * ring;
-        // neon oversaturation toward center — sci-fi glow
-        var neonBoost = Math.pow(Math.max(0, 1 - dist), 3) * (1.2 + energy * 1.5);
-        var r = Math.min(255, Math.round(portalGlowR * intensity + 220 * neonBoost * 0.3 + bass * 30));
-        var g = Math.min(255, Math.round(portalGlowG * intensity + 200 * neonBoost * 0.15));
-        var b = Math.min(255, Math.round(portalGlowB * intensity + 220 * neonBoost * 0.25 + energy * 20));
-        var key = VAULT_DYN_START + Math.min(8, Math.floor((1 - dist) * 9));
+        // slow concentric rings drifting inward — mesmerizing
+        var ring = Math.sin((dist * 4 - phase * ringSpeed) * Math.PI) * 0.08 + 0.92;
+        // smooth gradient falloff — deep at edges, bright at center
+        var gradient = Math.pow(Math.max(0, 1 - dist * 0.7), 1.8);
+        var intensity = gradient * breath * ring;
+        // neon core glow — intensifies smoothly toward center
+        var neonBoost = Math.pow(Math.max(0, 1 - dist), 4) * (1.0 + energy * 0.8);
+        // color with hue shift across gradient for depth
+        var hueShift = dist * 0.3; // outer ring shifts hue slightly
+        var r = Math.min(255, Math.round(portalGlowR * intensity * (1 - hueShift * 0.2) + 180 * neonBoost * 0.3));
+        var g = Math.min(255, Math.round(portalGlowG * intensity * (1 + hueShift * 0.15) + 160 * neonBoost * 0.15));
+        var b = Math.min(255, Math.round(portalGlowB * intensity * (1 + hueShift * 0.3) + 180 * neonBoost * 0.25));
+        var key = VAULT_DYN_START + Math.min(8, Math.floor(gradient * 9));
         if (C[key]) delete rgbCache[C[key]];
         C[key] = 'rgb(' + r + ',' + g + ',' + b + ')';
         scene[(VY + py) * COLS + (VX + px)] = key;
       }
     }
-    // blazing hot core — white-tinted neon center, 3x3 cluster
+    // hot core — smooth bright center, 3x3
     var ccx = VX + Math.floor(cx), ccy = VY + Math.floor(cy);
-    var coreI = breath * (1.3 + energy * 0.8);
+    var coreI = breath * (1.2 + energy * 0.5);
     var coreKey = VAULT_DYN_START + 8;
     if (C[coreKey]) delete rgbCache[C[coreKey]];
-    var coreR = Math.min(255, Math.round(portalGlowR * 0.4 * coreI + 200 * coreI));
-    var coreG = Math.min(255, Math.round(portalGlowG * 0.4 * coreI + 180 * coreI));
-    var coreB = Math.min(255, Math.round(portalGlowB * 0.4 * coreI + 160 * coreI));
+    var coreR = Math.min(255, Math.round(portalGlowR * 0.5 * coreI + 180 * coreI));
+    var coreG = Math.min(255, Math.round(portalGlowG * 0.5 * coreI + 160 * coreI));
+    var coreB = Math.min(255, Math.round(portalGlowB * 0.5 * coreI + 140 * coreI));
     C[coreKey] = 'rgb(' + coreR + ',' + coreG + ',' + coreB + ')';
     for (var cdy = -1; cdy <= 1; cdy++) {
       for (var cdx2 = -1; cdx2 <= 1; cdx2++) {
@@ -1391,7 +1379,7 @@
   // cast glow outward from portal into surrounding room — neon bleed, eats the scene
   function castRoomGlow(imgData) {
     if (!vaultOpen) return;
-    var breath = Math.sin(vaultFrame * 0.03) * 0.2 + 0.8;
+    var breath = Math.sin(vaultFrame * 0.015) * 0.15 + 0.85;
     var energy = window.__musicEnergy || 0;
     var bass = window.__musicBass || 0;
     var nightBoost = sceneTheme === 'dark' ? 3.5 : 1.6;
@@ -1453,7 +1441,7 @@
           vaultFrame++;
           drawPortal(vaultFrame);
           render();
-        }, 200);
+        }, 250);
       }
     }, 40);
   }

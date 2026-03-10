@@ -649,6 +649,11 @@
   var COL_GOLD = '#b8965a';       // gold accent
   var COL_ALIVE = '#5BF29B';      // green
   var COL_DANGER = '#c75050';     // red
+  // Light mode — darker for contrast on cream background
+  var COL_GLOW_L = '#4a3f2e';     // deep warm brown (replaces near-white)
+  var COL_GOLD_L = '#7a5520';     // deep gold
+  var COL_ALIVE_L = '#1a7a42';    // dark green
+  var COL_DANGER_L = '#8a2020';   // dark red
   // Pre-computed rgba versions for alpha blending
   function rgba(hex, a) {
     var r = parseInt(hex.slice(1,3), 16);
@@ -657,7 +662,9 @@
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
   }
   // Color cycle — melody-driven. dominant mid-freq bin steers hue position.
-  var PALETTE = [COL_GOLD, COL_GLOW, COL_ALIVE, COL_DANGER];
+  var PALETTE_DARK = [COL_GOLD, COL_GLOW, COL_ALIVE, COL_DANGER];
+  var PALETTE_LIGHT = [COL_GOLD_L, COL_GLOW_L, COL_ALIVE_L, COL_DANGER_L];
+  var PALETTE = PALETTE_DARK;
   var palIdx = 0;
   var palBlend = 0;
   var flashEnergy = 0;   // decays from bass hits, drives intensity
@@ -1141,6 +1148,7 @@
     ctx.drawImage(canvas, 0, 0);
     ctx.restore();
     var isDark = document.documentElement.dataset.theme !== 'light';
+    PALETTE = isDark ? PALETTE_DARK : PALETTE_LIGHT;
     var voidBg = isDark ? '0,0,0' : '240,235,225';
     ctx.fillStyle = 'rgba(' + voidBg + ', 0.18)';
     ctx.fillRect(0, 0, w, h);
@@ -1438,7 +1446,8 @@
         var hAlpha = (1 - ht0 / 0.5);
         if (hAlpha <= 0) break;
         hAlpha = hAlpha * (0.03 + efv * 0.06 + sTotal * 0.02);
-        ctx.strokeStyle = 'rgba(255,255,255,' + hAlpha + ')';
+        var hlCol = isDark ? '255,255,255' : '40,30,15';
+        ctx.strokeStyle = 'rgba(' + hlCol + ',' + hAlpha + ')';
         ctx.lineWidth = 0.5 * (1 - ht0);
         ctx.beginPath();
         ctx.moveTo(esc[0] + (vpx - esc[0]) * ht0, esc[1] + (vpy - esc[1]) * ht0);
@@ -1534,9 +1543,11 @@
         var pct = data.bitcoin.usd_24h_change.toFixed(2);
         var arrow = pct >= 0 ? '\u25B2' : '\u25BC';
         var sign = pct >= 0 ? '+' : '';
-        var color = pct >= 0 ? 'rgba(100,220,120,0.6)' : 'rgba(220,100,100,0.6)';
+        var stockIsDark = document.documentElement.dataset.theme !== 'light';
+        var color = pct >= 0 ? (stockIsDark ? 'rgba(100,220,120,0.6)' : 'rgba(30,140,60,0.8)') : (stockIsDark ? 'rgba(220,100,100,0.6)' : 'rgba(180,50,50,0.8)');
+        var priceColor = stockIsDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)';
         var html = '<span style="opacity:0.4">BTC</span> ' +
-          '<span style="color:rgba(255,255,255,0.6)">$' + price.toLocaleString() + '</span> ' +
+          '<span style="color:' + priceColor + '">$' + price.toLocaleString() + '</span> ' +
           '<span style="color:' + color + '">' + arrow + ' ' + sign + pct + '%</span>';
         var slots = banner.querySelectorAll('.np-stock');
         for (var i = 0; i < slots.length; i++) slots[i].innerHTML = html;

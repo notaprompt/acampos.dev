@@ -649,10 +649,8 @@
     boneWrap.style.display = 'grid';
     boneWrap.style.gridTemplateColumns = 'repeat(' + BONE_COLS + ', ' + PX + 'px)';
     boneWrap.style.gridTemplateRows = 'repeat(' + BONE.length + ', ' + PX + 'px)';
-    boneWrap.style.marginTop = '2px';
-    boneWrap.style.marginBottom = '2px';
     boneWrap.style.transform = 'rotate(-12deg)';
-    boneWrap.style.alignSelf = 'center';
+    boneWrap.style.pointerEvents = 'none';
     for (var br = 0; br < BONE.length; br++) {
       for (var bc = 0; bc < BONE_COLS; bc++) {
         var bp = document.createElement('div');
@@ -688,13 +686,10 @@
     nameLabel.textContent = esc(name);
     stage.appendChild(nameLabel);
 
-    // Bone sits right above the treat button
-    stage.appendChild(boneWrap);
-
-    // ── Feature 3: Treat button ──
+    // ── Feature 3: Treat button (bone replaces ~) ──
     var treatBtn = document.createElement('button');
     treatBtn.className = 'or-treat';
-    treatBtn.textContent = '~';
+    treatBtn.appendChild(boneWrap);
     // If secret already unlocked, apply glow style
     if (localStorage.getItem('oliver_secret_unlocked') === 'true') {
       treatBtn.classList.add('or-treat-glow');

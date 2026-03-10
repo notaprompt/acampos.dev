@@ -977,47 +977,46 @@
     registerObject('art', ART1_X, ART1_Y, ART1_W, ART1_H, 'https://instagram.com/notaprompt', 'instagram', true);
   }
 
-  // ── Eames Aluminum Group desk chair (3/4 facing left) ──
+  // ── Eames Aluminum Group desk chair (rear 3/4, facing ~10 o'clock) ──
   var CHAIR_X = 128, CHAIR_Y = 72;
   function drawChair() {
-    // Aluminum Group: thin die-cast aluminum rails curve from base over back
-    // Leather sling suspended between rails — frame is the dominant visual
-    // 3/4 view facing left: near-side rail in front, back rail visible behind
+    // Rear view: we see the back of the chair. Chrome arch on top,
+    // full leather back panel visible, side rails frame it.
+    // Arms point forward (away from us), barely visible as stubs.
     var A = 32, S = 33, L = 30, H = 31;
 
-    // ── Back: chrome arc over top ──
-    fillRect(CHAIR_X + 8, CHAIR_Y, 6, 1, A);         // top bar
-    fillRect(CHAIR_X + 7, CHAIR_Y + 1, 1, 1, A);     // left rail start
-    fillRect(CHAIR_X + 14, CHAIR_Y + 1, 1, 1, A);    // right rail start
+    // ── Chrome arch over back (top bar) ──
+    fillRect(CHAIR_X + 3, CHAIR_Y, 10, 1, A);
+    fillRect(CHAIR_X + 4, CHAIR_Y, 8, 1, S);         // highlight
 
-    // ── Rails running down ──
-    fillRect(CHAIR_X + 6, CHAIR_Y + 2, 1, 3, A);     // near-side rail
-    fillRect(CHAIR_X + 14, CHAIR_Y + 2, 1, 6, A);    // far-side rail (back frame)
-    fillRect(CHAIR_X + 15, CHAIR_Y + 3, 1, 4, S);    // far rail shadow
+    // ── Side rails running down from arch ──
+    fillRect(CHAIR_X + 2, CHAIR_Y + 1, 1, 8, A);     // left rail
+    fillRect(CHAIR_X + 13, CHAIR_Y + 1, 1, 8, A);    // right rail
+    fillRect(CHAIR_X + 1, CHAIR_Y + 2, 1, 6, S);     // left rail shadow
 
-    // ── Leather back panel (slung between rails) ──
-    fillRect(CHAIR_X + 7, CHAIR_Y + 2, 7, 6, L);
-    fillRect(CHAIR_X + 8, CHAIR_Y + 3, 5, 4, H);     // highlight center
+    // ── Leather back panel (rear surface visible) ──
+    fillRect(CHAIR_X + 3, CHAIR_Y + 1, 10, 8, L);
+    fillRect(CHAIR_X + 4, CHAIR_Y + 2, 8, 6, H);     // lighter center
 
-    // ── Near-side rail curves forward into arm ──
-    fillRect(CHAIR_X + 5, CHAIR_Y + 5, 1, 2, A);
-    fillRect(CHAIR_X + 4, CHAIR_Y + 7, 1, 1, A);
-    fillRect(CHAIR_X + 3, CHAIR_Y + 8, 2, 1, A);     // armrest pad
+    // ── Arm stubs (point forward, foreshortened — just small chrome pads) ──
+    fillRect(CHAIR_X + 1, CHAIR_Y + 9, 2, 1, A);     // left arm pad
+    fillRect(CHAIR_X + 13, CHAIR_Y + 9, 2, 1, A);    // right arm pad
 
-    // ── Seat frame + leather sling ──
-    fillRect(CHAIR_X + 4, CHAIR_Y + 9, 11, 1, A);    // seat frame top (chrome)
-    fillRect(CHAIR_X + 5, CHAIR_Y + 10, 9, 2, L);    // leather seat
-    fillRect(CHAIR_X + 6, CHAIR_Y + 10, 7, 1, H);    // seat highlight
-    fillRect(CHAIR_X + 4, CHAIR_Y + 12, 11, 1, A);   // seat frame bottom (chrome)
+    // ── Seat (barely visible below back) ──
+    fillRect(CHAIR_X + 2, CHAIR_Y + 10, 12, 1, A);   // seat frame chrome
+    fillRect(CHAIR_X + 3, CHAIR_Y + 11, 10, 2, L);   // leather seat edge
+    fillRect(CHAIR_X + 2, CHAIR_Y + 13, 12, 1, A);   // seat bottom frame
 
     // ── Pedestal ──
-    fillRect(CHAIR_X + 9, CHAIR_Y + 13, 1, 3, A);    // center column
+    fillRect(CHAIR_X + 7, CHAIR_Y + 14, 2, 2, A);    // hub
+    fillRect(CHAIR_X + 7, CHAIR_Y + 16, 2, 1, S);    // cylinder
 
-    // ── 5-star aluminum base ──
-    fillRect(CHAIR_X + 3, CHAIR_Y + 16, 13, 1, A);
-    fillRect(CHAIR_X + 2, CHAIR_Y + 17, 1, 1, S);    // caster
-    fillRect(CHAIR_X + 9, CHAIR_Y + 17, 1, 1, S);    // caster
-    fillRect(CHAIR_X + 15, CHAIR_Y + 17, 1, 1, S);   // caster
+    // ── 5-star aluminum base (seen from above-ish, spread out) ──
+    fillRect(CHAIR_X + 2, CHAIR_Y + 17, 12, 1, A);   // main bar
+    fillRect(CHAIR_X + 7, CHAIR_Y + 18, 2, 1, A);    // front spoke
+    fillRect(CHAIR_X + 1, CHAIR_Y + 18, 1, 1, S);    // caster L
+    fillRect(CHAIR_X + 7, CHAIR_Y + 19, 2, 1, S);    // caster front
+    fillRect(CHAIR_X + 14, CHAIR_Y + 18, 1, 1, S);   // caster R
   }
 
   // ── Subwoofer under desk ──

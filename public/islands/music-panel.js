@@ -1265,11 +1265,10 @@
     var vpy = h / 2 + chaseY * h * 0.12 + bendY1 * h * 0.05;
 
     // ═══ VANISHING POINT — underneath layer, only visible through gaps ═══
-    var vpDotR = Math.min(w, h) * 0.035;
+    var vpDotR = Math.min(w, h) * 0.018;
     var vpGrad = ctx.createRadialGradient(vpx, vpy, 0, vpx, vpy, vpDotR);
-    vpGrad.addColorStop(0, 'rgba(0,0,0,0.9)');
-    vpGrad.addColorStop(0.3, 'rgba(0,0,0,0.6)');
-    vpGrad.addColorStop(0.7, 'rgba(0,0,0,0.15)');
+    vpGrad.addColorStop(0, 'rgba(0,0,0,0.5)');
+    vpGrad.addColorStop(0.5, 'rgba(0,0,0,0.2)');
     vpGrad.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = vpGrad;
     ctx.beginPath();

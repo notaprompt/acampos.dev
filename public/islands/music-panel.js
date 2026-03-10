@@ -622,13 +622,17 @@
   audio.addEventListener('play', onPlay);
 
   // ── Visualizer ────────────────────────────────────────────
+  var PIXEL_SCALE = 3; // render at 1/3 res, scale up for vintage pixel look
   function resizeCanvas() {
     var wrap = canvas.parentElement;
     var w = wrap.clientWidth || panel.clientWidth || Math.round(window.innerWidth * 0.19);
     var h = wrap.clientHeight || 400;
     if (w < 10) w = Math.round(window.innerWidth * 0.19);
-    canvas.width = w;
-    canvas.height = h;
+    canvas.width = Math.floor(w / PIXEL_SCALE);
+    canvas.height = Math.floor(h / PIXEL_SCALE);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    canvas.style.imageRendering = 'pixelated';
   }
 
   function startVisualizer() {

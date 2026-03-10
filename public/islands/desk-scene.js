@@ -1318,62 +1318,80 @@
     var cx = VW / 2, cy = VH / 2;
     var energy = window.__musicEnergy || 0;
     var bass = window.__musicBass || 0;
-    // very slow breathing — mesmerizing, not chaotic
-    var breath = Math.sin(phase * 0.015) * 0.15 + 0.85;
-    // music tempo modulates the ring drift speed subtly
-    var ringSpeed = 0.02 + energy * 0.015;
+    var breath = Math.sin(phase * 0.015) * 0.12 + 0.88;
+    var spinSpeed = 0.025 + energy * 0.01;
 
-    // get color — music sync or neon purple default
-    var gr, gg, gb;
+    // R&M portal palette: pink, purple, gold — 3 color bands for spiral arms
+    // When music plays, these shift toward the music color
+    var arms = [
+      { r: 200, g: 80, b: 140 },   // pink
+      { r: 120, g: 50, b: 200 },   // purple
+      { r: 200, g: 160, b: 70 },   // gold
+    ];
     if (vaultMusicSync) {
       var mc = window.__musicColor;
       var m = mc && mc.match(/\d+/g);
-      if (m) { gr = parseInt(m[0]); gg = parseInt(m[1]); gb = parseInt(m[2]); }
-      else { gr = 184; gg = 150; gb = 90; }
-    } else {
-      gr = 120; gg = 50; gb = 230; // neon electric purple
+      if (m) {
+        var mr = parseInt(m[0]), mg = parseInt(m[1]), mb = parseInt(m[2]);
+        // blend arm colors toward music color
+        for (var ai = 0; ai < 3; ai++) {
+          arms[ai].r = Math.round(arms[ai].r * 0.5 + mr * 0.5);
+          arms[ai].g = Math.round(arms[ai].g * 0.5 + mg * 0.5);
+          arms[ai].b = Math.round(arms[ai].b * 0.5 + mb * 0.5);
+        }
+      }
     }
-    // very smooth color transitions
-    portalGlowR += (gr - portalGlowR) * 0.03;
-    portalGlowG += (gg - portalGlowG) * 0.03;
-    portalGlowB += (gb - portalGlowB) * 0.03;
+    // smooth glow color for room bleed (average of arms)
+    var avgR = (arms[0].r + arms[1].r + arms[2].r) / 3;
+    var avgG = (arms[0].g + arms[1].g + arms[2].g) / 3;
+    var avgB = (arms[0].b + arms[1].b + arms[2].b) / 3;
+    portalGlowR += (avgR - portalGlowR) * 0.03;
+    portalGlowG += (avgG - portalGlowG) * 0.03;
+    portalGlowB += (avgB - portalGlowB) * 0.03;
 
-    // fill portal — slow rotating spiral (Rick and Morty style)
-    var spiralSpeed = 0.012 + energy * 0.008; // music energy speeds rotation slightly
+    // R&M spiral: 3 thick arms with distinct color bands, rotating slowly
     for (var py = 0; py < VH; py++) {
       for (var px = 0; px < VW; px++) {
         var dx = (px - cx) / (VW / 2);
         var dy = (py - cy) / (VH / 2);
         var dist = Math.sqrt(dx * dx + dy * dy);
-        // spiral: angle + distance creates rotating arms
         var angle = Math.atan2(dy, dx);
-        var spiral = Math.sin(angle * 2 + dist * 5 - phase * spiralSpeed) * 0.5 + 0.5;
-        // smooth gradient falloff — deep at edges, bright at center
-        var gradient = Math.pow(Math.max(0, 1 - dist * 0.7), 1.6);
-        // spiral modulates intensity — creates visible arms
-        var intensity = gradient * breath * (0.6 + spiral * 0.4);
-        // neon core glow
-        var neonBoost = Math.pow(Math.max(0, 1 - dist), 4) * (1.0 + energy * 0.8);
-        // color with hue shift along spiral arms for depth
-        var hueShift = spiral * 0.25;
-        var r = Math.min(255, Math.round(portalGlowR * intensity * (1 + hueShift * 0.3) + 180 * neonBoost * 0.3));
-        var g = Math.min(255, Math.round(portalGlowG * intensity * (1 - hueShift * 0.1) + 160 * neonBoost * 0.15));
-        var b = Math.min(255, Math.round(portalGlowB * intensity * (1 + hueShift * 0.2) + 180 * neonBoost * 0.25));
-        var key = VAULT_DYN_START + Math.min(8, Math.floor(gradient * 9));
+
+        // spiral arm: angle wraps with distance for swirl
+        var spiralAngle = angle + dist * 3.5 - phase * spinSpeed;
+        // normalize to 0-1 across 3 arms
+        var armPos = ((spiralAngle / (Math.PI * 2)) % 1 + 1) % 1;
+        var armIdx = Math.floor(armPos * 3);
+        var armBlend = (armPos * 3) % 1; // blend between adjacent arms
+
+        // pick two arm colors and blend
+        var a1 = arms[armIdx % 3];
+        var a2 = arms[(armIdx + 1) % 3];
+        var armR = a1.r + (a2.r - a1.r) * armBlend;
+        var armG = a1.g + (a2.g - a1.g) * armBlend;
+        var armB = a1.b + (a2.b - a1.b) * armBlend;
+
+        // radial falloff — bright center, dimmer edges
+        var radial = Math.pow(Math.max(0, 1 - dist * 0.65), 1.4) * breath;
+        // center hot glow boost
+        var center = Math.pow(Math.max(0, 1 - dist), 4) * (1.0 + energy * 0.6);
+
+        var r = Math.min(255, Math.round(armR * radial + 200 * center * 0.4));
+        var g = Math.min(255, Math.round(armG * radial + 180 * center * 0.3));
+        var b = Math.min(255, Math.round(armB * radial + 180 * center * 0.35));
+
+        var key = VAULT_DYN_START + Math.min(8, Math.floor(radial * 9));
         if (C[key]) delete rgbCache[C[key]];
         C[key] = 'rgb(' + r + ',' + g + ',' + b + ')';
         scene[(VY + py) * COLS + (VX + px)] = key;
       }
     }
-    // hot core — smooth bright center, 3x3
+    // blazing white-tinted core — 3x3
     var ccx = VX + Math.floor(cx), ccy = VY + Math.floor(cy);
-    var coreI = breath * (1.2 + energy * 0.5);
+    var coreI = breath * (1.3 + energy * 0.5);
     var coreKey = VAULT_DYN_START + 8;
     if (C[coreKey]) delete rgbCache[C[coreKey]];
-    var coreR = Math.min(255, Math.round(portalGlowR * 0.5 * coreI + 180 * coreI));
-    var coreG = Math.min(255, Math.round(portalGlowG * 0.5 * coreI + 160 * coreI));
-    var coreB = Math.min(255, Math.round(portalGlowB * 0.5 * coreI + 140 * coreI));
-    C[coreKey] = 'rgb(' + coreR + ',' + coreG + ',' + coreB + ')';
+    C[coreKey] = 'rgb(' + Math.min(255, Math.round(220 * coreI)) + ',' + Math.min(255, Math.round(190 * coreI)) + ',' + Math.min(255, Math.round(210 * coreI)) + ')';
     for (var cdy = -1; cdy <= 1; cdy++) {
       for (var cdx2 = -1; cdx2 <= 1; cdx2++) {
         var cy2 = ccy + cdy, cx2 = ccx + cdx2;

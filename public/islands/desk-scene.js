@@ -268,6 +268,9 @@
       }
     }
 
+    // portal glow cast into room
+    castRoomGlow(d);
+
     bx.putImageData(img, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(off, 0, 0, canvas.width, canvas.height);
@@ -1143,34 +1146,81 @@
     }
   }
 
-  function drawVoidTunnel(phase) {
+  // portal glow state — bleeds light into the room
+  var portalGlowR = 90, portalGlowG = 70, portalGlowB = 140; // default purple
+
+  function drawPortal(phase) {
     updateVaultPalette();
     var cx = VW / 2, cy = VH / 2;
-    var baseRings = [105, 106, 107, 108, 109, 110, 111, 112, 113];
-    var dynRings = [115, 116, 117, 118, 119, 120, 121, 122, 123];
-    var rings = vaultMusicSync ? dynRings : baseRings;
-    // speed up pulse with bass
-    var bass = window.__musicBass || 0;
-    var speed = 0.15 + bass * 0.4;
+    // slow breathing pulse
+    var breath = Math.sin(phase * 0.04) * 0.3 + 0.7; // 0.4 to 1.0
+
+    // get color — music sync or default amber/purple
+    var gr, gg, gb;
+    if (vaultMusicSync) {
+      var mc = window.__musicColor;
+      var m = mc && mc.match(/\d+/g);
+      if (m) { gr = parseInt(m[0]); gg = parseInt(m[1]); gb = parseInt(m[2]); }
+      else { gr = 184; gg = 150; gb = 90; }
+    } else {
+      gr = 140; gg = 100; gb = 180; // quiet purple
+    }
+    // smooth the glow color
+    portalGlowR += (gr - portalGlowR) * 0.05;
+    portalGlowG += (gg - portalGlowG) * 0.05;
+    portalGlowB += (gb - portalGlowB) * 0.05;
+
+    // fill portal opening — radial falloff from center
     for (var py = 0; py < VH; py++) {
       for (var px = 0; px < VW; px++) {
         var dx = (px - cx) / (VW / 2);
         var dy = (py - cy) / (VH / 2);
-        var dist = Math.max(Math.abs(dx), Math.abs(dy));
-        var ring = Math.floor((dist * 6 + phase * speed) % rings.length);
-        scene[(VY + py) * COLS + (VX + px)] = rings[ring];
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var intensity = Math.max(0, 1 - dist) * breath;
+        var r = Math.round(portalGlowR * intensity * 0.4);
+        var g = Math.round(portalGlowG * intensity * 0.4);
+        var b = Math.round(portalGlowB * intensity * 0.4);
+        var key = VAULT_DYN_START + Math.min(8, Math.floor((1 - dist) * 9));
+        if (C[key]) delete rgbCache[C[key]];
+        C[key] = 'rgb(' + r + ',' + g + ',' + b + ')';
+        scene[(VY + py) * COLS + (VX + px)] = key;
       }
     }
-    // center glow
+    // bright core — small cluster
     var ccx = VX + Math.floor(cx), ccy = VY + Math.floor(cy);
-    var glow = Math.sin(phase * 0.2) * 0.5 + 0.5;
-    var bright = rings[rings.length - 1];
-    var mid = rings[rings.length - 2];
-    scene[ccy * COLS + ccx] = glow > 0.5 ? bright : mid;
-    scene[ccy * COLS + ccx - 1] = glow > 0.3 ? mid : rings[rings.length - 3];
-    scene[ccy * COLS + ccx + 1] = glow > 0.3 ? mid : rings[rings.length - 3];
-    scene[(ccy - 1) * COLS + ccx] = glow > 0.3 ? mid : rings[rings.length - 3];
-    scene[(ccy + 1) * COLS + ccx] = glow > 0.3 ? mid : rings[rings.length - 3];
+    var coreI = breath * 0.7;
+    var coreKey = VAULT_DYN_START + 8;
+    if (C[coreKey]) delete rgbCache[C[coreKey]];
+    C[coreKey] = 'rgb(' + Math.round(portalGlowR * coreI) + ',' + Math.round(portalGlowG * coreI) + ',' + Math.round(portalGlowB * coreI) + ')';
+    scene[ccy * COLS + ccx] = coreKey;
+  }
+
+  // cast glow outward from portal into surrounding room pixels
+  function castRoomGlow(imgData) {
+    if (!vaultOpen) return;
+    var breath = Math.sin(vaultFrame * 0.04) * 0.3 + 0.7;
+    var energy = window.__musicEnergy || 0;
+    var strength = (0.12 + energy * 0.15) * breath;
+    var cr = portalGlowR, cg = portalGlowG, cb = portalGlowB;
+    // glow radius extends outward from vault edges
+    var glowR = 18 + Math.round(energy * 8);
+    var vcx = VX + VW / 2, vcy = VY + VH / 2;
+    for (var gy = vcy - glowR; gy <= vcy + glowR; gy++) {
+      for (var gx = vcx - glowR; gx <= vcx + glowR; gx++) {
+        if (gx < 0 || gx >= COLS || gy < 0 || gy >= ROWS) continue;
+        // skip pixels inside the vault itself
+        if (gx >= VX && gx < VX + VW && gy >= VY && gy < VY + VH) continue;
+        var ddx = (gx - vcx) / glowR;
+        var ddy = (gy - vcy) / glowR;
+        var dd = Math.sqrt(ddx * ddx + ddy * ddy);
+        if (dd > 1) continue;
+        var falloff = Math.pow(1 - dd, 2.5) * strength;
+        var pi = (gy * COLS + gx) * 4;
+        imgData[pi]     = Math.min(255, imgData[pi]     + Math.round(cr * falloff));
+        imgData[pi + 1] = Math.min(255, imgData[pi + 1] + Math.round(cg * falloff));
+        imgData[pi + 2] = Math.min(255, imgData[pi + 2] + Math.round(cb * falloff));
+      }
+    }
   }
 
   function openVault() {
@@ -1204,12 +1254,12 @@
         vaultAnimating = false;
         vaultOpen = true;
         vaultFrame = 0;
-        // start tunnel animation loop
+        // start portal glow loop — slow breathing
         vaultInterval = setInterval(function () {
           vaultFrame++;
-          drawVoidTunnel(vaultFrame);
+          drawPortal(vaultFrame);
           render();
-        }, 80);
+        }, 150);
       }
     }, 40);
   }

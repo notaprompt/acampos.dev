@@ -1460,15 +1460,15 @@
       for (var sg = 0; sg < segs; sg++) {
         var t0 = sg / segs;
         var t1 = (sg + 1) / segs;
-        var segAlpha = (1 - t0 / 0.7);
+        var segAlpha = (1 - t0 / 0.4);
         if (segAlpha <= 0) break;
-        segAlpha = segAlpha * (0.25 + sTotal * 0.15);
+        segAlpha = segAlpha * segAlpha * (0.2 + sTotal * 0.12);
 
         var p0 = hallPos(t0, cSigns[cs][0], cSigns[cs][1]);
         var p1 = hallPos(t1, cSigns[cs][0], cSigns[cs][1]);
 
         ctx.strokeStyle = lerpColorA(colA, colB, csColT, segAlpha);
-        ctx.lineWidth = (1.5 + sTotal * 1.5) * (1 - t0 * 0.6);
+        ctx.lineWidth = (1 + sTotal * 1) * (1 - t0 * 0.8);
         ctx.beginPath();
         ctx.moveTo(p0[0], p0[1]);
         ctx.lineTo(p1[0], p1[1]);
@@ -1501,9 +1501,9 @@
         for (var sg = 0; sg < segs; sg++) {
           var t0 = sg / segs;
           var t1 = (sg + 1) / segs;
-          var segAlpha = (1 - t0 / 0.5);
+          var segAlpha = (1 - t0 / 0.35);
           if (segAlpha <= 0) break;
-          segAlpha = segAlpha * segAlpha * (0.1 + sfv * 0.15);
+          segAlpha = segAlpha * segAlpha * (0.08 + sfv * 0.1);
 
           var sp0 = hallPos(t0, seamSx, seamSy);
           var sp1 = hallPos(t1, seamSx, seamSy);
@@ -1558,13 +1558,15 @@
     }
 
     // ═══ LAYER 3e: BLACK HOLE — at VP where all lines converge ═══
+    // Outer fade — wide enough to swallow feedback ghost trail
     var bpX = vpx;
     var bpY = vpy;
-    var bpR = Math.min(w, h) * 0.12;
+    var bpR = Math.min(w, h) * 0.18;
     var bpGrad = ctx.createRadialGradient(bpX, bpY, 0, bpX, bpY, bpR);
-    bpGrad.addColorStop(0, 'rgba(0,0,0,0.9)');
-    bpGrad.addColorStop(0.15, 'rgba(0,0,0,0.5)');
-    bpGrad.addColorStop(0.4, 'rgba(0,0,0,0.12)');
+    bpGrad.addColorStop(0, 'rgba(0,0,0,1)');
+    bpGrad.addColorStop(0.08, 'rgba(0,0,0,0.95)');
+    bpGrad.addColorStop(0.2, 'rgba(0,0,0,0.5)');
+    bpGrad.addColorStop(0.45, 'rgba(0,0,0,0.1)');
     bpGrad.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = bpGrad;
     ctx.fillRect(0, 0, w, h);

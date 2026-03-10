@@ -1179,7 +1179,16 @@
     var isDark = document.documentElement.dataset.theme !== 'light';
     PALETTE = isDark ? PALETTE_DARK : PALETTE_LIGHT;
     var voidBg = isDark ? '0,0,0' : '240,235,225';
+    // Uniform void fade
     ctx.fillStyle = 'rgba(' + voidBg + ', 0.12)';
+    ctx.fillRect(0, 0, w, h);
+    // Extra fade at zoom center — counteracts feedback accumulation there
+    var centerFadeR = Math.min(w, h) * 0.4;
+    var centerFade = ctx.createRadialGradient(zoomCx, zoomCy, 0, zoomCx, zoomCy, centerFadeR);
+    centerFade.addColorStop(0, 'rgba(' + voidBg + ', 0.25)');
+    centerFade.addColorStop(0.4, 'rgba(' + voidBg + ', 0.1)');
+    centerFade.addColorStop(1, 'rgba(' + voidBg + ', 0)');
+    ctx.fillStyle = centerFade;
     ctx.fillRect(0, 0, w, h);
 
     visTime += 0.016;

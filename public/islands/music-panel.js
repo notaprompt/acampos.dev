@@ -1256,60 +1256,86 @@
     var vpy = h / 2 + chaseY * h * 0.12 + bendY1 * h * 0.05;
 
     // ═══ LAYER 1: INFINITE HALL — receding rectangles ═══
+    // OPTICAL ILLUSION: chromatic depth — warm near, cool far
+    // Human eye focuses red wavelengths in front of blue — literally looks closer
+    var warmCol = isDark ? '#e8a060' : '#a05828'; // warm amber/orange
+    var coolCol = isDark ? '#6868d0' : '#3838a0'; // cool blue/violet
     var rectCount = 18;
     for (var ri = 0; ri < rectCount; ri++) {
-      // z cycles forward continuously — each rect has a depth slot
       var zRaw = ((ri / rectCount) + hallZ) % 1;
-      // Ease: close rects spread out, far ones compress (perspective)
       var z = zRaw * zRaw * zRaw;
       if (z < 0.001) continue;
 
-      // Perspective scale: 0 = vanishing point, 1 = fills screen
       var scale = z;
       var rectW = w * scale;
       var rectH = h * scale;
 
-      // Parallax: near rects offset MORE from VP (you pass through them)
-      // At z=0 rect is at VP, at z=1 rect is at screen center
-      var parallax = z * z; // quadratic — near rects barely move, far rects swing hard
+      var parallax = z * z;
       var rectCx = vpx + (w / 2 - vpx) * parallax;
       var rectCy = vpy + (h / 2 - vpy) * parallax;
-      // S-curve bend — two control points at different depths create winding path
-      // Bend1 peaks at z~0.35 (mid-far), bend2 peaks at z~0.7 (mid-near)
-      var b1 = Math.sin(z * Math.PI * 1.2);       // peaks ~0.35 depth
-      var b2 = Math.sin((z - 0.3) * Math.PI * 1.1); // peaks ~0.7 depth
+      var b1 = Math.sin(z * Math.PI * 1.2);
+      var b2 = Math.sin((z - 0.3) * Math.PI * 1.1);
       rectCx += (bendX1 * b1 + bendX2 * b2) * w * 0.25;
       rectCy += (bendY1 * b1 + bendY2 * b2) * h * 0.2;
       var rx = rectCx - rectW / 2;
       var ry = rectCy - rectH / 2;
 
-      // Audio modulation — frequency data warps the rectangle
       var freqIdx = Math.floor(z * bufferLength) % bufferLength;
       var fv = freqData[freqIdx] / 255;
       var warp = fv * scale * 8;
 
-      // Light sweep — bright band rolling through depth, sells infinite motion
+      // Light sweep
       var sweepPos = (visTime * 0.4 + sBass * 0.3) % 1;
       var sweepDist = Math.abs(zRaw - sweepPos);
       if (sweepDist > 0.5) sweepDist = 1 - sweepDist;
       var sweepBoost = Math.max(0, 1 - sweepDist * 8) * (0.4 + sTotal * 0.3);
 
-      // Color — thinner, more transparent, breathes
+      // CHROMATIC DEPTH: near rects use palette warm-shifted, far use cool-shifted
       var rectAlpha = (0.1 + fv * 0.25 + sweepBoost * 0.5 + flashEnergy * 0.2) * (0.3 + z * 0.7);
+      // Blend palette color with chromatic depth overlay
       var colT = (z + palBlend) % 1;
-      ctx.strokeStyle = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 0.7));
+      var baseCol = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 0.7));
+      // Near rects (z>0.5): warm tint. Far rects (z<0.2): cool tint.
+      var chromaT = Math.max(0, Math.min(1, (z - 0.15) / 0.6)); // 0=far/cool, 1=near/warm
+      var chromaCol = lerpColorA(coolCol, warmCol, chromaT, Math.min(rectAlpha, 0.5));
+
+      // ATMOSPHERIC FOG: far rects lose saturation, blend toward void
+      var fogT = 1 - z; // 0=near, 1=far
+      fogT = fogT * fogT * fogT; // cubic — most fogging in deepest rects
+      var fogAlpha = fogT * 0.4;
+
       ctx.lineWidth = 0.4 + z * 1.5 + fv * 0.8 + sweepBoost + flashEnergy;
 
-      // Draw warped rectangle — not a perfect rect, audio bends it
+      // Draw warped rectangle
       ctx.beginPath();
       ctx.moveTo(rx - warp, ry - warp);
       ctx.lineTo(rx + rectW + warp, ry - warp * 0.7);
       ctx.lineTo(rx + rectW + warp * 0.7, ry + rectH + warp);
       ctx.lineTo(rx - warp * 0.7, ry + rectH + warp * 0.7);
       ctx.closePath();
+
+      // Layer 1: base color stroke
+      ctx.strokeStyle = baseCol;
+      ctx.stroke();
+      // Layer 2: chromatic depth tint
+      ctx.strokeStyle = chromaCol;
       ctx.stroke();
 
-      // Glow on close / loud rects — subtle
+      // Atmospheric fog overlay on far rects
+      if (fogAlpha > 0.01) {
+        ctx.strokeStyle = 'rgba(' + voidBg + ',' + fogAlpha + ')';
+        ctx.stroke();
+      }
+
+      // FLICKER PARALLAX: near rects pulse with bass (motion = close)
+      if (z > 0.5 && sBass > 0.3) {
+        var pulseAlpha = (z - 0.5) * sBass * 0.15;
+        ctx.strokeStyle = lerpColorA(warmCol, '#ffffff', 0.5, pulseAlpha);
+        ctx.lineWidth += sBass * z * 2;
+        ctx.stroke();
+      }
+
+      // Glow on close / loud rects
       if (z > 0.4 && flashEnergy > 0.3) {
         ctx.strokeStyle = lerpColorA(colA, colB, colT, flashEnergy * 0.1);
         ctx.lineWidth = 2 + z * 3 + flashEnergy * 4;
@@ -1520,8 +1546,8 @@
     }
     ctx.restore();
 
-    // ═══ LAYER 5: FLOOR GRID — perspective grid beneath ═══
-    var gridLines = 5;
+    // ═══ LAYER 5: FLOOR GRID — more lines = stronger perspective ═══
+    var gridLines = 10;
     for (var gi = 0; gi < gridLines; gi++) {
       var gz = ((gi / gridLines) + hallZ * 1.5) % 1;
       gz = gz * gz;
@@ -1547,6 +1573,44 @@
       ctx.lineTo(gridCx + gxSpread, gy);
       ctx.stroke();
     }
+
+    // ═══ SPEED LINES — radial streaks from edges toward VP on loud moments ═══
+    // Anime/manga speed effect — screams "forward motion"
+    if (loudness > 0.25) {
+      var slCount = 12 + Math.floor(loudness * 16);
+      var slAlphaBase = (loudness - 0.25) * 0.6;
+      for (var sl = 0; sl < slCount; sl++) {
+        // Random angle around perimeter
+        var slAngle = (sl / slCount) * Math.PI * 2 + visTime * 0.3;
+        // Start at screen edge
+        var edgeR = Math.max(w, h) * 0.7;
+        var sx = vpx + Math.cos(slAngle) * edgeR;
+        var sy = vpy + Math.sin(slAngle) * edgeR;
+        // End partway toward VP — longer when louder
+        var slLen = 0.3 + loudness * 0.4 + hit * 0.2;
+        var ex = sx + (vpx - sx) * slLen;
+        var ey = sy + (vpy - sy) * slLen;
+        // Vary alpha per line
+        var slA = slAlphaBase * (0.3 + 0.7 * Math.abs(Math.sin(sl * 7.3 + visTime)));
+        var slCol = isDark ? '255,255,255' : '40,30,15';
+        ctx.strokeStyle = 'rgba(' + slCol + ',' + slA + ')';
+        ctx.lineWidth = 0.3 + loudness * 0.8;
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+      }
+    }
+
+    // ═══ TUNNEL VIGNETTE — dark edges sell cylindrical depth ═══
+    var vigR = Math.max(w, h) * 0.75;
+    var vigGrad = ctx.createRadialGradient(vpx, vpy, vigR * 0.3, vpx, vpy, vigR);
+    vigGrad.addColorStop(0, 'rgba(0,0,0,0)');
+    vigGrad.addColorStop(0.6, 'rgba(0,0,0,0)');
+    vigGrad.addColorStop(0.85, 'rgba(0,0,0,' + (0.15 + loudness * 0.1) + ')');
+    vigGrad.addColorStop(1, 'rgba(0,0,0,' + (0.35 + loudness * 0.15) + ')');
+    ctx.fillStyle = vigGrad;
+    ctx.fillRect(0, 0, w, h);
 
   }
 

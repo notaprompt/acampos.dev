@@ -1002,6 +1002,7 @@
 
   // Smoothed audio values
   var sBass = 0, sMid = 0, sHigh = 0, sTotal = 0;
+  var sRms = 0, sVocal = 0, prevVocal = 0;
   var prevBass = 0;
   // Hall forward motion accumulator
   var hallZ = 0;
@@ -1053,10 +1054,36 @@
     bass /= third; mid /= third; high /= Math.max(1, bufferLength - third * 2);
     total /= bufferLength;
 
+    // RMS loudness from waveform — direct measure of volume
+    var rms = 0;
+    for (var wi = 0; wi < waveData.length; wi++) {
+      var sample = (waveData[wi] - 128) / 128;
+      rms += sample * sample;
+    }
+    rms = Math.sqrt(rms / waveData.length);
+
+    // Vocal range energy (~300Hz-3kHz, bins 5-30 in 64-bin FFT)
+    var vocal = 0, vocalCount = 0;
+    var vStart = Math.floor(bufferLength * 0.08);
+    var vEnd = Math.min(bufferLength, Math.floor(bufferLength * 0.5));
+    for (var vi = vStart; vi < vEnd; vi++) {
+      vocal += freqData[vi] / 255;
+      vocalCount++;
+    }
+    vocal = vocalCount > 0 ? vocal / vocalCount : 0;
+
     sBass = sBass * 0.7 + bass * 0.3;
     sMid = sMid * 0.7 + mid * 0.3;
     sHigh = sHigh * 0.7 + high * 0.3;
     sTotal = sTotal * 0.7 + total * 0.3;
+
+    // Smoothed loudness + vocal + silence detection
+    sRms = sRms * 0.75 + rms * 0.25;
+    sVocal = sVocal * 0.8 + vocal * 0.2;
+    var vocalDelta = vocal - prevVocal;
+    prevVocal = sVocal;
+    var isSilent = sRms < 0.02;
+    var loudness = Math.min(1, sRms * 3); // normalize RMS to 0-1
 
     var hit = Math.max(0, sBass - prevBass);
     prevBass = sBass;
@@ -1068,27 +1095,32 @@
     prevMid = sMid;
     prevHigh = sHigh;
 
-    // Steering — mid delta (transient snap) + continuous arc from sMid
+    // Steering — vocals and transients drive direction changes
     var p = activeProfile;
-    steerAngle += midDelta * 3 * p.midSnap          // transient snap — what makes snares jolt
-               + sMid * 0.08 * p.steerSens          // continuous arc from sustained mids
+    // Vocal onset = sharp direction shift (new phrase = new path)
+    if (vocalDelta > 0.03) {
+      steerAngle += vocalDelta * 8 * p.steerSens;
+    }
+    steerAngle += midDelta * 3 * p.midSnap          // transient snap
+               + sVocal * 0.06 * p.steerSens        // vocal presence = gentle steering
                + Math.sin(visTime * 0.4) * sMid * 0.05;
 
-    // Target velocity — follows a heading that the music steers
-    var steerSpeed = (0.015 + sMid * 0.025) * p.steerSens;
+    // Target velocity — scaled by loudness (silent = barely drifting)
+    var steerSpeed = (0.005 + loudness * 0.035) * p.steerSens;
     targetVelX += Math.cos(steerAngle) * steerSpeed;
     targetVelY += Math.sin(steerAngle) * steerSpeed;
 
-    // Bass hits = gentle nudge in current heading, not random kicks
+    // Bass hits = nudge in current heading
     if (hit > p.hitThresh) {
       targetVelX += Math.cos(steerAngle) * hit * 0.6 * p.bendAmp;
       targetVelY += Math.sin(steerAngle) * hit * 0.6 * p.bendAmp;
       hitAccum += hit;
     }
 
-    // Heavy damping — velocity bleeds off smoothly, long gliding curves
-    targetVelX *= 0.85;
-    targetVelY *= 0.85;
+    // Damping — tighter in silence, looser when loud
+    var damping = isSilent ? 0.92 : 0.85;
+    targetVelX *= damping;
+    targetVelY *= damping;
 
     // Move target
     targetX += targetVelX;
@@ -1125,19 +1157,27 @@
     flipVel *= 0.94;
     if (Math.abs(flipVel) < 0.002) flipVel = 0;
 
-    // ── Bend system — two-point S-curves, U-turns, hard randoms ──
-    // Bend angles wander continuously, bass hits jolt them hard
-    bendAngle1 += 0.008 + sMid * 0.02;
-    bendAngle2 -= 0.006 + sMid * 0.015;
+    // ── Bend system — vocal energy drives curves, bass jolts direction ──
+    // Vocal presence = gentle winding, silence = straighten out
+    var bendDrive = isSilent ? 0.002 : (0.005 + sVocal * 0.025);
+    bendAngle1 += bendDrive;
+    bendAngle2 -= bendDrive * 0.8;
+    // Bass hits = hard direction change
     if (hit > 0.07) {
       bendAngle1 += (Math.random() - 0.5) * 2.5;
       bendAngle2 += (Math.random() - 0.5) * 3.0;
     }
-    // Targets orbit widely — big amplitude = real turns
-    bendTX1 = Math.cos(bendAngle1) * (0.7 + sBass * 0.4) * p.bendAmp;
-    bendTY1 = Math.sin(bendAngle1) * (0.6 + sBass * 0.3) * p.bendAmp;
-    bendTX2 = Math.cos(bendAngle2) * (0.8 + sMid * 0.5) * p.bendAmp;
-    bendTY2 = Math.sin(bendAngle2) * (0.5 + sMid * 0.4) * p.bendAmp;
+    // Vocal onset = curve shift (new phrase = the tunnel turns)
+    if (vocalDelta > 0.04) {
+      bendAngle1 += vocalDelta * 4;
+      bendAngle2 -= vocalDelta * 3;
+    }
+    // Amplitude scales with loudness — silent = flat tunnel, loud = dramatic curves
+    var bendAmp = (0.3 + loudness * 0.8) * p.bendAmp;
+    bendTX1 = Math.cos(bendAngle1) * bendAmp;
+    bendTY1 = Math.sin(bendAngle1) * bendAmp * 0.8;
+    bendTX2 = Math.cos(bendAngle2) * bendAmp * 1.1;
+    bendTY2 = Math.sin(bendAngle2) * bendAmp * 0.7;
     // Smooth chase — fast enough to feel dramatic, slow enough to flow
     bendX1 += (bendTX1 - bendX1) * 0.025;
     bendY1 += (bendTY1 - bendY1) * 0.025;
@@ -1151,9 +1191,10 @@
     if (reverseTimer > 0) reverseTimer--;
     var forwardDir = reverseTimer > 0 ? -0.6 : 1;
 
-    // ── Feedback zoom — centered on VP so you fly TOWARD the target ──
-    var feedbackZoom = 1.012 + sBass * 0.015 + hit * 0.04;
-    if (reverseTimer > 0) feedbackZoom = 1 / (1.012 + sBass * 0.01);
+    // ── Feedback zoom — loudness drives zoom intensity ──
+    var feedbackZoom = 1.006 + loudness * 0.02 + hit * 0.04;
+    if (isSilent) feedbackZoom = 1.003; // barely moving in silence
+    if (reverseTimer > 0) feedbackZoom = 1 / (1.006 + loudness * 0.01);
     // Zoom origin = where the VP will be (chase position)
     var zoomCx = w / 2 + chaseX * w * 0.15;
     var zoomCy = h / 2 + chaseY * h * 0.12;
@@ -1173,8 +1214,11 @@
 
     visTime += 0.016;
 
-    // Forward motion — speed driven by bass, reversed during reverse
-    hallZ += (0.015 + sBass * 0.04 + hit * 0.25) * forwardDir;
+    // Forward motion — loudness drives speed, silence = floating drift
+    var fwdSpeed = isSilent
+      ? 0.003                                    // barely crawling in silence
+      : 0.008 + loudness * 0.05 + hit * 0.2;    // loudness = velocity
+    hallZ += fwdSpeed * forwardDir;
 
     // Melody color — multi-feature spectral analysis drives palette position
     // Feature 1: spectral centroid (which frequencies dominate)

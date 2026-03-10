@@ -1169,7 +1169,7 @@
     var zoomCx = w / 2 + chaseX * w * 0.15;
     var zoomCy = h / 2 + chaseY * h * 0.12;
     ctx.save();
-    ctx.globalAlpha = 0.82 - sTotal * 0.06;
+    ctx.globalAlpha = 0.86 - sTotal * 0.06;
     ctx.translate(zoomCx, zoomCy);
     ctx.rotate(flipAngle * 0.4);
     ctx.scale(feedbackZoom, feedbackZoom);
@@ -1180,13 +1180,13 @@
     PALETTE = isDark ? PALETTE_DARK : PALETTE_LIGHT;
     var voidBg = isDark ? '0,0,0' : '240,235,225';
     // Uniform void fade
-    ctx.fillStyle = 'rgba(' + voidBg + ', 0.12)';
+    ctx.fillStyle = 'rgba(' + voidBg + ', 0.07)';
     ctx.fillRect(0, 0, w, h);
-    // Extra fade at zoom center — counteracts feedback accumulation there
-    var centerFadeR = Math.min(w, h) * 0.4;
+    // Extra fade at zoom center — counteracts feedback accumulation
+    var centerFadeR = Math.min(w, h) * 0.35;
     var centerFade = ctx.createRadialGradient(zoomCx, zoomCy, 0, zoomCx, zoomCy, centerFadeR);
-    centerFade.addColorStop(0, 'rgba(' + voidBg + ', 0.25)');
-    centerFade.addColorStop(0.4, 'rgba(' + voidBg + ', 0.1)');
+    centerFade.addColorStop(0, 'rgba(' + voidBg + ', 0.15)');
+    centerFade.addColorStop(0.4, 'rgba(' + voidBg + ', 0.06)');
     centerFade.addColorStop(1, 'rgba(' + voidBg + ', 0)');
     ctx.fillStyle = centerFade;
     ctx.fillRect(0, 0, w, h);
@@ -1269,10 +1269,10 @@
     // Human eye focuses red wavelengths in front of blue — literally looks closer
     var warmCol = isDark ? '#e8a060' : '#a05828'; // warm amber/orange
     var coolCol = isDark ? '#6868d0' : '#3838a0'; // cool blue/violet
-    var rectCount = 18;
+    var rectCount = 28;
     for (var ri = 0; ri < rectCount; ri++) {
       var zRaw = ((ri / rectCount) + hallZ) % 1;
-      var z = zRaw * zRaw * zRaw;
+      var z = Math.pow(zRaw, 2.2); // softer than cubic — far rects spread out more
       if (z < 0.001) continue;
 
       var scale = z;
@@ -1472,7 +1472,7 @@
     // ── WALL JOINT TICKS — short marks at rect corners, rush past like panel seams ──
     // Only near camera (z > 0.15). Bold when close, invisible when far.
     // Draws small perpendicular tick marks at each corner of the hall rects.
-    var tickCount = 10;
+    var tickCount = 14;
     for (var ti = 0; ti < tickCount; ti++) {
       var tRaw = ((ti / tickCount) + hallZ * 1.1) % 1;
       var tz = tRaw * tRaw * tRaw;
@@ -1536,7 +1536,7 @@
     ctx.restore();
 
     // ═══ LAYER 5: FLOOR GRID — more lines = stronger perspective ═══
-    var gridLines = 10;
+    var gridLines = 14;
     for (var gi = 0; gi < gridLines; gi++) {
       var gz = ((gi / gridLines) + hallZ * 1.5) % 1;
       gz = gz * gz;

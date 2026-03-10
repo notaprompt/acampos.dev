@@ -1328,6 +1328,11 @@
       var cParallax = cz * cz;
       var colCx = vpx + (w / 2 - vpx) * cParallax;
       var colCy = vpy + (h / 2 - vpy) * cParallax;
+      // Follow bend curves like hall rects
+      var cb1 = Math.sin(cz * Math.PI * 1.2);
+      var cb2 = Math.sin((cz - 0.3) * Math.PI * 1.1);
+      colCx += (bendX1 * cb1 + bendX2 * cb2) * w * 0.25;
+      colCy += (bendY1 * cb1 + bendY2 * cb2) * h * 0.2;
       var spread = w * cScale * 0.55;
 
       var freqIdx = Math.floor(cz * bufferLength) % bufferLength;
@@ -1426,59 +1431,71 @@
     var midY = h / 2 + bendY1 * h * 0.2;
     var screenCorners = [[0, 0], [w, 0], [w, h], [0, h]];
 
-    // ── 4 CORNER SEAM LINES — where walls meet floor/ceiling ──
-    // These define the hall structure. Strong near edges, fade toward VP.
-    var cornerSeams = [
-      [0, 0],     // top-left
-      [w, 0],     // top-right
-      [w, h],     // bottom-right
-      [0, h],     // bottom-left
-    ];
+    // ── Helper: trace rect corner/edge position at depth t ──
+    // Uses EXACT same math as hall rects: cubic z, quadratic parallax, S-curve bends
+    // cornerSx/Sy: -1 or 1 for corner direction from center, or fractional for wall seams
+    function hallPos(t, cornerSx, cornerSy) {
+      var z = t * t * t; // cubic ease — same as rects
+      if (z < 0.001) return [vpx, vpy];
+      var scale = z;
+      var parallax = z * z;
+      // Center — same as rectCx/rectCy
+      var cx = vpx + (w / 2 - vpx) * parallax;
+      var cy = vpy + (h / 2 - vpy) * parallax;
+      // Bend — same as rects
+      var b1 = Math.sin(z * Math.PI * 1.2);
+      var b2 = Math.sin((z - 0.3) * Math.PI * 1.1);
+      cx += (bendX1 * b1 + bendX2 * b2) * w * 0.25;
+      cy += (bendY1 * b1 + bendY2 * b2) * h * 0.2;
+      // Corner offset from center — same as rectW/2, rectH/2
+      return [cx + cornerSx * w * scale * 0.5, cy + cornerSy * h * scale * 0.5];
+    }
+
+    // ── 4 CORNER SEAM LINES — trace rect corner path through depth ──
+    // cornerSigns: TL(-1,-1), TR(1,-1), BR(1,1), BL(-1,1)
+    var cSigns = [[-1,-1], [1,-1], [1,1], [-1,1]];
     for (var cs = 0; cs < 4; cs++) {
-      var csx = cornerSeams[cs][0];
-      var csy = cornerSeams[cs][1];
       var csColT = (cs * 0.25 + palBlend) % 1;
       var segs = 16;
       for (var sg = 0; sg < segs; sg++) {
         var t0 = sg / segs;
         var t1 = (sg + 1) / segs;
-        // Fade: strong near corner, reaches 70% toward VP
         var segAlpha = (1 - t0 / 0.7);
         if (segAlpha <= 0) break;
         segAlpha = segAlpha * (0.25 + sTotal * 0.15);
 
-        var x0 = csx + (vpx - csx) * t0;
-        var y0 = csy + (vpy - csy) * t0;
-        var x1 = csx + (vpx - csx) * t1;
-        var y1 = csy + (vpy - csy) * t1;
+        var p0 = hallPos(t0, cSigns[cs][0], cSigns[cs][1]);
+        var p1 = hallPos(t1, cSigns[cs][0], cSigns[cs][1]);
 
         ctx.strokeStyle = lerpColorA(colA, colB, csColT, segAlpha);
         ctx.lineWidth = (1.5 + sTotal * 1.5) * (1 - t0 * 0.6);
         ctx.beginPath();
-        ctx.moveTo(x0, y0);
-        ctx.lineTo(x1, y1);
+        ctx.moveTo(p0[0], p0[1]);
+        ctx.lineTo(p1[0], p1[1]);
         ctx.stroke();
       }
     }
 
-    // ── WALL SUBDIVISION SEAMS — secondary lines between corners ──
-    var wallDefs = [
-      { genY: true, ex: 0, colShift: 0 },
-      { genY: true, ex: w, colShift: 0.25 },
-      { genX: true, ey: 0, colShift: 0.5 },
-      { genX: true, ey: h, colShift: 0.75 },
+    // ── WALL SUBDIVISION SEAMS — trace rect edge midpoints through depth ──
+    // Left wall seams: sx=-1, sy=fractional; Right: sx=1; Top: sy=-1, sx=frac; Bottom: sy=1
+    var wallSeamDefs = [
+      { sx: -1, syBase: true, colShift: 0 },      // left wall
+      { sx: 1, syBase: true, colShift: 0.25 },     // right wall
+      { sxBase: true, sy: -1, colShift: 0.5 },     // ceiling
+      { sxBase: true, sy: 1, colShift: 0.75 },     // floor
     ];
     var wallSeams = 2;
-    for (var wi = 0; wi < wallDefs.length; wi++) {
-      var wd = wallDefs[wi];
+    for (var wi = 0; wi < wallSeamDefs.length; wi++) {
+      var wd = wallSeamDefs[wi];
       for (var si = 0; si < wallSeams; si++) {
         var sfrac = (si + 0.5) / wallSeams;
+        // Convert fraction to -1..1 range for hallPos
+        var seamFrac = sfrac * 2 - 1;
         var sfv = freqData[(wi * wallSeams + si + 8) % bufferLength] / 255;
         var sColT = (sfrac * 0.3 + wd.colShift + palBlend) % 1;
 
-        var startX, startY;
-        if (wd.genY) { startX = wd.ex; startY = h * sfrac; }
-        else { startX = w * sfrac; startY = wd.ey; }
+        var seamSx = wd.sxBase ? seamFrac : wd.sx;
+        var seamSy = wd.syBase ? seamFrac : wd.sy;
 
         var segs = 12;
         for (var sg = 0; sg < segs; sg++) {
@@ -1488,11 +1505,14 @@
           if (segAlpha <= 0) break;
           segAlpha = segAlpha * segAlpha * (0.1 + sfv * 0.15);
 
+          var sp0 = hallPos(t0, seamSx, seamSy);
+          var sp1 = hallPos(t1, seamSx, seamSy);
+
           ctx.strokeStyle = lerpColorA(colA, colB, sColT, segAlpha);
           ctx.lineWidth = (0.5 + sfv * 1) * (1 - t0 * 0.7);
           ctx.beginPath();
-          ctx.moveTo(startX + (vpx - startX) * t0, startY + (vpy - startY) * t0);
-          ctx.lineTo(startX + (vpx - startX) * t1, startY + (vpy - startY) * t1);
+          ctx.moveTo(sp0[0], sp0[1]);
+          ctx.lineTo(sp1[0], sp1[1]);
           ctx.stroke();
         }
       }
@@ -1537,9 +1557,9 @@
       }
     }
 
-    // ═══ LAYER 3e: BLACK HOLE — follows tunnel endpoint (VP + bend offset) ═══
-    var bpX = vpx + bendX1 * w * 0.15 + bendX2 * w * 0.1;
-    var bpY = vpy + bendY1 * h * 0.12 + bendY2 * h * 0.08;
+    // ═══ LAYER 3e: BLACK HOLE — at VP where all lines converge ═══
+    var bpX = vpx;
+    var bpY = vpy;
     var bpR = Math.min(w, h) * 0.12;
     var bpGrad = ctx.createRadialGradient(bpX, bpY, 0, bpX, bpY, bpR);
     bpGrad.addColorStop(0, 'rgba(0,0,0,0.9)');
@@ -1560,6 +1580,10 @@
       var gParallax = gz * gz;
       var gridCx = vpx + (w / 2 - vpx) * gParallax;
       var gridCy = vpy + (h / 2 - vpy) * gParallax;
+      var gb1 = Math.sin(gz * Math.PI * 1.2);
+      var gb2 = Math.sin((gz - 0.3) * Math.PI * 1.1);
+      gridCx += (bendX1 * gb1 + bendX2 * gb2) * w * 0.25;
+      gridCy += (bendY1 * gb1 + bendY2 * gb2) * h * 0.2;
       var gy = gridCy + h * gScale * 0.45;
       var gxSpread = w * gScale * 0.55;
       var gfv = freqData[Math.floor(gz * bufferLength) % bufferLength] / 255;

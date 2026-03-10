@@ -19,15 +19,15 @@
     </svg>
     <span class="theme-slash">/</span>
     <svg class="theme-icon theme-icon--moon" width="10" height="10" viewBox="0 0 12 12" fill="none">
-      <!-- thin crescent — opens left, angled up, elongated -->
-      <rect x="8" y="0" width="1" height="1" fill="currentColor"/>
-      <rect x="9" y="1" width="1" height="1" fill="currentColor"/>
-      <rect x="10" y="2" width="1" height="2" fill="currentColor"/>
-      <rect x="9" y="4" width="1" height="2" fill="currentColor"/>
-      <rect x="8" y="6" width="1" height="2" fill="currentColor"/>
-      <rect x="7" y="8" width="1" height="1" fill="currentColor"/>
-      <rect x="6" y="9" width="1" height="1" fill="currentColor"/>
-      <rect x="5" y="10" width="1" height="1" fill="currentColor"/>
+      <!-- crescent — opens left, angled up, 2px thick body -->
+      <rect x="7" y="0" width="2" height="1" fill="currentColor"/>
+      <rect x="8" y="1" width="2" height="1" fill="currentColor"/>
+      <rect x="9" y="2" width="2" height="2" fill="currentColor"/>
+      <rect x="8" y="4" width="2" height="2" fill="currentColor"/>
+      <rect x="7" y="6" width="2" height="2" fill="currentColor"/>
+      <rect x="6" y="8" width="2" height="1" fill="currentColor"/>
+      <rect x="5" y="9" width="2" height="1" fill="currentColor"/>
+      <rect x="4" y="10" width="2" height="1" fill="currentColor"/>
     </svg>
   </button>
   <span class="ds-tooltip" id="ds-tooltip"></span>
@@ -98,7 +98,7 @@
   .theme-icon { transition: color 0.3s, opacity 0.3s, filter 0.3s; }
   /* Day mode: sun active (warm gold glow), moon dimmed but visible white */
   .theme-icon--sun { color: #d4a030; opacity: 1; filter: drop-shadow(0 0 3px #d4a030); }
-  .theme-icon--moon { color: #b0b0b0; opacity: 0.5; filter: none; }
+  .theme-icon--moon { color: #d0d0d0; opacity: 0.6; filter: none; }
   /* Night mode: moon active (white glow), sun dimmed */
   [data-theme="dark"] .theme-icon--sun { color: #555; opacity: 0.4; filter: none; }
   [data-theme="dark"] .theme-icon--moon { color: #ffffff; opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.7)); }

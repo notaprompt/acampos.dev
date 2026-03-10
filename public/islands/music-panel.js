@@ -1218,18 +1218,18 @@
     var flux = Math.abs(midDelta) + Math.abs(highDelta) * 1.5;
 
     // Feature 3: slow drift — time-based wander so sustained passages still move
-    var drift = Math.sin(visTime * 0.12) * 0.15 + Math.sin(visTime * 0.07) * 0.1;
+    var drift = Math.sin(visTime * 0.05) * 0.08 + Math.sin(visTime * 0.03) * 0.05;
 
-    // Feature 4: energy ratio — treble-dominant moments push cool, bass pushes warm
+    // Feature 4: energy ratio — treble pushes cool, bass pushes warm
     var energyRatio = sHigh > 0.01 ? (sHigh / (sBass + 0.01)) : 0;
-    var ratioShift = Math.min(0.2, energyRatio * 0.15);
+    var ratioShift = Math.min(0.1, energyRatio * 0.08);
 
-    // Combine: centroid is base position, flux adds jitter, drift adds wander
-    var rawMelodyColor = normCentroid + drift + flux * 0.3 + ratioShift;
-    rawMelodyColor = ((rawMelodyColor % 1) + 1) % 1; // wrap around palette
+    // Combine: centroid is base, flux/drift/ratio add slow movement
+    var rawMelodyColor = normCentroid + drift + flux * 0.1 + ratioShift;
+    rawMelodyColor = ((rawMelodyColor % 1) + 1) % 1;
 
-    // Smooth — fast enough to react, slow enough to feel like mood
-    var melodyLag = weightTotal > 2 ? 0.05 : 0.015;
+    // Smooth — slow chase for mood, not beat-by-beat reaction
+    var melodyLag = weightTotal > 2 ? 0.02 : 0.008;
     melodyColorSmooth += (rawMelodyColor - melodyColorSmooth) * melodyLag;
     // Allow wrapping — if smooth is at 0.9 and target is 0.1, go through 1.0
     var diff = rawMelodyColor - melodyColorSmooth;

@@ -1000,9 +1000,12 @@
     fillRect(CHAIR_X + 2, CHAIR_Y + 5, 13, 1, A);    // back brace
     fillRect(CHAIR_X + 2, CHAIR_Y + 10, 13, 1, A);   // bottom rail
 
-    // ── LEFT ARM — thin chrome tube, L-shape ──
-    fillRect(CHAIR_X - 1, CHAIR_Y + 5, 3, 1, A);     // horizontal tube
-    fillRect(CHAIR_X - 1, CHAIR_Y + 6, 1, 6, A);     // vertical drop
+    // ── LEFT ARM — thin chrome tube, curved J-shape ──
+    fillRect(CHAIR_X + 1, CHAIR_Y + 6, 1, 1, A);     // exits back at brace
+    fillRect(CHAIR_X, CHAIR_Y + 7, 1, 1, A);          // curves out + down
+    fillRect(CHAIR_X - 1, CHAIR_Y + 8, 1, 1, A);     // continues curve
+    fillRect(CHAIR_X - 1, CHAIR_Y + 9, 1, 3, A);     // drops to seat
+    fillRect(CHAIR_X - 2, CHAIR_Y + 9, 1, 2, S);     // shadow on drop
 
     // ── RIGHT ARM — stub ──
     fillRect(CHAIR_X + 14, CHAIR_Y + 5, 1, 1, S);

@@ -1421,16 +1421,51 @@
     var midY = h / 2 + bendY1 * h * 0.2;
     var screenCorners = [[0, 0], [w, 0], [w, h], [0, h]];
 
-    var wallDefs = [
-      { genY: true, ex: 0, cpBiasX: -0.2, cpBiasY: 0, colShift: 0 },
-      { genY: true, ex: w, cpBiasX: 0.2, cpBiasY: 0, colShift: 0.25 },
-      { genX: true, ey: 0, cpBiasX: 0, cpBiasY: -0.15, colShift: 0.5 },
-      { genX: true, ey: h, cpBiasX: 0, cpBiasY: 0.15, colShift: 0.75 },
+    // ── 4 CORNER SEAM LINES — where walls meet floor/ceiling ──
+    // These define the hall structure. Strong near edges, fade toward VP.
+    var cornerSeams = [
+      [0, 0],     // top-left
+      [w, 0],     // top-right
+      [w, h],     // bottom-right
+      [0, h],     // bottom-left
     ];
-    var wallSeams = 5;
+    for (var cs = 0; cs < 4; cs++) {
+      var csx = cornerSeams[cs][0];
+      var csy = cornerSeams[cs][1];
+      var csColT = (cs * 0.25 + palBlend) % 1;
+      var segs = 16;
+      for (var sg = 0; sg < segs; sg++) {
+        var t0 = sg / segs;
+        var t1 = (sg + 1) / segs;
+        // Fade: strong near corner, reaches 70% toward VP
+        var segAlpha = (1 - t0 / 0.7);
+        if (segAlpha <= 0) break;
+        segAlpha = segAlpha * (0.25 + sTotal * 0.15);
+
+        var x0 = csx + (vpx - csx) * t0;
+        var y0 = csy + (vpy - csy) * t0;
+        var x1 = csx + (vpx - csx) * t1;
+        var y1 = csy + (vpy - csy) * t1;
+
+        ctx.strokeStyle = lerpColorA(colA, colB, csColT, segAlpha);
+        ctx.lineWidth = (1.5 + sTotal * 1.5) * (1 - t0 * 0.6);
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+        ctx.stroke();
+      }
+    }
+
+    // ── WALL SUBDIVISION SEAMS — secondary lines between corners ──
+    var wallDefs = [
+      { genY: true, ex: 0, colShift: 0 },
+      { genY: true, ex: w, colShift: 0.25 },
+      { genX: true, ey: 0, colShift: 0.5 },
+      { genX: true, ey: h, colShift: 0.75 },
+    ];
+    var wallSeams = 3;
     for (var wi = 0; wi < wallDefs.length; wi++) {
       var wd = wallDefs[wi];
-
       for (var si = 0; si < wallSeams; si++) {
         var sfrac = (si + 0.5) / wallSeams;
         var sfv = freqData[(wi * wallSeams + si + 8) % bufferLength] / 255;
@@ -1440,43 +1475,35 @@
         if (wd.genY) { startX = wd.ex; startY = h * sfrac; }
         else { startX = w * sfrac; startY = wd.ey; }
 
-        // Draw line as segments that fade out toward VP — never reaches center
         var segs = 12;
         for (var sg = 0; sg < segs; sg++) {
           var t0 = sg / segs;
           var t1 = (sg + 1) / segs;
-          // Fade: full alpha near screen edge, zero by 55% of the way
-          var segAlpha = (1 - t0 / 0.55);
+          var segAlpha = (1 - t0 / 0.5);
           if (segAlpha <= 0) break;
-          segAlpha = segAlpha * segAlpha * (0.08 + sfv * 0.2 + sTotal * 0.08);
-
-          // Lerp along straight line from start to VP (bend handled by rects)
-          var x0 = startX + (vpx - startX) * t0;
-          var y0 = startY + (vpy - startY) * t0;
-          var x1 = startX + (vpx - startX) * t1;
-          var y1 = startY + (vpy - startY) * t1;
+          segAlpha = segAlpha * segAlpha * (0.1 + sfv * 0.15);
 
           ctx.strokeStyle = lerpColorA(colA, colB, sColT, segAlpha);
-          ctx.lineWidth = (0.5 + sfv * 1.5) * (1 - t0 * 0.7);
+          ctx.lineWidth = (0.5 + sfv * 1) * (1 - t0 * 0.7);
           ctx.beginPath();
-          ctx.moveTo(x0, y0);
-          ctx.lineTo(x1, y1);
+          ctx.moveTo(startX + (vpx - startX) * t0, startY + (vpy - startY) * t0);
+          ctx.lineTo(startX + (vpx - startX) * t1, startY + (vpy - startY) * t1);
           ctx.stroke();
         }
       }
     }
 
-    // ═══ LAYER 3c: CORNER AO — dark gradients where walls meet ═══
+    // ═══ CORNER AO — dark gradients where walls meet ═══
     ctx.save();
     ctx.globalCompositeOperation = 'multiply';
     for (var ai = 0; ai < 4; ai++) {
       var sc = screenCorners[ai];
-      // Radial gradient along each corner edge — darkest at the seam
-      var aoR = Math.max(w, h) * 0.25;
+      var aoR = Math.max(w, h) * 0.35;
       var aoGrad = ctx.createRadialGradient(sc[0], sc[1], 0, sc[0], sc[1], aoR);
       var aoBase = isDark ? '0,0,0' : '80,70,55';
-      aoGrad.addColorStop(0, 'rgba(' + aoBase + ',0.25)');
-      aoGrad.addColorStop(0.3, 'rgba(' + aoBase + ',0.1)');
+      aoGrad.addColorStop(0, 'rgba(' + aoBase + ',0.45)');
+      aoGrad.addColorStop(0.25, 'rgba(' + aoBase + ',0.2)');
+      aoGrad.addColorStop(0.5, 'rgba(' + aoBase + ',0.05)');
       aoGrad.addColorStop(1, 'rgba(' + aoBase + ',0)');
       ctx.fillStyle = aoGrad;
       ctx.fillRect(0, 0, w, h);

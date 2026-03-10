@@ -1356,21 +1356,6 @@
       ctx.lineTo(rrx, colCy + h * cScale * 0.5);
       ctx.stroke();
 
-      // Cross beams
-      if (ci % 3 === 0 && cz > 0.1) {
-        var beamY1 = colCy - h * cScale * 0.35;
-        var beamY2 = colCy + h * cScale * 0.35;
-        ctx.strokeStyle = lerpColorA(colB, colA, cColT, colAlpha * 0.5);
-        ctx.lineWidth = 0.3 + cz;
-        ctx.beginPath();
-        ctx.moveTo(lx, beamY1);
-        ctx.lineTo(rrx, beamY1);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(lx, beamY2);
-        ctx.lineTo(rrx, beamY2);
-        ctx.stroke();
-      }
     }
 
     // ═══ LAYER 2b: WALL ARCHITECTURE — doors, windows, frames, shelves ═══

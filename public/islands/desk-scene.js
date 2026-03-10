@@ -398,9 +398,10 @@
     // night mode — shadow-casting light from lamps
     if (sceneTheme === 'dark') {
       var lampSources = [
-        { x: LAMP_X + 4, y: LAMP_Y + 3, r: 40, strength: 0.22, cr: 245, cg: 190, cb: 100 }, // desk lamp
-        { x: 120, y: 10, r: 50, strength: 0.16, cr: 240, cg: 180, cb: 90 },                   // pendant
+        { x: LAMP_X + 4, y: LAMP_Y + 3, r: 50, strength: 0.22, cr: 245, cg: 190, cb: 100 }, // desk lamp
+        { x: 120, y: 10, r: 65, strength: 0.18, cr: 240, cg: 180, cb: 90 },                   // pendant — reaches floor for chair shadow
         { x: 21, y: 21, r: 15, strength: 0.06, cr: 91, cg: 242, cb: 155 },                    // server LED glow
+        { x: Math.round(WIN_X + WIN_W / 2), y: Math.round(WIN_Y + WIN_H / 2), r: 35, strength: 0.08, cr: 140, cg: 170, cb: 220 }, // moonlight spill
       ];
 
       // light-blocking check — opaque objects cast shadows
@@ -532,27 +533,7 @@
     // fixture
     fillRect(115, 8, 10, 2, 66);
     fillRect(116, 10, 8, 2, 67);
-    // glow cone (subtle amber on wall behind)
-    for (var r = 12; r < 55; r++) {
-      var spread = Math.floor((r - 12) * 0.6);
-      var cx = 120;
-      for (var c = cx - spread; c < cx + spread; c++) {
-        if (c < 0 || c >= COLS) continue;
-        var idx = r * COLS + c;
-        var existing = scene[idx];
-        // only brighten wall pixels
-        if (existing === 1 || existing === 2 || existing === 3) {
-          var dist = Math.abs(c - cx);
-          var intensity = 1 - dist / (spread + 1);
-          if (intensity > 0.7) scene[idx] = 103; // warm amber center
-          else if (intensity > 0.3 && existing !== 103) {
-            // leave a slight warm shift — blend olive toward amber
-            // use a lighter olive to simulate
-            scene[idx] = 2;
-          }
-        }
-      }
-    }
+    // glow handled by shadow-casting light system in render()
   }
 
   // ── Window with blinds (right side of wall) ──
@@ -996,23 +977,37 @@
     registerObject('art', ART1_X, ART1_Y, ART1_W, ART1_H, 'https://instagram.com/notaprompt', 'instagram', true);
   }
 
-  // ── Eames chair ──
-  var CHAIR_X = 108, CHAIR_Y = 42;
+  // ── Eames chair (center-right of rug, turned facing left — nobody's home) ──
+  var CHAIR_X = 128, CHAIR_Y = 72;
   function drawChair() {
-    // chair back (tall)
-    fillRect(CHAIR_X + 3, CHAIR_Y, 16, 2, 32); // chrome top
-    fillRect(CHAIR_X + 4, CHAIR_Y + 2, 14, 14, 30); // leather back
-    fillRect(CHAIR_X + 5, CHAIR_Y + 3, 12, 12, 31); // leather highlight
-    // seat
-    fillRect(CHAIR_X + 2, CHAIR_Y + 16, 18, 3, 30);
-    fillRect(CHAIR_X + 3, CHAIR_Y + 16, 16, 1, 31);
-    // chrome base star
-    fillRect(CHAIR_X + 8, CHAIR_Y + 19, 6, 2, 33);
-    fillRect(CHAIR_X + 10, CHAIR_Y + 21, 2, 4, 33);
-    // wheels
-    fillRect(CHAIR_X + 4, CHAIR_Y + 24, 3, 2, 33);
-    fillRect(CHAIR_X + 15, CHAIR_Y + 24, 3, 2, 33);
-    fillRect(CHAIR_X + 9, CHAIR_Y + 25, 4, 1, 33);
+    // Eames-style lounge chair, facing left (back on right side)
+    // chrome base star (5-point)
+    fillRect(CHAIR_X + 5, CHAIR_Y + 18, 8, 1, 32);
+    fillRect(CHAIR_X + 8, CHAIR_Y + 19, 2, 2, 33);
+    // chrome pedestal
+    fillRect(CHAIR_X + 8, CHAIR_Y + 16, 2, 2, 32);
+    // seat cushion — wide, low, plush leather
+    fillRect(CHAIR_X, CHAIR_Y + 10, 18, 6, 30);
+    fillRect(CHAIR_X + 1, CHAIR_Y + 10, 16, 1, 31); // top highlight
+    fillRect(CHAIR_X + 1, CHAIR_Y + 11, 16, 4, 30); // leather body
+    // seat cushion tufting lines
+    fillRect(CHAIR_X + 5, CHAIR_Y + 12, 1, 3, 7);
+    fillRect(CHAIR_X + 11, CHAIR_Y + 12, 1, 3, 7);
+    // back shell — on the right side (chair faces left)
+    fillRect(CHAIR_X + 14, CHAIR_Y + 2, 4, 14, 30); // shell
+    fillRect(CHAIR_X + 15, CHAIR_Y + 3, 2, 12, 31); // leather highlight
+    // headrest curve (top of back)
+    fillRect(CHAIR_X + 13, CHAIR_Y + 2, 6, 2, 30);
+    fillRect(CHAIR_X + 14, CHAIR_Y + 1, 4, 1, 31);
+    // chrome shell edge
+    fillRect(CHAIR_X + 18, CHAIR_Y + 2, 1, 14, 32);
+    // armrest (left side, facing out)
+    fillRect(CHAIR_X, CHAIR_Y + 9, 2, 2, 32);
+    fillRect(CHAIR_X + 1, CHAIR_Y + 9, 1, 1, 33);
+    // wheels (5 casters)
+    fillRect(CHAIR_X + 3, CHAIR_Y + 21, 2, 1, 33);
+    fillRect(CHAIR_X + 13, CHAIR_Y + 21, 2, 1, 33);
+    fillRect(CHAIR_X + 8, CHAIR_Y + 21, 2, 1, 33);
   }
 
   // ── Subwoofer under desk ──
@@ -1045,7 +1040,7 @@
   }
 
   // ── French Bulldog (curled on rug) ──
-  var DOG_X = 130, DOG_Y = 80;
+  var DOG_X = 90, DOG_Y = 82;
   function drawDog() {
     var dog = [
       [_,_,_,_,91,91,_,_,_,_,_,_,_,_,_,_],
@@ -1250,6 +1245,7 @@
   drawCRT();
   drawUltrawide();
   drawChair();
+  drawDog();
   drawKeyboard();
   drawMug();
   drawLamp();
@@ -1334,9 +1330,11 @@
     updateVaultPalette();
     var cx = VW / 2, cy = VH / 2;
     // slow breathing pulse
-    var breath = Math.sin(phase * 0.04) * 0.3 + 0.7; // 0.4 to 1.0
+    var breath = Math.sin(phase * 0.03) * 0.2 + 0.8; // 0.6 to 1.0, slower
+    var energy = window.__musicEnergy || 0;
+    var bass = window.__musicBass || 0;
 
-    // get color — music sync or default amber/purple
+    // get color — music sync or neon purple/cyan default
     var gr, gg, gb;
     if (vaultMusicSync) {
       var mc = window.__musicColor;
@@ -1344,59 +1342,73 @@
       if (m) { gr = parseInt(m[0]); gg = parseInt(m[1]); gb = parseInt(m[2]); }
       else { gr = 184; gg = 150; gb = 90; }
     } else {
-      gr = 140; gg = 100; gb = 180; // quiet purple
+      gr = 120; gg = 50; gb = 230; // neon electric purple
     }
     // smooth the glow color
-    portalGlowR += (gr - portalGlowR) * 0.05;
-    portalGlowG += (gg - portalGlowG) * 0.05;
-    portalGlowB += (gb - portalGlowB) * 0.05;
+    portalGlowR += (gr - portalGlowR) * 0.08;
+    portalGlowG += (gg - portalGlowG) * 0.08;
+    portalGlowB += (gb - portalGlowB) * 0.08;
 
-    // fill portal opening — radial falloff from center
+    // fill portal — intense neon radial with concentric ring pulses
     for (var py = 0; py < VH; py++) {
       for (var px = 0; px < VW; px++) {
         var dx = (px - cx) / (VW / 2);
         var dy = (py - cy) / (VH / 2);
         var dist = Math.sqrt(dx * dx + dy * dy);
-        var intensity = Math.max(0, 1 - dist) * breath;
-        var r = Math.round(portalGlowR * intensity * 0.4);
-        var g = Math.round(portalGlowG * intensity * 0.4);
-        var b = Math.round(portalGlowB * intensity * 0.4);
+        // concentric ring pulse — subtle rings radiating outward
+        var ring = Math.sin((dist * 6 - phase * 0.05) * Math.PI) * 0.12 + 0.88;
+        var intensity = Math.max(0, 1 - dist * 0.75) * breath * ring;
+        // neon oversaturation toward center — sci-fi glow
+        var neonBoost = Math.pow(Math.max(0, 1 - dist), 3) * (1.2 + energy * 1.5);
+        var r = Math.min(255, Math.round(portalGlowR * intensity + 220 * neonBoost * 0.3 + bass * 30));
+        var g = Math.min(255, Math.round(portalGlowG * intensity + 200 * neonBoost * 0.15));
+        var b = Math.min(255, Math.round(portalGlowB * intensity + 220 * neonBoost * 0.25 + energy * 20));
         var key = VAULT_DYN_START + Math.min(8, Math.floor((1 - dist) * 9));
         if (C[key]) delete rgbCache[C[key]];
         C[key] = 'rgb(' + r + ',' + g + ',' + b + ')';
         scene[(VY + py) * COLS + (VX + px)] = key;
       }
     }
-    // bright core — small cluster
+    // blazing hot core — white-tinted neon center, 3x3 cluster
     var ccx = VX + Math.floor(cx), ccy = VY + Math.floor(cy);
-    var coreI = breath * 0.7;
+    var coreI = breath * (1.3 + energy * 0.8);
     var coreKey = VAULT_DYN_START + 8;
     if (C[coreKey]) delete rgbCache[C[coreKey]];
-    C[coreKey] = 'rgb(' + Math.round(portalGlowR * coreI) + ',' + Math.round(portalGlowG * coreI) + ',' + Math.round(portalGlowB * coreI) + ')';
-    scene[ccy * COLS + ccx] = coreKey;
+    var coreR = Math.min(255, Math.round(portalGlowR * 0.4 * coreI + 200 * coreI));
+    var coreG = Math.min(255, Math.round(portalGlowG * 0.4 * coreI + 180 * coreI));
+    var coreB = Math.min(255, Math.round(portalGlowB * 0.4 * coreI + 160 * coreI));
+    C[coreKey] = 'rgb(' + coreR + ',' + coreG + ',' + coreB + ')';
+    for (var cdy = -1; cdy <= 1; cdy++) {
+      for (var cdx2 = -1; cdx2 <= 1; cdx2++) {
+        var cy2 = ccy + cdy, cx2 = ccx + cdx2;
+        if (cy2 >= VY && cy2 < VY + VH && cx2 >= VX && cx2 < VX + VW) {
+          scene[cy2 * COLS + cx2] = coreKey;
+        }
+      }
+    }
   }
 
-  // cast glow outward from portal into surrounding room pixels
+  // cast glow outward from portal into surrounding room — neon bleed, eats the scene
   function castRoomGlow(imgData) {
     if (!vaultOpen) return;
-    var breath = Math.sin(vaultFrame * 0.04) * 0.3 + 0.7;
+    var breath = Math.sin(vaultFrame * 0.03) * 0.2 + 0.8;
     var energy = window.__musicEnergy || 0;
-    var nightBoost = sceneTheme === 'dark' ? 2.2 : 1.0;
-    var strength = (0.12 + energy * 0.15) * breath * nightBoost;
+    var bass = window.__musicBass || 0;
+    var nightBoost = sceneTheme === 'dark' ? 3.5 : 1.6;
+    var strength = (0.3 + energy * 0.4 + bass * 0.2) * breath * nightBoost;
     var cr = portalGlowR, cg = portalGlowG, cb = portalGlowB;
-    // glow radius extends outward from vault edges
-    var glowR = (sceneTheme === 'dark' ? 28 : 18) + Math.round(energy * 8);
+    // massive glow radius — eats the scene
+    var glowR = (sceneTheme === 'dark' ? 55 : 35) + Math.round(energy * 20);
     var vcx = VX + VW / 2, vcy = VY + VH / 2;
-    for (var gy = vcy - glowR; gy <= vcy + glowR; gy++) {
-      for (var gx = vcx - glowR; gx <= vcx + glowR; gx++) {
-        if (gx < 0 || gx >= COLS || gy < 0 || gy >= ROWS) continue;
+    for (var gy = Math.max(0, vcy - glowR); gy <= Math.min(ROWS - 1, vcy + glowR); gy++) {
+      for (var gx = Math.max(0, vcx - glowR); gx <= Math.min(COLS - 1, vcx + glowR); gx++) {
         // skip pixels inside the vault itself
         if (gx >= VX && gx < VX + VW && gy >= VY && gy < VY + VH) continue;
         var ddx = (gx - vcx) / glowR;
         var ddy = (gy - vcy) / glowR;
         var dd = Math.sqrt(ddx * ddx + ddy * ddy);
         if (dd > 1) continue;
-        var falloff = Math.pow(1 - dd, 2.5) * strength;
+        var falloff = Math.pow(1 - dd, 2) * strength;
         var pi = (gy * COLS + gx) * 4;
         imgData[pi]     = Math.min(255, imgData[pi]     + Math.round(cr * falloff));
         imgData[pi + 1] = Math.min(255, imgData[pi + 1] + Math.round(cg * falloff));
@@ -1441,7 +1453,7 @@
           vaultFrame++;
           drawPortal(vaultFrame);
           render();
-        }, 150);
+        }, 200);
       }
     }, 40);
   }
@@ -1536,27 +1548,45 @@
     render();
   }, 530);
 
-  // Shimmering book — one book spine pulses with a subtle gold glow
+  // Shimmering book — traveling sparkle pixel, video game twinkle
   var shimmerBookX = SHELF_X + 2 + 18; // ~middle of row 1
   var shimmerBookY = SHELF_Y + 6; // top of books area
   var shimmerBookH = 10; // book height
-  var shimmerPhase = 0;
   var shimmerOriginal = [];
   for (var si = 0; si < shimmerBookH; si++) {
     shimmerOriginal.push(scene[(shimmerBookY + si) * COLS + shimmerBookX]);
     shimmerOriginal.push(scene[(shimmerBookY + si) * COLS + shimmerBookX + 1]);
   }
+  var sparklePos = 0;
+  var sparkleDir = 1;
+  var sparkleTick = 0;
   setInterval(function () {
-    shimmerPhase += 0.08;
-    var glow = Math.sin(shimmerPhase) * 0.5 + 0.5; // 0 to 1
+    // restore all pixels to original first
     for (var si2 = 0; si2 < shimmerBookH; si2++) {
-      // alternate between original color and gold accent (21)
-      var idx1 = (shimmerBookY + si2) * COLS + shimmerBookX;
-      var idx2 = idx1 + 1;
-      scene[idx1] = glow > 0.6 ? 21 : shimmerOriginal[si2 * 2];
-      scene[idx2] = glow > 0.6 ? 21 : shimmerOriginal[si2 * 2 + 1];
+      scene[(shimmerBookY + si2) * COLS + shimmerBookX] = shimmerOriginal[si2 * 2];
+      scene[(shimmerBookY + si2) * COLS + shimmerBookX + 1] = shimmerOriginal[si2 * 2 + 1];
     }
-  }, 120);
+    // stop shimmer when vault is open
+    if (vaultOpen) return;
+    // advance sparkle position every 3 ticks
+    sparkleTick++;
+    if (sparkleTick % 3 === 0) {
+      sparklePos += sparkleDir;
+      if (sparklePos >= shimmerBookH - 1 || sparklePos <= 0) sparkleDir *= -1;
+    }
+    // main sparkle — bright white flash pixel
+    var spIdx = (shimmerBookY + sparklePos) * COLS + shimmerBookX;
+    scene[spIdx] = 104; // warm white
+    scene[spIdx + 1] = 21; // gold adjacent
+    // trail above — dimmer gold
+    if (sparklePos > 0) {
+      scene[(shimmerBookY + sparklePos - 1) * COLS + shimmerBookX] = 21;
+    }
+    // trail below — dim gold
+    if (sparklePos < shimmerBookH - 1) {
+      scene[(shimmerBookY + sparklePos + 1) * COLS + shimmerBookX] = 22;
+    }
+  }, 90);
 
   // ══════════════════════════════════════════════════════════════
   //  INTERACTION

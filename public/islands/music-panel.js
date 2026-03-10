@@ -986,7 +986,7 @@
 
   // Object pool — placed on walls at random depths
   var wallObjects = [];
-  var wallObjCount = 18;
+  var wallObjCount = 5;
   function initWallObj() {
     return {
       type: wallObjKeys[Math.floor(Math.random() * wallObjKeys.length)],
@@ -1128,32 +1128,27 @@
     flipVel *= 0.94;
     if (Math.abs(flipVel) < 0.002) flipVel = 0;
 
-    // ── Tunnel curves — THIS is what moves, not the camera ──
-    // Vocal energy drives how curvy the tunnel is
-    var bendDrive = isSilent ? 0.003 : (0.008 + sVocal * 0.04);
+    // ── Tunnel curves — long sweeping arcs, not twitchy bends ──
+    // Slow continuous sweep — like a highway curve, not a shaking hose
+    var bendDrive = isSilent ? 0.002 : (0.004 + sVocal * 0.008);
     bendAngle1 += bendDrive;
-    bendAngle2 -= bendDrive * 0.75;
-    // Bass hits = sharp curve (the tunnel turns hard)
-    if (hit > 0.06) {
-      bendAngle1 += (Math.random() - 0.5) * 3.5;
-      bendAngle2 += (Math.random() - 0.5) * 4.0;
+    bendAngle2 -= bendDrive * 0.6;
+    // Bass hits = gentle nudge, not a jolt
+    if (hit > 0.08) {
+      bendAngle1 += (Math.random() - 0.5) * 0.8;
+      bendAngle2 += (Math.random() - 0.5) * 0.6;
     }
-    // Vocal onset = the road bends
-    if (vocalDelta > 0.03) {
-      bendAngle1 += vocalDelta * 6;
-      bendAngle2 -= vocalDelta * 5;
-    }
-    // Big amplitude — silence = gentle drift, loud = dramatic winding curves
-    var bendAmp = (0.4 + loudness * 1.2) * p.bendAmp;
+    // Low amplitude — sweeping, not snaking
+    var bendAmp = (0.25 + loudness * 0.35) * p.bendAmp;
     bendTX1 = Math.cos(bendAngle1) * bendAmp;
-    bendTY1 = Math.sin(bendAngle1) * bendAmp * 0.9;
-    bendTX2 = Math.cos(bendAngle2) * bendAmp * 1.2;
-    bendTY2 = Math.sin(bendAngle2) * bendAmp * 0.8;
-    // Curve chase — responsive enough to feel the road bending
-    bendX1 += (bendTX1 - bendX1) * 0.04;
-    bendY1 += (bendTY1 - bendY1) * 0.04;
-    bendX2 += (bendTX2 - bendX2) * 0.035;
-    bendY2 += (bendTY2 - bendY2) * 0.035;
+    bendTY1 = Math.sin(bendAngle1) * bendAmp * 0.7;
+    bendTX2 = Math.cos(bendAngle2) * bendAmp * 0.8;
+    bendTY2 = Math.sin(bendAngle2) * bendAmp * 0.5;
+    // Slow chase — curves ease in gradually
+    bendX1 += (bendTX1 - bendX1) * 0.015;
+    bendY1 += (bendTY1 - bendY1) * 0.015;
+    bendX2 += (bendTX2 - bendX2) * 0.012;
+    bendY2 += (bendTY2 - bendY2) * 0.012;
 
     // ── Reverse system — beat bounce, threshold scaled to song profile ──
     if (hit > Math.max(p.hitThresh * 1.5, 0.06) && reverseTimer <= 0 && Math.random() < 0.08) {
@@ -1377,8 +1372,8 @@
       var oz = ozRaw * ozRaw * ozRaw;
       if (oz < 0.01 || oz > 0.85) continue; // skip too far or too near
 
-      // Scale: oz is 0-1 but cubed, so boost for visible object sizes
-      var oScale = oz * 3 + 0.15;
+      // Scale: smaller so they don't dominate
+      var oScale = oz * 1.8 + 0.1;
       var oParallax = oz * oz;
       var oCx = vpx + (w / 2 - vpx) * oParallax;
       var oCy = vpy + (h / 2 - vpy) * oParallax;
@@ -1406,8 +1401,8 @@
         objY = oCy + halfH * (0.5 + obj.pos * 0.2);
       }
 
-      // Alpha fades with distance, brightens when near
-      var oAlpha = (0.15 + oz * 0.5) * (0.5 + sTotal * 0.3);
+      // Very subtle — background texture, not foreground objects
+      var oAlpha = (0.06 + oz * 0.2) * (0.3 + sTotal * 0.15);
       var oColT = (oz + palBlend + obj.seed) % 1;
       var oCol = lerpColor(colA, colB, oColT);
       var oRgb = parseInt(oCol.slice(1,3),16)+','+parseInt(oCol.slice(3,5),16)+','+parseInt(oCol.slice(5,7),16);

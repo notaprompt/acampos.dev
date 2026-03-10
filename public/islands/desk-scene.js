@@ -175,13 +175,19 @@
 
   // ── Hex to RGB cache ──
   var rgbCache = {};
-  function hexToRgb(hex) {
-    if (rgbCache[hex]) return rgbCache[hex];
-    var r = parseInt(hex.slice(1, 3), 16);
-    var g = parseInt(hex.slice(3, 5), 16);
-    var b = parseInt(hex.slice(5, 7), 16);
-    rgbCache[hex] = [r, g, b];
-    return rgbCache[hex];
+  function hexToRgb(str) {
+    if (rgbCache[str]) return rgbCache[str];
+    var r, g, b;
+    if (str.charAt(0) === '#') {
+      r = parseInt(str.slice(1, 3), 16);
+      g = parseInt(str.slice(3, 5), 16);
+      b = parseInt(str.slice(5, 7), 16);
+    } else {
+      var m = str.match(/\d+/g);
+      r = parseInt(m[0]); g = parseInt(m[1]); b = parseInt(m[2]);
+    }
+    rgbCache[str] = [r, g, b];
+    return rgbCache[str];
   }
 
   // ── Object registry (for hit detection) ──
@@ -1110,28 +1116,61 @@
     }
   }
 
+  // dynamic palette slots for music-synced vault colors
+  var VAULT_DYN_START = 115; // palette indices 115-123
+  var vaultMusicSync = false;
+
+  function updateVaultPalette() {
+    var mc = window.__musicColor;
+    if (!mc) { vaultMusicSync = false; return; }
+    vaultMusicSync = true;
+    // parse rgb(r,g,b) from music panel
+    var m = mc.match(/\d+/g);
+    if (!m || m.length < 3) return;
+    var mr = parseInt(m[0]), mg = parseInt(m[1]), mb = parseInt(m[2]);
+    var energy = window.__musicEnergy || 0;
+    var bass = window.__musicBass || 0;
+    // build 9-step gradient from black -> music color, boosted by energy
+    for (var i = 0; i < 9; i++) {
+      var t = i / 8;
+      var boost = 1 + energy * 0.8 + bass * 0.3;
+      var r = Math.min(255, Math.round(mr * t * t * boost));
+      var g = Math.min(255, Math.round(mg * t * t * boost));
+      var b = Math.min(255, Math.round(mb * t * t * boost));
+      var key = VAULT_DYN_START + i;
+      if (C[key]) delete rgbCache[C[key]];
+      C[key] = 'rgb(' + r + ',' + g + ',' + b + ')';
+    }
+  }
+
   function drawVoidTunnel(phase) {
-    // pixelated receding tunnel — concentric rings shrinking to center
+    updateVaultPalette();
     var cx = VW / 2, cy = VH / 2;
-    var rings = [105, 106, 107, 108, 109, 110, 111, 112, 113];
+    var baseRings = [105, 106, 107, 108, 109, 110, 111, 112, 113];
+    var dynRings = [115, 116, 117, 118, 119, 120, 121, 122, 123];
+    var rings = vaultMusicSync ? dynRings : baseRings;
+    // speed up pulse with bass
+    var bass = window.__musicBass || 0;
+    var speed = 0.15 + bass * 0.4;
     for (var py = 0; py < VH; py++) {
       for (var px = 0; px < VW; px++) {
         var dx = (px - cx) / (VW / 2);
         var dy = (py - cy) / (VH / 2);
         var dist = Math.max(Math.abs(dx), Math.abs(dy));
-        // animate: rings pulse inward with phase
-        var ring = Math.floor((dist * 6 + phase * 0.15) % rings.length);
+        var ring = Math.floor((dist * 6 + phase * speed) % rings.length);
         scene[(VY + py) * COLS + (VX + px)] = rings[ring];
       }
     }
-    // gold dot at center
+    // center glow
     var ccx = VX + Math.floor(cx), ccy = VY + Math.floor(cy);
     var glow = Math.sin(phase * 0.2) * 0.5 + 0.5;
-    scene[ccy * COLS + ccx] = glow > 0.5 ? 113 : 112;
-    scene[ccy * COLS + ccx - 1] = glow > 0.3 ? 112 : 111;
-    scene[ccy * COLS + ccx + 1] = glow > 0.3 ? 112 : 111;
-    scene[(ccy - 1) * COLS + ccx] = glow > 0.3 ? 112 : 111;
-    scene[(ccy + 1) * COLS + ccx] = glow > 0.3 ? 112 : 111;
+    var bright = rings[rings.length - 1];
+    var mid = rings[rings.length - 2];
+    scene[ccy * COLS + ccx] = glow > 0.5 ? bright : mid;
+    scene[ccy * COLS + ccx - 1] = glow > 0.3 ? mid : rings[rings.length - 3];
+    scene[ccy * COLS + ccx + 1] = glow > 0.3 ? mid : rings[rings.length - 3];
+    scene[(ccy - 1) * COLS + ccx] = glow > 0.3 ? mid : rings[rings.length - 3];
+    scene[(ccy + 1) * COLS + ccx] = glow > 0.3 ? mid : rings[rings.length - 3];
   }
 
   function openVault() {

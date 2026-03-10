@@ -1167,6 +1167,10 @@
     palBlend = palPos % 1;
     var colA = PALETTE[palIdx];
     var colB = PALETTE[(palIdx + 1) % PALETTE.length];
+    // expose live color for desk-scene vault sync
+    window.__musicColor = lerpColor(colA, colB, palBlend);
+    window.__musicEnergy = flashEnergy;
+    window.__musicBass = sBass;
 
     // Flash energy — spikes on hit, drives intensity (percussion layer on top)
     flashEnergy = Math.min(1, flashEnergy + hit * 3);

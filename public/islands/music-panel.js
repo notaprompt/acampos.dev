@@ -644,16 +644,38 @@
   var visTime = 0;
   var waveData = null;
 
-  // Site palette — no hsl, raw hex/rgba
-  var COL_GLOW = '#E8DCC8';       // warm white
-  var COL_GOLD = '#b8965a';       // gold accent
-  var COL_ALIVE = '#5BF29B';      // green
-  var COL_DANGER = '#c75050';     // red
-  // Light mode — darker for contrast on cream background
-  var COL_GLOW_L = '#4a3f2e';     // deep warm brown (replaces near-white)
-  var COL_GOLD_L = '#7a5520';     // deep gold
-  var COL_ALIVE_L = '#1a7a42';    // dark green
-  var COL_DANGER_L = '#8a2020';   // dark red
+  // ── Mood palette — full spectral sweep, pulled from scene colors ──
+  // Dark mode: luminous, glowing — light on void
+  var PALETTE_DARK = [
+    '#b8965a',  // gold (lamp, accent)
+    '#d4a843',  // warm amber (desk glow)
+    '#e8a060',  // burnt orange (sunset window)
+    '#c75050',  // ember red (danger)
+    '#c86090',  // dusty rose (portal pink)
+    '#a050c8',  // violet (portal purple)
+    '#6868d0',  // periwinkle (night sky)
+    '#5090c8',  // slate blue (window light)
+    '#40a8a0',  // teal (deep water)
+    '#5BF29B',  // mint (monitor alive)
+    '#90d870',  // chartreuse (fresh)
+    '#E8DCC8',  // warm white (glow)
+  ];
+  // Light mode: deeper, richer — dark on cream
+  var PALETTE_LIGHT = [
+    '#7a5520',  // deep gold
+    '#9a6818',  // dark amber
+    '#a05828',  // rust
+    '#8a2020',  // dark red
+    '#8a3058',  // plum
+    '#602090',  // deep violet
+    '#3838a0',  // indigo
+    '#285888',  // dark slate blue
+    '#1a6860',  // dark teal
+    '#1a7a42',  // forest green
+    '#4a7830',  // olive
+    '#4a3f2e',  // warm brown
+  ];
+  var PALETTE = PALETTE_DARK;
   // Pre-computed rgba versions for alpha blending
   function rgba(hex, a) {
     var r = parseInt(hex.slice(1,3), 16);
@@ -661,10 +683,6 @@
     var b = parseInt(hex.slice(5,7), 16);
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
   }
-  // Color cycle — melody-driven. dominant mid-freq bin steers hue position.
-  var PALETTE_DARK = [COL_GOLD, COL_GLOW, COL_ALIVE, COL_DANGER];
-  var PALETTE_LIGHT = [COL_GOLD_L, COL_GLOW_L, COL_ALIVE_L, COL_DANGER_L];
-  var PALETTE = PALETTE_DARK;
   var palIdx = 0;
   var palBlend = 0;
   var flashEnergy = 0;   // decays from bass hits, drives intensity
@@ -1158,24 +1176,28 @@
     // Forward motion — speed driven by bass, reversed during reverse
     hallZ += (0.015 + sBass * 0.04 + hit * 0.25) * forwardDir;
 
-    // Melody color — spectral centroid of mid range, normalized to spread all 4 colors
-    var midStart = Math.floor(bufferLength * 0.05);
-    var midEnd   = Math.floor(bufferLength * 0.55);
+    // Melody color — spectral centroid across full spectrum, normalized across palette
+    // Wider range (0.02 - 0.75) so centroid sweeps more of the 12-color gradient
+    var midStart = Math.floor(bufferLength * 0.02);
+    var midEnd   = Math.floor(bufferLength * 0.75);
     var weightedSum = 0, weightTotal = 0;
     for (var mi = midStart; mi < midEnd; mi++) {
       var mw = freqData[mi] / 255;
       weightedSum += mi * mw;
       weightTotal += mw;
     }
-    // Spectral centroid — center of mass of mid spectrum
+    // Spectral centroid — center of mass
     var centroid = weightTotal > 0.1 ? (weightedSum / weightTotal) : midStart;
-    var rawMelodyColor = Math.pow((centroid - midStart) / (midEnd - midStart), 0.5); // sqrt spread = more range
+    var rawMelodyColor = (centroid - midStart) / (midEnd - midStart);
+    // Bass-heavy = warm shift (toward golds/reds), treble-heavy = cool shift (blues/greens)
+    var warmCool = (sBass - sHigh) * 0.15; // subtle mood bias
+    rawMelodyColor = Math.max(0, Math.min(1, rawMelodyColor - warmCool));
     // Slow smooth — note changes drift color, sustained notes hold it
-    var melodyLag = weightTotal > 2 ? 0.05 : 0.01;
+    var melodyLag = weightTotal > 2 ? 0.04 : 0.008;
     melodyColorSmooth += (rawMelodyColor - melodyColorSmooth) * melodyLag;
     melodyColor = Math.max(0, Math.min(0.999, melodyColorSmooth));
 
-    // Continuous palette position — spans all 4 colors
+    // Continuous palette position — spectral centroid sweeps full gradient
     var palPos = melodyColor * PALETTE.length;
     palIdx = Math.floor(palPos) % PALETTE.length;
     palBlend = palPos % 1;

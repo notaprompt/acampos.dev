@@ -1081,12 +1081,19 @@
   // ── Initial render ──
   render();
 
-  // ── Hint: fade-out text + CRT shimmer ──
-  if (tooltip) {
-    tooltip.textContent = 'hover to explore';
+  // ── Hint: repeating nudge until first interaction ──
+  var hasInteracted = false;
+  var hintInterval = null;
+  function showHint() {
+    if (hasInteracted || !tooltip) return;
+    tooltip.textContent = 'hover to interact';
     tooltip.classList.add('visible');
-    setTimeout(function () { tooltip.classList.remove('visible'); }, 3500);
+    setTimeout(function () {
+      if (!hasInteracted) tooltip.classList.remove('visible');
+    }, 3500);
   }
+  showHint();
+  hintInterval = setInterval(showHint, 15000);
 
   // Server LED blink — staggered, async activity patterns
   var srvLeds = [
@@ -1143,6 +1150,10 @@
     if (found !== hoveredObj) {
       hoveredObj = found;
       canvas.style.cursor = found ? 'pointer' : 'default';
+      if (found && !hasInteracted) {
+        hasInteracted = true;
+        if (hintInterval) clearInterval(hintInterval);
+      }
       if (tooltip) {
         if (found) {
           tooltip.textContent = found.label;

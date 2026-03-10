@@ -1294,12 +1294,11 @@
       if (sweepDist > 0.5) sweepDist = 1 - sweepDist;
       var sweepBoost = Math.max(0, 1 - sweepDist * 8) * (0.4 + sTotal * 0.3);
 
-      // Color — vanish near VP, bold near camera
-      var depthFade = z * z; // quadratic — kills small rects near VP hard
-      var rectAlpha = (0.1 + fv * 0.25 + sweepBoost * 0.5 + flashEnergy * 0.2) * depthFade;
+      // Color — thinner, more transparent, breathes
+      var rectAlpha = (0.1 + fv * 0.25 + sweepBoost * 0.5 + flashEnergy * 0.2) * (0.3 + z * 0.7);
       var colT = (z + palBlend) % 1;
       ctx.strokeStyle = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 0.7));
-      ctx.lineWidth = (0.4 + z * 1.5 + fv * 0.8 + sweepBoost + flashEnergy) * depthFade;
+      ctx.lineWidth = 0.4 + z * 1.5 + fv * 0.8 + sweepBoost + flashEnergy;
 
       // Draw warped rectangle — not a perfect rect, audio bends it
       ctx.beginPath();

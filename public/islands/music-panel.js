@@ -1532,16 +1532,14 @@
       }
     }
 
-    // ═══ LAYER 3e: DEPTH FOG — tiny vanishing point dot, not a sphere ═══
-    var fogR = Math.max(w, h) * 0.5;
-    var fogGrad = ctx.createRadialGradient(vpx, vpy, 0, vpx, vpy, fogR);
-    var fogBase = isDark ? '0,0,0' : '240,235,225';
-    fogGrad.addColorStop(0, 'rgba(' + fogBase + ',0.3)');
-    fogGrad.addColorStop(0.02, 'rgba(' + fogBase + ',0.12)');
-    fogGrad.addColorStop(0.06, 'rgba(' + fogBase + ',0.03)');
-    fogGrad.addColorStop(0.15, 'rgba(' + fogBase + ',0)');
-    fogGrad.addColorStop(1, 'rgba(' + fogBase + ',0)');
-    ctx.fillStyle = fogGrad;
+    // ═══ LAYER 3e: BLACK HOLE — hard dark point at VP sells infinite depth ═══
+    var bpR = Math.min(w, h) * 0.12;
+    var bpGrad = ctx.createRadialGradient(vpx, vpy, 0, vpx, vpy, bpR);
+    bpGrad.addColorStop(0, 'rgba(0,0,0,0.9)');
+    bpGrad.addColorStop(0.15, 'rgba(0,0,0,0.5)');
+    bpGrad.addColorStop(0.4, 'rgba(0,0,0,0.12)');
+    bpGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = bpGrad;
     ctx.fillRect(0, 0, w, h);
 
     // ═══ LAYER 5: FLOOR GRID — perspective grid beneath ═══

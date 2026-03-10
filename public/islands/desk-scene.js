@@ -224,9 +224,11 @@
     C_NIGHT[16] = dim('#4a1c26', 0.45);
     // CRT — stays bright (it's a screen)
     // ultrawide — stays bright
-    // chair — slightly darker
+    // chair — leather darker, chrome toned down
     C_NIGHT[30] = '#0e0e0e';
     C_NIGHT[31] = '#161616';
+    C_NIGHT[32] = '#686868';   // chrome dimmed in lamplight
+    C_NIGHT[33] = '#505050';   // chrome shadow dimmed
     // bookshelf wood — amber-lit
     C_NIGHT[34] = amber('#8a6a3a', 0.50, 0.4);
     C_NIGHT[35] = amber('#5a4020', 0.45, 0.3);

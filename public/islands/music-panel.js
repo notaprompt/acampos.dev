@@ -1348,13 +1348,12 @@
     for (var ci = 0; ci < colCount; ci++) {
       var cz = ((ci / colCount) + hallZ * 1.3) % 1;
       cz = cz * cz;
-      if (cz < 0.005) continue;
+      if (cz < 0.08) continue; // skip near-VP columns — they smear into a blob
 
       var cScale = cz;
       var cParallax = cz * cz;
       var colCx = vpx + (w / 2 - vpx) * cParallax;
       var colCy = vpy + (h / 2 - vpy) * cParallax;
-      // Follow bend curves like hall rects
       var cb1 = Math.sin(cz * Math.PI * 1.2);
       var cb2 = Math.sin((cz - 0.3) * Math.PI * 1.1);
       colCx += (bendX1 * cb1 + bendX2 * cb2) * w * 0.25;
@@ -1363,7 +1362,8 @@
 
       var freqIdx = Math.floor(cz * bufferLength) % bufferLength;
       var cfv = freqData[freqIdx] / 255;
-      var colAlpha = (0.1 + cfv * 0.3) * (0.2 + cz * 0.8);
+      // Fade with depth squared — no brightness accumulation near center
+      var colAlpha = (0.1 + cfv * 0.3) * cz * cz;
       var cColT = (cz * 0.7 + palBlend + 0.5) % 1;
       ctx.strokeStyle = lerpColorA(colB, colA, cColT, Math.min(colAlpha, 0.6));
       ctx.lineWidth = 0.5 + cz * 2;
@@ -1551,7 +1551,7 @@
     for (var gi = 0; gi < gridLines; gi++) {
       var gz = ((gi / gridLines) + hallZ * 1.5) % 1;
       gz = gz * gz;
-      if (gz < 0.01) continue;
+      if (gz < 0.06) continue;
 
       var gScale = gz;
       var gParallax = gz * gz;

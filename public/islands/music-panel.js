@@ -1451,24 +1451,26 @@
       return [cx + cornerSx * w * scale * 0.5, cy + cornerSy * h * scale * 0.5];
     }
 
-    // ── 4 CORNER SEAM LINES — trace rect corner path through depth ──
-    // cornerSigns: TL(-1,-1), TR(1,-1), BR(1,1), BL(-1,1)
+    // ── 4 CORNER SEAM LINES — thick at edge, vanish toward VP (sells inward) ──
     var cSigns = [[-1,-1], [1,-1], [1,1], [-1,1]];
     for (var cs = 0; cs < 4; cs++) {
       var csColT = (cs * 0.25 + palBlend) % 1;
-      var segs = 16;
+      var segs = 20;
       for (var sg = 0; sg < segs; sg++) {
         var t0 = sg / segs;
         var t1 = (sg + 1) / segs;
-        var segAlpha = (1 - t0 / 0.4);
+        // Fade: gone by 55% depth — no convergence clutter
+        var segAlpha = (1 - t0 / 0.55);
         if (segAlpha <= 0) break;
-        segAlpha = segAlpha * segAlpha * (0.2 + sTotal * 0.12);
+        // Cubic falloff — very bright near edge, drops fast
+        segAlpha = segAlpha * segAlpha * segAlpha * (0.5 + sTotal * 0.2);
 
         var p0 = hallPos(t0, cSigns[cs][0], cSigns[cs][1]);
         var p1 = hallPos(t1, cSigns[cs][0], cSigns[cs][1]);
 
-        ctx.strokeStyle = lerpColorA(colA, colB, csColT, segAlpha);
-        ctx.lineWidth = (1 + sTotal * 1) * (1 - t0 * 0.8);
+        ctx.strokeStyle = lerpColorA(colA, colB, csColT, Math.min(segAlpha, 0.7));
+        // Thick near camera (3px+), hair-thin toward VP
+        ctx.lineWidth = (2.5 + sTotal * 1.5) * (1 - t0) * (1 - t0);
         ctx.beginPath();
         ctx.moveTo(p0[0], p0[1]);
         ctx.lineTo(p1[0], p1[1]);
@@ -1501,15 +1503,15 @@
         for (var sg = 0; sg < segs; sg++) {
           var t0 = sg / segs;
           var t1 = (sg + 1) / segs;
-          var segAlpha = (1 - t0 / 0.35);
+          var segAlpha = (1 - t0 / 0.45);
           if (segAlpha <= 0) break;
-          segAlpha = segAlpha * segAlpha * (0.08 + sfv * 0.1);
+          segAlpha = segAlpha * segAlpha * segAlpha * (0.2 + sfv * 0.15);
 
           var sp0 = hallPos(t0, seamSx, seamSy);
           var sp1 = hallPos(t1, seamSx, seamSy);
 
           ctx.strokeStyle = lerpColorA(colA, colB, sColT, segAlpha);
-          ctx.lineWidth = (0.5 + sfv * 1) * (1 - t0 * 0.7);
+          ctx.lineWidth = (1.2 + sfv * 1) * (1 - t0) * (1 - t0);
           ctx.beginPath();
           ctx.moveTo(sp0[0], sp0[1]);
           ctx.lineTo(sp1[0], sp1[1]);

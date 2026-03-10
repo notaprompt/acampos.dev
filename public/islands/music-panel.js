@@ -1299,46 +1299,32 @@
       if (sweepDist > 0.5) sweepDist = 1 - sweepDist;
       var sweepBoost = Math.max(0, 1 - sweepDist * 8) * (0.4 + sTotal * 0.3);
 
-      // CHROMATIC DEPTH: near rects warm-shifted, far cool-shifted
-      var rectAlpha = (0.15 + fv * 0.35 + sweepBoost * 0.6 + flashEnergy * 0.3) * (0.3 + z * 0.7);
+      // Color — chromatic depth blended into base (single stroke, not stacked)
+      var rectAlpha = (0.1 + fv * 0.2 + sweepBoost * 0.4 + flashEnergy * 0.2) * (0.3 + z * 0.7);
       var colT = (z + palBlend) % 1;
-      var baseCol = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 0.85));
+      // Blend palette with subtle warm/cool shift — near=warm, far=cool
       var chromaT = Math.max(0, Math.min(1, (z - 0.15) / 0.6));
-      var chromaCol = lerpColorA(coolCol, warmCol, chromaT, Math.min(rectAlpha, 0.55));
+      var depthCol = lerpColor(coolCol, warmCol, chromaT);
+      // Mix depth tint into palette color (~30% depth, 70% palette)
+      var mixCol = lerpColorA(depthCol, lerpColor(colA, colB, colT), 0.7, Math.min(rectAlpha, 0.55));
 
-      // ATMOSPHERIC FOG: far rects desaturate toward void
-      var fogT = 1 - z;
-      fogT = fogT * fogT * fogT;
-      var fogAlpha = fogT * 0.4;
+      ctx.lineWidth = 0.6 + z * 2 + fv * 0.8 + sweepBoost + flashEnergy;
 
-      ctx.lineWidth = 0.8 + z * 2.5 + fv * 1.2 + sweepBoost * 1.5 + flashEnergy;
-
-      // Draw warped rectangle
+      // Draw warped rectangle — single stroke
       ctx.beginPath();
       ctx.moveTo(rx - warp, ry - warp);
       ctx.lineTo(rx + rectW + warp, ry - warp * 0.7);
       ctx.lineTo(rx + rectW + warp * 0.7, ry + rectH + warp);
       ctx.lineTo(rx - warp * 0.7, ry + rectH + warp * 0.7);
       ctx.closePath();
-
-      // Layer 1: base color stroke
-      ctx.strokeStyle = baseCol;
-      ctx.stroke();
-      // Layer 2: chromatic depth tint
-      ctx.strokeStyle = chromaCol;
+      ctx.strokeStyle = mixCol;
       ctx.stroke();
 
-      // Atmospheric fog overlay on far rects
-      if (fogAlpha > 0.01) {
-        ctx.strokeStyle = 'rgba(' + voidBg + ',' + fogAlpha + ')';
-        ctx.stroke();
-      }
-
-      // FLICKER PARALLAX: near rects pulse with bass (motion = close)
-      if (z > 0.5 && sBass > 0.3) {
-        var pulseAlpha = (z - 0.5) * sBass * 0.15;
+      // Subtle bass pulse on near rects only
+      if (z > 0.6 && sBass > 0.4) {
+        var pulseAlpha = (z - 0.6) * sBass * 0.08;
         ctx.strokeStyle = lerpColorA(warmCol, '#ffffff', 0.5, pulseAlpha);
-        ctx.lineWidth += sBass * z * 2;
+        ctx.lineWidth += sBass * z;
         ctx.stroke();
       }
 

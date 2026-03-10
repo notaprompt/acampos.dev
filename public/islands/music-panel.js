@@ -1427,8 +1427,6 @@
     }
 
     // ═══ LAYER 3b: WALL SEAM LINES — fade out before center (no X convergence) ═══
-    var midX = w / 2 + bendX1 * w * 0.25;
-    var midY = h / 2 + bendY1 * h * 0.2;
     var screenCorners = [[0, 0], [w, 0], [w, h], [0, h]];
 
     // ── Helper: trace rect corner/edge position at depth t ──
@@ -1536,28 +1534,6 @@
       ctx.fillRect(0, 0, w, h);
     }
     ctx.restore();
-
-    // ═══ LAYER 3d: EDGE HIGHLIGHTS — fading specular at corners ═══
-    for (var ei = 0; ei < 4; ei++) {
-      var esc = screenCorners[ei];
-      var efv = freqData[(ei * 12) % bufferLength] / 255;
-      // Fading segments — only near half, never reaches center
-      var hl = 8;
-      for (var hi = 0; hi < hl; hi++) {
-        var ht0 = hi / hl;
-        var ht1 = (hi + 1) / hl;
-        var hAlpha = (1 - ht0 / 0.5);
-        if (hAlpha <= 0) break;
-        hAlpha = hAlpha * (0.03 + efv * 0.06 + sTotal * 0.02);
-        var hlCol = isDark ? '255,255,255' : '40,30,15';
-        ctx.strokeStyle = 'rgba(' + hlCol + ',' + hAlpha + ')';
-        ctx.lineWidth = 0.5 * (1 - ht0);
-        ctx.beginPath();
-        ctx.moveTo(esc[0] + (vpx - esc[0]) * ht0, esc[1] + (vpy - esc[1]) * ht0);
-        ctx.lineTo(esc[0] + (vpx - esc[0]) * ht1, esc[1] + (vpy - esc[1]) * ht1);
-        ctx.stroke();
-      }
-    }
 
     // ═══ LAYER 5: FLOOR GRID — perspective grid beneath ═══
     var gridLines = 5;

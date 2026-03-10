@@ -395,26 +395,55 @@
       }
     }
 
-    // night mode lamp glow — warm amber radiating from light sources
+    // night mode — shadow-casting light from lamps
     if (sceneTheme === 'dark') {
       var lampSources = [
-        { x: LAMP_X + 4, y: LAMP_Y + 3, r: 25, strength: 0.18 },  // desk lamp
-        { x: 120, y: 10, r: 35, strength: 0.14 },                   // pendant
+        { x: LAMP_X + 4, y: LAMP_Y + 3, r: 40, strength: 0.22, cr: 245, cg: 190, cb: 100 }, // desk lamp
+        { x: 120, y: 10, r: 50, strength: 0.16, cr: 240, cg: 180, cb: 90 },                   // pendant
+        { x: 21, y: 21, r: 15, strength: 0.06, cr: 91, cg: 242, cb: 155 },                    // server LED glow
       ];
+
+      // light-blocking check — opaque objects cast shadows
+      // transparent (0) and wall tones (1-3) don't block; everything else does
+      function isOpaque(sx, sy) {
+        if (sx < 0 || sx >= COLS || sy < 0 || sy >= ROWS) return false;
+        var ci = scene[sy * COLS + sx];
+        return ci !== 0 && ci !== 1 && ci !== 2 && ci !== 3 && ci !== 75 && ci !== 76 && ci !== 77;
+      }
+
+      // ray march from pixel back to light source — returns true if unblocked
+      function hasLineOfSight(px, py, lxs, lys) {
+        var dx = lxs - px, dy = lys - py;
+        var steps = Math.max(Math.abs(dx), Math.abs(dy));
+        if (steps < 2) return true;
+        var sx = dx / steps, sy = dy / steps;
+        // sample every 2 pixels for performance
+        for (var t = 1; t < steps; t += 2) {
+          var cx = Math.round(px + sx * t);
+          var cy = Math.round(py + sy * t);
+          if (cx === lxs && cy === lys) break;
+          if (isOpaque(cx, cy)) return false;
+        }
+        return true;
+      }
+
       for (var ls = 0; ls < lampSources.length; ls++) {
         var src = lampSources[ls];
-        for (var ly = src.y - src.r; ly <= src.y + src.r; ly++) {
-          for (var lx = src.x - src.r; lx <= src.x + src.r; lx++) {
-            if (lx < 0 || lx >= COLS || ly < 0 || ly >= ROWS) continue;
+        for (var ly = Math.max(0, src.y - src.r); ly <= Math.min(ROWS - 1, src.y + src.r); ly++) {
+          for (var lx = Math.max(0, src.x - src.r); lx <= Math.min(COLS - 1, src.x + src.r); lx++) {
             var ldx = (lx - src.x) / src.r;
             var ldy = (ly - src.y) / src.r;
             var ld = Math.sqrt(ldx * ldx + ldy * ldy);
             if (ld > 1) continue;
+
+            // shadow check — does this pixel have line of sight to the light?
+            if (!hasLineOfSight(lx, ly, src.x, src.y)) continue;
+
             var lf = Math.pow(1 - ld, 2) * src.strength;
             var lpi = (ly * COLS + lx) * 4;
-            d[lpi]     = Math.min(255, d[lpi]     + Math.round(240 * lf));
-            d[lpi + 1] = Math.min(255, d[lpi + 1] + Math.round(176 * lf));
-            d[lpi + 2] = Math.min(255, d[lpi + 2] + Math.round(80 * lf));
+            d[lpi]     = Math.min(255, d[lpi]     + Math.round(src.cr * lf));
+            d[lpi + 1] = Math.min(255, d[lpi + 1] + Math.round(src.cg * lf));
+            d[lpi + 2] = Math.min(255, d[lpi + 2] + Math.round(src.cb * lf));
           }
         }
       }

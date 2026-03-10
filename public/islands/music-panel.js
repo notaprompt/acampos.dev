@@ -1480,15 +1480,14 @@
         // Fade: gone by 55% depth — no convergence clutter
         var segAlpha = (1 - t0 / 0.55);
         if (segAlpha <= 0) break;
-        // Cubic falloff — very bright near edge, drops fast
-        segAlpha = segAlpha * segAlpha * segAlpha * (0.5 + sTotal * 0.2);
+        // Cubic falloff — visible near edge, gone fast
+        segAlpha = segAlpha * segAlpha * segAlpha * (0.18 + sTotal * 0.08);
 
         var p0 = hallPos(t0, cSigns[cs][0], cSigns[cs][1]);
         var p1 = hallPos(t1, cSigns[cs][0], cSigns[cs][1]);
 
-        ctx.strokeStyle = lerpColorA(colA, colB, csColT, Math.min(segAlpha, 0.7));
-        // Thick near camera (3px+), hair-thin toward VP
-        ctx.lineWidth = (2.5 + sTotal * 1.5) * (1 - t0) * (1 - t0);
+        ctx.strokeStyle = lerpColorA(colA, colB, csColT, Math.min(segAlpha, 0.25));
+        ctx.lineWidth = (1.2 + sTotal * 0.8) * (1 - t0) * (1 - t0);
         ctx.beginPath();
         ctx.moveTo(p0[0], p0[1]);
         ctx.lineTo(p1[0], p1[1]);
@@ -1523,13 +1522,13 @@
           var t1 = (sg + 1) / segs;
           var segAlpha = (1 - t0 / 0.45);
           if (segAlpha <= 0) break;
-          segAlpha = segAlpha * segAlpha * segAlpha * (0.2 + sfv * 0.15);
+          segAlpha = segAlpha * segAlpha * segAlpha * (0.08 + sfv * 0.06);
 
           var sp0 = hallPos(t0, seamSx, seamSy);
           var sp1 = hallPos(t1, seamSx, seamSy);
 
-          ctx.strokeStyle = lerpColorA(colA, colB, sColT, segAlpha);
-          ctx.lineWidth = (1.2 + sfv * 1) * (1 - t0) * (1 - t0);
+          ctx.strokeStyle = lerpColorA(colA, colB, sColT, Math.min(segAlpha, 0.15));
+          ctx.lineWidth = (0.6 + sfv * 0.5) * (1 - t0) * (1 - t0);
           ctx.beginPath();
           ctx.moveTo(sp0[0], sp0[1]);
           ctx.lineTo(sp1[0], sp1[1]);

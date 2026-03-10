@@ -1095,94 +1095,65 @@
     prevMid = sMid;
     prevHigh = sHigh;
 
-    // Steering — vocals and transients drive direction changes
+    // ── Camera: nearly locked center, minimal sway ──
     var p = activeProfile;
-    // Vocal onset = sharp direction shift (new phrase = new path)
-    if (vocalDelta > 0.03) {
-      steerAngle += vocalDelta * 8 * p.steerSens;
-    }
-    steerAngle += midDelta * 3 * p.midSnap          // transient snap
-               + sVocal * 0.06 * p.steerSens        // vocal presence = gentle steering
-               + Math.sin(visTime * 0.4) * sMid * 0.05;
+    var midDelta = sMid - prevMid;
+    var highDelta = sHigh - prevHigh;
+    prevMid = sMid;
+    prevHigh = sHigh;
 
-    // Target velocity — scaled by loudness (silent = barely drifting)
-    var steerSpeed = (0.005 + loudness * 0.035) * p.steerSens;
-    targetVelX += Math.cos(steerAngle) * steerSpeed;
-    targetVelY += Math.sin(steerAngle) * steerSpeed;
-
-    // Bass hits = nudge in current heading
-    if (hit > p.hitThresh) {
-      targetVelX += Math.cos(steerAngle) * hit * 0.6 * p.bendAmp;
-      targetVelY += Math.sin(steerAngle) * hit * 0.6 * p.bendAmp;
-      hitAccum += hit;
-    }
-
-    // Damping — tighter in silence, looser when loud
-    var damping = isSilent ? 0.92 : 0.85;
-    targetVelX *= damping;
-    targetVelY *= damping;
-
-    // Move target
+    // Tiny VP drift — just enough life, not swiveling
+    steerAngle += 0.003 + sMid * 0.005;
+    targetVelX = Math.cos(steerAngle) * 0.002;
+    targetVelY = Math.sin(steerAngle) * 0.002;
     targetX += targetVelX;
     targetY += targetVelY;
+    // Very tight leash — VP stays near center
+    targetX *= 0.92;
+    targetY *= 0.92;
+    chaseX += (targetX - chaseX) * 0.02;
+    chaseY += (targetY - chaseY) * 0.02;
 
-    // Soft bounds — tighter leash, VP never drifts too far from center
-    var dist = Math.sqrt(targetX * targetX + targetY * targetY);
-    var bound = 0.35 / p.bendAmp; // profiles with high bendAmp get tighter bounds
-    if (dist > bound) {
-      var pull = (dist - bound) * 0.12;
-      targetX -= targetX / dist * pull;
-      targetY -= targetY / dist * pull;
-    }
-
-    // Chase smoothing — VP glides after target with heavy lag
-    var chaseSpeed = 0.03 + sTotal * 0.02;
-    chaseX += (targetX - chaseX) * chaseSpeed;
-    chaseY += (targetY - chaseY) * chaseSpeed;
-
-    // ── Flip system — rollercoaster backflips on bass accumulation ──
+    // Bass accumulator for flips (kept but rarer)
+    if (hit > p.hitThresh) hitAccum += hit;
     if (flipCooldown > 0) flipCooldown--;
-    if (hitAccum > p.flipThresh && flipCooldown <= 0 && Math.random() < 0.5) {
-      // Full rotation — fast enough to feel like a backflip
-      flipVel = (Math.random() < 0.5 ? 1 : -1) * (0.25 + Math.random() * 0.15);
-      flipCooldown = 90; // ~1.5 seconds cooldown — more frequent
+    if (hitAccum > p.flipThresh * 1.5 && flipCooldown <= 0 && Math.random() < 0.3) {
+      flipVel = (Math.random() < 0.5 ? 1 : -1) * (0.2 + Math.random() * 0.1);
+      flipCooldown = 150; // longer cooldown
       hitAccum = 0;
     }
-    // Decay hit accumulator
     hitAccum *= 0.97;
-
-    // Flip animation — carries momentum, decays into next movement
     flipAngle += flipVel;
-    flipAngle = ((flipAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2); // wrap 0-2π, no accumulation
+    flipAngle = ((flipAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
     flipVel *= 0.94;
     if (Math.abs(flipVel) < 0.002) flipVel = 0;
 
-    // ── Bend system — vocal energy drives curves, bass jolts direction ──
-    // Vocal presence = gentle winding, silence = straighten out
-    var bendDrive = isSilent ? 0.002 : (0.005 + sVocal * 0.025);
+    // ── Tunnel curves — THIS is what moves, not the camera ──
+    // Vocal energy drives how curvy the tunnel is
+    var bendDrive = isSilent ? 0.003 : (0.008 + sVocal * 0.04);
     bendAngle1 += bendDrive;
-    bendAngle2 -= bendDrive * 0.8;
-    // Bass hits = hard direction change
-    if (hit > 0.07) {
-      bendAngle1 += (Math.random() - 0.5) * 2.5;
-      bendAngle2 += (Math.random() - 0.5) * 3.0;
+    bendAngle2 -= bendDrive * 0.75;
+    // Bass hits = sharp curve (the tunnel turns hard)
+    if (hit > 0.06) {
+      bendAngle1 += (Math.random() - 0.5) * 3.5;
+      bendAngle2 += (Math.random() - 0.5) * 4.0;
     }
-    // Vocal onset = curve shift (new phrase = the tunnel turns)
-    if (vocalDelta > 0.04) {
-      bendAngle1 += vocalDelta * 4;
-      bendAngle2 -= vocalDelta * 3;
+    // Vocal onset = the road bends
+    if (vocalDelta > 0.03) {
+      bendAngle1 += vocalDelta * 6;
+      bendAngle2 -= vocalDelta * 5;
     }
-    // Amplitude scales with loudness — silent = flat tunnel, loud = dramatic curves
-    var bendAmp = (0.3 + loudness * 0.8) * p.bendAmp;
+    // Big amplitude — silence = gentle drift, loud = dramatic winding curves
+    var bendAmp = (0.4 + loudness * 1.2) * p.bendAmp;
     bendTX1 = Math.cos(bendAngle1) * bendAmp;
-    bendTY1 = Math.sin(bendAngle1) * bendAmp * 0.8;
-    bendTX2 = Math.cos(bendAngle2) * bendAmp * 1.1;
-    bendTY2 = Math.sin(bendAngle2) * bendAmp * 0.7;
-    // Smooth chase — fast enough to feel dramatic, slow enough to flow
-    bendX1 += (bendTX1 - bendX1) * 0.025;
-    bendY1 += (bendTY1 - bendY1) * 0.025;
-    bendX2 += (bendTX2 - bendX2) * 0.02;
-    bendY2 += (bendTY2 - bendY2) * 0.02;
+    bendTY1 = Math.sin(bendAngle1) * bendAmp * 0.9;
+    bendTX2 = Math.cos(bendAngle2) * bendAmp * 1.2;
+    bendTY2 = Math.sin(bendAngle2) * bendAmp * 0.8;
+    // Curve chase — responsive enough to feel the road bending
+    bendX1 += (bendTX1 - bendX1) * 0.04;
+    bendY1 += (bendTY1 - bendY1) * 0.04;
+    bendX2 += (bendTX2 - bendX2) * 0.035;
+    bendY2 += (bendTY2 - bendY2) * 0.035;
 
     // ── Reverse system — beat bounce, threshold scaled to song profile ──
     if (hit > Math.max(p.hitThresh * 1.5, 0.06) && reverseTimer <= 0 && Math.random() < 0.08) {
@@ -1201,7 +1172,7 @@
     ctx.save();
     ctx.globalAlpha = 0.75 - sTotal * 0.08;
     ctx.translate(zoomCx, zoomCy);
-    ctx.rotate(flipAngle * 0.8);
+    ctx.rotate(flipAngle * 0.4);
     ctx.scale(feedbackZoom, feedbackZoom);
     ctx.translate(-zoomCx, -zoomCy);
     ctx.drawImage(canvas, 0, 0);
@@ -1214,10 +1185,10 @@
 
     visTime += 0.016;
 
-    // Forward motion — loudness drives speed, silence = floating drift
+    // Forward motion — loudness = gas pedal, silence = brakes
     var fwdSpeed = isSilent
-      ? 0.003                                    // barely crawling in silence
-      : 0.008 + loudness * 0.05 + hit * 0.2;    // loudness = velocity
+      ? 0.002                                    // creeping in silence
+      : 0.006 + loudness * 0.08 + hit * 0.35;   // loud = fast, hits = burst
     hallZ += fwdSpeed * forwardDir;
 
     // Melody color — multi-feature spectral analysis drives palette position

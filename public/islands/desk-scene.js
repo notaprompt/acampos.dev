@@ -1000,10 +1000,9 @@
     fillRect(CHAIR_X + 2, CHAIR_Y + 5, 13, 1, A);    // back brace
     fillRect(CHAIR_X + 2, CHAIR_Y + 10, 13, 1, A);   // bottom rail
 
-    // ── LEFT ARM — 3px horizontal pad + vertical drop ──
-    fillRect(CHAIR_X - 1, CHAIR_Y + 5, 3, 1, A);     // arm pad
+    // ── LEFT ARM — thin chrome tube, L-shape ──
+    fillRect(CHAIR_X - 1, CHAIR_Y + 5, 3, 1, A);     // horizontal tube
     fillRect(CHAIR_X - 1, CHAIR_Y + 6, 1, 6, A);     // vertical drop
-    fillRect(CHAIR_X - 2, CHAIR_Y + 6, 1, 5, S);     // shadow
 
     // ── RIGHT ARM — stub ──
     fillRect(CHAIR_X + 14, CHAIR_Y + 5, 1, 1, S);

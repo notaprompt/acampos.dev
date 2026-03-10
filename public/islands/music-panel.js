@@ -1157,15 +1157,14 @@
     if (reverseTimer > 0) reverseTimer--;
     var forwardDir = reverseTimer > 0 ? -0.6 : 1;
 
-    // ── Feedback zoom — loudness drives zoom intensity ──
-    var feedbackZoom = 1.006 + loudness * 0.02 + hit * 0.04;
-    if (isSilent) feedbackZoom = 1.003; // barely moving in silence
-    if (reverseTimer > 0) feedbackZoom = 1 / (1.006 + loudness * 0.01);
-    // Zoom origin = where the VP will be (chase position)
+    // ── Feedback zoom — loudness drives the rush ──
+    var feedbackZoom = 1.012 + loudness * 0.025 + hit * 0.06;
+    if (isSilent) feedbackZoom = 1.004;
+    if (reverseTimer > 0) feedbackZoom = 1 / (1.012 + loudness * 0.01);
     var zoomCx = w / 2 + chaseX * w * 0.15;
     var zoomCy = h / 2 + chaseY * h * 0.12;
     ctx.save();
-    ctx.globalAlpha = 0.75 - sTotal * 0.08;
+    ctx.globalAlpha = 0.82 - sTotal * 0.06;
     ctx.translate(zoomCx, zoomCy);
     ctx.rotate(flipAngle * 0.4);
     ctx.scale(feedbackZoom, feedbackZoom);
@@ -1175,15 +1174,15 @@
     var isDark = document.documentElement.dataset.theme !== 'light';
     PALETTE = isDark ? PALETTE_DARK : PALETTE_LIGHT;
     var voidBg = isDark ? '0,0,0' : '240,235,225';
-    ctx.fillStyle = 'rgba(' + voidBg + ', 0.18)';
+    ctx.fillStyle = 'rgba(' + voidBg + ', 0.12)';
     ctx.fillRect(0, 0, w, h);
 
     visTime += 0.016;
 
     // Forward motion — loudness = gas pedal, silence = brakes
     var fwdSpeed = isSilent
-      ? 0.002                                    // creeping in silence
-      : 0.006 + loudness * 0.08 + hit * 0.35;   // loud = fast, hits = burst
+      ? 0.003
+      : 0.012 + loudness * 0.06 + hit * 0.3;
     hallZ += fwdSpeed * forwardDir;
 
     // Melody color — multi-feature spectral analysis drives palette position

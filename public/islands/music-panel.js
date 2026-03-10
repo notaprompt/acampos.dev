@@ -1169,7 +1169,7 @@
     var zoomCx = w / 2 + chaseX * w * 0.15;
     var zoomCy = h / 2 + chaseY * h * 0.12;
     ctx.save();
-    ctx.globalAlpha = 0.86 - sTotal * 0.06;
+    ctx.globalAlpha = 0.78 - sTotal * 0.06;
     ctx.translate(zoomCx, zoomCy);
     ctx.rotate(flipAngle * 0.4);
     ctx.scale(feedbackZoom, feedbackZoom);
@@ -1180,13 +1180,13 @@
     PALETTE = isDark ? PALETTE_DARK : PALETTE_LIGHT;
     var voidBg = isDark ? '0,0,0' : '240,235,225';
     // Uniform void fade
-    ctx.fillStyle = 'rgba(' + voidBg + ', 0.07)';
+    ctx.fillStyle = 'rgba(' + voidBg + ', 0.14)';
     ctx.fillRect(0, 0, w, h);
-    // Extra fade at zoom center — counteracts feedback accumulation
+    // Extra fade at zoom center
     var centerFadeR = Math.min(w, h) * 0.35;
     var centerFade = ctx.createRadialGradient(zoomCx, zoomCy, 0, zoomCx, zoomCy, centerFadeR);
-    centerFade.addColorStop(0, 'rgba(' + voidBg + ', 0.15)');
-    centerFade.addColorStop(0.4, 'rgba(' + voidBg + ', 0.06)');
+    centerFade.addColorStop(0, 'rgba(' + voidBg + ', 0.12)');
+    centerFade.addColorStop(0.4, 'rgba(' + voidBg + ', 0.04)');
     centerFade.addColorStop(1, 'rgba(' + voidBg + ', 0)');
     ctx.fillStyle = centerFade;
     ctx.fillRect(0, 0, w, h);
@@ -1299,21 +1299,19 @@
       if (sweepDist > 0.5) sweepDist = 1 - sweepDist;
       var sweepBoost = Math.max(0, 1 - sweepDist * 8) * (0.4 + sTotal * 0.3);
 
-      // CHROMATIC DEPTH: near rects use palette warm-shifted, far use cool-shifted
-      var rectAlpha = (0.1 + fv * 0.25 + sweepBoost * 0.5 + flashEnergy * 0.2) * (0.3 + z * 0.7);
-      // Blend palette color with chromatic depth overlay
+      // CHROMATIC DEPTH: near rects warm-shifted, far cool-shifted
+      var rectAlpha = (0.15 + fv * 0.35 + sweepBoost * 0.6 + flashEnergy * 0.3) * (0.3 + z * 0.7);
       var colT = (z + palBlend) % 1;
-      var baseCol = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 0.7));
-      // Near rects (z>0.5): warm tint. Far rects (z<0.2): cool tint.
-      var chromaT = Math.max(0, Math.min(1, (z - 0.15) / 0.6)); // 0=far/cool, 1=near/warm
-      var chromaCol = lerpColorA(coolCol, warmCol, chromaT, Math.min(rectAlpha, 0.5));
+      var baseCol = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 0.85));
+      var chromaT = Math.max(0, Math.min(1, (z - 0.15) / 0.6));
+      var chromaCol = lerpColorA(coolCol, warmCol, chromaT, Math.min(rectAlpha, 0.55));
 
-      // ATMOSPHERIC FOG: far rects lose saturation, blend toward void
-      var fogT = 1 - z; // 0=near, 1=far
-      fogT = fogT * fogT * fogT; // cubic — most fogging in deepest rects
+      // ATMOSPHERIC FOG: far rects desaturate toward void
+      var fogT = 1 - z;
+      fogT = fogT * fogT * fogT;
       var fogAlpha = fogT * 0.4;
 
-      ctx.lineWidth = 0.4 + z * 1.5 + fv * 0.8 + sweepBoost + flashEnergy;
+      ctx.lineWidth = 0.8 + z * 2.5 + fv * 1.2 + sweepBoost * 1.5 + flashEnergy;
 
       // Draw warped rectangle
       ctx.beginPath();

@@ -161,6 +161,16 @@
     // extra detail
     103: '#cc8844',  // warm amber accent
     104: '#e0d8c8',  // warm white label
+    // void tunnel
+    105: '#040408',  // void black
+    106: '#0a0a1a',  // void deep
+    107: '#141428',  // void mid
+    108: '#1e1e3a',  // void ring dark
+    109: '#2a2a50',  // void ring mid
+    110: '#3a3a6a',  // void ring light
+    111: '#5a4a8a',  // void purple
+    112: '#8a6ab0',  // void lavender
+    113: '#b8965a',  // void gold (accent)
   };
 
   // ── Hex to RGB cache ──
@@ -1069,14 +1079,142 @@
     }
     if (o.id === 'books') {
       o.action = function () {
+        // toggle influences list
         var list = document.getElementById('influences-list');
         if (list) {
           list.classList.toggle('influences-hidden');
           list.classList.toggle('influences-visible');
         }
+        // toggle vault
+        if (!vaultOpen && !vaultAnimating) {
+          openVault();
+        } else if (vaultOpen && !vaultAnimating) {
+          closeVault();
+        }
       };
     }
   });
+
+  // ── Vault animation ──
+  var vaultOpen = false;
+  var vaultAnimating = false;
+  var vaultInterval = null;
+  var vaultFrame = 0;
+  // vault region: books area between shelf 1 and shelf 3
+  var VX = SHELF_X + 2, VY = SHELF_Y + 6, VW = 40, VH = 22;
+  // snapshot original book pixels
+  var bookSnapshot = new Uint8Array(VW * VH);
+  for (var vy = 0; vy < VH; vy++) {
+    for (var vx = 0; vx < VW; vx++) {
+      bookSnapshot[vy * VW + vx] = scene[(VY + vy) * COLS + (VX + vx)];
+    }
+  }
+
+  function drawVoidTunnel(phase) {
+    // pixelated receding tunnel — concentric rings shrinking to center
+    var cx = VW / 2, cy = VH / 2;
+    var rings = [105, 106, 107, 108, 109, 110, 111, 112, 113];
+    for (var py = 0; py < VH; py++) {
+      for (var px = 0; px < VW; px++) {
+        var dx = (px - cx) / (VW / 2);
+        var dy = (py - cy) / (VH / 2);
+        var dist = Math.max(Math.abs(dx), Math.abs(dy));
+        // animate: rings pulse inward with phase
+        var ring = Math.floor((dist * 6 + phase * 0.15) % rings.length);
+        scene[(VY + py) * COLS + (VX + px)] = rings[ring];
+      }
+    }
+    // gold dot at center
+    var ccx = VX + Math.floor(cx), ccy = VY + Math.floor(cy);
+    var glow = Math.sin(phase * 0.2) * 0.5 + 0.5;
+    scene[ccy * COLS + ccx] = glow > 0.5 ? 113 : 112;
+    scene[ccy * COLS + ccx - 1] = glow > 0.3 ? 112 : 111;
+    scene[ccy * COLS + ccx + 1] = glow > 0.3 ? 112 : 111;
+    scene[(ccy - 1) * COLS + ccx] = glow > 0.3 ? 112 : 111;
+    scene[(ccy + 1) * COLS + ccx] = glow > 0.3 ? 112 : 111;
+  }
+
+  function openVault() {
+    vaultAnimating = true;
+    var step = 0;
+    var maxSteps = 12;
+    var anim = setInterval(function () {
+      step++;
+      // books slide apart: left half slides left, right half slides right
+      var gap = Math.floor((VW / 2) * (step / maxSteps));
+      // clear vault area
+      for (var py = 0; py < VH; py++) {
+        for (var px = 0; px < VW; px++) {
+          scene[(VY + py) * COLS + (VX + px)] = 105; // void black
+        }
+      }
+      // draw remaining book slivers on edges
+      var leftW = Math.max(0, (VW / 2) - gap);
+      var rightW = leftW;
+      for (var py2 = 0; py2 < VH; py2++) {
+        for (var lx = 0; lx < leftW; lx++) {
+          scene[(VY + py2) * COLS + (VX + lx)] = bookSnapshot[py2 * VW + (VW / 2 - leftW + lx)];
+        }
+        for (var rx = 0; rx < rightW; rx++) {
+          scene[(VY + py2) * COLS + (VX + VW - rightW + rx)] = bookSnapshot[py2 * VW + (VW / 2 + rx)];
+        }
+      }
+      render();
+      if (step >= maxSteps) {
+        clearInterval(anim);
+        vaultAnimating = false;
+        vaultOpen = true;
+        vaultFrame = 0;
+        // start tunnel animation loop
+        vaultInterval = setInterval(function () {
+          vaultFrame++;
+          drawVoidTunnel(vaultFrame);
+          render();
+        }, 80);
+      }
+    }, 40);
+  }
+
+  function closeVault() {
+    vaultAnimating = true;
+    if (vaultInterval) { clearInterval(vaultInterval); vaultInterval = null; }
+    var step = 0;
+    var maxSteps = 12;
+    var anim = setInterval(function () {
+      step++;
+      var gap = Math.floor((VW / 2) * (1 - step / maxSteps));
+      // clear vault area
+      for (var py = 0; py < VH; py++) {
+        for (var px = 0; px < VW; px++) {
+          scene[(VY + py) * COLS + (VX + px)] = 105;
+        }
+      }
+      // books slide back in
+      var leftW = Math.max(0, (VW / 2) - gap);
+      var rightW = leftW;
+      for (var py2 = 0; py2 < VH; py2++) {
+        for (var lx = 0; lx < leftW; lx++) {
+          scene[(VY + py2) * COLS + (VX + lx)] = bookSnapshot[py2 * VW + (VW / 2 - leftW + lx)];
+        }
+        for (var rx = 0; rx < rightW; rx++) {
+          scene[(VY + py2) * COLS + (VX + VW - rightW + rx)] = bookSnapshot[py2 * VW + (VW / 2 + rx)];
+        }
+      }
+      render();
+      if (step >= maxSteps) {
+        clearInterval(anim);
+        // restore all book pixels exactly
+        for (var py3 = 0; py3 < VH; py3++) {
+          for (var px3 = 0; px3 < VW; px3++) {
+            scene[(VY + py3) * COLS + (VX + px3)] = bookSnapshot[py3 * VW + px3];
+          }
+        }
+        render();
+        vaultAnimating = false;
+        vaultOpen = false;
+      }
+    }, 40);
+  }
 
   // ── Initial render ──
   render();

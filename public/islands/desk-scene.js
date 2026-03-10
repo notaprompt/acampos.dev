@@ -1215,25 +1215,45 @@
       ],
     };
 
-    var line1 = ['a','l','e','x','a','n','d','e','r'];
+    // Ornate drop cap "A" — 9x11 illuminated manuscript style
+    var H = 21; // gold highlight
+    var B = 22; // dim gold body
+    var ornateA = [
+      [_,_,_,B,H,B,_,_,_],
+      [_,_,B,H,_,H,B,_,_],
+      [_,_,B,_,_,_,B,_,_],
+      [_,B,H,_,_,_,H,B,_],
+      [_,B,_,_,_,_,_,B,_],
+      [B,H,H,H,H,H,H,H,B],
+      [B,H,_,_,_,_,_,H,B],
+      [B,_,_,_,_,_,_,_,B],
+      [H,B,_,_,_,_,_,B,H],
+      [H,_,_,_,_,_,_,_,H],
+      [B,H,_,_,_,_,_,H,B],
+    ];
+
+    var line1 = ['l','e','x','a','n','d','e','r'];
     var line2 = ['c','a','m','p','o','s'];
 
-    var sx = 4;   // left margin
-    var sy = 95;   // bottom area of scene
+    var sx = 3;   // left margin
+    var sy = 93;  // adjusted for taller drop cap
 
-    // line 1: "alexander"
-    var cx = sx;
+    // Drop cap "A" — ornate, 2 lines tall
+    placeSprite(ornateA, sx, sy);
+
+    // line 1: "lexander" — starts after drop cap, vertically centered with it
+    var cx = sx + 10; // 9 wide + 1 gap
     for (var i = 0; i < line1.length; i++) {
       var glyph = font[line1[i]];
-      if (glyph) placeSprite(glyph, cx, sy);
-      cx += 6; // 5 wide + 1 gap
+      if (glyph) placeSprite(glyph, cx, sy + 2); // offset down to align with cap midline
+      cx += 6;
     }
 
-    // line 2: "campos" — below, same left margin
-    cx = sx;
+    // line 2: "campos" — below drop cap
+    cx = sx + 10;
     for (var j = 0; j < line2.length; j++) {
       var glyph2 = font[line2[j]];
-      if (glyph2) placeSprite(glyph2, cx, sy + 8);
+      if (glyph2) placeSprite(glyph2, cx, sy + 10);
       cx += 6;
     }
   }

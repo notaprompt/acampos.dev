@@ -81,6 +81,7 @@
     uniform float u_cellW;
     uniform float u_cellH;
     uniform float u_audioLevel;
+    uniform float u_theme; // 0.0 = day (light), 1.0 = night (dark)
 
     void main() {
       // Which cell are we in?
@@ -104,9 +105,15 @@
       float atlasY = cellUv.y;
       float charSample = texture(u_charAtlas, vec2(atlasX, atlasY)).r;
 
-      // Visible but restrained — warm gold on void
-      vec3 bgColor = vec3(0.02);  // just above void
-      vec3 charColor = vec3(0.28, 0.22, 0.12);  // warm gold, readable
+      // Theme-aware colors
+      vec3 bgDark = vec3(0.02);
+      vec3 bgLight = vec3(0.92, 0.88, 0.82);
+      vec3 bgColor = mix(bgLight, bgDark, u_theme);
+
+      vec3 charDark = vec3(0.28, 0.22, 0.12);
+      vec3 charLight = vec3(0.18, 0.15, 0.10);
+      vec3 charColor = mix(charLight, charDark, u_theme);
+
       float warmBoost = u_audioLevel * 0.15;
       charColor += vec3(warmBoost, warmBoost * 0.6, 0.0);
 
@@ -162,6 +169,9 @@
   const uCellW = gl.getUniformLocation(program, 'u_cellW');
   const uCellH = gl.getUniformLocation(program, 'u_cellH');
   const uAudioLevel = gl.getUniformLocation(program, 'u_audioLevel');
+  const uTheme = gl.getUniformLocation(program, 'u_theme');
+  var asciiThemeVal = (localStorage.getItem('theme') || 'light') === 'dark' ? 1.0 : 0.0;
+  window.__setAsciiTheme = function(v) { asciiThemeVal = v; };
   const uCharAtlas = gl.getUniformLocation(program, 'u_charAtlas');
   const uRdField = gl.getUniformLocation(program, 'u_rdField');
 
@@ -213,6 +223,7 @@
     gl.useProgram(program);
     gl.uniform2f(uResolution, canvas.width, canvas.height);
     gl.uniform1f(uAudioLevel, audioLevel);
+    gl.uniform1f(uTheme, asciiThemeVal);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, charAtlasTex);

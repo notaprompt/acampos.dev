@@ -35,6 +35,39 @@
   --body: Georgia, 'Times New Roman', serif;
 }
 
+/* ── Light (Day) Mode ────────────────────────────────────────── */
+
+[data-theme="light"] {
+  --void: #f4efe6;
+  --depth-1: #ede7dc;
+  --depth-2: #e5ded2;
+  --depth-3: #dbd4c7;
+  --depth-4: #d1c9bb;
+
+  --glow: #2a2218;
+  --glow-hot: #1a1410;
+  --glow-dim: rgba(42,34,24, 0.06);
+  --glow-trace: rgba(42,34,24, 0.03);
+  --glow-line: rgba(42,34,24, 0.09);
+  --glow-pulse: rgba(42,34,24, 0.18);
+
+  --white-90: rgba(0,0,0,0.85);
+  --white-70: rgba(0,0,0,0.65);
+  --white-60: rgba(0,0,0,0.55);
+  --white-45: rgba(0,0,0,0.40);
+  --white-30: rgba(0,0,0,0.28);
+  --white-20: rgba(0,0,0,0.18);
+  --white-15: rgba(0,0,0,0.13);
+  --white-08: rgba(0,0,0,0.07);
+  --white-04: rgba(0,0,0,0.04);
+
+  --gold-accent: #8a6a2e;
+  --alive: #2a9a5a;
+  --alive-dim: rgba(42,154,90, 0.08);
+  --danger: #a83030;
+  --focus-ring: rgba(42, 34, 24, 0.6);
+}
+
 /* ── Reset ──────────────────────────────────────────────────── */
 
 *, *::before, *::after {

@@ -37,6 +37,18 @@
   );
 }
 
+[data-theme="light"] .vignette {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
+}
+
+[data-theme="light"] .grain {
+  opacity: 0.02;
+}
+
 /* ── Marquee ────────────────────────────────────────────────── */
 
 .retro-marquee {

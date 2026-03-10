@@ -39,6 +39,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <link rel="canonical" href={canonicalURL} />
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
+  <!-- Blocking theme init — prevents flash of wrong theme -->
+  <script is:inline>
+    (function(){
+      var t = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
   <ViewTransitions />
   <title>{title}</title>
   <meta name="description" content={description} />
@@ -125,6 +133,28 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <script is:inline src="/islands/ambient-audio.js"></script>
   <script is:inline src="/islands/assistant.js"></script>
 
+  <!-- Theme toggle handler -->
+  <script is:inline>
+    (function() {
+      function wireToggle() {
+        var btn = document.getElementById('theme-toggle');
+        if (!btn) return;
+        btn.addEventListener('click', function() {
+          var current = document.documentElement.getAttribute('data-theme') || 'light';
+          var next = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('theme', next);
+          if (window.__setDeskSceneTheme) window.__setDeskSceneTheme(next);
+          if (window.__setAsciiTheme) window.__setAsciiTheme(next === 'dark' ? 1.0 : 0.0);
+        });
+      }
+      wireToggle();
+      document.addEventListener('astro:after-swap', function() {
+        setTimeout(wireToggle, 200);
+      });
+    })();
+  </script>
+
   <!-- Re-run islands after View Transition page swaps -->
   <script is:inline>
     document.addEventListener('astro:after-swap', function () {
@@ -139,6 +169,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       window.__audioBridgeInit = false;
       window.__ambientInit = false;
       window.__oliverInit = false;
+      // Re-apply theme
+      var t = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
       // Re-execute island scripts
       var islands = [
         '/islands/desk-scene.js', '/islands/ascii-bg.js',

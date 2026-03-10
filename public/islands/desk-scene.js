@@ -27,7 +27,8 @@
 
   // ── Palette ──
   var _ = 0;
-  var C = {
+  var sceneTheme = 'light'; // day = current palette, night = darkened
+  var C_DAY = {
     0:  'transparent',
     // walls
     1:  '#4a5a3a',   // olive wall
@@ -172,6 +173,132 @@
     112: '#8a6ab0',  // void lavender
     113: '#b8965a',  // void gold (accent)
   };
+
+  // Night palette — same room, darker, amber lamp glow, night window
+  var C_NIGHT = {};
+  (function buildNightPalette() {
+    // start with a copy of day
+    for (var k in C_DAY) C_NIGHT[k] = C_DAY[k];
+
+    // darken helper — shift hex toward black by factor (0=black, 1=original)
+    function dim(hex, factor) {
+      var r = parseInt(hex.slice(1,3),16);
+      var g = parseInt(hex.slice(3,5),16);
+      var b = parseInt(hex.slice(5,7),16);
+      r = Math.round(r * factor);
+      g = Math.round(g * factor);
+      b = Math.round(b * factor);
+      return '#' + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+    }
+    // warm tint — shift toward amber
+    function amber(hex, factor, warmth) {
+      var r = parseInt(hex.slice(1,3),16);
+      var g = parseInt(hex.slice(3,5),16);
+      var b = parseInt(hex.slice(5,7),16);
+      r = Math.min(255, Math.round(r * factor + warmth * 30));
+      g = Math.min(255, Math.round(g * factor + warmth * 15));
+      b = Math.round(b * factor * 0.7);
+      return '#' + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+    }
+
+    // walls — much darker, slight amber cast
+    C_NIGHT[1] = amber('#4a5a3a', 0.35, 0.4);
+    C_NIGHT[2] = amber('#3f4f32', 0.30, 0.3);
+    C_NIGHT[3] = amber('#354528', 0.25, 0.3);
+    // floor — dark, warm
+    C_NIGHT[4] = amber('#3a2a1a', 0.45, 0.3);
+    C_NIGHT[5] = amber('#2e2015', 0.40, 0.2);
+    C_NIGHT[6] = amber('#453220', 0.45, 0.3);
+    // baseboard
+    C_NIGHT[7] = '#0e0e0e';
+    C_NIGHT[8] = '#0a0a0a';
+    // desk — warm amber reflection
+    C_NIGHT[9]  = amber('#5c3d2e', 0.55, 0.5);
+    C_NIGHT[10] = amber('#4a3222', 0.45, 0.4);
+    C_NIGHT[11] = amber('#6b4a35', 0.55, 0.5);
+    C_NIGHT[12] = dim('#3d2818', 0.5);
+    // rug — darker
+    C_NIGHT[13] = dim('#6b2d3a', 0.5);
+    C_NIGHT[14] = dim('#7a3545', 0.5);
+    C_NIGHT[15] = dim('#5a2430', 0.45);
+    C_NIGHT[16] = dim('#4a1c26', 0.45);
+    // CRT — stays bright (it's a screen)
+    // ultrawide — stays bright
+    // chair — slightly darker
+    C_NIGHT[30] = '#0e0e0e';
+    C_NIGHT[31] = '#161616';
+    // bookshelf wood — amber-lit
+    C_NIGHT[34] = amber('#8a6a3a', 0.50, 0.4);
+    C_NIGHT[35] = amber('#5a4020', 0.45, 0.3);
+    C_NIGHT[36] = amber('#6b5030', 0.45, 0.3);
+    // book spines — dimmed
+    C_NIGHT[37] = dim('#6b2d3a', 0.55);
+    C_NIGHT[38] = dim('#2a3a4a', 0.55);
+    C_NIGHT[39] = dim('#3a4a2a', 0.55);
+    C_NIGHT[40] = dim('#d4c8a8', 0.50);
+    C_NIGHT[41] = dim('#5c3d2e', 0.55);
+    C_NIGHT[42] = dim('#8a3030', 0.55);
+    C_NIGHT[43] = dim('#2a2a3a', 0.55);
+    C_NIGHT[44] = dim('#c8b888', 0.50);
+    // speakers — darker
+    C_NIGHT[45] = '#0e0e0e';
+    C_NIGHT[46] = '#141414';
+    // plants — dimmed
+    C_NIGHT[50] = dim('#2d5a27', 0.45);
+    C_NIGHT[51] = dim('#4a7a3a', 0.45);
+    C_NIGHT[52] = dim('#5a8a4a', 0.45);
+    C_NIGHT[53] = dim('#6b4a2a', 0.50);
+    C_NIGHT[54] = dim('#5a3a1e', 0.50);
+    // 3D printer — dimmed
+    C_NIGHT[55] = '#181818';
+    C_NIGHT[56] = '#202020';
+    // lamp/pendant — these GLOW brighter at night (light sources)
+    C_NIGHT[64] = '#e8a040'; // lamp amber — brighter
+    C_NIGHT[65] = '#f0c878'; // lamp glow — brighter
+    C_NIGHT[67] = '#e8a040'; // pendant glow
+    C_NIGHT[68] = '#f0c878'; // pendant bright
+    // window — night sky
+    C_NIGHT[75] = '#0a1018'; // deep night
+    C_NIGHT[76] = '#141e30'; // moonlight blue
+    C_NIGHT[77] = '#1e2e48'; // lighter blue
+    // server — LEDs stay bright
+    // hi-fi — dimmed body, LEDs stay
+    C_NIGHT[82] = '#0e0e0e';
+    C_NIGHT[83] = '#141414';
+    // credenza — amber-lit
+    C_NIGHT[86] = amber('#5c3d2e', 0.50, 0.4);
+    C_NIGHT[87] = amber('#4a3222', 0.45, 0.3);
+    // wall art — dimmed
+    C_NIGHT[69] = dim('#5c3d2e', 0.5);
+    C_NIGHT[70] = dim('#6b2d3a', 0.5);
+    C_NIGHT[71] = dim('#d4c8a8', 0.45);
+    C_NIGHT[72] = '#0e0e0e';
+    C_NIGHT[73] = amber('#cc8844', 0.6, 0.3);
+    // desk accessories
+    C_NIGHT[59] = '#0e0e0e';
+    C_NIGHT[60] = '#161616';
+    C_NIGHT[61] = '#121212';
+    C_NIGHT[62] = '#181818';
+    // warm accent — glows at night
+    C_NIGHT[103] = '#e8a040';
+  })();
+
+  // active palette — mutable copy, starts as day
+  var C = {};
+  for (var ck in C_DAY) C[ck] = C_DAY[ck];
+
+  function setSceneTheme(theme) {
+    sceneTheme = theme;
+    // swap palette reference, keep dynamic vault slots
+    var base = theme === 'light' ? C_DAY : C_NIGHT;
+    for (var k in base) {
+      if (k >= 115 && k <= 123) continue; // skip dynamic vault colors
+      C[k] = base[k];
+    }
+    rgbCache = {};
+    render();
+  }
+  window.__setDeskSceneTheme = setSceneTheme;
 
   // ── Hex to RGB cache ──
   var rgbCache = {};
@@ -1200,10 +1327,11 @@
     if (!vaultOpen) return;
     var breath = Math.sin(vaultFrame * 0.04) * 0.3 + 0.7;
     var energy = window.__musicEnergy || 0;
-    var strength = (0.12 + energy * 0.15) * breath;
+    var nightBoost = sceneTheme === 'dark' ? 2.2 : 1.0;
+    var strength = (0.12 + energy * 0.15) * breath * nightBoost;
     var cr = portalGlowR, cg = portalGlowG, cb = portalGlowB;
     // glow radius extends outward from vault edges
-    var glowR = 18 + Math.round(energy * 8);
+    var glowR = (sceneTheme === 'dark' ? 28 : 18) + Math.round(energy * 8);
     var vcx = VX + VW / 2, vcy = VY + VH / 2;
     for (var gy = vcy - glowR; gy <= vcy + glowR; gy++) {
       for (var gx = vcx - glowR; gx <= vcx + glowR; gx++) {
@@ -1304,6 +1432,10 @@
       }
     }, 40);
   }
+
+  // ── Apply stored theme before first render ──
+  var storedTheme = localStorage.getItem('theme') || 'light';
+  if (storedTheme === 'dark') setSceneTheme('dark');
 
   // ── Initial render ──
   render();

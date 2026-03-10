@@ -5,6 +5,30 @@
 
 <div class="desk-scene-wrap" role="banner" aria-label="Alexander Campos">
   <canvas id="desk-scene" aria-hidden="true"></canvas>
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle day/night mode" type="button">
+    <svg class="theme-icon theme-icon--sun" width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <rect x="5" y="0" width="2" height="2" fill="currentColor"/>
+      <rect x="5" y="10" width="2" height="2" fill="currentColor"/>
+      <rect x="0" y="5" width="2" height="2" fill="currentColor"/>
+      <rect x="10" y="5" width="2" height="2" fill="currentColor"/>
+      <rect x="1" y="1" width="2" height="2" fill="currentColor"/>
+      <rect x="9" y="1" width="2" height="2" fill="currentColor"/>
+      <rect x="1" y="9" width="2" height="2" fill="currentColor"/>
+      <rect x="9" y="9" width="2" height="2" fill="currentColor"/>
+      <rect x="4" y="4" width="4" height="4" fill="currentColor"/>
+    </svg>
+    <svg class="theme-icon theme-icon--moon" width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <rect x="4" y="1" width="2" height="2" fill="currentColor"/>
+      <rect x="6" y="1" width="2" height="2" fill="currentColor"/>
+      <rect x="2" y="3" width="2" height="2" fill="currentColor"/>
+      <rect x="1" y="5" width="2" height="2" fill="currentColor"/>
+      <rect x="2" y="7" width="2" height="2" fill="currentColor"/>
+      <rect x="4" y="9" width="2" height="2" fill="currentColor"/>
+      <rect x="6" y="9" width="2" height="2" fill="currentColor"/>
+      <rect x="8" y="7" width="2" height="2" fill="currentColor"/>
+      <rect x="8" y="3" width="2" height="2" fill="currentColor"/>
+    </svg>
+  </button>
   <span class="ds-tooltip" id="ds-tooltip"></span>
 </div>
 
@@ -43,6 +67,31 @@
   .ds-tooltip.visible {
     opacity: 1;
   }
+
+  .theme-toggle {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    border: none;
+    padding: 4px;
+    z-index: 2;
+    color: var(--gold-accent);
+    opacity: 0.3;
+    transition: opacity 0.25s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .theme-toggle:hover { opacity: 0.9; }
+
+  /* day mode: show moon (click to go night), hide sun */
+  .theme-icon--moon { display: none; }
+  [data-theme="dark"] .theme-icon--sun { display: none; }
+  [data-theme="dark"] .theme-icon--moon { display: block; }
 
   @media (max-width: 480px) {
     .desk-scene-wrap {

@@ -980,58 +980,52 @@
   // ── Eames Aluminum Group desk chair (rear 3/4, facing 10 o'clock) ──
   // Left side closer to viewer — left arm visible dropping 90deg down
   // Right side recedes — foreshortened. Back brace crossbar visible.
-  var CHAIR_X = 122, CHAIR_Y = 68;
+  var CHAIR_X = 125, CHAIR_Y = 70;
   function drawChair() {
     var A = 32, S = 33, L = 30, H = 31;
 
-    // Eames Aluminum Group — front 3/4 left (matching reference photo)
-    // Thin chrome tube frame, ribbed leather, L-shaped armrests, 4-star base
+    // Eames Aluminum Group — side profile facing left (toward desk)
+    // This angle reads best at pixel scale: L-arm, gap, ribs all visible
 
-    // ── BACK — chrome frame with ribbed leather ──
-    // top rail
-    fillRect(CHAIR_X + 4, CHAIR_Y, 10, 1, A);
-    // left rail (near side — visible)
-    fillRect(CHAIR_X + 3, CHAIR_Y + 1, 1, 9, A);
-    fillRect(CHAIR_X + 2, CHAIR_Y + 2, 1, 7, S);     // shadow edge
-    // right rail (far side — thinner)
-    fillRect(CHAIR_X + 14, CHAIR_Y + 1, 1, 9, S);
-    // leather back with horizontal ribs
-    fillRect(CHAIR_X + 4, CHAIR_Y + 1, 10, 9, L);
-    fillRect(CHAIR_X + 4, CHAIR_Y + 2, 10, 1, H);    // rib 1
-    fillRect(CHAIR_X + 4, CHAIR_Y + 4, 10, 1, H);    // rib 2
-    fillRect(CHAIR_X + 4, CHAIR_Y + 6, 10, 1, H);    // rib 3
-    fillRect(CHAIR_X + 4, CHAIR_Y + 8, 10, 1, H);    // rib 4
-    // bottom rail of back
-    fillRect(CHAIR_X + 3, CHAIR_Y + 10, 12, 1, A);
+    // ── BACK — slight recline, chrome rail + ribbed leather ──
+    fillRect(CHAIR_X + 7, CHAIR_Y, 1, 1, A);          // top corner chrome
+    fillRect(CHAIR_X + 6, CHAIR_Y + 1, 1, 2, A);     // chrome rail (reclined angle)
+    fillRect(CHAIR_X + 5, CHAIR_Y + 3, 1, 3, A);     // chrome rail continued
+    fillRect(CHAIR_X + 4, CHAIR_Y + 6, 1, 3, A);     // chrome rail lower
+    fillRect(CHAIR_X + 8, CHAIR_Y + 1, 1, 8, A);     // rear chrome rail
+    fillRect(CHAIR_X + 9, CHAIR_Y + 2, 1, 6, S);     // rear rail shadow
+    // leather between rails
+    fillRect(CHAIR_X + 7, CHAIR_Y + 1, 1, 8, L);     // leather fill
+    // horizontal ribs
+    fillRect(CHAIR_X + 6, CHAIR_Y + 2, 2, 1, H);     // rib 1
+    fillRect(CHAIR_X + 5, CHAIR_Y + 4, 3, 1, H);     // rib 2
+    fillRect(CHAIR_X + 5, CHAIR_Y + 6, 3, 1, H);     // rib 3
+    fillRect(CHAIR_X + 4, CHAIR_Y + 8, 4, 1, H);     // rib 4
 
-    // ── ARMRESTS — thin chrome L-shape ──
-    // Left arm: horizontal bar from mid-back extending left, then drops to seat
-    fillRect(CHAIR_X, CHAIR_Y + 5, 3, 1, A);          // horizontal tube (extends left of back)
-    fillRect(CHAIR_X, CHAIR_Y + 6, 1, 7, A);          // vertical drop to seat level
-    fillRect(CHAIR_X - 1, CHAIR_Y + 6, 1, 5, S);     // arm shadow
-    // Right arm: foreshortened — just a short horizontal + drop
-    fillRect(CHAIR_X + 14, CHAIR_Y + 5, 2, 1, S);    // horizontal stub
-    fillRect(CHAIR_X + 15, CHAIR_Y + 6, 1, 6, S);    // vertical drop (dim)
+    // ── ARMREST — L-shape: horizontal forward from mid-back, drops to seat ──
+    fillRect(CHAIR_X + 1, CHAIR_Y + 5, 4, 1, A);     // horizontal arm extending forward (left)
+    fillRect(CHAIR_X, CHAIR_Y + 5, 1, 1, S);          // arm cap highlight
+    fillRect(CHAIR_X + 1, CHAIR_Y + 6, 1, 6, A);     // vertical drop
+    fillRect(CHAIR_X, CHAIR_Y + 6, 1, 5, S);          // drop shadow
 
-    // ── GAP between back and seat (open air — just arms visible) ──
+    // ── GAP — open air between back and seat (rows 9-10) ──
+    // Back-to-seat hinge chrome
+    fillRect(CHAIR_X + 4, CHAIR_Y + 9, 1, 2, A);     // hinge bracket
 
-    // ── SEAT — chrome frame with ribbed leather ──
-    fillRect(CHAIR_X + 1, CHAIR_Y + 13, 14, 1, A);   // top rail
-    fillRect(CHAIR_X + 2, CHAIR_Y + 14, 12, 3, L);   // leather
-    fillRect(CHAIR_X + 2, CHAIR_Y + 15, 12, 1, H);   // rib
-    fillRect(CHAIR_X + 1, CHAIR_Y + 17, 14, 1, A);   // bottom rail
+    // ── SEAT — horizontal, chrome frame + leather ──
+    fillRect(CHAIR_X + 2, CHAIR_Y + 11, 8, 1, A);    // front rail
+    fillRect(CHAIR_X + 2, CHAIR_Y + 12, 8, 2, L);    // leather
+    fillRect(CHAIR_X + 2, CHAIR_Y + 13, 8, 1, H);    // rib
+    fillRect(CHAIR_X + 2, CHAIR_Y + 14, 8, 1, A);    // rear rail
 
-    // ── PEDESTAL — single chrome column ──
-    fillRect(CHAIR_X + 7, CHAIR_Y + 18, 2, 2, A);
-    fillRect(CHAIR_X + 7, CHAIR_Y + 20, 2, 1, S);
+    // ── PEDESTAL ──
+    fillRect(CHAIR_X + 5, CHAIR_Y + 15, 2, 2, A);
+    fillRect(CHAIR_X + 5, CHAIR_Y + 17, 2, 1, S);
 
-    // ── 4-STAR BASE — flat aluminum legs ──
-    fillRect(CHAIR_X + 1, CHAIR_Y + 21, 14, 1, A);   // crossbar
-    // legs / casters
-    fillRect(CHAIR_X, CHAIR_Y + 22, 2, 1, S);         // left front
-    fillRect(CHAIR_X + 14, CHAIR_Y + 22, 2, 1, S);   // right front
-    fillRect(CHAIR_X + 4, CHAIR_Y + 22, 1, 1, S);    // left rear
-    fillRect(CHAIR_X + 11, CHAIR_Y + 22, 1, 1, S);   // right rear
+    // ── 4-STAR BASE ──
+    fillRect(CHAIR_X + 1, CHAIR_Y + 18, 10, 1, A);   // crossbar
+    fillRect(CHAIR_X, CHAIR_Y + 19, 2, 1, S);         // front caster
+    fillRect(CHAIR_X + 10, CHAIR_Y + 19, 2, 1, S);   // rear caster
   }
 
   // ── Subwoofer under desk ──

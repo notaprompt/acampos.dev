@@ -1434,7 +1434,7 @@
   }
 
   // ── Apply stored theme before first render ──
-  var storedTheme = localStorage.getItem('theme') || 'light';
+  var storedTheme = localStorage.getItem('theme') || 'dark';
   if (storedTheme === 'dark') setSceneTheme('dark');
 
   // ── Initial render ──

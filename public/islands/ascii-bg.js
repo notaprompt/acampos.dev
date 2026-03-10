@@ -170,7 +170,7 @@
   const uCellH = gl.getUniformLocation(program, 'u_cellH');
   const uAudioLevel = gl.getUniformLocation(program, 'u_audioLevel');
   const uTheme = gl.getUniformLocation(program, 'u_theme');
-  var asciiThemeVal = (localStorage.getItem('theme') || 'light') === 'dark' ? 1.0 : 0.0;
+  var asciiThemeVal = (localStorage.getItem('theme') || 'dark') === 'dark' ? 1.0 : 0.0;
   window.__setAsciiTheme = function(v) { asciiThemeVal = v; };
   const uCharAtlas = gl.getUniformLocation(program, 'u_charAtlas');
   const uRdField = gl.getUniformLocation(program, 'u_rdField');

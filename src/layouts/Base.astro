@@ -42,7 +42,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <!-- Blocking theme init — prevents flash of wrong theme -->
   <script is:inline>
     (function(){
-      var t = localStorage.getItem('theme') || 'light';
+      var t = localStorage.getItem('theme') || 'dark';
       document.documentElement.setAttribute('data-theme', t);
     })();
   </script>
@@ -170,7 +170,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       window.__ambientInit = false;
       window.__oliverInit = false;
       // Re-apply theme
-      var t = localStorage.getItem('theme') || 'light';
+      var t = localStorage.getItem('theme') || 'dark';
       document.documentElement.setAttribute('data-theme', t);
       // Re-execute island scripts
       var islands = [

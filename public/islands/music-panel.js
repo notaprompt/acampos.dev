@@ -1256,7 +1256,7 @@
     var vpy = h / 2 + chaseY * h * 0.12 + bendY1 * h * 0.05;
 
     // ═══ LAYER 1: INFINITE HALL — receding rectangles ═══
-    var rectCount = 36;
+    var rectCount = 18;
     for (var ri = 0; ri < rectCount; ri++) {
       // z cycles forward continuously — each rect has a depth slot
       var zRaw = ((ri / rectCount) + hallZ) % 1;
@@ -1294,11 +1294,11 @@
       if (sweepDist > 0.5) sweepDist = 1 - sweepDist;
       var sweepBoost = Math.max(0, 1 - sweepDist * 8) * (0.4 + sTotal * 0.3);
 
-      // Color — depth-mapped, flash-boosted on hits
-      var rectAlpha = (0.2 + fv * 0.45 + sweepBoost + flashEnergy * 0.4) * (0.3 + z * 0.7);
+      // Color — thinner, more transparent, breathes
+      var rectAlpha = (0.1 + fv * 0.25 + sweepBoost * 0.5 + flashEnergy * 0.2) * (0.3 + z * 0.7);
       var colT = (z + palBlend) % 1;
-      ctx.strokeStyle = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 1.0));
-      ctx.lineWidth = 0.5 + z * 2.5 + fv * 1.5 + sweepBoost * 2 + flashEnergy * 2;
+      ctx.strokeStyle = lerpColorA(colA, colB, colT, Math.min(rectAlpha, 0.7));
+      ctx.lineWidth = 0.4 + z * 1.5 + fv * 0.8 + sweepBoost + flashEnergy;
 
       // Draw warped rectangle — not a perfect rect, audio bends it
       ctx.beginPath();
@@ -1309,16 +1309,16 @@
       ctx.closePath();
       ctx.stroke();
 
-      // Glow on close / loud rects — amplified by flash energy
-      if (z > 0.3 && (fv > 0.3 || flashEnergy > 0.2)) {
-        ctx.strokeStyle = lerpColorA(colA, colB, colT, (fv + flashEnergy * 0.5) * 0.18);
-        ctx.lineWidth = 3 + z * 6 + flashEnergy * 8;
+      // Glow on close / loud rects — subtle
+      if (z > 0.4 && flashEnergy > 0.3) {
+        ctx.strokeStyle = lerpColorA(colA, colB, colT, flashEnergy * 0.1);
+        ctx.lineWidth = 2 + z * 3 + flashEnergy * 4;
         ctx.stroke();
       }
     }
 
     // ═══ LAYER 2: VERTICAL COLUMNS — pillars passing by ═══
-    var colCount = 12;
+    var colCount = 6;
     for (var ci = 0; ci < colCount; ci++) {
       var cz = ((ci / colCount) + hallZ * 1.3) % 1;
       cz = cz * cz;
@@ -1468,7 +1468,7 @@
       { genX: true, ey: 0, colShift: 0.5 },
       { genX: true, ey: h, colShift: 0.75 },
     ];
-    var wallSeams = 3;
+    var wallSeams = 2;
     for (var wi = 0; wi < wallDefs.length; wi++) {
       var wd = wallDefs[wi];
       for (var si = 0; si < wallSeams; si++) {
@@ -1548,7 +1548,7 @@
     ctx.fillRect(0, 0, w, h);
 
     // ═══ LAYER 5: FLOOR GRID — perspective grid beneath ═══
-    var gridLines = 10;
+    var gridLines = 5;
     for (var gi = 0; gi < gridLines; gi++) {
       var gz = ((gi / gridLines) + hallZ * 1.5) % 1;
       gz = gz * gz;

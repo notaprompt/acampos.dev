@@ -1535,6 +1535,18 @@
     }
     ctx.restore();
 
+    // ═══ VANISHING POINT — tiny black dot sells infinite depth ═══
+    var vpDotR = Math.min(w, h) * 0.035;
+    var vpGrad = ctx.createRadialGradient(vpx, vpy, 0, vpx, vpy, vpDotR);
+    vpGrad.addColorStop(0, 'rgba(0,0,0,0.9)');
+    vpGrad.addColorStop(0.3, 'rgba(0,0,0,0.6)');
+    vpGrad.addColorStop(0.7, 'rgba(0,0,0,0.15)');
+    vpGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = vpGrad;
+    ctx.beginPath();
+    ctx.arc(vpx, vpy, vpDotR, 0, Math.PI * 2);
+    ctx.fill();
+
     // ═══ LAYER 5: FLOOR GRID — more lines = stronger perspective ═══
     var gridLines = 14;
     for (var gi = 0; gi < gridLines; gi++) {

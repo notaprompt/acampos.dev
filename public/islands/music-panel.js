@@ -1264,17 +1264,6 @@
     var vpx = w / 2 + chaseX * w * 0.15 + bendX1 * w * 0.06;
     var vpy = h / 2 + chaseY * h * 0.12 + bendY1 * h * 0.05;
 
-    // ═══ VANISHING POINT — underneath layer, only visible through gaps ═══
-    var vpDotR = Math.min(w, h) * 0.018;
-    var vpGrad = ctx.createRadialGradient(vpx, vpy, 0, vpx, vpy, vpDotR);
-    vpGrad.addColorStop(0, 'rgba(0,0,0,0.5)');
-    vpGrad.addColorStop(0.5, 'rgba(0,0,0,0.2)');
-    vpGrad.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = vpGrad;
-    ctx.beginPath();
-    ctx.arc(vpx, vpy, vpDotR, 0, Math.PI * 2);
-    ctx.fill();
-
     // ═══ LAYER 1: INFINITE HALL — receding rectangles ═══
     // OPTICAL ILLUSION: chromatic depth — warm near, cool far
     // Human eye focuses red wavelengths in front of blue — literally looks closer

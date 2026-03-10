@@ -986,7 +986,7 @@
 
   // Object pool — placed on walls at random depths
   var wallObjects = [];
-  var wallObjCount = 5;
+  var wallObjCount = 0;
   function initWallObj() {
     return {
       type: wallObjKeys[Math.floor(Math.random() * wallObjKeys.length)],

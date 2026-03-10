@@ -1557,20 +1557,6 @@
       }
     }
 
-    // ═══ LAYER 3e: BLACK HOLE — at VP where all lines converge ═══
-    // Outer fade — wide enough to swallow feedback ghost trail
-    var bpX = vpx;
-    var bpY = vpy;
-    var bpR = Math.min(w, h) * 0.18;
-    var bpGrad = ctx.createRadialGradient(bpX, bpY, 0, bpX, bpY, bpR);
-    bpGrad.addColorStop(0, 'rgba(0,0,0,1)');
-    bpGrad.addColorStop(0.08, 'rgba(0,0,0,0.95)');
-    bpGrad.addColorStop(0.2, 'rgba(0,0,0,0.5)');
-    bpGrad.addColorStop(0.45, 'rgba(0,0,0,0.1)');
-    bpGrad.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = bpGrad;
-    ctx.fillRect(0, 0, w, h);
-
     // ═══ LAYER 5: FLOOR GRID — perspective grid beneath ═══
     var gridLines = 5;
     for (var gi = 0; gi < gridLines; gi++) {

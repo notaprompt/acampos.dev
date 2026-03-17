@@ -3,7 +3,7 @@ title: "MCP Memory Server"
 tagline: "The memory primitive — strength decay, retrieval reinforcement, local-first storage"
 status: "active"
 stack: ["TypeScript", "MCP Protocol", "SQLite", "MIT License"]
-repo: "https://github.com/notaprompt"
+repo: "https://github.com/notaprompt/ForgeFrame"
 order: 3
 ---
 
@@ -27,12 +27,12 @@ Storage is SQLite — single-file, portable, zero-configuration. A memory server
 
 ## Limitations
 
-- Search is keyword-based (FTS5), not semantic embedding. (yet)
+- Semantic search via local embeddings (Ollama) with FTS5 keyword fallback when the embedder is unavailable.
 - The decay model is simple exponential. Human memory consolidation is more complex (sleep-dependent, emotion-weighted, context-dependent). This is a useful approximation, not a faithful model.
-- No built-in encryption. Sovereign storage means the user owns the file, but the file is plaintext SQLite. Encryption at rest is the user's responsibility.
+- No built-in encryption. Local storage means the user owns the file, but the file is plaintext SQLite. Encryption at rest is the user's responsibility.
 
 ## Learnings
 
-The most important design decision was what to leave out. Every feature request -- vector embeddings, graph relationships, encryption, multi-user sync -- would have made it more capable and less useful as a primitive. A primitive that does one thing well gets composed into systems. A server that does everything gets replaced. I have to keep reminding myself of this.
+The most important design decision was what to leave out. Every feature request -- graph relationships, encryption, multi-user sync -- would have made it more capable and less useful as a primitive. Vector embeddings earned their way in because they don't change the interface -- search still takes text and returns memories. A primitive that does one thing well gets composed into systems. A server that does everything gets replaced. I have to keep reminding myself of this.
 
 MCP taught me the difference between tools and intercept. MCP is excellent for exposing capabilities. It is not designed for observing conversations. Both are necessary for local control, but they're different mechanisms. That distinction shaped all of ForgeFrame's architecture.

@@ -3,7 +3,7 @@ title: "ForgeFrame"
 tagline: "Local intelligence infrastructure — routing, memory, provenance"
 status: "active"
 stack: ["TypeScript", "Node.js", "MCP Protocol", "AGPL/MIT"]
-repo: "https://github.com/notaprompt"
+repo: "https://github.com/notaprompt/ForgeFrame"
 order: 2
 ---
 
@@ -13,9 +13,10 @@ Guardian's routing, memory, and session management extracted into standalone inf
 
 ## Process
 
-Monorepo with three packages: `@forgeframe/memory` (MIT), `@forgeframe/core` (AGPL), and vertical configurations for domain-specific deployments.
+Monorepo with four packages: `@forgeframe/memory` (MIT), `@forgeframe/core` (AGPL), `@forgeframe/server` (MIT), and `@forgeframe/proxy` (AGPL).
 
 ```
+L4  ForgeFrame Proxy (scrub, inject, log)   AGPL
 L3  ForgeFrame Core (routing, sessions)     AGPL
 L2  MCP Memory Server (the primitive)       MIT
 L1  MCP Protocol (Anthropic's standard)     OPEN
@@ -29,7 +30,7 @@ L1  MCP Protocol (Anthropic's standard)     OPEN
 
 ## Limitations
 
-- Proxy is architecturally designed but not production-hardened.
+- Proxy has 63 tests and handles scrubbing, rehydration, and latency instrumentation, but has not been load-tested at scale.
 - Enterprise vertical configurations exist as domain knowledge, not shipped code.
 - AGPL core creates friction for some enterprise adopters. Intentional, but still friction.
 

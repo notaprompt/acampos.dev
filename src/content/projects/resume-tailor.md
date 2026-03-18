@@ -4,7 +4,7 @@ tagline: "Upload a resume, paste a job description, get three tailored versions 
 status: "shipped"
 stack: ["Next.js", "TypeScript", "Claude API", "Stripe", "React PDF"]
 repo: "https://github.com/notaprompt/resume-tailor"
-demo: "https://resume-tailor.vercel.app"
+demo: "https://resume-tailor-gilt.vercel.app"
 order: 6
 ---
 

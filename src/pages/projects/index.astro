@@ -3,6 +3,7 @@ import Page from '../../layouts/Page.astro';
 import { getCollection } from 'astro:content';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const micro = (await getCollection('micro')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <Page title="projects -- alexander campos" description="Guardian, ForgeFrame, MCP Memory Server, Resonance, Cipher.">
@@ -30,6 +31,33 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
         </a>
       ))}
     </div>
+
+    {micro.length > 0 && (
+      <div class="micro-section">
+        <h2 class="micro-heading">Micro</h2>
+        <p class="micro-desc">Small tools. Single-purpose. Ship and forget.</p>
+        <div class="micro-list">
+          {micro.map(m => (
+            <div class="micro-card">
+              <div class="micro-header">
+                <h3>{m.data.title}</h3>
+                <span class={`status status-${m.data.status}`}>{m.data.status}</span>
+              </div>
+              <p class="micro-tagline">{m.data.tagline}</p>
+              <div class="micro-links">
+                {m.data.repo && <a href={m.data.repo} class="micro-link">repo</a>}
+                {m.data.download && <a href={m.data.download} class="micro-link">download</a>}
+              </div>
+              <div class="project-stack">
+                {m.data.stack.map(tech => (
+                  <span class="tech">{tech}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
   </article>
 
   <script is:inline>
@@ -160,6 +188,76 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
     background: var(--depth-2);
     padding: 0.15em 0.4em;
     border: 1px solid var(--white-08);
+  }
+
+  .micro-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--white-08);
+  }
+
+  .micro-heading {
+    font-size: 1rem;
+    color: var(--white-45);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .micro-desc {
+    font-size: 0.8rem;
+    color: var(--white-30);
+    margin-bottom: 1.25rem;
+  }
+
+  .micro-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .micro-card {
+    padding: 1rem;
+    background: var(--depth-1);
+    border: 1px solid var(--white-08);
+  }
+
+  .micro-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .micro-header h3 {
+    font-size: 0.95rem;
+    margin: 0;
+    color: var(--glow);
+  }
+
+  .micro-tagline {
+    color: var(--white-45);
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .micro-links {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .micro-link {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--gold-accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+
+  .micro-link:hover {
+    border-bottom-color: var(--gold-accent);
   }
 
 </style>

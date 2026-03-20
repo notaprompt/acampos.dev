@@ -14,4 +14,17 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { projects };
+const micro = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    tagline: z.string(),
+    status: z.enum(['active', 'shipped', 'concept']),
+    stack: z.array(z.string()),
+    download: z.string().optional(),
+    repo: z.string().optional(),
+    order: z.number(),
+  }),
+});
+
+export const collections = { projects, micro };

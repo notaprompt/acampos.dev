@@ -1,6 +1,6 @@
 ---
 title: "Voice Widget"
-tagline: "Punk rock transcription. Click lips, speak, text on clipboard. Local whisper, sovereign."
+tagline: "On-device transcription. Click lips, speak, text on clipboard. Audio never saved."
 status: "shipped"
 stack: ["Swift", "whisper.cpp", "macOS"]
 repo: "https://github.com/notaprompt/voice-widget"

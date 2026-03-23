@@ -8,7 +8,17 @@
 
   window.__toggleAmbient = async function () {
     if (!started) {
-      const Tone = await import('tone');
+      // Load Tone.js from CDN if not already loaded
+      if (!window.Tone) {
+        await new Promise(function (resolve, reject) {
+          var s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/tone@15.1.22/build/Tone.min.js';
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+      var Tone = window.Tone;
       await Tone.start();
 
       reverb = new Tone.Reverb({ decay: 8, wet: 0.7 }).toDestination();

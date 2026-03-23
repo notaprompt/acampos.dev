@@ -58,5 +58,11 @@
     "title": "l'histoire de ta vie",
     "url": "/audio/lhistoire-de-ta-vie.mp3",
     "profile": { "hitThresh": 0.03, "bendAmp": 1.6, "steerSens": 2.2, "midSnap": 3.0, "flipThresh": 0.6, "smoothing": 0.6 }
+  },
+  {
+    "artist": "54 Ultra",
+    "title": "Heaven Knows",
+    "url": "/audio/heaven-knows.mp3",
+    "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.65 }
   }
 ]

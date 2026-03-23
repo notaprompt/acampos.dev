@@ -100,11 +100,18 @@
     tryAutoplay();
   }
 
-  fetch('/playlist.json')
-    .then(function(r) { return r.json(); })
+  // Fetch from API (DB-backed), fall back to static JSON, then hardcoded
+  fetch('/api/playlist')
+    .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
     .then(onPlaylistLoaded)
     .catch(function() {
-      // Fallback — try hardcoded tracks
+      // API down — try static file
+      return fetch('/playlist.json')
+        .then(function(r) { return r.json(); })
+        .then(onPlaylistLoaded);
+    })
+    .catch(function() {
+      // Both failed — hardcoded fallback
       onPlaylistLoaded([
         { artist: 'Shigeo Sekito', title: 'the word II', url: '/audio/the-word-ii.mp3',
           profile: { hitThresh: 0.08, bendAmp: 1.0, steerSens: 1.0, midSnap: 1.0, flipThresh: 0.5, smoothing: 0.8 } },

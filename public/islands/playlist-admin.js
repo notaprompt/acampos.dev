@@ -1,14 +1,15 @@
 /**
  * Hidden playlist admin — triggered by double-clicking the hifi in the desk scene.
- * Password-gated, manages /playlist.json, generates download for committing.
+ * Password-gated. Reads/writes to /api/playlist (Neon DB-backed).
  */
 (function () {
   'use strict';
   if (window.__playlistAdmin) return;
 
-  var HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // sha256 of "admin"
+  var HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
   var overlay = null;
   var authenticated = false;
+  var passwordRaw = '';
   var playlist = [];
 
   var DEFAULT_PROFILE = {
@@ -21,6 +22,31 @@
     var hash = await crypto.subtle.digest('SHA-256', buf);
     var arr = new Uint8Array(hash);
     return Array.from(arr).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+  }
+
+  // Save entire playlist to API
+  async function saveToAPI() {
+    var hash = await sha256(passwordRaw);
+    try {
+      await fetch('/api/playlist', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-hash': hash },
+        body: JSON.stringify(playlist),
+      });
+      flash('saved', '#5BF29B');
+    } catch (e) {
+      flash('save failed', '#c75050');
+    }
+  }
+
+  function flash(msg, color) {
+    var list = document.getElementById('pa-list');
+    if (!list) return;
+    var el = document.createElement('div');
+    el.textContent = msg;
+    el.style.cssText = 'font-size:9px;color:' + color + ';opacity:0.6;padding:4px 0;text-align:center;';
+    list.prepend(el);
+    setTimeout(function () { if (el.parentNode) el.remove(); }, 1500);
   }
 
   function createOverlay() {
@@ -45,31 +71,21 @@
           '<input id="pa-url" placeholder="/audio/filename.mp3" style="width:100%;background:#0C0C0C;border:1px solid rgba(232,220,200,0.09);color:#E8DCC8;padding:6px 10px;font-family:inherit;font-size:11px;margin-bottom:8px;outline:none;" />' +
           '<button id="pa-add" style="background:#b8965a;color:#050505;border:none;padding:6px 16px;font-family:inherit;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;">add</button>' +
         '</div>' +
-        '<div style="margin-top:16px;display:flex;gap:8px;">' +
-          '<button id="pa-download" style="flex:1;background:none;border:1px solid rgba(232,220,200,0.15);color:#E8DCC8;padding:8px;font-family:inherit;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;opacity:0.6;">download playlist.json</button>' +
-          '<button id="pa-reload" style="background:none;border:1px solid rgba(232,220,200,0.09);color:#E8DCC8;padding:8px 12px;font-family:inherit;font-size:10px;cursor:pointer;opacity:0.4;">reload</button>' +
+        '<div style="margin-top:16px;">' +
+          '<button id="pa-reload" style="width:100%;background:none;border:1px solid rgba(232,220,200,0.09);color:#E8DCC8;padding:8px;font-family:inherit;font-size:10px;cursor:pointer;opacity:0.4;">reload from server</button>' +
         '</div>' +
       '</div>' +
     '</div>';
     document.body.appendChild(overlay);
 
-    // Close
     document.getElementById('pa-close').addEventListener('click', hide);
     overlay.addEventListener('click', function (e) { if (e.target === overlay) hide(); });
 
-    // Auth
-    var passInput = document.getElementById('pa-pass');
-    passInput.addEventListener('keydown', function (e) {
+    document.getElementById('pa-pass').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') tryAuth();
     });
 
-    // Add track
     document.getElementById('pa-add').addEventListener('click', addTrack);
-
-    // Download
-    document.getElementById('pa-download').addEventListener('click', downloadPlaylist);
-
-    // Reload
     document.getElementById('pa-reload').addEventListener('click', loadPlaylist);
   }
 
@@ -78,6 +94,7 @@
     var hash = await sha256(pass);
     if (hash === HASH) {
       authenticated = true;
+      passwordRaw = pass;
       document.getElementById('pa-auth').style.display = 'none';
       document.getElementById('pa-content').style.display = 'block';
       loadPlaylist();
@@ -90,10 +107,15 @@
 
   async function loadPlaylist() {
     try {
-      var res = await fetch('/playlist.json?t=' + Date.now());
+      var res = await fetch('/api/playlist');
       playlist = await res.json();
     } catch (e) {
-      playlist = [];
+      try {
+        var res2 = await fetch('/playlist.json?t=' + Date.now());
+        playlist = await res2.json();
+      } catch (e2) {
+        playlist = [];
+      }
     }
     renderList();
   }
@@ -119,7 +141,6 @@
     });
     list.innerHTML = html;
 
-    // Wire events
     list.querySelectorAll('[data-up]').forEach(function (btn) {
       btn.addEventListener('click', function () { moveTrack(parseInt(btn.dataset.up), -1); });
     });
@@ -138,21 +159,13 @@
     playlist[idx] = playlist[newIdx];
     playlist[newIdx] = tmp;
     renderList();
+    saveToAPI();
   }
 
   function deleteTrack(idx) {
-    var name = playlist[idx] ? playlist[idx].title : '';
     playlist.splice(idx, 1);
     renderList();
-    // Flash confirmation
-    var list = document.getElementById('pa-list');
-    if (list) {
-      var msg = document.createElement('div');
-      msg.textContent = 'removed ' + name;
-      msg.style.cssText = 'font-size:9px;color:#c75050;opacity:0.6;padding:4px 0;text-align:center;';
-      list.prepend(msg);
-      setTimeout(function() { if (msg.parentNode) msg.remove(); }, 1500);
-    }
+    saveToAPI();
   }
 
   function addTrack() {
@@ -170,17 +183,7 @@
     document.getElementById('pa-title').value = '';
     document.getElementById('pa-url').value = '';
     renderList();
-  }
-
-  function downloadPlaylist() {
-    var json = JSON.stringify(playlist, null, 2);
-    var blob = new Blob([json], { type: 'application/json' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'playlist.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    saveToAPI();
   }
 
   function esc(str) {
@@ -207,11 +210,8 @@
   }
 
   function toggle() {
-    if (!overlay || overlay.style.display === 'none') {
-      show();
-    } else {
-      hide();
-    }
+    if (!overlay || overlay.style.display === 'none') show();
+    else hide();
   }
 
   window.__playlistAdmin = { toggle: toggle, show: show, hide: hide };

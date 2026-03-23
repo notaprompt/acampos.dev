@@ -28,30 +28,39 @@
   var playlistReady = false;
   var autoplayTriggered = false;
 
-  // Autoplay: after first user interaction anywhere on the page,
-  // wait 5 seconds then start music. Browsers require a gesture
-  // before allowing audio playback.
-  function setupAutoplay() {
-    function onInteraction() {
-      if (autoplayTriggered) return;
+  // Autoplay: start a 5s timer on page load. When it fires, wait
+  // for the next user interaction then play immediately. If the user
+  // interacts before the 5s, play right when the timer completes.
+  var autoplayReady = false;   // 5s elapsed
+  var userGestured = false;    // user has interacted
+
+  function tryAutoplay() {
+    if (autoplayTriggered || isPlaying) return;
+    if (autoplayReady && userGestured && PLAYLIST.length > 0) {
       autoplayTriggered = true;
-      document.removeEventListener('click', onInteraction);
-      document.removeEventListener('scroll', onInteraction);
-      document.removeEventListener('keydown', onInteraction);
-      document.removeEventListener('touchstart', onInteraction);
-      setTimeout(function () {
-        if (!isPlaying && PLAYLIST.length > 0) {
-          if (!audio.src || audio.src === window.location.href) loadTrack(currentIndex);
-          playTrack();
-        }
-      }, 5000);
+      if (!audio.src || audio.src === window.location.href) loadTrack(currentIndex);
+      playTrack();
     }
-    document.addEventListener('click', onInteraction);
-    document.addEventListener('scroll', onInteraction);
-    document.addEventListener('keydown', onInteraction);
-    document.addEventListener('touchstart', onInteraction);
   }
-  setupAutoplay();
+
+  setTimeout(function () {
+    autoplayReady = true;
+    tryAutoplay();
+  }, 5000);
+
+  function onGesture() {
+    if (userGestured) return;
+    userGestured = true;
+    document.removeEventListener('click', onGesture);
+    document.removeEventListener('scroll', onGesture);
+    document.removeEventListener('keydown', onGesture);
+    document.removeEventListener('touchstart', onGesture);
+    tryAutoplay();
+  }
+  document.addEventListener('click', onGesture);
+  document.addEventListener('scroll', onGesture);
+  document.addEventListener('keydown', onGesture);
+  document.addEventListener('touchstart', onGesture);
 
   // Fetch playlist at runtime — callbacks fire after DOM is built
   function onPlaylistLoaded(data) {

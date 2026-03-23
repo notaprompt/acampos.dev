@@ -1266,27 +1266,27 @@
   drawDeskPlant();
   drawSignature();
 
-  // ── Guestbook — small open book on the rug floor ──
+  // ── Guestbook — closed black book on the floor, lower-right ──
   (function () {
-    var GBX = 50, GBY = 90; // bottom-left area of rug
-    // Left page (slightly warm paper)
-    fillRect(GBX, GBY, 5, 6, 9);       // left page — warm white
-    fillRect(GBX, GBY, 1, 6, 5);       // spine shadow
-    // Right page
-    fillRect(GBX + 5, GBY, 5, 6, 9);   // right page
-    fillRect(GBX + 9, GBY, 1, 6, 5);   // right edge shadow
-    // Spine
-    fillRect(GBX + 4, GBY, 2, 6, 87);  // dark spine
-    // "Writing" lines on pages
-    fillRect(GBX + 1, GBY + 1, 3, 0.5, 5);
-    fillRect(GBX + 1, GBY + 3, 3, 0.5, 5);
-    fillRect(GBX + 6, GBY + 1, 3, 0.5, 5);
-    fillRect(GBX + 6, GBY + 3, 3, 0.5, 5);
-    // Small pen next to book
-    fillRect(GBX + 11, GBY + 2, 1, 4, 87);
-    fillRect(GBX + 11, GBY + 1, 1, 1, 47);  // pen tip
+    var GBX = 190, GBY = 93; // lower-right floor, past the rug edge
+    var W = 8, H = 5;
 
-    registerObject('guestbook', GBX - 1, GBY - 1, 13, 8, '/guestbook', 'sign the guestbook', false);
+    // Book body — dark, like the shelf books
+    fillRect(GBX, GBY, W, H, 43);        // dark blue-black cover
+    fillRect(GBX, GBY, W, 1, 38);        // top edge highlight (navy)
+    fillRect(GBX, GBY, 1, H, 38);        // spine (navy, slightly lighter)
+    fillRect(GBX + 1, GBY + H - 1, W - 1, 1, 5); // bottom shadow
+
+    // Page edges visible on the right side
+    fillRect(GBX + W - 1, GBY + 1, 1, H - 2, 9); // cream page edges
+
+    // Small sticky note on the cover — warm yellow with "gb"
+    fillRect(GBX + 2, GBY + 1, 4, 3, 44);   // tan/cream sticky
+    // Tiny "g" and "b" dots to suggest text (1px each)
+    scene[(GBY + 2) * COLS + (GBX + 3)] = 87; // dark pixel for "g"
+    scene[(GBY + 2) * COLS + (GBX + 5)] = 87; // dark pixel for "b"
+
+    registerObject('guestbook', GBX - 1, GBY - 1, W + 2, H + 2, '/guestbook', 'sign the guestbook', false);
   })();
 
   // ── Link speaker objects to music panel toggle ──

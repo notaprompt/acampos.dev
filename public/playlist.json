@@ -64,5 +64,23 @@
     "title": "Heaven Knows",
     "url": "/audio/heaven-knows.mp3",
     "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.65 }
+  },
+  {
+    "artist": "Mojave",
+    "title": "Love Songs on the Radio",
+    "url": "/audio/love-songs-on-the-radio.mp3",
+    "profile": { "hitThresh": 0.04, "bendAmp": 1.3, "steerSens": 1.6, "midSnap": 2.0, "flipThresh": 0.55, "smoothing": 0.7 }
+  },
+  {
+    "artist": "Dean Blunt",
+    "title": "100",
+    "url": "/audio/100.mp3",
+    "profile": { "hitThresh": 0.03, "bendAmp": 1.6, "steerSens": 2.2, "midSnap": 3.0, "flipThresh": 0.6, "smoothing": 0.58 }
+  },
+  {
+    "artist": "Latin Mafia",
+    "title": "Siento Que Merezco Mas",
+    "url": "/audio/siento-que-merezco-mas.mp3",
+    "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.65 }
   }
 ]

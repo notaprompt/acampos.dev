@@ -1,19 +1,26 @@
-// Hit counter — localStorage-based odometer
+// Hit counter — real unique-IP counter via server API
 (function () {
-  const KEY = 'campos-site-hits';
-  const DIGITS = 6;
-
-  let count = parseInt(localStorage.getItem(KEY) || '0', 10);
-  count++;
-  localStorage.setItem(KEY, String(count));
-
-  const el = document.getElementById('hit-digits');
+  var el = document.getElementById('hit-digits');
   if (!el) return;
+  var DIGITS = 6;
 
-  const str = String(count).padStart(DIGITS, '0');
-  const spans = el.querySelectorAll('.digit');
-
-  for (let i = 0; i < spans.length && i < str.length; i++) {
-    spans[i].textContent = str[i];
+  function render(count) {
+    var str = String(count).padStart(DIGITS, '0');
+    var spans = el.querySelectorAll('.digit');
+    for (var i = 0; i < spans.length && i < str.length; i++) {
+      spans[i].textContent = str[i];
+    }
   }
+
+  // Register this visit + get total count
+  fetch('/api/hits', { method: 'POST' })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data.count != null) render(data.count);
+    })
+    .catch(function () {
+      // Fallback: show cached count from localStorage
+      var cached = localStorage.getItem('campos-hits-cache');
+      if (cached) render(parseInt(cached, 10));
+    });
 })();

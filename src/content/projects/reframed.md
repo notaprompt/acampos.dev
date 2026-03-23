@@ -38,6 +38,7 @@ Upload a resume (paste, file, or URL scrape), paste a job description. The syste
 
 - Resume parser handles most formats but unusual layouts can break extraction.
 - Multi-model routing means each step takes a few seconds. The full flow is not instant.
+- Product works. Distribution is the bottleneck.
 
 ## Learnings
 

@@ -6,10 +6,16 @@
     "profile": { "hitThresh": 0.08, "bendAmp": 1.0, "steerSens": 1.0, "midSnap": 1.0, "flipThresh": 0.5, "smoothing": 0.8 }
   },
   {
-    "artist": "Aphex Twin",
-    "title": "Avril 14th",
-    "url": "/audio/avril-14th.mp3",
-    "profile": { "hitThresh": 0.02, "bendAmp": 1.8, "steerSens": 2.5, "midSnap": 4.0, "flipThresh": 0.6, "smoothing": 0.55 }
+    "artist": "Piero Piccioni",
+    "title": "Easy Lovers",
+    "url": "/audio/easy-lovers.mp3",
+    "profile": { "hitThresh": 0.05, "bendAmp": 1.2, "steerSens": 1.5, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.7 }
+  },
+  {
+    "artist": "Maison Music",
+    "title": "l'histoire de ta vie",
+    "url": "/audio/lhistoire-de-ta-vie.mp3",
+    "profile": { "hitThresh": 0.03, "bendAmp": 1.6, "steerSens": 2.2, "midSnap": 3.0, "flipThresh": 0.6, "smoothing": 0.6 }
   },
   {
     "artist": "Nick Drake",
@@ -18,16 +24,10 @@
     "profile": { "hitThresh": 0.03, "bendAmp": 1.6, "steerSens": 2.0, "midSnap": 3.5, "flipThresh": 0.55, "smoothing": 0.65 }
   },
   {
-    "artist": "A Flock of Seagulls",
-    "title": "Space Age Love Song",
-    "url": "/audio/space-age-love-song.mp3",
-    "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.8, "flipThresh": 0.55, "smoothing": 0.6 }
-  },
-  {
-    "artist": "Piero Piccioni",
-    "title": "Easy Lovers",
-    "url": "/audio/easy-lovers.mp3",
-    "profile": { "hitThresh": 0.05, "bendAmp": 1.2, "steerSens": 1.5, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.7 }
+    "artist": "Blood Orange",
+    "title": "Wish",
+    "url": "/audio/wish.mp3",
+    "profile": { "hitThresh": 0.04, "bendAmp": 1.3, "steerSens": 1.6, "midSnap": 2.0, "flipThresh": 0.55, "smoothing": 0.7 }
   },
   {
     "artist": "Mitu",
@@ -42,28 +42,22 @@
     "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.65 }
   },
   {
-    "artist": "Yves Tumor",
-    "title": "Limerence",
-    "url": "/audio/limerence.mp3",
-    "profile": { "hitThresh": 0.03, "bendAmp": 1.7, "steerSens": 2.3, "midSnap": 3.5, "flipThresh": 0.6, "smoothing": 0.55 }
-  },
-  {
-    "artist": "Blood Orange",
-    "title": "Wish",
-    "url": "/audio/wish.mp3",
-    "profile": { "hitThresh": 0.04, "bendAmp": 1.3, "steerSens": 1.6, "midSnap": 2.0, "flipThresh": 0.55, "smoothing": 0.7 }
-  },
-  {
-    "artist": "Maison Music",
-    "title": "l'histoire de ta vie",
-    "url": "/audio/lhistoire-de-ta-vie.mp3",
-    "profile": { "hitThresh": 0.03, "bendAmp": 1.6, "steerSens": 2.2, "midSnap": 3.0, "flipThresh": 0.6, "smoothing": 0.6 }
+    "artist": "Latin Mafia",
+    "title": "Siento Que Merezco Mas",
+    "url": "/audio/siento-que-merezco-mas.mp3",
+    "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.65 }
   },
   {
     "artist": "54 Ultra",
     "title": "Heaven Knows",
     "url": "/audio/heaven-knows.mp3",
     "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.65 }
+  },
+  {
+    "artist": "A Flock of Seagulls",
+    "title": "Space Age Love Song",
+    "url": "/audio/space-age-love-song.mp3",
+    "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.8, "flipThresh": 0.55, "smoothing": 0.6 }
   },
   {
     "artist": "Mojave",
@@ -78,21 +72,27 @@
     "profile": { "hitThresh": 0.03, "bendAmp": 1.6, "steerSens": 2.2, "midSnap": 3.0, "flipThresh": 0.6, "smoothing": 0.58 }
   },
   {
-    "artist": "Latin Mafia",
-    "title": "Siento Que Merezco Mas",
-    "url": "/audio/siento-que-merezco-mas.mp3",
-    "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.65 }
+    "artist": "Panchiko",
+    "title": "D>E>A>T>H>M>E>T>A>L (Tongg Remix)",
+    "url": "/audio/tongg-deathmetal-remix.mp3",
+    "profile": { "hitThresh": 0.03, "bendAmp": 1.5, "steerSens": 2.0, "midSnap": 3.0, "flipThresh": 0.55, "smoothing": 0.6 }
+  },
+  {
+    "artist": "Yves Tumor",
+    "title": "Limerence",
+    "url": "/audio/limerence.mp3",
+    "profile": { "hitThresh": 0.03, "bendAmp": 1.7, "steerSens": 2.3, "midSnap": 3.5, "flipThresh": 0.6, "smoothing": 0.55 }
+  },
+  {
+    "artist": "Aphex Twin",
+    "title": "Avril 14th",
+    "url": "/audio/avril-14th.mp3",
+    "profile": { "hitThresh": 0.02, "bendAmp": 1.8, "steerSens": 2.5, "midSnap": 4.0, "flipThresh": 0.6, "smoothing": 0.55 }
   },
   {
     "artist": "Fontaines D.C.",
     "title": "Roman Holiday",
     "url": "/audio/roman-holiday.mp3",
     "profile": { "hitThresh": 0.03, "bendAmp": 1.7, "steerSens": 2.4, "midSnap": 3.8, "flipThresh": 0.6, "smoothing": 0.55 }
-  },
-  {
-    "artist": "Panchiko",
-    "title": "D>E>A>T>H>M>E>T>A>L (Tongg Remix)",
-    "url": "/audio/tongg-deathmetal-remix.mp3",
-    "profile": { "hitThresh": 0.03, "bendAmp": 1.5, "steerSens": 2.0, "midSnap": 3.0, "flipThresh": 0.55, "smoothing": 0.6 }
   }
 ]

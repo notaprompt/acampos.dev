@@ -65,6 +65,30 @@ const sections = [
         </ul>
       </section>
     ))}
+
+    <hr />
+
+    <section class="influence-section">
+      <h2>Currently in rotation</h2>
+      <ul class="rotation-list">
+        <li>Shigeo Sekito</li>
+        <li>Piero Piccioni</li>
+        <li>Maison Music</li>
+        <li>Nick Drake</li>
+        <li>Blood Orange</li>
+        <li>Mitu</li>
+        <li>Lilen</li>
+        <li>Latin Mafia</li>
+        <li>54 Ultra</li>
+        <li>A Flock of Seagulls</li>
+        <li>Mojave</li>
+        <li>Dean Blunt</li>
+        <li>Panchiko</li>
+        <li>Yves Tumor</li>
+        <li>Aphex Twin</li>
+        <li>Fontaines D.C.</li>
+      </ul>
+    </section>
   </article>
 
   <script is:inline>
@@ -111,5 +135,20 @@ const sections = [
 
   .influence-note {
     color: var(--white-60);
+  }
+
+  .rotation-list {
+    list-style: none;
+    padding-left: 0;
+    columns: 2;
+    column-gap: 2rem;
+  }
+
+  .rotation-list li {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--white-45);
+    margin-bottom: 0.4rem;
+    break-inside: avoid;
   }
 </style>

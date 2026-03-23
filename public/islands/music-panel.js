@@ -84,6 +84,18 @@
     }
     activeProfile = PLAYLIST[0] ? PLAYLIST[0].profile : DEFAULT_PROFILE;
     playlistReady = true;
+    // Initialize shuffle order if shuffle is on by default
+    if (isShuffled && PLAYLIST.length > 0) {
+      shuffleOrder = shuffle(PLAYLIST);
+      // Always start with track 0 (Sekito) on first visit, then shuffle the rest
+      if (!saved) {
+        var sekitoIdx = shuffleOrder.indexOf(0);
+        if (sekitoIdx > 0) {
+          shuffleOrder.splice(sekitoIdx, 1);
+          shuffleOrder.unshift(0);
+        }
+      }
+    }
     // Re-render playlist UI
     if (typeof buildPlaylist === 'function') buildPlaylist();
     // Pre-load first track so it's ready when autoplay or manual play fires
@@ -131,7 +143,7 @@
   try { saved = JSON.parse(localStorage.getItem('mp_state')); } catch(e) {}
   var currentIndex = saved ? saved.idx : 0;
   var isPlaying = false;
-  var isShuffled = false;
+  var isShuffled = true; // shuffle on by default
   var repeatMode = 1; // 0=off, 1=all, 2=one — default: loop playlist
   var shuffleOrder = null;
   var volume = saved ? (saved.vol != null ? saved.vol : 0.7) : 0.7;

@@ -82,5 +82,17 @@
     "title": "Siento Que Merezco Mas",
     "url": "/audio/siento-que-merezco-mas.mp3",
     "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.65 }
+  },
+  {
+    "artist": "Fontaines D.C.",
+    "title": "Roman Holiday",
+    "url": "/audio/roman-holiday.mp3",
+    "profile": { "hitThresh": 0.03, "bendAmp": 1.7, "steerSens": 2.4, "midSnap": 3.8, "flipThresh": 0.6, "smoothing": 0.55 }
+  },
+  {
+    "artist": "Panchiko",
+    "title": "D>E>A>T>H>M>E>T>A>L (Tongg Remix)",
+    "url": "/audio/tongg-deathmetal-remix.mp3",
+    "profile": { "hitThresh": 0.03, "bendAmp": 1.5, "steerSens": 2.0, "midSnap": 3.0, "flipThresh": 0.55, "smoothing": 0.6 }
   }
 ]

@@ -139,8 +139,11 @@
       sourceNode = audioCtx.createMediaElementSource(audio);
       sourceNode.connect(analyser);
       analyser.connect(audioCtx.destination);
+      console.log('[music] audio graph: source → analyser → destination ✓');
     } catch (e) {
-      // Already connected
+      // Already connected — but make sure analyser still routes to speakers
+      console.log('[music] audio graph already exists, re-ensuring destination connection');
+      try { analyser.connect(audioCtx.destination); } catch(e2) {}
     }
     window.__musicPlayerAnalyser = analyser;
   }

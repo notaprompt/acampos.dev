@@ -18,25 +18,10 @@
       return;
     }
 
-    // Fallback: create our own from the audio element
-    const audio = document.querySelector('#music-player-audio');
-    if (!audio) return;
-
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const source = ctx.createMediaElementSource(audio);
-      analyser = ctx.createAnalyser();
-      analyser.fftSize = 64;
-      dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-      source.connect(analyser);
-      analyser.connect(ctx.destination);
-      connected = true;
-
-      poll();
-    } catch (e) {
-      // Audio element may already be connected or context unavailable
-    }
+    // Don't create our own MediaElementSource — it would steal the audio
+    // element from music-panel.js and cause silence. Wait for the shared
+    // analyser to become available instead.
+    // The music panel exposes window.__musicPlayerAnalyser after initAudioContext()
   }
 
   function poll() {

@@ -165,12 +165,24 @@
   function playTrack() {
     initAudioContext();
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    // Ensure audio element volume is audible
+    audio.volume = volume > 0 ? volume : 0.7;
+    audio.muted = false;
     audio.play().then(function () {
       isPlaying = true;
       updatePlayBtn();
       showBanner(true);
       startVisualizer();
-    }).catch(function () {});
+      // Safari sometimes needs a nudge after AudioContext resume
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(function () {
+          console.log('[music] AudioContext resumed:', audioCtx.state);
+        });
+      }
+      console.log('[music] playing — vol:', audio.volume, 'muted:', audio.muted, 'ctx:', audioCtx.state);
+    }).catch(function (err) {
+      console.log('[music] play failed:', err.message);
+    });
   }
 
   function pauseTrack() {

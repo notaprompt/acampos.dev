@@ -38,18 +38,30 @@
 
   function tryAutoplay() {
     if (autoplayTriggered || isPlaying) return;
-    if (autoplayTimer && autoplayGesture && playlistReady && PLAYLIST.length > 0) {
+    if (playlistReady && PLAYLIST.length > 0) {
       autoplayTriggered = true;
       if (!audio.src || audio.src === window.location.href) loadTrack(currentIndex);
-      playTrack();
+      // Try playing — if browser blocks it, wait for gesture
+      initAudioContext();
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      audio.volume = volume > 0 ? volume : 0.7;
+      audio.muted = false;
+      audio.play().then(function () {
+        isPlaying = true;
+        updatePlayBtn();
+        showBanner(true);
+        startVisualizer();
+      }).catch(function () {
+        // Browser blocked autoplay — reset and wait for gesture
+        autoplayTriggered = false;
+      });
     }
   }
 
-  setTimeout(function () {
-    autoplayTimer = true;
-    tryAutoplay();
-  }, 2000);
+  // Try autoplay 2s after page load
+  setTimeout(tryAutoplay, 2000);
 
+  // Also try on any user gesture (fallback if autoplay was blocked)
   function onGesture() {
     if (autoplayGesture) return;
     autoplayGesture = true;
@@ -57,7 +69,7 @@
     document.removeEventListener('scroll', onGesture);
     document.removeEventListener('keydown', onGesture);
     document.removeEventListener('touchstart', onGesture);
-    tryAutoplay();
+    if (!isPlaying) tryAutoplay();
   }
   document.addEventListener('click', onGesture);
   document.addEventListener('scroll', onGesture);
@@ -850,6 +862,11 @@
     resizeCanvas();
     drawVisualizer();
   }
+
+  // Always run visualizer — shows idle/ambient state even without music
+  setTimeout(function () {
+    startVisualizer();
+  }, 500);
 
   var visTime = 0;
   var waveData = null;

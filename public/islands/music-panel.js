@@ -28,15 +28,17 @@
   var playlistReady = false;
   var autoplayTriggered = false;
 
-  // Autoplay: start a 5s timer on page load. When it fires, wait
-  // for the next user interaction then play immediately. If the user
-  // interacts before the 5s, play right when the timer completes.
-  var autoplayReady = false;   // 5s elapsed
-  var userGestured = false;    // user has interacted
+  // Autoplay: needs THREE conditions to be true:
+  // 1. Timer elapsed (2s)
+  // 2. User has interacted (browser requirement)
+  // 3. Playlist has loaded
+  // Whichever condition is met LAST triggers playback.
+  var autoplayTimer = false;
+  var autoplayGesture = false;
 
   function tryAutoplay() {
     if (autoplayTriggered || isPlaying) return;
-    if (autoplayReady && userGestured && PLAYLIST.length > 0) {
+    if (autoplayTimer && autoplayGesture && playlistReady && PLAYLIST.length > 0) {
       autoplayTriggered = true;
       if (!audio.src || audio.src === window.location.href) loadTrack(currentIndex);
       playTrack();
@@ -44,13 +46,13 @@
   }
 
   setTimeout(function () {
-    autoplayReady = true;
+    autoplayTimer = true;
     tryAutoplay();
-  }, 5000);
+  }, 2000);
 
   function onGesture() {
-    if (userGestured) return;
-    userGestured = true;
+    if (autoplayGesture) return;
+    autoplayGesture = true;
     document.removeEventListener('click', onGesture);
     document.removeEventListener('scroll', onGesture);
     document.removeEventListener('keydown', onGesture);
@@ -64,7 +66,6 @@
 
   // Fetch playlist at runtime — callbacks fire after DOM is built
   function onPlaylistLoaded(data) {
-    console.log('[music] playlist loaded:', data.length, 'tracks');
     PLAYLIST = data;
     for (var i = 0; i < PLAYLIST.length; i++) {
       if (!PLAYLIST[i].profile) PLAYLIST[i].profile = DEFAULT_PROFILE;
@@ -73,7 +74,7 @@
     playlistReady = true;
     // Re-render playlist UI
     if (typeof buildPlaylist === 'function') buildPlaylist();
-    // Load first track if nothing is playing
+    // Pre-load first track so it's ready when autoplay or manual play fires
     var audioHasSrc = audio.src && audio.src !== '' && audio.src !== window.location.href;
     if (!audioHasSrc && PLAYLIST.length > 0) {
       var idx = 0;
@@ -83,6 +84,8 @@
       } catch(e) {}
       loadTrack(idx);
     }
+    // Playlist is the last piece — try autoplay now
+    tryAutoplay();
   }
 
   fetch('/playlist.json')
@@ -174,10 +177,8 @@
       sourceNode = audioCtx.createMediaElementSource(audio);
       sourceNode.connect(analyser);
       analyser.connect(audioCtx.destination);
-      console.log('[music] audio graph: source → analyser → destination ✓');
     } catch (e) {
       // Already connected — but make sure analyser still routes to speakers
-      console.log('[music] audio graph already exists, re-ensuring destination connection');
       try { analyser.connect(audioCtx.destination); } catch(e2) {}
     }
     window.__musicPlayerAnalyser = analyser;
@@ -214,12 +215,9 @@
       // Safari sometimes needs a nudge after AudioContext resume
       if (audioCtx.state === 'suspended') {
         audioCtx.resume().then(function () {
-          console.log('[music] AudioContext resumed:', audioCtx.state);
         });
       }
-      console.log('[music] playing — vol:', audio.volume, 'muted:', audio.muted, 'ctx:', audioCtx.state);
     }).catch(function (err) {
-      console.log('[music] play failed:', err.message);
     });
   }
 
@@ -230,8 +228,8 @@
   }
 
   function togglePlay() {
-    console.log('[music] togglePlay — playlist:', PLAYLIST.length, 'playing:', isPlaying, 'src:', audio.src);
-    if (PLAYLIST.length === 0) { console.log('[music] no tracks, returning'); return; }
+    if (PLAYLIST.length === 0) return;
+    autoplayTriggered = true; // manual play cancels autoplay
     if (isPlaying) {
       pauseTrack();
     } else {

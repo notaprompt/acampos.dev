@@ -12,6 +12,18 @@
     "profile": { "hitThresh": 0.02, "bendAmp": 1.8, "steerSens": 2.5, "midSnap": 4.0, "flipThresh": 0.6, "smoothing": 0.55 }
   },
   {
+    "artist": "Nick Drake",
+    "title": "Pink Moon",
+    "url": "/audio/pink-moon.mp3",
+    "profile": { "hitThresh": 0.03, "bendAmp": 1.6, "steerSens": 2.0, "midSnap": 3.5, "flipThresh": 0.55, "smoothing": 0.65 }
+  },
+  {
+    "artist": "A Flock of Seagulls",
+    "title": "Space Age Love Song",
+    "url": "/audio/space-age-love-song.mp3",
+    "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.8, "flipThresh": 0.55, "smoothing": 0.6 }
+  },
+  {
     "artist": "Piero Piccioni",
     "title": "Easy Lovers",
     "url": "/audio/easy-lovers.mp3",

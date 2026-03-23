@@ -1,10 +1,11 @@
 ---
 const links = [
   { href: '/', label: 'home' },
+  { href: '/resume', label: 'resume', accent: true },
   { href: '/about', label: 'about' },
   { href: '/projects', label: 'projects' },
   { href: '/writing', label: 'writing' },
-  { href: '/resume', label: 'resume' },
+  { href: '/influences', label: 'influences' },
   { href: '/links', label: 'links' },
   { href: '/guestbook', label: 'guestbook' },
 ];
@@ -18,7 +19,10 @@ const currentPath = Astro.url.pathname;
       <li>
         <a
           href={link.href}
-          class:list={[{ active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) }]}
+          class:list={[
+            { active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) },
+            { 'nav-accent': link.accent },
+          ]}
         >
           {link.label}
         </a>
@@ -60,6 +64,11 @@ const currentPath = Astro.url.pathname;
       border-bottom: 2px dashed var(--gold-accent);
       transition: border-bottom 0s;
     }
+  }
+
+  a.nav-accent {
+    color: var(--gold-accent);
+    border-bottom: 1px solid var(--gold-accent);
   }
 
   a.active {

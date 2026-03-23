@@ -7,7 +7,7 @@ const links = [
   { label: 'LinkedIn', url: 'https://www.linkedin.com/in/alexander-d-campos/', desc: 'professional' },
   { label: 'Guardian', url: 'https://github.com/notaprompt/guardian-ui-scaffold', desc: 'desktop workspace' },
   { label: 'ForgeFrame', url: 'https://github.com/notaprompt/ForgeFrame', desc: 'local infrastructure' },
-  { label: 'Resume Tailor', url: 'https://resume-tailor-gilt.vercel.app', desc: 'tailor your resume' },
+  { label: 'Reframed', url: 'https://reframed.works', desc: 'resume analysis' },
   { label: 'MCP Spec', url: 'https://modelcontextprotocol.io', desc: 'protocol' },
 ];
 ---
@@ -108,6 +108,19 @@ const links = [
         rgba(0, 0, 0, 0.08) 2px
       );
       pointer-events: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .button-88x31 {
+      width: 120px;
+      height: 44px;
+    }
+    .btn-label {
+      font-size: 0.7rem;
+    }
+    .btn-desc {
+      font-size: 0.5rem;
     }
   }
 

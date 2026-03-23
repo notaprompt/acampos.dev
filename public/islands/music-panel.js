@@ -747,6 +747,7 @@
 
   function showBanner(visible) {
     banner.classList.toggle('visible', visible);
+    document.body.classList.toggle('has-now-playing', visible);
   }
 
   function onPause() {
@@ -1923,6 +1924,7 @@
     if (animId) { cancelAnimationFrame(animId); animId = null; }
     if (panel && panel.parentNode) panel.parentNode.removeChild(panel);
     if (banner && banner.parentNode) banner.parentNode.removeChild(banner);
+    document.body.classList.remove('has-now-playing');
     if (toggle && toggle.parentNode) toggle.parentNode.removeChild(toggle);
     if (weatherEl && weatherEl.parentNode) weatherEl.parentNode.removeChild(weatherEl);
     if (miniPlayer && miniPlayer.parentNode) miniPlayer.parentNode.removeChild(miniPlayer);

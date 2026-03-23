@@ -2,46 +2,51 @@
 import Page from '../layouts/Page.astro';
 ---
 
-<Page title="resume -- alexander campos" description="Operations engineer, intelligence systems builder. Capital One, Apple FCU, Guardian, ForgeFrame.">
+<Page title="resume -- alexander campos" description="Operations background, self-taught engineer. Capital One, Guardian, ForgeFrame, Reframed.">
   <article class="resume">
     <h1>Resume</h1>
 
     <section class="summary">
       <p>
-        Operations and process engineering in regulated finance.
-        Building local intelligence infrastructure on the side.
+        Operations background, self-taught engineer. Led process modernization across a $600M+
+        regulatory operation at Capital One. Built and open-sourced AI infrastructure --
+        model routing, semantic memory, cognitive safety tooling -- to solve problems the
+        existing tools didn't cover. Business degree gave me stakeholder fluency. Building
+        gave me technical depth. Looking for a role where both matter.
       </p>
     </section>
 
     <hr />
 
     <section>
-      <h2>Technical Skills</h2>
+      <h2>Skills</h2>
 
-      <h3>Intelligence Systems & Architecture</h3>
+      <h3>Operations & Systems</h3>
       <p class="skills">
-        Multi-Provider LLM Routing (Anthropic/OpenAI/Ollama), Intent-Based Model Selection,
-        Prompt Engineering (Chain-of-Thought, Structured Extraction), Retrieval-Augmented Context
-        Injection, Hierarchical Memory Compression, MCP Protocol, Reframe Detection,
-        Post-Session Intelligence Pipelines
+        Process Modernization · Failure-Surface Mapping · Dependency Sequencing ·
+        KPI/OKR Frameworks · Executive Reporting · Regulatory Compliance (NCUA, CFPB)
       </p>
 
-      <h3>Application Engineering</h3>
+      <h3>Data</h3>
       <p class="skills">
-        TypeScript, Node.js, React, Electron, SQLite/FTS5, Python, Astro,
-        Web Workers, WebGL2/GLSL, Three.js, Web Audio API, Tone.js, HTML/CSS
+        SQL (Postgres, Snowflake) · Python (Pandas) · Splunk · Pipeline Monitoring ·
+        Looker Studio · QuickSight · Power BI
       </p>
 
-      <h3>Process & Operations Engineering</h3>
+      <h3>Development</h3>
       <p class="skills">
-        Pipeline Anomaly Detection, Process Modernization, Root-Cause Analysis,
-        Dependency Sequencing, Rollback Architecture
+        TypeScript · React · Node.js · Electron · Next.js · Astro · SQLite/FTS5 · Vite · Zustand
       </p>
 
-      <h3>Data & Observability</h3>
+      <h3>AI Infrastructure</h3>
       <p class="skills">
-        SQL (Advanced -- Postgres, Snowflake), Splunk (Search & Reporting),
-        Real-Time Monitoring Dashboards, AWS, Looker Studio, QuickSight, Power BI
+        Multi-Provider LLM Routing (Anthropic/OpenAI/Ollama) · Model Context Protocol ·
+        Structured Tool-Use · Semantic Memory · Streaming SSE · Local-First Architecture
+      </p>
+
+      <h3>Enterprise</h3>
+      <p class="skills">
+        Salesforce · JIRA · Confluence · SLA Governance · Vendor Risk Management · Change Control
       </p>
     </section>
 
@@ -53,31 +58,84 @@ import Page from '../layouts/Page.astro';
       <div class="role">
         <div class="role-header">
           <h3>Capital One -- Senior Process Manager, Card Legal Recoveries Operations</h3>
-          <span class="dates">2025 -- Present | Richmond, VA</span>
+          <span class="dates">June 2025 -- Present | Richmond, VA</span>
         </div>
         <ul>
           <li>
-            <strong>Built process health monitoring for a $600M+ file exchange network.</strong>
-            300+ daily regulatory transmissions had no unified failure tracking.
-            Built a pipeline-backed anomaly detection system with predictive validation.
-            Reduced manual monitoring effort by 78%.
+            <strong>Built the monitoring system for a $600M+ file exchange network</strong> --
+            300+ daily regulatory transmissions, no unified failure tracking. Rapid prototype
+            (SQL/Sheets/Looker) evolved into automated anomaly detection. Reduced manual
+            monitoring by 78%.
           </li>
           <li>
-            <strong>Resolved a 20,000+ account logic failure.</strong> Data team was backlogged
-            6+ weeks. Built SQL framework to isolate root cause, remediate impacted accounts,
-            and document failure taxonomy. Process team now owns root-cause analysis.
+            <strong>Resolved a 20,000+ account logic failure</strong> while the Data team was
+            backlogged 6+ weeks. Built an investigative SQL framework, isolated root cause,
+            remediated accounts, documented the failure taxonomy.
           </li>
           <li>
-            <strong>Validated specifications for the $35B+ Discover merger integration.</strong>
-            Owned technical validation of the Systems Integration Guide for legacy firm
-            onboarding. Surfaced design-layer gaps in regulatory file exchange formats
-            with Engineering and vendor partners. Zero transmission errors through cutover.
+            <strong>Zero transmission errors during $35B Discover merger integration.</strong>
+            Owned the Systems Integration Guide -- caught specification failures with Engineering
+            and vendor partners before production cutover.
           </li>
           <li>
-            <strong>Designed a 5-month modernization roadmap for fragmented manual workflows.</strong>
-            Staged automation with dependency sequencing, stakeholder gates, and rollback
-            protocols. Learned Splunk, Postgres, and JSON parsing to unblock 6 months of
-            stalled monitoring work.
+            <strong>Authored a 5-month modernization roadmap</strong> -- dependency sequencing,
+            stakeholder gates, rollback protocols. Full visibility for leadership before
+            resource commitment.
+          </li>
+          <li>
+            <strong>Self-learned infrastructure tooling</strong> (Splunk, Postgres, JSON parsing)
+            to close a gap between Process and Engineering. Built a real-time validation layer.
+            Unblocked 6 months of stalled monitoring work.
+          </li>
+          <li>
+            <strong>Automated business reviews</strong> across 3 teams and 6 operational vectors.
+            Standardized one-pagers now used by department leaders three levels up for quarterly reviews.
+          </li>
+          <li>
+            <strong>Operationalized Gemini as a structured reporting tool</strong> before the org
+            had an AI playbook. Scoped instruction sets with validated formulas. Operational AI,
+            not conversational.
+          </li>
+        </ul>
+      </div>
+
+      <div class="role">
+        <div class="role-header">
+          <h3>Independent Engineering -- Open Source</h3>
+          <span class="dates">June 2025 -- Present</span>
+        </div>
+        <p>
+          Building tools to solve problems I keep hitting at work -- privacy, cost, context loss,
+          vendor lock-in. Teaching myself the engineering. Everything is open-source, live, and verifiable.
+        </p>
+        <ul>
+          <li>
+            <strong>Shipped a resume analysis platform end-to-end</strong> -- live at
+            <a href="https://reframed.works">reframed.works</a>. Stripe payments, magic-link auth,
+            streaming analysis. 34 API routes, multi-provider routing with fallback chains,
+            voice fingerprinting, 14 industry format profiles. Sole developer, architecture
+            through deployment.
+          </li>
+          <li>
+            <strong>Built a local-first AI desktop application</strong> (Electron, React, Node.js) --
+            chat, terminal, notes, knowledge graph. 50+ IPC channels, 20 backend modules. Five-stage
+            post-chat pipeline: awareness detection, summarization, embeddings, knowledge graph,
+            auto-extraction. Supports air-gapped local inference.
+          </li>
+          <li>
+            <strong>Designed a model routing engine</strong> -- open-source TypeScript package.
+            Tier-based dispatch across Anthropic, OpenAI, and Ollama. Intent detection, SSE
+            normalization, cost optimization (40-60% reduction).
+          </li>
+          <li>
+            <strong>Built a semantic memory system</strong> (SQLite/FTS5) with hierarchical
+            compression. Shipped as an MCP server with 12 tools. Works with Claude Desktop,
+            Cursor, and any MCP client.
+          </li>
+          <li>
+            <strong>Built cognitive safety tooling</strong> -- reframe detection across 7 influence
+            types and 8 identity dimensions, awareness-trap detection for recurring unresolved
+            patterns. Integrated into the desktop pipeline. Local-only.
           </li>
         </ul>
       </div>
@@ -85,101 +143,23 @@ import Page from '../layouts/Page.astro';
       <div class="role">
         <div class="role-header">
           <h3>Apple Federal Credit Union -- Branch Operations Administrator</h3>
-          <span class="dates">January 2020 -- 2025 | Fairfax, VA</span>
+          <span class="dates">January 2020 -- May 2025 | Fairfax, VA</span>
         </div>
         <ul>
           <li>
-            <strong>Promoted four times in five years</strong> -- from teller through loan
-            underwriting and account management, to full branch operational strategy, then
-            enterprise-level operational support across a 25-branch network during a major merger.
+            <strong>Promoted four times in five years</strong> -- teller to enterprise support
+            across 25 branches during a major merger. Completed bachelor's degree concurrently.
           </li>
           <li>
-            <strong>Completed B.S. at George Mason University concurrently</strong> while
-            carrying a full-time operational role across all four promotion stages.
+            <strong>Built compliance tracking infrastructure</strong> -- Power BI dashboards
+            for VP-level reporting, regulatory documentation (NCUA, CFPB). Reduced complaint
+            response cycles by 50%.
           </li>
           <li>
-            <strong>Built compliance tracking and reporting dashboards</strong> (Power BI) for
-            regulatory documentation (NCUA, CFPB). Designed monitoring infrastructure and
-            workflow automation that reduced complaint response cycles by 50%.
-          </li>
-          <li>
-            <strong>Proposed branch-wide modernization roadmap</strong> with VP and SVP backing.
-            Designed automation strategy for manual workflows across the branch network.
-            Approved and moved into implementation.
+            <strong>Designed a branch-wide modernization roadmap</strong> -- presented to the
+            CEO with VP and SVP backing. Approved and moved into active implementation.
           </li>
         </ul>
-      </div>
-    </section>
-
-    <hr />
-
-    <section>
-      <h2>Projects</h2>
-
-      <div class="role">
-        <div class="role-header">
-          <h3>Guardian -- Desktop Intelligence Workspace</h3>
-          <span class="dates">2023 -- Present</span>
-        </div>
-        <p>
-          Open-source desktop application (Electron + React + Node.js) integrating
-          chat, terminal, notes, and persistent memory into a single local-first interface.
-        </p>
-        <ul>
-          <li>
-            <strong>Built a reframe detection engine</strong> that classifies when language models
-            subtly rewrite user statements. Triggers automatic prompt correction when user-rated
-            inaccuracy exceeds 40%.
-          </li>
-          <li>
-            <strong>Designed provider-agnostic model routing</strong> across Anthropic, OpenAI,
-            and Ollama. Auto-selects by intent complexity and cost. Runs air-gapped on local
-            models or through cloud APIs.
-          </li>
-          <li>
-            <strong>Designed hierarchical memory compression</strong> -- raw to summary to pattern
-            to principle. Strength decay with retrieval reinforcement for long-term context
-            retention.
-          </li>
-          <li>
-            <strong>Built post-session extraction pipeline.</strong> Extracts decisions, tasks,
-            and code artifacts on conversation end. Generates typed notes and indexes into
-            FTS5 for search.
-          </li>
-        </ul>
-      </div>
-
-      <div class="role">
-        <div class="role-header">
-          <h3>ForgeFrame -- Local Intelligence Infrastructure</h3>
-          <span class="dates">2025 -- Present</span>
-        </div>
-        <p>
-          Open-source local infrastructure for memory, routing, and provenance.
-          Monorepo architecture -- MIT-licensed memory primitive, AGPL core.
-        </p>
-        <ul>
-          <li>
-            <strong>Built the MCP Memory Server</strong> (MIT). SQLite-backed persistent memory
-            implementing the Model Context Protocol. Strength decay, retrieval reinforcement,
-            and semantic search.
-          </li>
-          <li>
-            <strong>Designed dual integration architecture</strong> -- MCP for ecosystem
-            compatibility plus a localhost proxy for conversation intercept and PII scrubbing.
-          </li>
-        </ul>
-      </div>
-
-      <div class="role">
-        <div class="role-header">
-          <h3>campos.works -- This Site</h3>
-          <span class="dates">2026</span>
-        </div>
-        <p>
-          Hand-built with Astro and vanilla JS. WebGL2 ASCII shader over a Gray-Scott
-          reaction-diffusion field in a Web Worker. Audio-reactive via Web Audio API.
-        </p>
       </div>
     </section>
 
@@ -188,13 +168,17 @@ import Page from '../layouts/Page.astro';
     <section>
       <h2>Education</h2>
       <p>
-        <strong>M.Eng. Product Innovation</strong> -- In Progress
-      </p>
-      <p>
         <strong>B.S. Business Administration, Management and Operations</strong> -- George Mason
         University, December 2024.
       </p>
+      <p class="skills">Certifications: Business Process Management · Google Data Analytics</p>
     </section>
+
+    <hr />
+
+    <div class="resume-contact">
+      <p>adc.acampos@gmail.com · (703) 625-3586 · <a href="https://campos.works">campos.works</a></p>
+    </div>
   </article>
 
   <script is:inline>
@@ -244,5 +228,15 @@ import Page from '../layouts/Page.astro';
 
   .role li strong {
     color: var(--glow-hot);
+  }
+
+  .resume-contact {
+    text-align: center;
+  }
+
+  .resume-contact p {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--white-45);
   }
 </style>

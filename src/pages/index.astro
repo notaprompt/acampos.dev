@@ -22,6 +22,7 @@ import HitCounter from '../components/HitCounter.astro';
         became <a href="/projects/guardian">Guardian</a>. The deeper problem it
         surfaced became <a href="/projects/forgeframe">ForgeFrame</a> --
         infrastructure for keeping what's yours on your machine.
+        <a href="https://reframed.works">Reframed</a> is the first product.
       </p>
       <p>
         This site is hand-built with a mix of agentic engineering, intuition,
@@ -35,6 +36,11 @@ import HitCounter from '../components/HitCounter.astro';
       <a href="/about" class="enter-link">about me >></a>
       <a href="/writing" class="enter-link">writing >></a>
     </nav>
+
+    <p class="cta-line">
+      Operations background. Self-taught engineer. Currently building AI infrastructure.
+      <a href="/resume">See the resume</a> or <a href="mailto:adc.acampos@gmail.com">get in touch</a>.
+    </p>
 
     <div class="counter-row">
       <HitCounter />
@@ -86,6 +92,19 @@ import HitCounter from '../components/HitCounter.astro';
     color: var(--glow-hot);
     border-bottom: none;
     transition: none;
+  }
+
+  .cta-line {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--white-45);
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  .cta-line a {
+    color: var(--gold-accent);
+    border-bottom: 1px solid var(--gold-accent);
   }
 
   .counter-row {

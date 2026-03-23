@@ -131,6 +131,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <script is:inline src="/islands/konami.js"></script>
   <script is:inline src="/islands/spotify.js"></script>
   <script is:inline src="/islands/music-panel.js"></script>
+  <script is:inline src="/islands/playlist-admin.js"></script>
   <script is:inline src="/islands/audio-bridge.js"></script>
   <script is:inline src="/islands/ambient-audio.js"></script>
   <script is:inline src="/islands/assistant.js"></script>
@@ -178,7 +179,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       var islands = [
         '/islands/desk-scene.js', '/islands/ascii-bg.js',
         '/islands/cursor-trail.js', '/islands/konami.js',
-        '/islands/music-panel.js', '/islands/audio-bridge.js',
+        '/islands/music-panel.js', '/islands/playlist-admin.js', '/islands/audio-bridge.js',
         '/islands/ambient-audio.js', '/islands/assistant.js'
       ];
       islands.forEach(function (src) {

@@ -1267,8 +1267,30 @@
   drawSignature();
 
   // ── Link speaker objects to music panel toggle ──
+  // Double-click the hifi to open the hidden playlist admin
+  var hifiClickCount = 0;
+  var hifiClickTimer = null;
   objects.forEach(function (o) {
-    if (o.label === 'audio') {
+    if (o.id === 'hifi') {
+      o.action = function () {
+        hifiClickCount++;
+        if (hifiClickCount === 1) {
+          hifiClickTimer = setTimeout(function () {
+            // Single click — toggle music panel
+            hifiClickCount = 0;
+            var toggle = document.querySelector('.mp-toggle');
+            if (toggle) toggle.click();
+          }, 300);
+        } else if (hifiClickCount >= 2) {
+          // Double click — open playlist admin
+          clearTimeout(hifiClickTimer);
+          hifiClickCount = 0;
+          if (window.__playlistAdmin) {
+            window.__playlistAdmin.toggle();
+          }
+        }
+      };
+    } else if (o.label === 'audio') {
       o.action = function () {
         var toggle = document.querySelector('.mp-toggle');
         if (toggle) toggle.click();

@@ -1,0 +1,580 @@
+---
+// Standalone admin page — no layout, all styles inline
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>playlist admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('/fonts/jetbrains-mono-400.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      background: #050505;
+      color: #E8DCC8;
+      min-height: 100vh;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1 {
+      font-size: 0.85rem;
+      color: #b8965a;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 12px;
+    }
+    /* password gate */
+    #pw-gate {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      gap: 12px;
+    }
+    #pw-gate label {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    #pw-gate input {
+      background: #0C0C0C;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #E8DCC8;
+      font-family: inherit;
+      font-size: 0.8rem;
+      padding: 10px 16px;
+      width: 240px;
+      outline: none;
+    }
+    #pw-gate input:focus {
+      border-color: #b8965a;
+    }
+    #pw-gate button {
+      background: #0C0C0C;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #b8965a;
+      font-family: inherit;
+      font-size: 0.7rem;
+      padding: 8px 24px;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    #pw-gate button:hover { border-color: #b8965a; }
+    #pw-error {
+      color: #c75050;
+      font-size: 0.65rem;
+      min-height: 1em;
+    }
+    /* admin panel */
+    #admin-panel { display: none; }
+    #admin-panel.visible { display: block; }
+    .track-list {
+      list-style: none;
+      margin-bottom: 24px;
+    }
+    .track-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-bottom: none;
+      font-size: 0.72rem;
+      background: #0A0A0A;
+    }
+    .track-item:last-child { border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .track-item .track-num {
+      color: rgba(255,255,255,0.2);
+      font-size: 0.6rem;
+      min-width: 20px;
+      text-align: right;
+    }
+    .track-item .track-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .track-item .track-artist {
+      color: #b8965a;
+    }
+    .track-item .track-title {
+      color: #E8DCC8;
+    }
+    .track-item .track-url {
+      color: rgba(255,255,255,0.2);
+      font-size: 0.58rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .track-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .track-actions button, .btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.35);
+      font-family: inherit;
+      font-size: 0.6rem;
+      padding: 4px 8px;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+    }
+    .track-actions button:hover, .btn:hover {
+      color: #E8DCC8;
+      border-color: rgba(255,255,255,0.25);
+    }
+    .btn-danger:hover { color: #c75050; border-color: #c75050; }
+    .btn-primary {
+      color: #b8965a !important;
+      border-color: #b8965a !important;
+    }
+    .btn-primary:hover {
+      background: rgba(184,150,90,0.1) !important;
+    }
+    .btn-success {
+      color: #5BF29B !important;
+      border-color: #5BF29B !important;
+    }
+    .btn-success:hover {
+      background: rgba(91,242,155,0.1) !important;
+    }
+    /* forms */
+    .form-section {
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 16px;
+      margin-bottom: 20px;
+      background: #0A0A0A;
+    }
+    .form-section h2 {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .form-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 120px;
+    }
+    .form-field label {
+      font-size: 0.58rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .form-field input {
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #E8DCC8;
+      font-family: inherit;
+      font-size: 0.7rem;
+      padding: 7px 10px;
+      outline: none;
+    }
+    .form-field input:focus { border-color: #b8965a; }
+    .form-field input[type="number"] { width: 80px; flex: none; min-width: 80px; }
+    .actions-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    /* edit modal overlay */
+    #edit-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    #edit-overlay.visible { display: block; }
+    #edit-overlay .form-section {
+      max-width: 500px;
+      margin: 40px auto;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      border: 1px solid #b8965a;
+      color: #b8965a;
+      font-family: inherit;
+      font-size: 0.65rem;
+      padding: 8px 20px;
+      z-index: 2000;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <h1>playlist admin</h1>
+
+  <!-- password gate -->
+  <div id="pw-gate">
+    <label for="pw-input">password</label>
+    <input type="password" id="pw-input" autocomplete="off" autofocus />
+    <button id="pw-submit">enter</button>
+    <div id="pw-error"></div>
+  </div>
+
+  <!-- admin panel (hidden until auth) -->
+  <div id="admin-panel">
+    <ul class="track-list" id="track-list"></ul>
+
+    <div class="form-section" id="add-form">
+      <h2>add track</h2>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="add-artist">artist</label>
+          <input type="text" id="add-artist" placeholder="Artist name" />
+        </div>
+        <div class="form-field">
+          <label for="add-title">title</label>
+          <input type="text" id="add-title" placeholder="Track title" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="add-url">audio path</label>
+          <input type="text" id="add-url" placeholder="/audio/filename.mp3" />
+        </div>
+      </div>
+      <div class="form-row" style="margin-top: 4px;">
+        <button class="btn btn-primary" id="add-btn">+ add track</button>
+      </div>
+    </div>
+
+    <div class="actions-bar">
+      <button class="btn btn-success" id="save-btn">download playlist.json</button>
+    </div>
+  </div>
+
+  <!-- edit overlay -->
+  <div id="edit-overlay">
+    <div class="form-section">
+      <h2>edit track</h2>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="edit-artist">artist</label>
+          <input type="text" id="edit-artist" />
+        </div>
+        <div class="form-field">
+          <label for="edit-title">title</label>
+          <input type="text" id="edit-title" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="edit-url">audio path</label>
+          <input type="text" id="edit-url" />
+        </div>
+      </div>
+      <h2 style="margin-top: 16px;">visualizer profile</h2>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="edit-hitThresh">hitThresh</label>
+          <input type="number" id="edit-hitThresh" step="0.01" />
+        </div>
+        <div class="form-field">
+          <label for="edit-bendAmp">bendAmp</label>
+          <input type="number" id="edit-bendAmp" step="0.1" />
+        </div>
+        <div class="form-field">
+          <label for="edit-steerSens">steerSens</label>
+          <input type="number" id="edit-steerSens" step="0.1" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="edit-midSnap">midSnap</label>
+          <input type="number" id="edit-midSnap" step="0.1" />
+        </div>
+        <div class="form-field">
+          <label for="edit-flipThresh">flipThresh</label>
+          <input type="number" id="edit-flipThresh" step="0.01" />
+        </div>
+        <div class="form-field">
+          <label for="edit-smoothing">smoothing</label>
+          <input type="number" id="edit-smoothing" step="0.01" />
+        </div>
+      </div>
+      <div class="form-row" style="margin-top: 12px; gap: 10px;">
+        <button class="btn btn-primary" id="edit-save">save</button>
+        <button class="btn" id="edit-cancel">cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script is:inline>
+  (function() {
+    'use strict';
+
+    var PW_HASH = 'fb9b8ef8df7040ff5bceb09736df045d068b240a452ce5be1974a5a88513ee26';
+
+    var DEFAULT_PROFILE = {
+      hitThresh: 0.04,
+      bendAmp: 1.3,
+      steerSens: 1.8,
+      midSnap: 2.5,
+      flipThresh: 0.55,
+      smoothing: 0.65
+    };
+
+    var playlist = [];
+    var editIdx = -1;
+
+    // ── Elements ──
+    var pwGate = document.getElementById('pw-gate');
+    var pwInput = document.getElementById('pw-input');
+    var pwSubmit = document.getElementById('pw-submit');
+    var pwError = document.getElementById('pw-error');
+    var adminPanel = document.getElementById('admin-panel');
+    var trackList = document.getElementById('track-list');
+    var editOverlay = document.getElementById('edit-overlay');
+    var toastEl = document.getElementById('toast');
+
+    // ── SHA-256 ──
+    function sha256(str) {
+      var buf = new TextEncoder().encode(str);
+      return crypto.subtle.digest('SHA-256', buf).then(function(hash) {
+        var arr = new Uint8Array(hash);
+        var hex = '';
+        for (var i = 0; i < arr.length; i++) {
+          hex += ('0' + arr[i].toString(16)).slice(-2);
+        }
+        return hex;
+      });
+    }
+
+    // ── Auth ──
+    function tryAuth() {
+      var pw = pwInput.value;
+      if (!pw) return;
+      sha256(pw).then(function(hash) {
+        if (hash === PW_HASH) {
+          pwGate.style.display = 'none';
+          adminPanel.classList.add('visible');
+          loadPlaylist();
+        } else {
+          pwError.textContent = 'wrong password';
+          pwInput.value = '';
+          pwInput.focus();
+        }
+      });
+    }
+
+    pwSubmit.addEventListener('click', tryAuth);
+    pwInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') tryAuth();
+    });
+
+    // ── Load playlist ──
+    function loadPlaylist() {
+      fetch('/playlist.json')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          playlist = data;
+          renderList();
+        })
+        .catch(function() {
+          playlist = [];
+          renderList();
+          toast('could not load playlist.json');
+        });
+    }
+
+    // ── Render track list ──
+    function renderList() {
+      trackList.innerHTML = '';
+      for (var i = 0; i < playlist.length; i++) {
+        var t = playlist[i];
+        var li = document.createElement('li');
+        li.className = 'track-item';
+        li.dataset.index = i;
+        li.innerHTML =
+          '<span class="track-num">' + (i + 1) + '</span>' +
+          '<div class="track-info">' +
+            '<span class="track-artist">' + esc(t.artist) + '</span> ' +
+            '<span class="track-title">' + esc(t.title) + '</span>' +
+            '<div class="track-url">' + esc(t.url) + '</div>' +
+          '</div>' +
+          '<div class="track-actions">' +
+            (i > 0 ? '<button class="move-up" title="Move up">&uarr;</button>' : '') +
+            (i < playlist.length - 1 ? '<button class="move-down" title="Move down">&darr;</button>' : '') +
+            '<button class="edit-btn">edit</button>' +
+            '<button class="del-btn btn-danger">del</button>' +
+          '</div>';
+        trackList.appendChild(li);
+      }
+
+      // Wire events
+      trackList.querySelectorAll('.move-up').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var idx = parseInt(this.closest('.track-item').dataset.index);
+          if (idx > 0) {
+            var tmp = playlist[idx];
+            playlist[idx] = playlist[idx - 1];
+            playlist[idx - 1] = tmp;
+            renderList();
+          }
+        });
+      });
+      trackList.querySelectorAll('.move-down').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var idx = parseInt(this.closest('.track-item').dataset.index);
+          if (idx < playlist.length - 1) {
+            var tmp = playlist[idx];
+            playlist[idx] = playlist[idx + 1];
+            playlist[idx + 1] = tmp;
+            renderList();
+          }
+        });
+      });
+      trackList.querySelectorAll('.edit-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var idx = parseInt(this.closest('.track-item').dataset.index);
+          openEdit(idx);
+        });
+      });
+      trackList.querySelectorAll('.del-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var idx = parseInt(this.closest('.track-item').dataset.index);
+          if (confirm('Delete "' + playlist[idx].artist + ' \u2014 ' + playlist[idx].title + '"?')) {
+            playlist.splice(idx, 1);
+            renderList();
+            toast('track removed');
+          }
+        });
+      });
+    }
+
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    // ── Edit ──
+    function openEdit(idx) {
+      editIdx = idx;
+      var t = playlist[idx];
+      var p = t.profile || DEFAULT_PROFILE;
+      document.getElementById('edit-artist').value = t.artist;
+      document.getElementById('edit-title').value = t.title;
+      document.getElementById('edit-url').value = t.url;
+      document.getElementById('edit-hitThresh').value = p.hitThresh;
+      document.getElementById('edit-bendAmp').value = p.bendAmp;
+      document.getElementById('edit-steerSens').value = p.steerSens;
+      document.getElementById('edit-midSnap').value = p.midSnap;
+      document.getElementById('edit-flipThresh').value = p.flipThresh;
+      document.getElementById('edit-smoothing').value = p.smoothing;
+      editOverlay.classList.add('visible');
+    }
+
+    document.getElementById('edit-save').addEventListener('click', function() {
+      if (editIdx < 0) return;
+      playlist[editIdx].artist = document.getElementById('edit-artist').value;
+      playlist[editIdx].title = document.getElementById('edit-title').value;
+      playlist[editIdx].url = document.getElementById('edit-url').value;
+      playlist[editIdx].profile = {
+        hitThresh: parseFloat(document.getElementById('edit-hitThresh').value) || DEFAULT_PROFILE.hitThresh,
+        bendAmp: parseFloat(document.getElementById('edit-bendAmp').value) || DEFAULT_PROFILE.bendAmp,
+        steerSens: parseFloat(document.getElementById('edit-steerSens').value) || DEFAULT_PROFILE.steerSens,
+        midSnap: parseFloat(document.getElementById('edit-midSnap').value) || DEFAULT_PROFILE.midSnap,
+        flipThresh: parseFloat(document.getElementById('edit-flipThresh').value) || DEFAULT_PROFILE.flipThresh,
+        smoothing: parseFloat(document.getElementById('edit-smoothing').value) || DEFAULT_PROFILE.smoothing
+      };
+      editOverlay.classList.remove('visible');
+      renderList();
+      toast('track updated');
+    });
+
+    document.getElementById('edit-cancel').addEventListener('click', function() {
+      editOverlay.classList.remove('visible');
+    });
+
+    // ── Add track ──
+    document.getElementById('add-btn').addEventListener('click', function() {
+      var artist = document.getElementById('add-artist').value.trim();
+      var title = document.getElementById('add-title').value.trim();
+      var url = document.getElementById('add-url').value.trim();
+      if (!artist || !title || !url) {
+        toast('fill in artist, title, and audio path');
+        return;
+      }
+      playlist.push({
+        artist: artist,
+        title: title,
+        url: url,
+        profile: JSON.parse(JSON.stringify(DEFAULT_PROFILE))
+      });
+      document.getElementById('add-artist').value = '';
+      document.getElementById('add-title').value = '';
+      document.getElementById('add-url').value = '';
+      renderList();
+      toast('track added — edit to customize profile');
+    });
+
+    // ── Save / download playlist.json ──
+    document.getElementById('save-btn').addEventListener('click', function() {
+      var json = JSON.stringify(playlist, null, 2);
+      var blob = new Blob([json + '\n'], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'playlist.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast('playlist.json downloaded — commit to /public/');
+    });
+
+    // ── Toast ──
+    var toastTimer = null;
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function() {
+        toastEl.classList.remove('show');
+      }, 2500);
+    }
+
+  })();
+  </script>
+</body>
+</html>

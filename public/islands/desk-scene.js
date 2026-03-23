@@ -1266,6 +1266,29 @@
   drawDeskPlant();
   drawSignature();
 
+  // ── Guestbook — small open book on the rug floor ──
+  (function () {
+    var GBX = 50, GBY = 90; // bottom-left area of rug
+    // Left page (slightly warm paper)
+    fillRect(GBX, GBY, 5, 6, 9);       // left page — warm white
+    fillRect(GBX, GBY, 1, 6, 5);       // spine shadow
+    // Right page
+    fillRect(GBX + 5, GBY, 5, 6, 9);   // right page
+    fillRect(GBX + 9, GBY, 1, 6, 5);   // right edge shadow
+    // Spine
+    fillRect(GBX + 4, GBY, 2, 6, 87);  // dark spine
+    // "Writing" lines on pages
+    fillRect(GBX + 1, GBY + 1, 3, 0.5, 5);
+    fillRect(GBX + 1, GBY + 3, 3, 0.5, 5);
+    fillRect(GBX + 6, GBY + 1, 3, 0.5, 5);
+    fillRect(GBX + 6, GBY + 3, 3, 0.5, 5);
+    // Small pen next to book
+    fillRect(GBX + 11, GBY + 2, 1, 4, 87);
+    fillRect(GBX + 11, GBY + 1, 1, 1, 47);  // pen tip
+
+    registerObject('guestbook', GBX - 1, GBY - 1, 13, 8, '/guestbook', 'sign the guestbook', false);
+  })();
+
   // ── Link speaker objects to music panel toggle ──
   // Double-click the hifi to open the hidden playlist admin
   var hifiClickCount = 0;

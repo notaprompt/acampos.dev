@@ -26,6 +26,32 @@
   var PLAYLIST = [];
   var activeProfile = DEFAULT_PROFILE;
   var playlistReady = false;
+  var autoplayTriggered = false;
+
+  // Autoplay: after first user interaction anywhere on the page,
+  // wait 5 seconds then start music. Browsers require a gesture
+  // before allowing audio playback.
+  function setupAutoplay() {
+    function onInteraction() {
+      if (autoplayTriggered) return;
+      autoplayTriggered = true;
+      document.removeEventListener('click', onInteraction);
+      document.removeEventListener('scroll', onInteraction);
+      document.removeEventListener('keydown', onInteraction);
+      document.removeEventListener('touchstart', onInteraction);
+      setTimeout(function () {
+        if (!isPlaying && PLAYLIST.length > 0) {
+          if (!audio.src || audio.src === window.location.href) loadTrack(currentIndex);
+          playTrack();
+        }
+      }, 5000);
+    }
+    document.addEventListener('click', onInteraction);
+    document.addEventListener('scroll', onInteraction);
+    document.addEventListener('keydown', onInteraction);
+    document.addEventListener('touchstart', onInteraction);
+  }
+  setupAutoplay();
 
   // Fetch playlist at runtime — callbacks fire after DOM is built
   function onPlaylistLoaded(data) {

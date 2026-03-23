@@ -168,22 +168,39 @@
     saveToAPI();
   }
 
-  function addTrack() {
+  async function addTrack() {
     var artist = document.getElementById('pa-artist').value.trim();
     var title = document.getElementById('pa-title').value.trim();
     var url = document.getElementById('pa-url').value.trim();
     if (!artist || !title || !url) return;
+
+    var addBtn = document.getElementById('pa-add');
+    if (addBtn) { addBtn.disabled = true; addBtn.textContent = 'analyzing...'; }
+
+    // Auto-profile the track if the profiler is available
+    var profile = Object.assign({}, DEFAULT_PROFILE);
+    if (window.__autoProfile) {
+      try {
+        profile = await window.__autoProfile(url);
+        flash('auto-profiled: smoothing=' + profile.smoothing + ' snap=' + profile.midSnap, '#5BF29B');
+      } catch (e) {
+        flash('profiling failed, using defaults', '#c4956a');
+      }
+    }
+
     playlist.push({
       artist: artist,
       title: title,
       url: url,
-      profile: Object.assign({}, DEFAULT_PROFILE)
+      profile: profile
     });
     document.getElementById('pa-artist').value = '';
     document.getElementById('pa-title').value = '';
     document.getElementById('pa-url').value = '';
     renderList();
     saveToAPI();
+
+    if (addBtn) { addBtn.disabled = false; addBtn.textContent = 'add'; }
   }
 
   function esc(str) {

@@ -141,8 +141,18 @@
   }
 
   function deleteTrack(idx) {
+    var name = playlist[idx] ? playlist[idx].title : '';
     playlist.splice(idx, 1);
     renderList();
+    // Flash confirmation
+    var list = document.getElementById('pa-list');
+    if (list) {
+      var msg = document.createElement('div');
+      msg.textContent = 'removed ' + name;
+      msg.style.cssText = 'font-size:9px;color:#c75050;opacity:0.6;padding:4px 0;text-align:center;';
+      list.prepend(msg);
+      setTimeout(function() { if (msg.parentNode) msg.remove(); }, 1500);
+    }
   }
 
   function addTrack() {

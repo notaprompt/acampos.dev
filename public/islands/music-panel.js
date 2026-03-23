@@ -29,6 +29,7 @@
 
   // Fetch playlist at runtime — callbacks fire after DOM is built
   function onPlaylistLoaded(data) {
+    console.log('[music] playlist loaded:', data.length, 'tracks');
     PLAYLIST = data;
     for (var i = 0; i < PLAYLIST.length; i++) {
       if (!PLAYLIST[i].profile) PLAYLIST[i].profile = DEFAULT_PROFILE;
@@ -179,7 +180,8 @@
   }
 
   function togglePlay() {
-    if (PLAYLIST.length === 0) return;
+    console.log('[music] togglePlay — playlist:', PLAYLIST.length, 'playing:', isPlaying, 'src:', audio.src);
+    if (PLAYLIST.length === 0) { console.log('[music] no tracks, returning'); return; }
     if (isPlaying) {
       pauseTrack();
     } else {

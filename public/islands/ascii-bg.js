@@ -198,7 +198,7 @@
   // --- RD Worker ---
   let worker = null;
   try {
-    const workerUrl = new URL('./rd-worker.js', import.meta.url);
+    const workerUrl = new URL('/islands/rd-worker.js', window.location.origin);
     worker = new Worker(workerUrl);
 
     worker.onmessage = function (e) {

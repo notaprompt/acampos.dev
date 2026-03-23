@@ -25,24 +25,47 @@
 
   var PLAYLIST = [];
   var activeProfile = DEFAULT_PROFILE;
+  var playlistReady = false;
 
-  // Fetch playlist at runtime
+  // Fetch playlist at runtime — callbacks fire after DOM is built
+  function onPlaylistLoaded(data) {
+    PLAYLIST = data;
+    for (var i = 0; i < PLAYLIST.length; i++) {
+      if (!PLAYLIST[i].profile) PLAYLIST[i].profile = DEFAULT_PROFILE;
+    }
+    activeProfile = PLAYLIST[0] ? PLAYLIST[0].profile : DEFAULT_PROFILE;
+    playlistReady = true;
+    // Re-render playlist UI
+    if (typeof buildPlaylist === 'function') buildPlaylist();
+    // Load first track if nothing is playing
+    var audioHasSrc = audio.src && audio.src !== '' && audio.src !== window.location.href;
+    if (!audioHasSrc && PLAYLIST.length > 0) {
+      var idx = 0;
+      try {
+        var s = JSON.parse(localStorage.getItem('mp_state'));
+        if (s && s.idx < PLAYLIST.length) idx = s.idx;
+      } catch(e) {}
+      loadTrack(idx);
+    }
+  }
+
   fetch('/playlist.json')
     .then(function(r) { return r.json(); })
-    .then(function(data) {
-      PLAYLIST = data;
-      // Ensure every track has a profile (use defaults if missing)
-      for (var i = 0; i < PLAYLIST.length; i++) {
-        if (!PLAYLIST[i].profile) PLAYLIST[i].profile = DEFAULT_PROFILE;
-      }
-      activeProfile = PLAYLIST[0] ? PLAYLIST[0].profile : DEFAULT_PROFILE;
-      // Re-render playlist UI if it exists
-      if (typeof buildPlaylist === 'function') buildPlaylist();
-      // Load first track if nothing is playing
-      if (!isPlaying && PLAYLIST.length > 0) loadTrack(currentIndex);
-    })
+    .then(onPlaylistLoaded)
     .catch(function() {
-      // Fallback to empty — site works without music
+      // Fallback — try hardcoded tracks
+      onPlaylistLoaded([
+        { artist: 'Shigeo Sekito', title: 'the word II', url: '/audio/the-word-ii.mp3',
+          profile: { hitThresh: 0.08, bendAmp: 1.0, steerSens: 1.0, midSnap: 1.0, flipThresh: 0.5, smoothing: 0.8 } },
+        { artist: 'Aphex Twin', title: 'Avril 14th', url: '/audio/avril-14th.mp3',
+          profile: { hitThresh: 0.02, bendAmp: 1.8, steerSens: 2.5, midSnap: 4.0, flipThresh: 0.6, smoothing: 0.55 } },
+        { artist: 'Brent Faiyaz', title: 'white noise.', url: '/audio/white-noise.mp3',
+          profile: { hitThresh: 0.03, bendAmp: 1.4, steerSens: 2.0, midSnap: 3.5, flipThresh: 0.6, smoothing: 0.6 } },
+        { artist: 'Piero Piccioni', title: 'Easy Lovers', url: '/audio/easy-lovers.mp3',
+          profile: { hitThresh: 0.05, bendAmp: 1.2, steerSens: 1.5, midSnap: 2.5, flipThresh: 0.55, smoothing: 0.7 } },
+        { artist: 'Maison Music', title: "l'histoire de ta vie", url: '/audio/lhistoire-de-ta-vie.mp3',
+          profile: { hitThresh: 0.03, bendAmp: 1.6, steerSens: 2.2, midSnap: 3.0, flipThresh: 0.6, smoothing: 0.6 } },
+      ]);
     });
 
   // ── State (restore from localStorage if available) ────────

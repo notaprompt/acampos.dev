@@ -30,6 +30,30 @@
     "profile": { "hitThresh": 0.05, "bendAmp": 1.2, "steerSens": 1.5, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.7 }
   },
   {
+    "artist": "Mitu",
+    "title": "Volando",
+    "url": "/audio/volando.mp3",
+    "profile": { "hitThresh": 0.04, "bendAmp": 1.5, "steerSens": 2.0, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.65 }
+  },
+  {
+    "artist": "Lilen",
+    "title": "Fronteo",
+    "url": "/audio/fronteo.mp3",
+    "profile": { "hitThresh": 0.04, "bendAmp": 1.4, "steerSens": 1.8, "midSnap": 2.5, "flipThresh": 0.55, "smoothing": 0.65 }
+  },
+  {
+    "artist": "Yves Tumor",
+    "title": "Limerence",
+    "url": "/audio/limerence.mp3",
+    "profile": { "hitThresh": 0.03, "bendAmp": 1.7, "steerSens": 2.3, "midSnap": 3.5, "flipThresh": 0.6, "smoothing": 0.55 }
+  },
+  {
+    "artist": "Blood Orange",
+    "title": "Wish",
+    "url": "/audio/wish.mp3",
+    "profile": { "hitThresh": 0.04, "bendAmp": 1.3, "steerSens": 1.6, "midSnap": 2.0, "flipThresh": 0.55, "smoothing": 0.7 }
+  },
+  {
     "artist": "Maison Music",
     "title": "l'histoire de ta vie",
     "url": "/audio/lhistoire-de-ta-vie.mp3",

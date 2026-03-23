@@ -1734,4 +1734,69 @@
       }
     }
   });
+
+  // Touch support — tap to interact with desk objects
+  canvas.addEventListener('touchstart', function (e) {
+    var touch = e.touches[0];
+    var rect = canvas.getBoundingClientRect();
+    var mx = Math.floor((touch.clientX - rect.left) / (rect.width / COLS));
+    var my = Math.floor((touch.clientY - rect.top) / (rect.height / ROWS));
+
+    var found = null;
+    for (var i = 0; i < objects.length; i++) {
+      var o = objects[i];
+      if (mx >= o.x && mx < o.x + o.w && my >= o.y && my < o.y + o.h) {
+        // check non-transparent pixel
+        var idx = my * COLS + mx;
+        if (scene[idx] !== 0) {
+          found = o;
+          break;
+        }
+      }
+    }
+
+    if (found) {
+      e.preventDefault(); // prevent scroll on interactive area
+      hoveredObj = found;
+      canvas.style.cursor = 'pointer';
+      if (!hasInteracted) {
+        hasInteracted = true;
+        if (hintInterval) clearInterval(hintInterval);
+      }
+      if (tooltip) {
+        tooltip.textContent = found.label;
+        tooltip.classList.add('visible');
+      }
+      render();
+
+      // Auto-activate after brief tooltip show
+      setTimeout(function () {
+        if (hoveredObj === found) {
+          if (found.action) {
+            found.action();
+          } else if (found.url) {
+            if (found.external) {
+              window.open(found.url, '_blank', 'noopener');
+            } else {
+              window.location.href = found.url;
+            }
+          }
+          // Clear hover state
+          hoveredObj = null;
+          if (tooltip) tooltip.classList.remove('visible');
+          render();
+        }
+      }, 300);
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', function () {
+    // Clean up hover state
+    setTimeout(function () {
+      hoveredObj = null;
+      if (tooltip) tooltip.classList.remove('visible');
+      canvas.style.cursor = 'default';
+      render();
+    }, 500);
+  });
 })();

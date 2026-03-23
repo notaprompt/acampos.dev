@@ -435,6 +435,80 @@
     '/* Hide on mobile */',
     '@media (max-width: 768px) {',
     '  #music-panel, #mp-toggle { display: none !important; }',
+    '  #mp-mini { display: block; }',
+    '}',
+    '',
+    '/* Mobile mini-player */',
+    '#mp-mini {',
+    '  display: none;',
+    '  position: fixed;',
+    '  bottom: 0;',
+    '  left: 0;',
+    '  right: 0;',
+    '  z-index: 200;',
+    '  background: rgba(8, 8, 8, 0.95);',
+    '  border-top: 1px solid rgba(232, 220, 200, 0.06);',
+    '  backdrop-filter: blur(8px);',
+    '  -webkit-backdrop-filter: blur(8px);',
+    '}',
+    '#mp-mini-inner {',
+    '  display: flex;',
+    '  align-items: center;',
+    '  gap: 10px;',
+    '  padding: 10px 14px;',
+    '  padding-bottom: max(10px, env(safe-area-inset-bottom));',
+    '}',
+    '#mp-mini-play, #mp-mini-next {',
+    '  background: none;',
+    '  border: none;',
+    '  color: var(--glow, #E8DCC8);',
+    '  font-size: 14px;',
+    '  cursor: pointer;',
+    '  padding: 8px;',
+    '  opacity: 0.7;',
+    '  min-width: 44px;',
+    '  min-height: 44px;',
+    '  display: flex;',
+    '  align-items: center;',
+    '  justify-content: center;',
+    '}',
+    '#mp-mini-play:active, #mp-mini-next:active { opacity: 1; }',
+    '#mp-mini-info {',
+    '  flex: 1;',
+    '  min-width: 0;',
+    '  display: flex;',
+    '  flex-direction: column;',
+    '  gap: 2px;',
+    '}',
+    '#mp-mini-title {',
+    '  font-family: var(--mono, "JetBrains Mono", monospace);',
+    '  font-size: 11px;',
+    '  color: var(--glow, #E8DCC8);',
+    '  white-space: nowrap;',
+    '  overflow: hidden;',
+    '  text-overflow: ellipsis;',
+    '}',
+    '#mp-mini-artist {',
+    '  font-family: var(--mono, "JetBrains Mono", monospace);',
+    '  font-size: 9px;',
+    '  color: rgba(232, 220, 200, 0.4);',
+    '  white-space: nowrap;',
+    '  overflow: hidden;',
+    '  text-overflow: ellipsis;',
+    '}',
+    '#mp-mini-progress {',
+    '  width: 40px;',
+    '  height: 2px;',
+    '  background: rgba(232, 220, 200, 0.08);',
+    '  border-radius: 1px;',
+    '  overflow: hidden;',
+    '  flex-shrink: 0;',
+    '}',
+    '#mp-mini-fill {',
+    '  height: 100%;',
+    '  background: var(--gold-accent, #b8965a);',
+    '  width: 0%;',
+    '  transition: width 0.3s linear;',
     '}',
   ].join('\n');
   document.head.appendChild(style);
@@ -504,6 +578,24 @@
     '</div>',
   ].join('\n');
   document.body.appendChild(panel);
+
+  // Mobile mini-player — fixed bottom bar, visible only on small screens
+  var miniPlayer = document.createElement('div');
+  miniPlayer.id = 'mp-mini';
+  miniPlayer.innerHTML = [
+    '<div id="mp-mini-inner">',
+    '  <button id="mp-mini-play" type="button">\u25B6</button>',
+    '  <div id="mp-mini-info">',
+    '    <span id="mp-mini-title">\u2014</span>',
+    '    <span id="mp-mini-artist"></span>',
+    '  </div>',
+    '  <div id="mp-mini-progress">',
+    '    <div id="mp-mini-fill"></div>',
+    '  </div>',
+    '  <button id="mp-mini-next" type="button">\u25B6\u25B6</button>',
+    '</div>',
+  ].join('\n');
+  document.body.appendChild(miniPlayer);
 
   // ── Element refs ──────────────────────────────────────────
   var titleEl = panel.querySelector('.track-title');
@@ -680,6 +772,42 @@
   }
   audio.addEventListener('pause', onPause);
   audio.addEventListener('play', onPlay);
+
+  // ── Mobile mini-player wiring ──────────────────────────────
+  var miniPlayBtn = document.getElementById('mp-mini-play');
+  var miniNextBtn = document.getElementById('mp-mini-next');
+  var miniTitle = document.getElementById('mp-mini-title');
+  var miniArtist = document.getElementById('mp-mini-artist');
+  var miniFill = document.getElementById('mp-mini-fill');
+
+  if (miniPlayBtn) {
+    miniPlayBtn.addEventListener('click', function () { togglePlay(); });
+  }
+  if (miniNextBtn) {
+    miniNextBtn.addEventListener('click', function () { nextTrack(); });
+  }
+
+  // Wrap updateNowPlaying to also update mini-player
+  var origUpdateNowPlaying = updateNowPlaying;
+  updateNowPlaying = function (track) {
+    origUpdateNowPlaying(track);
+    if (miniTitle) miniTitle.textContent = track.title;
+    if (miniArtist) miniArtist.textContent = track.artist;
+  };
+
+  // Wrap updatePlayBtn to also update mini play button
+  var origUpdatePlayBtn = updatePlayBtn;
+  updatePlayBtn = function () {
+    origUpdatePlayBtn();
+    if (miniPlayBtn) miniPlayBtn.textContent = isPlaying ? '\u275A\u275A' : '\u25B6';
+  };
+
+  // Update mini progress bar
+  audio.addEventListener('timeupdate', function () {
+    if (miniFill && audio.duration) {
+      miniFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+    }
+  });
 
   // ── Visualizer ────────────────────────────────────────────
   var PIXEL_SCALE = 3; // render at 1/3 res, scale up for vintage pixel look
@@ -1906,6 +2034,7 @@
     if (banner && banner.parentNode) banner.parentNode.removeChild(banner);
     if (toggle && toggle.parentNode) toggle.parentNode.removeChild(toggle);
     if (weatherEl && weatherEl.parentNode) weatherEl.parentNode.removeChild(weatherEl);
+    if (miniPlayer && miniPlayer.parentNode) miniPlayer.parentNode.removeChild(miniPlayer);
     if (style && style.parentNode) style.parentNode.removeChild(style);
     audio.removeEventListener('timeupdate', onTimeUpdate);
     audio.removeEventListener('loadedmetadata', onLoadedMetadata);

@@ -35,7 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         || /bot|crawl|spider|slurp|curl|wget|python|go-http|node-fetch|axios|vercel|pingdom|uptimerobot|monitor|check|scan|headless/i.test(ua);
 
       if (isBot) {
-        const [row] = await sql`SELECT COUNT(DISTINCT COALESCE(vid, ip)) AS count FROM site_hits WHERE vid IS NOT NULL OR ip NOT LIKE '54.%'`;
+        const [row] = await sql`SELECT COUNT(DISTINCT vid) AS count FROM site_hits WHERE vid IS NOT NULL`;
         return res.json({ count: Number(row.count) });
       }
 
@@ -60,7 +60,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Count unique visitors: prefer vid, fall back to ip for old entries
-    const [row] = await sql`SELECT COUNT(DISTINCT COALESCE(vid, ip)) AS count FROM site_hits WHERE vid IS NOT NULL OR ip NOT LIKE '54.%'`;
+    const [row] = await sql`SELECT COUNT(DISTINCT vid) AS count FROM site_hits WHERE vid IS NOT NULL`;
     return res.json({ count: Number(row.count) });
   } catch {
     return res.json({ count: 0 });

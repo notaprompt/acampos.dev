@@ -14,6 +14,8 @@ async function init() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
+  // Add vid column if table existed before the fingerprint update
+  try { await sql`ALTER TABLE site_hits ADD COLUMN IF NOT EXISTS vid TEXT`; } catch {}
   await sql`CREATE INDEX IF NOT EXISTS idx_hits_ip ON site_hits (ip)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_hits_vid ON site_hits (vid)`;
   initialized = true;

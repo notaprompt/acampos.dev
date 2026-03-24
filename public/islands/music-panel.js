@@ -489,9 +489,22 @@
     '  pointer-events: none;',
     '}',
     '',
-    '/* Hide on mobile */',
+    '/* Mobile: full-width slide-out panel + mini-player at bottom */',
     '@media (max-width: 768px) {',
-    '  #music-panel, #mp-toggle { display: none !important; }',
+    '  #music-panel {',
+    '    width: 80vw !important;',
+    '    max-width: 320px;',
+    '    backdrop-filter: blur(16px);',
+    '    -webkit-backdrop-filter: blur(16px);',
+    '  }',
+    '  #music-panel.open { transform: translateX(0); }',
+    '  #mp-toggle {',
+    '    padding: 14px 6px !important;',
+    '    font-size: 0.55rem !important;',
+    '    min-height: 44px;',
+    '    touch-action: manipulation;',
+    '  }',
+    '  #mp-toggle.shifted { right: 80vw !important; max-width: none; right: min(80vw, 320px) !important; }',
     '  #mp-mini { display: block; }',
     '}',
     '',
@@ -668,6 +681,10 @@
     panelOpen = !panelOpen;
     panel.classList.toggle('open', panelOpen);
     toggle.classList.toggle('shifted', panelOpen);
+    // Start visualizer when panel opens (especially on mobile where it doesn't auto-start)
+    if (panelOpen && !animId) {
+      startVisualizer();
+    }
   }
 
   toggle.addEventListener('click', togglePanel);

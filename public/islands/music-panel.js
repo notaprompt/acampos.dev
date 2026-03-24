@@ -785,6 +785,28 @@
   document.addEventListener('mousemove', onDocMouseMove);
   document.addEventListener('mouseup', onDocMouseUp);
 
+  // Touch seek support for mobile
+  function seekFromTouchEvent(e) {
+    var touch = e.touches[0];
+    var rect = progressBar.getBoundingClientRect();
+    var pct = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+    if (audio.duration) {
+      audio.currentTime = pct * audio.duration;
+      updateProgressDisplay();
+    }
+  }
+  progressBar.addEventListener('touchstart', function (e) {
+    e.preventDefault();
+    seeking = true;
+    seekFromTouchEvent(e);
+  }, { passive: false });
+  document.addEventListener('touchmove', function (e) {
+    if (seeking) seekFromTouchEvent(e);
+  });
+  document.addEventListener('touchend', function () {
+    seeking = false;
+  });
+
   // ── Now playing ───────────────────────────────────────────
   function updateNowPlaying(track) {
     titleEl.textContent = track.title;
@@ -880,8 +902,9 @@
   }
 
   // Always run visualizer — shows idle/ambient state even without music
+  // Only start if panel is visible (hidden on mobile)
   setTimeout(function () {
-    startVisualizer();
+    if (window.innerWidth > 768) startVisualizer();
   }, 500);
 
   var visTime = 0;
@@ -1984,6 +2007,18 @@
     }
     tryAutoPlay();
   }
+
+  // Pause/resume visualizer on tab visibility change (saves battery on mobile)
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      if (animId) { cancelAnimationFrame(animId); animId = null; }
+    } else {
+      if (isPlaying) {
+        startVisualizer();
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      }
+    }
+  });
 
   // Expose cleanup for navigation re-init
   window.__musicPanelCleanup = function () {

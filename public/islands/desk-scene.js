@@ -1286,7 +1286,7 @@
     scene[(GBY + 2) * COLS + (GBX + 3)] = 87; // dark pixel for "g"
     scene[(GBY + 2) * COLS + (GBX + 5)] = 87; // dark pixel for "b"
 
-    registerObject('guestbook', GBX - 1, GBY - 1, W + 2, H + 2, '/guestbook', 'sign the guestbook', false);
+    registerObject('guestbook', GBX - 3, GBY - 3, W + 6, H + 6, '/guestbook', 'sign the guestbook', false);
   })();
 
   // ── Link speaker objects to music panel toggle ──
@@ -1592,9 +1592,10 @@
   // ── Hint: repeating nudge until first interaction ──
   var hasInteracted = false;
   var hintInterval = null;
+  var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   function showHint() {
     if (hasInteracted || !tooltip) return;
-    tooltip.textContent = 'hover to interact';
+    tooltip.textContent = isTouchDevice ? 'tap to interact' : 'hover to interact';
     tooltip.classList.add('visible');
     setTimeout(function () {
       if (!hasInteracted) tooltip.classList.remove('visible');
@@ -1786,6 +1787,19 @@
         hasInteracted = true;
         if (hintInterval) clearInterval(hintInterval);
       }
+
+      // Hifi needs double-tap handling — don't auto-activate
+      if (found.id === 'hifi') {
+        if (tooltip) { tooltip.textContent = found.label; tooltip.classList.add('visible'); }
+        // Use the existing double-click logic — just call the action directly
+        // The action already has its own double-click timer
+        found.action();
+        setTimeout(function () {
+          if (tooltip) tooltip.classList.remove('visible');
+        }, 1000);
+        return; // Don't auto-activate after 300ms
+      }
+
       if (tooltip) {
         tooltip.textContent = found.label;
         tooltip.classList.add('visible');

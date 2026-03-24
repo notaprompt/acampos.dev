@@ -232,4 +232,41 @@
   }
 
   window.__playlistAdmin = { toggle: toggle, show: show, hide: hide };
+
+  // Create a left-side tab (mirrors the player tab on the right)
+  var oliverTab = document.createElement('button');
+  oliverTab.id = 'oliver-toggle';
+  oliverTab.textContent = 'oliver';
+  oliverTab.setAttribute('aria-label', 'Open playlist admin');
+  oliverTab.className = 'glow';
+  oliverTab.style.cssText = [
+    'position: fixed; left: 0; top: 50%; z-index: 9600;',
+    'transform: translateY(-50%); writing-mode: vertical-rl; text-orientation: mixed;',
+    'background: var(--depth-3, #111111); color: var(--white-30, rgba(232,220,200,0.3));',
+    'border: 1px solid var(--white-08, rgba(232,220,200,0.08)); border-left: none;',
+    'padding: 14px 6px; font-family: "JetBrains Mono", monospace; font-size: 0.55rem;',
+    'letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer;',
+    'transition: color 0.2s, background 0.2s;',
+    'backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);',
+    'min-height: 44px; touch-action: manipulation;',
+  ].join(' ');
+
+  // Glow animation (same as player tab)
+  var oliverStyle = document.createElement('style');
+  oliverStyle.textContent = [
+    '#oliver-toggle.glow { animation: oliverGlow 2s ease-in-out infinite; }',
+    '@keyframes oliverGlow {',
+    '  0%, 100% { border-color: var(--white-08, rgba(232,220,200,0.08)); color: var(--white-30, rgba(232,220,200,0.3)); }',
+    '  50% { border-color: var(--gold-accent, #b8965a); color: var(--gold-accent, #b8965a); }',
+    '}',
+    '#oliver-toggle:hover, #oliver-toggle:active { color: var(--gold-accent, #b8965a); background: var(--depth-2, #0C0C0C); }',
+  ].join('\n');
+  document.head.appendChild(oliverStyle);
+
+  oliverTab.addEventListener('click', function () {
+    oliverTab.classList.remove('glow');
+    toggle();
+  });
+
+  document.body.appendChild(oliverTab);
 })();

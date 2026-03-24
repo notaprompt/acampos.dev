@@ -160,7 +160,7 @@
   var audioCtx = null;
   var analyser = null;
   var sourceNode = null;
-  var panelOpen = true;
+  var panelOpen = false;
   var peaks = [];
   var peakDecay = [];
   var animId = null;
@@ -339,6 +339,11 @@
     '}',
     '#mp-toggle:hover { color: var(--gold-accent); background: var(--depth-2); }',
     '#mp-toggle.shifted { right: 19vw; }',
+    '#mp-toggle.glow { animation: tabGlow 2s ease-in-out infinite; }',
+    '@keyframes tabGlow {',
+    '  0%, 100% { border-color: var(--white-08); color: var(--white-30); }',
+    '  50% { border-color: var(--gold-accent, #b8965a); color: var(--gold-accent, #b8965a); }',
+    '}',
     '',
     '#mp-titlebar {',
     '  display: flex; align-items: center; justify-content: space-between;',
@@ -600,7 +605,7 @@
   // Toggle button
   var toggle = document.createElement('button');
   toggle.id = 'mp-toggle';
-  toggle.className = 'shifted';
+  toggle.className = 'glow'; // starts closed, glows until first interaction
   toggle.textContent = 'player';
   toggle.setAttribute('aria-label', 'Toggle music player');
   document.body.appendChild(toggle);
@@ -681,6 +686,8 @@
     panelOpen = !panelOpen;
     panel.classList.toggle('open', panelOpen);
     toggle.classList.toggle('shifted', panelOpen);
+    // Remove glow on first interaction
+    toggle.classList.remove('glow');
     // Start visualizer when panel opens (especially on mobile where it doesn't auto-start)
     if (panelOpen && !animId) {
       startVisualizer();

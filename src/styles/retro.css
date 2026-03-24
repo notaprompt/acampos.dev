@@ -51,7 +51,7 @@
 
 /* ── Marquee ────────────────────────────────────────────────── */
 
-.retro-marquee {
+.retro-marquee-wrap {
   font-family: var(--mono);
   font-size: 0.8rem;
   color: var(--white-45);
@@ -59,4 +59,17 @@
   border-top: 1px solid var(--white-08);
   border-bottom: 1px solid var(--white-08);
   margin: 1rem 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.retro-marquee-text {
+  display: inline-block;
+  will-change: transform;
+  animation: cssMarquee 30s linear infinite;
+}
+
+@keyframes cssMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }

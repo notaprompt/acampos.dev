@@ -4,8 +4,7 @@
   // Don't re-init on client-side navigation
   if (window.__oliverInit) return;
   window.__oliverInit = true;
-  // Skip on narrow screens (mobile)
-  if (window.innerWidth <= 768) return;
+  // Oliver works everywhere — desktop and mobile
 
   // ── Oliver's Pixel Sprite ───────────────────────────────────
   // French Bulldog as a CSS pixel grid — no text alignment issues
@@ -584,7 +583,7 @@
     // ── Room panel ──
     var panel = document.createElement('div');
     panel.id = 'oliver-room';
-    panel.className = 'open';
+    panel.className = ''; // starts closed
     panel.innerHTML = [
       '<div class="or-titlebar">',
       '  <span class="or-title">' + esc(name) + '.exe</span>',
@@ -599,7 +598,7 @@
     // ── Toggle button ──
     var toggle = document.createElement('button');
     toggle.id = 'or-toggle';
-    toggle.className = 'shifted';
+    toggle.className = 'glow'; // starts closed, glows until first interaction
     toggle.textContent = esc(name);
     toggle.setAttribute('aria-label', 'Toggle ' + esc(name) + ' room');
     document.body.appendChild(toggle);
@@ -730,6 +729,7 @@
       roomOpen = !roomOpen;
       panel.classList.toggle('open', roomOpen);
       toggle.classList.toggle('shifted', roomOpen);
+      toggle.classList.remove('glow');
     }
 
     toggle.addEventListener('click', toggleRoom);
@@ -1098,9 +1098,19 @@
       '  100% { opacity: 0; transform: translateY(-40px) scale(0.7); }',
       '}',
       '',
-      '/* Hide on mobile */',
+      '/* Mobile: full-width slide-out */',
       '@media (max-width: 768px) {',
-      '  #oliver-room, #or-toggle { display: none !important; }',
+      '  #oliver-room { width: 80vw !important; max-width: 320px; }',
+      '  #or-toggle {',
+      '    padding: 14px 6px !important; font-size: 0.55rem !important;',
+      '    min-height: 44px; touch-action: manipulation;',
+      '  }',
+      '  #or-toggle.shifted { left: 80vw !important; left: min(80vw, 320px) !important; }',
+      '}',
+      '#or-toggle.glow { animation: oliverTabGlow 2s ease-in-out infinite; }',
+      '@keyframes oliverTabGlow {',
+      '  0%, 100% { border-color: var(--white-08); color: var(--white-30); }',
+      '  50% { border-color: var(--gold-accent); color: var(--gold-accent); }',
       '}',
     ].join('\n');
     document.head.appendChild(css);

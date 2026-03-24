@@ -235,7 +235,6 @@
   function playTrack() {
     initAudioContext();
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    // Ensure audio element volume is audible
     audio.volume = volume > 0 ? volume : 0.7;
     audio.muted = false;
     audio.play().then(function () {
@@ -243,13 +242,11 @@
       updatePlayBtn();
       showBanner(true);
       startVisualizer();
-      // Safari sometimes needs a nudge after AudioContext resume
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume().then(function () {
-        });
-      }
-    }).catch(function (err) {
-    });
+      // Re-show now-playing info on resume (not just on track load)
+      var track = PLAYLIST[getPlayIndex(currentIndex)];
+      if (track) updateNowPlaying(track);
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }).catch(function () {});
   }
 
   function pauseTrack() {

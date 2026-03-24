@@ -613,7 +613,7 @@
   // Panel
   var panel = document.createElement('div');
   panel.id = 'music-panel';
-  panel.className = 'open';
+  panel.className = ''; // starts closed
   panel.innerHTML = [
     '<div id="mp-titlebar">',
     '  <span class="title">music_player.exe</span>',

@@ -10,10 +10,12 @@ async function init() {
     CREATE TABLE IF NOT EXISTS site_hits (
       id SERIAL PRIMARY KEY,
       ip TEXT NOT NULL,
+      vid TEXT,
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
   await sql`CREATE INDEX IF NOT EXISTS idx_hits_ip ON site_hits (ip)`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_hits_vid ON site_hits (vid)`;
   initialized = true;
 }
 
@@ -26,30 +28,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         || req.headers['x-real-ip'] as string
         || 'unknown';
       const ua = (req.headers['user-agent'] || '').toLowerCase();
+      const vid = req.body?.vid || null;
 
-      // Filter bots/crawlers
+      // Filter bots
       const isBot = !ua
-        || /bot|crawl|spider|slurp|curl|wget|python|go-http|node-fetch|axios|vercel|pingdom|uptimerobot|monitor|check|scan|headless/i.test(ua)
-        || /^(52\.53|54\.176|54\.219|54\.193|54\.153|54\.177|54\.151|54\.67|13\.56|13\.52|18\.144|3\.101|3\.236|3\.80|3\.94|3\.234|100\.26)\./.test(ip);
+        || /bot|crawl|spider|slurp|curl|wget|python|go-http|node-fetch|axios|vercel|pingdom|uptimerobot|monitor|check|scan|headless/i.test(ua);
 
       if (isBot) {
-        const [row] = await sql`SELECT COUNT(DISTINCT ip) AS count FROM site_hits`;
+        const [row] = await sql`SELECT COUNT(DISTINCT COALESCE(vid, ip)) AS count FROM site_hits WHERE vid IS NOT NULL OR ip NOT LIKE '54.%'`;
         return res.json({ count: Number(row.count) });
       }
 
-      // One count per IP per 24 hours
-      const [existing] = await sql`
-        SELECT 1 FROM site_hits
-        WHERE ip = ${ip} AND created_at > NOW() - INTERVAL '24 hours'
-        LIMIT 1
-      `;
+      // Check if this visitor already counted (by vid first, then IP fallback)
+      let exists = false;
+      if (vid) {
+        const [existing] = await sql`SELECT 1 FROM site_hits WHERE vid = ${vid} LIMIT 1`;
+        exists = !!existing;
+      }
+      if (!exists) {
+        const [existing] = await sql`
+          SELECT 1 FROM site_hits
+          WHERE ip = ${ip} AND vid IS NULL AND created_at > NOW() - INTERVAL '24 hours'
+          LIMIT 1
+        `;
+        exists = !!existing;
+      }
 
-      if (!existing) {
-        await sql`INSERT INTO site_hits (ip) VALUES (${ip})`;
+      if (!exists) {
+        await sql`INSERT INTO site_hits (ip, vid) VALUES (${ip}, ${vid})`;
       }
     }
 
-    const [row] = await sql`SELECT COUNT(DISTINCT ip) AS count FROM site_hits`;
+    // Count unique visitors: prefer vid, fall back to ip for old entries
+    const [row] = await sql`SELECT COUNT(DISTINCT COALESCE(vid, ip)) AS count FROM site_hits WHERE vid IS NOT NULL OR ip NOT LIKE '54.%'`;
     return res.json({ count: Number(row.count) });
   } catch {
     return res.json({ count: 0 });

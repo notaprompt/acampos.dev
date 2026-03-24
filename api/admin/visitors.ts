@@ -22,20 +22,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // Total unique visitors
-    const [total] = await sql`SELECT COUNT(DISTINCT ip) AS count FROM site_hits`;
+    const [total] = await sql`SELECT COUNT(DISTINCT ip) AS count FROM visitors`;
 
     // Visitors today
-    const [today] = await sql`SELECT COUNT(DISTINCT ip) AS count FROM site_hits WHERE created_at > NOW() - INTERVAL '24 hours'`;
+    const [today] = await sql`SELECT COUNT(DISTINCT ip) AS count FROM visitors WHERE created_at > NOW() - INTERVAL '24 hours'`;
 
     // Visitors this week
-    const [week] = await sql`SELECT COUNT(DISTINCT ip) AS count FROM site_hits WHERE created_at > NOW() - INTERVAL '7 days'`;
+    const [week] = await sql`SELECT COUNT(DISTINCT ip) AS count FROM visitors WHERE created_at > NOW() - INTERVAL '7 days'`;
 
     // Recent visitors (last 50, grouped by IP)
     const visitors = await sql`
       SELECT ip, COUNT(*) AS visits,
         MIN(created_at) AS first_visit,
         MAX(created_at) AS last_visit
-      FROM site_hits
+      FROM visitors
       GROUP BY ip
       ORDER BY last_visit DESC
       LIMIT 50
@@ -44,7 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Daily breakdown (last 14 days)
     const daily = await sql`
       SELECT DATE(created_at) AS day, COUNT(DISTINCT ip) AS unique_visitors
-      FROM site_hits
+      FROM visitors
       WHERE created_at > NOW() - INTERVAL '14 days'
       GROUP BY DATE(created_at)
       ORDER BY day DESC

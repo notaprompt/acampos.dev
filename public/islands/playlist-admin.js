@@ -6,7 +6,7 @@
   'use strict';
   if (window.__playlistAdmin) return;
 
-  var HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+  var HASH = '7dfef7aed2105b7eceb4d34e1ad84fdad4693bd5de041e1b47079efeb6001a83';
   var overlay = null;
   var authenticated = false;
   var passwordRaw = '';

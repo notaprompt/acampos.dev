@@ -3,7 +3,7 @@ import { neon } from '@neondatabase/serverless';
 import { createHash } from 'crypto';
 
 const sql = neon(process.env.DATABASE_URL || '');
-const ADMIN_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+const ADMIN_HASH = '7dfef7aed2105b7eceb4d34e1ad84fdad4693bd5de041e1b47079efeb6001a83';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Auth check

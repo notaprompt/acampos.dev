@@ -879,11 +879,12 @@
     drawVisualizer();
   }
 
-  // Always run visualizer — shows idle/ambient state even without music
-  // Only start if panel is visible (hidden on mobile)
-  setTimeout(function () {
-    if (window.innerWidth > 768) startVisualizer();
-  }, 500);
+  // Start visualizer immediately if panel is open (desktop)
+  // Shows ambient idle animation even without music playing
+  if (panelOpen) {
+    // Small delay to let DOM settle after panel creation
+    setTimeout(startVisualizer, 100);
+  }
 
   var visTime = 0;
   var waveData = null;

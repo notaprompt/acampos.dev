@@ -355,6 +355,8 @@
     '#mp-controls button:hover { color: var(--glow); }',
     '#mp-controls .play-btn { font-size: 1.1rem; color: var(--white-45); }',
     '#mp-controls .play-btn:hover { color: var(--alive); }',
+    '#mp-controls .play-btn.pulse-hint { animation: mp-pulse 2s ease-in-out infinite; color: var(--gold-accent); }',
+    '@keyframes mp-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.15); } }',
     '',
     '#mp-volume-wrap {',
     '  display: flex; align-items: center; gap: 8px;',
@@ -710,8 +712,18 @@
     audio.volume = volume;
   });
 
+  var hasPlayedOnce = false;
   function updatePlayBtn() {
     playBtn.textContent = isPlaying ? '\u275A\u275A' : '\u25B6';
+    if (isPlaying && !hasPlayedOnce) {
+      hasPlayedOnce = true;
+      playBtn.classList.remove('pulse-hint');
+    }
+  }
+
+  // Pulse the play button until first interaction
+  if (!hasPlayedOnce) {
+    playBtn.classList.add('pulse-hint');
   }
 
   // ── Progress bar ──────────────────────────────────────────

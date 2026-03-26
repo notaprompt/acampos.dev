@@ -61,8 +61,7 @@
       } catch(e) {}
       loadTrack(idx);
     }
-    // Playlist is the last piece — try autoplay now
-    tryAutoplay();
+    // Playlist loaded — ready for user to press play (opt-in only)
   }
 
   // Fetch from API (DB-backed), fall back to static JSON, then hardcoded
@@ -210,7 +209,7 @@
 
   function togglePlay() {
     if (PLAYLIST.length === 0) return;
-    autoplayTriggered = true; // manual play cancels autoplay
+    // User explicitly pressed play
     if (isPlaying) {
       pauseTrack();
     } else {

@@ -575,7 +575,8 @@
   // ── Spawn Oliver in his room ────────────────────────────────
   function spawnInRoom(name) {
     var isOliver = name.toLowerCase() === 'oliver';
-    var roomOpen = true;
+    var startOpen = window.innerWidth > 768;
+    var roomOpen = startOpen;
 
     // ── Interaction state flag ──
     var interactionActive = false;
@@ -583,7 +584,7 @@
     // ── Room panel ──
     var panel = document.createElement('div');
     panel.id = 'oliver-room';
-    panel.className = ''; // starts closed
+    panel.className = startOpen ? 'open' : '';
     panel.innerHTML = [
       '<div class="or-titlebar">',
       '  <span class="or-title">' + esc(name) + '.exe</span>',
@@ -598,7 +599,7 @@
     // ── Toggle button ──
     var toggle = document.createElement('button');
     toggle.id = 'or-toggle';
-    toggle.className = 'glow'; // starts closed, glows until first interaction
+    toggle.className = startOpen ? 'shifted' : 'glow';
     toggle.textContent = esc(name);
     toggle.setAttribute('aria-label', 'Toggle ' + esc(name) + ' room');
     document.body.appendChild(toggle);

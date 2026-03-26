@@ -112,7 +112,7 @@
   var audioCtx = null;
   var analyser = null;
   var sourceNode = null;
-  var panelOpen = false;
+  var panelOpen = window.innerWidth > 768;
   var peaks = [];
   var peakDecay = [];
   var animId = null;
@@ -557,7 +557,7 @@
   // Toggle button
   var toggle = document.createElement('button');
   toggle.id = 'mp-toggle';
-  toggle.className = 'glow'; // starts closed, glows until first interaction
+  toggle.className = startOpen ? 'shifted' : 'glow'; // desktop: shifted (panel open), mobile: glow hint
   toggle.textContent = 'player';
   toggle.setAttribute('aria-label', 'Toggle music player');
   document.body.appendChild(toggle);
@@ -565,7 +565,9 @@
   // Panel
   var panel = document.createElement('div');
   panel.id = 'music-panel';
-  panel.className = ''; // starts closed
+  // Desktop: panel starts open. Mobile: starts closed.
+  var startOpen = window.innerWidth > 768;
+  panel.className = startOpen ? 'open' : '';
   panel.innerHTML = [
     '<div id="mp-titlebar">',
     '  <span class="title">music_player.exe</span>',

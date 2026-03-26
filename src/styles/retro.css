@@ -20,6 +20,29 @@
   100% { transform: translate(0, 0); }
 }
 
+/* Mobile: disable grain animation, shrink to viewport size */
+@media (max-width: 768px) {
+  .grain {
+    animation: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+}
+
+/* Reduced motion: kill all animations */
+@media (prefers-reduced-motion: reduce) {
+  .grain {
+    animation: none;
+    display: none;
+  }
+
+  .retro-marquee-text {
+    animation: none;
+  }
+}
+
 /* ── Vignette Overlay ───────────────────────────────────────── */
 
 .vignette {

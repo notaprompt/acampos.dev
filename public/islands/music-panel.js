@@ -26,55 +26,8 @@
   var PLAYLIST = [];
   var activeProfile = DEFAULT_PROFILE;
   var playlistReady = false;
-  var autoplayTriggered = false;
-
-  // Autoplay: needs THREE conditions to be true:
-  // 1. Timer elapsed (2s)
-  // 2. User has interacted (browser requirement)
-  // 3. Playlist has loaded
-  // Whichever condition is met LAST triggers playback.
-  var autoplayTimer = false;
-  var autoplayGesture = false;
-
-  function tryAutoplay() {
-    if (autoplayTriggered || isPlaying) return;
-    if (playlistReady && PLAYLIST.length > 0) {
-      autoplayTriggered = true;
-      if (!audio.src || audio.src === window.location.href) loadTrack(currentIndex);
-      // Try playing — if browser blocks it, wait for gesture
-      initAudioContext();
-      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-      audio.volume = volume > 0 ? volume : 0.7;
-      audio.muted = false;
-      audio.play().then(function () {
-        isPlaying = true;
-        updatePlayBtn();
-        showBanner(true);
-        startVisualizer();
-      }).catch(function () {
-        // Browser blocked autoplay — reset and wait for gesture
-        autoplayTriggered = false;
-      });
-    }
-  }
-
-  // Try autoplay 2s after page load
-  setTimeout(tryAutoplay, 2000);
-
-  // Also try on any user gesture (fallback if autoplay was blocked)
-  function onGesture() {
-    if (autoplayGesture) return;
-    autoplayGesture = true;
-    document.removeEventListener('click', onGesture);
-    document.removeEventListener('scroll', onGesture);
-    document.removeEventListener('keydown', onGesture);
-    document.removeEventListener('touchstart', onGesture);
-    if (!isPlaying) tryAutoplay();
-  }
-  document.addEventListener('click', onGesture);
-  document.addEventListener('scroll', onGesture);
-  document.addEventListener('keydown', onGesture);
-  document.addEventListener('touchstart', onGesture);
+  // Music is opt-in only — no autoplay, no gesture hijacking.
+  // User clicks play button or hifi desk scene object to start.
 
   // Fetch playlist at runtime — callbacks fire after DOM is built
   function onPlaylistLoaded(data) {
@@ -2008,7 +1961,8 @@
     }
     updatePlaylistHighlight();
 
-    function tryAutoPlay() {
+    // Only resume if user was actively playing before navigation (opt-in respected)
+    if (saved && saved.playing) {
       initAudioContext();
       if (audioCtx.state === 'suspended') audioCtx.resume();
       if (restoreTime > 0) {
@@ -2022,14 +1976,8 @@
         updatePlayBtn();
         showBanner(true);
         startVisualizer();
-      }).catch(function () {
-        document.addEventListener('click', function autoplayOnClick() {
-          document.removeEventListener('click', autoplayOnClick);
-          tryAutoPlay();
-        }, { once: true });
-      });
+      }).catch(function () {});
     }
-    tryAutoPlay();
   }
 
   // Pause/resume visualizer on tab visibility change (saves battery on mobile)

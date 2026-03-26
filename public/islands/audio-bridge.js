@@ -26,6 +26,13 @@
 
   function poll() {
     if (!analyser || !dataArray) return;
+    // Pause polling when tab is hidden
+    if (document.hidden) {
+      if (typeof window.__setAsciiAudioLevel === 'function') {
+        window.__setAsciiAudioLevel(0);
+      }
+      return;
+    }
 
     analyser.getByteFrequencyData(dataArray);
 
@@ -44,6 +51,13 @@
 
     requestAnimationFrame(poll);
   }
+
+  // Resume polling when tab becomes visible again
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && connected) {
+      requestAnimationFrame(poll);
+    }
+  });
 
   // Wait for music panel to initialize, then try connecting
   setTimeout(function () {

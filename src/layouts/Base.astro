@@ -61,6 +61,21 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={new URL('/og-image.png', Astro.site)} />
 
+  <!-- Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Alexander Campos",
+    "url": Astro.site?.toString(),
+    "jobTitle": "Software Engineer",
+    "description": "Builder of local intelligence infrastructure. Operations background, self-taught engineer.",
+    "sameAs": [
+      "https://github.com/notaprompt",
+      "https://linkedin.com/in/alexandercampos",
+      "https://reframed.works"
+    ]
+  })} />
+
   <!-- Fonts -->
   <link rel="preload" href="/fonts/cormorant-garamond-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/cormorant-garamond-600.woff2" as="font" type="font/woff2" crossorigin />
@@ -163,6 +178,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <script is:inline>
     document.addEventListener('astro:after-swap', function () {
       // Clean up island instances before re-init
+      if (window.__asciiBgCleanup) window.__asciiBgCleanup();
       if (window.__musicPanelCleanup) window.__musicPanelCleanup();
       // Clear all init guards so scripts can rebuild DOM
       window.__deskSceneInit = false;

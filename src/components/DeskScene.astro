@@ -31,6 +31,17 @@
     </svg>
   </button>
   <span class="ds-tooltip" id="ds-tooltip"></span>
+
+  <!-- Accessible navigation overlay — keyboard-focusable links for canvas objects -->
+  <nav class="desk-a11y" aria-label="Desk scene links">
+    <a href="/projects">projects</a>
+    <a href="/about">about</a>
+    <a href="https://github.com/notaprompt" target="_blank" rel="noopener">github</a>
+    <a href="/resume">resume</a>
+    <a href="https://linkedin.com/in/alexandercampos" target="_blank" rel="noopener">linkedin</a>
+    <a href="https://instagram.com/acampos.dev" target="_blank" rel="noopener">instagram</a>
+    <a href="/influences">influences</a>
+  </nav>
 </div>
 
 <style>
@@ -115,5 +126,52 @@
     .desk-scene-wrap {
       max-width: 100%;
     }
+  }
+
+  /* Accessible desk scene links — hidden until focused via keyboard */
+  .desk-a11y {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .desk-a11y a {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+    pointer-events: auto;
+  }
+
+  .desk-a11y a:focus {
+    position: relative;
+    width: auto;
+    height: auto;
+    padding: 2px 8px;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--gold-accent);
+    background: var(--void);
+    border: 1px solid var(--gold-accent);
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    z-index: 10;
   }
 </style>

@@ -201,6 +201,7 @@
     const workerUrl = new URL('/islands/rd-worker.js', window.location.origin);
     worker = new Worker(workerUrl);
 
+    var workerReady = false;
     worker.onmessage = function (e) {
       const field = e.data;
       gl.bindTexture(gl.TEXTURE_2D, rdTex);
@@ -208,8 +209,8 @@
         gl.TEXTURE_2D, 0, 0, 0, RD_SIZE, RD_SIZE,
         gl.RED, gl.FLOAT, field
       );
-      // Request next computation
-      worker.postMessage(null);
+      workerReady = true;
+      // Don't immediately request next — wait for rAF to request it (throttle to display rate)
     };
 
     // Kick off first computation
@@ -218,7 +219,24 @@
     console.warn('RD worker failed to start:', err.message);
   }
 
-  // --- Render loop ---
+  // --- Render loop (visibility-gated) ---
+  var asciiBgPaused = false;
+  var rafId = null;
+
+  // Pause when tab is hidden to save battery
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      asciiBgPaused = true;
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    } else {
+      asciiBgPaused = false;
+      if (!rafId) rafId = requestAnimationFrame(render);
+    }
+  });
+
+  // prefers-reduced-motion: render one static frame, then stop
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   function render() {
     gl.useProgram(program);
     gl.uniform2f(uResolution, canvas.width, canvas.height);
@@ -231,8 +249,29 @@
     gl.bindTexture(gl.TEXTURE_2D, rdTex);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    requestAnimationFrame(render);
+
+    // Request next worker computation (throttled to rAF rate)
+    if (worker && workerReady && !asciiBgPaused) {
+      workerReady = false;
+      worker.postMessage(null);
+    }
+
+    if (!reduceMotion && !asciiBgPaused) {
+      rafId = requestAnimationFrame(render);
+    }
   }
 
-  requestAnimationFrame(render);
+  rafId = requestAnimationFrame(render);
+
+  // Cleanup function for View Transitions
+  window.__asciiBgCleanup = function () {
+    asciiBgPaused = true;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    if (worker) { worker.terminate(); worker = null; }
+    window.removeEventListener('resize', resize);
+    try {
+      var ext = gl.getExtension('WEBGL_lose_context');
+      if (ext) ext.loseContext();
+    } catch (e) {}
+  };
 })();

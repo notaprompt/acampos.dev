@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://acampos.dev/sitemap-index.xml
+Sitemap: https://campos.works/sitemap-index.xml

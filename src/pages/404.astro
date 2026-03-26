@@ -1,0 +1,52 @@
+---
+import Page from '../layouts/Page.astro';
+---
+
+<Page title="404 — campos.works" description="Page not found.">
+  <section class="not-found">
+    <h1>404</h1>
+    <p>Nothing here. Maybe there was once, maybe there will be.</p>
+    <nav>
+      <a href="/">home</a>
+      <a href="/projects">projects</a>
+      <a href="/about">about</a>
+    </nav>
+  </section>
+</Page>
+
+<style>
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .not-found h1 {
+    font-family: var(--serif);
+    font-size: 4rem;
+    font-weight: 600;
+    color: var(--gold-accent);
+    margin: 0;
+  }
+
+  .not-found p {
+    font-size: 1rem;
+    color: var(--white-60);
+    max-width: 30ch;
+  }
+
+  .not-found nav {
+    display: flex;
+    gap: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+  }
+
+  .not-found nav a {
+    color: var(--gold-accent);
+  }
+</style>

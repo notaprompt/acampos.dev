@@ -5,6 +5,7 @@ import HitCounter from '../components/HitCounter.astro';
 
 <Page title="alexander campos" description="Hand-built personal site. building things to protect how we think.">
   <section class="splash">
+    <h1 class="site-name">Alexander Campos <span>— engineer & builder</span></h1>
     <p class="tagline">building things to protect how we think.</p>
 
     <div class="retro-marquee-wrap" aria-hidden="true">
@@ -96,16 +97,34 @@ import HitCounter from '../components/HitCounter.astro';
     transition: none;
   }
 
+  .site-name {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--glow);
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+
+  .site-name span {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--white-60);
+    letter-spacing: 0.04em;
+  }
+
   .cta-line {
     font-family: var(--mono);
-    font-size: 0.7rem;
-    color: var(--white-45);
+    font-size: 0.8rem;
+    color: var(--white-60);
     line-height: 1.6;
     margin-bottom: 0;
   }
 
   .cta-line a {
     color: var(--gold-accent);
+    font-weight: 600;
     border-bottom: 1px solid var(--gold-accent);
   }
 

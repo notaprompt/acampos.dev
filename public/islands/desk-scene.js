@@ -1612,9 +1612,16 @@
     { x: SRV_X + 2, y: SRV_Y + 6, on: 80, rate: 1470 },
     { x: SRV_X + 4, y: SRV_Y + 6, on: 81, rate: 2420 },
   ];
+  var deskHidden = false;
+  document.addEventListener('visibilitychange', function () {
+    deskHidden = document.hidden;
+    if (!document.hidden) render();
+  });
+
   srvLeds.forEach(function (led) {
     var lit = true;
     setInterval(function () {
+      if (deskHidden) return;
       lit = !lit;
       scene[led.y * COLS + led.x] = lit ? led.on : 79;
     }, led.rate);
@@ -1625,6 +1632,7 @@
   var cursorX = CRT_X + 5;
   var cursorY = CRT_Y + 8;
   setInterval(function () {
+    if (deskHidden) return;
     cursorOn = !cursorOn;
     var idx = cursorY * COLS + cursorX;
     scene[idx] = cursorOn ? 21 : 20;

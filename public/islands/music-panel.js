@@ -2023,9 +2023,10 @@
     if (document.hidden) {
       if (animId) { cancelAnimationFrame(animId); animId = null; }
     } else {
+      // Resume audio context first — browser suspends it when tab is hidden
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
       // Always restart visualizer if panel is open (ambient when silent, reactive when playing)
       if (panelOpen) startVisualizer();
-      if (isPlaying && audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     }
   });
 

@@ -1410,7 +1410,7 @@
 
     // ── Tunnel curves — sweeping S-curves that follow the song ──
     // Two bend points at different rates create winding narrative path
-    var bendDrive = isSilent ? 0.003 : (0.006 + sVocal * 0.02 + loudness * 0.01);
+    var bendDrive = isSilent ? 0.008 : (0.006 + sVocal * 0.02 + loudness * 0.01);
     bendAngle1 += bendDrive;
     bendAngle2 -= bendDrive * 0.7 + Math.sin(visTime * 0.15) * 0.003;
     // Bass hits = the road bends harder
@@ -1444,7 +1444,7 @@
 
     // ── Feedback zoom — loudness drives the rush ──
     var feedbackZoom = 1.012 + loudness * 0.025 + hit * 0.06;
-    if (isSilent) feedbackZoom = 1.004;
+    if (isSilent) feedbackZoom = 1.006;
     if (reverseTimer > 0) feedbackZoom = 1 / (1.012 + loudness * 0.01);
     var zoomCx = w / 2 + chaseX * w * 0.15;
     var zoomCy = h / 2 + chaseY * h * 0.12;
@@ -1475,7 +1475,7 @@
 
     // Forward motion — loudness = gas pedal, silence = brakes
     var fwdSpeed = isSilent
-      ? 0.003
+      ? 0.008
       : 0.012 + loudness * 0.06 + hit * 0.3;
     hallZ += fwdSpeed * forwardDir;
 
@@ -2021,10 +2021,9 @@
     if (document.hidden) {
       if (animId) { cancelAnimationFrame(animId); animId = null; }
     } else {
-      if (isPlaying) {
-        startVisualizer();
-        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-      }
+      // Always restart visualizer if panel is open (ambient when silent, reactive when playing)
+      if (panelOpen) startVisualizer();
+      if (isPlaying && audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     }
   });
 

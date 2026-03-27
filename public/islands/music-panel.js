@@ -646,7 +646,9 @@
   var timeDur = panel.querySelector('#mp-time-dur');
   var playBtn = panel.querySelector('.play-btn');
   var shuffleBtn = panel.querySelector('.shuffle-btn');
+  shuffleBtn.style.color = isShuffled ? 'var(--alive)' : 'var(--white-30)';
   var repeatBtn = panel.querySelector('.repeat-btn');
+  repeatBtn.style.color = repeatMode >= 1 ? 'var(--alive)' : 'var(--white-30)';
   var volumeSlider = panel.querySelector('#mp-volume');
   var playlistEl = panel.querySelector('#mp-playlist');
   var canvas = panel.querySelector('#mp-visualizer');

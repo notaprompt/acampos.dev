@@ -61,7 +61,23 @@
       } catch(e) {}
       loadTrack(idx);
     }
-    // Playlist loaded — ready for user to press play (opt-in only)
+    // Playlist loaded — reconnect if audio is already playing (View Transition)
+    var audioHasSrc = audio.src && audio.src !== '' && audio.src !== window.location.href;
+    if (audioHasSrc) {
+      var curSrc = audio.src;
+      for (var ri = 0; ri < PLAYLIST.length; ri++) {
+        if (curSrc.indexOf(PLAYLIST[ri].url) !== -1) { currentIndex = ri; break; }
+      }
+      isPlaying = !audio.paused;
+      hasPlayedOnce = isPlaying;
+      var reconnTrack = PLAYLIST[getPlayIndex(currentIndex)];
+      if (reconnTrack) updateNowPlaying(reconnTrack);
+      updatePlaylistHighlight();
+      updatePlayBtn();
+      if (isPlaying) showBanner(true);
+      initAudioContext();
+      if (panelOpen) startVisualizer();
+    }
   }
 
   // Fetch from API (DB-backed), fall back to static JSON, then hardcoded
@@ -1958,14 +1974,13 @@
         break;
       }
     }
+    // Reconnection happens in onPlaylistLoaded (after fetch) — playlist needed for track matching
     isPlaying = !audio.paused;
-    var initTrack = PLAYLIST.length > 0 ? PLAYLIST[getPlayIndex(currentIndex)] : null;
-    if (initTrack) updateNowPlaying(initTrack);
-    updatePlaylistHighlight();
+    hasPlayedOnce = isPlaying;
     updatePlayBtn();
     if (isPlaying) showBanner(true);
-    initAudioContext();
-    if (isPlaying) startVisualizer();
+    // Start visualizer ambient immediately — playlist reconnect will upgrade it
+    if (panelOpen) startVisualizer();
   } else if (PLAYLIST.length > 0) {
     // Truly fresh — no audio loaded at all (only if playlist already loaded)
     audio.loop = false;

@@ -559,7 +559,7 @@
   // Toggle button
   var toggle = document.createElement('button');
   toggle.id = 'mp-toggle';
-  toggle.className = startOpen ? 'shifted' : 'glow'; // desktop: shifted (panel open), mobile: glow hint
+  toggle.className = startOpen ? 'shifted' : ''; // no tab glow — play button pulses instead
   toggle.textContent = 'player';
   toggle.setAttribute('aria-label', 'Toggle music player');
   document.body.appendChild(toggle);
@@ -1286,7 +1286,25 @@
   function drawVisualizer() {
     animId = requestAnimationFrame(drawVisualizer);
 
-    if (!analyser) return;
+    // Ambient mode: render slow drift when no audio context yet
+    if (!analyser) {
+      var w = canvas.width;
+      var h = canvas.height;
+      if (w === 0 || h === 0) { resizeCanvas(); return; }
+      visTime += 0.016;
+      var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+      var bg = isDark ? '#0a0a14' : '#e8e0d4';
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+      var pal = isDark ? PALETTE_DARK : PALETTE_LIGHT;
+      for (var ai = 0; ai < 6; ai++) {
+        var ay = h * 0.3 + Math.sin(visTime * 0.4 + ai * 1.2) * h * 0.15;
+        var ax = (visTime * 8 + ai * w / 6) % (w + 20) - 10;
+        ctx.fillStyle = rgba(pal[ai % pal.length], 0.15 + Math.sin(visTime + ai) * 0.08);
+        ctx.fillRect(Math.floor(ax), Math.floor(ay), 3, 2);
+      }
+      return;
+    }
 
     var bufferLength = analyser.frequencyBinCount;
     var freqData = new Uint8Array(bufferLength);

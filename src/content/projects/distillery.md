@@ -1,6 +1,6 @@
 ---
 title: "Distillery"
-tagline: "Share a URL from your phone. Your Mac distills it through your intellectual identity."
+tagline: "Share a link from your phone. Your laptop reads it through your own recorded principles and tells you what resonates."
 status: "active"
 stack: ["Python", "Flask", "Ollama", "yt-dlp", "SQLite", "iOS Shortcuts", "Tailscale"]
 order: 4

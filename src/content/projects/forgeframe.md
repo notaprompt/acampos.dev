@@ -1,10 +1,10 @@
 ---
 title: "ForgeFrame"
-tagline: "Local-first memory for AI agents — strength decay, constitutional principles, MCP-native"
+tagline: "Open-source memory for AI agents. Memories decay over time. Principles don't. You decide which is which."
 status: "active"
 stack: ["TypeScript", "Node.js", "MCP Protocol", "SQLite", "FTS5", "Ollama", "MIT/AGPL"]
 repo: "https://github.com/notaprompt/ForgeFrame"
-order: 2
+order: 3
 ---
 
 ## Goals

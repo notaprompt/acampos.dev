@@ -1,6 +1,6 @@
 ---
 title: "Reframed"
-tagline: "Resume analysis that sounds like you, not like a recruiter — voice fingerprinting, semantic scoring, pay-per-use"
+tagline: "Helps people describe their experience honestly and still get the job. Live at reframed.works."
 status: "shipped"
 stack: ["Next.js", "TypeScript", "Multi-Provider LLM Routing", "Stripe", "React PDF"]
 repo: "https://github.com/notaprompt/resume-tailor"

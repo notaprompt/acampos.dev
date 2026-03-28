@@ -1,11 +1,11 @@
 ---
 title: "Guardian"
-tagline: "Desktop workspace that keeps your context local and your language yours"
+tagline: "Desktop app that sits between you and the models you use. Keeps context local, detects when language shifts yours."
 status: "active"
 stack: ["Electron 33", "React 18", "Node.js", "SQLite/FTS5", "Zustand", "xterm.js"]
 image: "/images/projects/guardian.png"
 repo: "https://github.com/notaprompt/guardian-ui-scaffold"
-order: 3
+order: 2
 ---
 
 ## Goals

@@ -3,18 +3,16 @@ import Page from '../layouts/Page.astro';
 import HitCounter from '../components/HitCounter.astro';
 ---
 
-<Page title="alexander campos" description="Hand-built personal site. building things to protect how we think.">
+<Page title="alexander campos" description="Software, research, and open-source infrastructure. All local-first.">
   <section class="splash">
-    <h1 class="site-name">Alexander Campos <span>— engineer & builder</span></h1>
-    <p class="tagline">building things to protect how we think.</p>
+    <h1 class="site-name">Alexander Campos</h1>
+    <p class="tagline">I build software and run experiments. Mostly interested in how systems model people — and what happens when people can see the model.</p>
 
     <div class="retro-marquee-wrap" aria-hidden="true">
       <span class="retro-marquee-text">
-        last updated march 2026 — yes this was a marquee tag — it got promoted — it's css now — still slow on purpose&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;last updated march 2026 — yes this was a marquee tag — it got promoted — it's css now — still slow on purpose
+        reframed.works is live — GL-001 preprint submitted — forgeframe approaching npm publish — guardian in active build&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reframed.works is live — GL-001 preprint submitted — forgeframe approaching npm publish — guardian in active build
       </span>
     </div>
-
-    <p class="one-liner">Independent research. Commercial products. Open-source infrastructure. All local-first.</p>
 
     <nav class="enter-nav" aria-label="Quick links">
       <a href="/projects" class="enter-link">projects >></a>
@@ -50,17 +48,11 @@ import HitCounter from '../components/HitCounter.astro';
   }
 
   .tagline {
-    font-family: var(--mono);
-    font-size: 0.85rem;
-    color: var(--white-60);
-    margin-bottom: 0;
-  }
-
-  .one-liner {
     font-family: var(--body);
     font-size: 1rem;
     color: var(--glow);
     line-height: 1.6;
+    margin-bottom: 0;
   }
 
   .enter-nav {
@@ -90,13 +82,6 @@ import HitCounter from '../components/HitCounter.astro';
     letter-spacing: 0.02em;
   }
 
-  .site-name span {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    font-weight: 400;
-    color: var(--white-60);
-    letter-spacing: 0.04em;
-  }
 
   .cta-line {
     font-family: var(--mono);

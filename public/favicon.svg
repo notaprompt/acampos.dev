@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges">
   <rect width="32" height="32" fill="#050505"/>
 
-  <!-- Gold border -->
-  <rect x="1" y="1" width="30" height="30" fill="none" stroke="#b8965a" stroke-width="1"/>
+  <!-- Gold border (inset so no bleed) -->
+  <rect x="2" y="2" width="28" height="28" fill="none" stroke="#b8965a" stroke-width="1"/>
 
   <!-- A letterform (solid gold, no stripes) -->
   <rect x="7" y="7" width="1" height="1" fill="#b8965a"/>

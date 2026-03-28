@@ -9,7 +9,7 @@ order: 2
 
 ## Goals
 
-Guardian's routing, memory, and session management extracted into standalone infrastructure. Any application can use it. Memory primitive is MIT. Core is AGPL.
+AI agents forget everything between sessions. ForgeFrame gives them persistent memory that works like yours does — what matters stays, what doesn't fades, and some things are constitutional and never decay. Extracted from Guardian into standalone infrastructure. Memory primitive is MIT. Core is AGPL.
 
 ## Process
 
@@ -34,7 +34,7 @@ L1  MCP Protocol (Anthropic's standard)     OPEN
 
 ## In production
 
-ForgeFrame is running in production right now. The Business OS reads its SQLite database directly for founder receipts, team meeting persistence, and TODO tracking across dashboard tabs. It's not a demo -- it's the memory layer for everything else I build.
+ForgeFrame is running in production right now — 295 memories across 88 sessions. The Distillery reads it for relevance scoring. The Business OS reads it for founder receipts and TODO tracking. Every Claude Code session logs to it automatically via a SessionEnd hook. It's not a demo — it's the memory layer for everything else I build.
 
 ## Limitations
 

@@ -10,7 +10,7 @@ order: 3
 
 ## Goals
 
-Desktop workspace where chat, terminal, notes, and memory live in one local-first interface. You pick the model, the data stays on your machine.
+The question that started everything: when an AI system observes you long enough, does its model of you start shaping who you become? Guardian is the workspace where I tried to answer that — and built the detectors, the memory, and the infrastructure to do something about it.
 
 ## Process
 
@@ -44,4 +44,6 @@ The hardest problems were state synchronization and process lifecycle management
 
 Reframe detection surfaced a deeper problem: models subtly reshape your language over time. Detecting that requires understanding the user's baseline, which requires memory, which requires local persistence. That dependency chain is why ForgeFrame exists.
 
-Awareness-trap detection surfaced something else: the patterns you avoid aren't in individual conversations -- they're in the gaps between them. You need memory that spans sessions to see what you keep not talking about.
+Awareness-trap detection surfaced something else: the patterns you avoid aren't in individual conversations — they're in the gaps between them. You need memory that spans sessions to see what you keep not talking about.
+
+Guardian is where the essay on observation and identity modeling came from. Everything I describe there — the loop, the reframe types, the four quadrants of who-sees-what — I found by building this and watching what happened.

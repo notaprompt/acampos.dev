@@ -1,0 +1,38 @@
+# Alexander Campos
+
+Independent researcher and engineer. Builds local-first cognitive infrastructure. Self-taught. No CS degree.
+
+## What I Build
+
+ForgeFrame: Local-first memory system for AI agents. Persistent memory with strength decay, constitutional principles that never decay, and MCP-native integration. SQLite + FTS5. Runs on a laptop.
+
+Reframed: Resume analysis platform that preserves your voice instead of replacing it with recruiter-speak. Voice fingerprinting, multi-reader semantic analysis, streaming AI. Live at reframed.works.
+
+Guardian: Desktop cognitive workspace with reframe detection (7 types across 8 identity dimensions), awareness-trap detection, knowledge graph, and local-only inference.
+
+Distillery: Phone-to-local-inference pipeline. Share a URL from iOS, Mac extracts content via yt-dlp, Ollama distills through a constitutional lens, results stored locally.
+
+## Research
+
+Guardian Labs (guardian-labs.org): Independent research at the intersection of psychiatry, computational neuroscience, and philosophy of mind.
+
+GL-001: Discrete triple-network coupling architectures orthogonal to psychiatric diagnosis. Preprint on bioRxiv.
+
+## Writing
+
+On Observation and Identity Modeling: How systems build models of the people who use them, and what happens when the model starts shaping the person.
+
+## Principles
+
+Sovereignty: Sensitive cognitive data never leaves the machine.
+Architecture: Single source of truth. Local-first with cloud as optional acceleration.
+Product: Ship the wedge, expand to the platform.
+Voice: Direct, honest, no corporate-speak.
+Building: The work is real even when the world hasn't caught up yet.
+
+## Contact
+
+alex@campos.works
+https://campos.works
+https://guardian-labs.org
+https://github.com/notaprompt

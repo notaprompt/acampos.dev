@@ -4,7 +4,7 @@ tagline: "Generative WebGL architecture — seeded procedural halls rendered as 
 status: "shipped"
 stack: ["Three.js", "WebGL", "Custom GLSL Shaders", "Vanilla JS"]
 demo: "/recursive-hall.html"
-order: 4
+order: 2
 ---
 
 ## Goals

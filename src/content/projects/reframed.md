@@ -5,7 +5,7 @@ status: "shipped"
 stack: ["Next.js", "TypeScript", "Multi-Provider LLM Routing", "Stripe", "React PDF"]
 repo: "https://github.com/notaprompt/resume-tailor"
 demo: "https://reframed.works"
-order: 6
+order: 1
 ---
 
 ## Goals

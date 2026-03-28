@@ -4,6 +4,7 @@ tagline: "Financial monitoring agent — always-on scoring, threshold escalation
 status: "concept"
 stack: ["Python", "ForgeFrame", "Twilio", "RSS", "LLM Scoring"]
 order: 5
+repo: "https://github.com/notaprompt/cipher"
 ---
 
 ## Goals

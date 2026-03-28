@@ -1,8 +1,8 @@
 ---
 title: "ForgeFrame"
-tagline: "Local intelligence infrastructure — routing, memory, provenance"
+tagline: "Local-first memory for AI agents — strength decay, constitutional principles, MCP-native"
 status: "active"
-stack: ["TypeScript", "Node.js", "MCP Protocol", "SQLite", "AGPL/MIT"]
+stack: ["TypeScript", "Node.js", "MCP Protocol", "SQLite", "FTS5", "Ollama", "MIT/AGPL"]
 repo: "https://github.com/notaprompt/ForgeFrame"
 order: 2
 ---

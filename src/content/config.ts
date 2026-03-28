@@ -23,8 +23,21 @@ const micro = defineCollection({
     stack: z.array(z.string()),
     download: z.string().optional(),
     repo: z.string().optional(),
+    demo: z.string().optional(),
     order: z.number(),
   }),
 });
 
-export const collections = { projects, micro };
+const essays = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    subtitle: z.string(),
+    status: z.enum(['draft', 'published']),
+    date: z.string(),
+    series: z.string().optional(),
+    order: z.number().optional(),
+  }),
+});
+
+export const collections = { projects, micro, essays };

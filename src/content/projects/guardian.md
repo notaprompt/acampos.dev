@@ -5,7 +5,7 @@ status: "active"
 stack: ["Electron 33", "React 18", "Node.js", "SQLite/FTS5", "Zustand", "xterm.js"]
 image: "/images/projects/guardian.png"
 repo: "https://github.com/notaprompt/guardian-ui-scaffold"
-order: 1
+order: 3
 ---
 
 ## Goals

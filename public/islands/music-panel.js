@@ -40,13 +40,11 @@
     // Initialize shuffle order if shuffle is on by default
     if (isShuffled && PLAYLIST.length > 0) {
       shuffleOrder = shuffle(PLAYLIST);
-      // Always start with track 0 (Sekito) on first visit, then shuffle the rest
-      if (!saved) {
-        var sekitoIdx = shuffleOrder.indexOf(0);
-        if (sekitoIdx > 0) {
-          shuffleOrder.splice(sekitoIdx, 1);
-          shuffleOrder.unshift(0);
-        }
+      // Always start with track 0 (Sekito), then shuffle the rest
+      var sekitoIdx = shuffleOrder.indexOf(0);
+      if (sekitoIdx > 0) {
+        shuffleOrder.splice(sekitoIdx, 1);
+        shuffleOrder.unshift(0);
       }
     }
     // Re-render playlist UI
@@ -189,11 +187,18 @@
     if (!track) return;
     currentIndex = index;
     audio.src = track.url;
-    // Apply song-specific visualizer profile
+    // Apply song-specific visualizer profile and reset analyser for fresh data
     if (track.profile) {
       activeProfile = track.profile;
-      if (analyser) analyser.smoothingTimeConstant = track.profile.smoothing;
+      if (analyser) {
+        analyser.smoothingTimeConstant = track.profile.smoothing;
+        // Flush stale frequency data from previous track
+        var flush = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(flush);
+      }
     }
+    // Restart visualizer loop to sync with new source
+    if (typeof stopVisualizer === 'function') stopVisualizer();
     updateNowPlaying(track);
     updatePlaylistHighlight();
     updateProgressDisplay();
@@ -903,8 +908,15 @@
     canvas.style.imageRendering = 'pixelated';
   }
 
+  function stopVisualizer() {
+    if (animId) {
+      cancelAnimationFrame(animId);
+      animId = null;
+    }
+  }
+
   function startVisualizer() {
-    if (animId) return;
+    stopVisualizer();
     resizeCanvas();
     drawVisualizer();
   }

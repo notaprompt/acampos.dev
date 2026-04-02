@@ -198,7 +198,7 @@
       }
     }
     // Restart visualizer loop to sync with new source
-    if (typeof stopVisualizer === 'function') stopVisualizer();
+    stopVisualizer();
     updateNowPlaying(track);
     updatePlaylistHighlight();
     updateProgressDisplay();
@@ -208,6 +208,8 @@
   function playTrack() {
     initAudioContext();
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    // Ensure audio routing is intact: source → analyser → speakers
+    try { analyser.connect(audioCtx.destination); } catch(e) {}
     audio.volume = volume > 0 ? volume : 0.7;
     audio.muted = false;
     audio.play().then(function () {

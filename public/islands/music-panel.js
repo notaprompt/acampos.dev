@@ -2044,13 +2044,17 @@
   // Pause/resume visualizer on tab visibility change (saves battery on mobile)
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
-      if (animId) { cancelAnimationFrame(animId); animId = null; }
+      stopVisualizer();
     } else {
       // Resume audio context first — browser suspends it when tab is hidden
       if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-      // Always restart visualizer if panel is open (ambient when silent, reactive when playing)
-      if (panelOpen) startVisualizer();
+      if (panelOpen || isPlaying) startVisualizer();
     }
+  });
+  // Belt-and-suspenders: some browsers don't fire visibilitychange reliably
+  window.addEventListener('focus', function () {
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    if ((panelOpen || isPlaying) && !animId) startVisualizer();
   });
 
   // Expose cleanup for navigation re-init

@@ -63,8 +63,17 @@
     var audioHasSrc = audio.src && audio.src !== '' && audio.src !== window.location.href;
     if (audioHasSrc) {
       var curSrc = audio.src;
+      var matchedPlaylistIdx = 0;
       for (var ri = 0; ri < PLAYLIST.length; ri++) {
-        if (curSrc.indexOf(PLAYLIST[ri].url) !== -1) { currentIndex = ri; break; }
+        if (curSrc.indexOf(PLAYLIST[ri].url) !== -1) { matchedPlaylistIdx = ri; break; }
+      }
+      // When shuffle is on, find the shuffle position for this track
+      if (isShuffled && shuffleOrder) {
+        for (var si = 0; si < shuffleOrder.length; si++) {
+          if (shuffleOrder[si] === matchedPlaylistIdx) { currentIndex = si; break; }
+        }
+      } else {
+        currentIndex = matchedPlaylistIdx;
       }
       isPlaying = !audio.paused;
       hasPlayedOnce = isPlaying;
@@ -611,7 +620,7 @@
     '</div>',
     '<div id="mp-times"><span id="mp-time-cur">0:00</span><span id="mp-time-dur">0:00</span></div>',
     '<div id="mp-controls">',
-    '  <button class="shuffle-btn" title="Shuffle">\u266A</button>',
+    '  <button class="shuffle-btn" title="Shuffle">\uD83D\uDD00</button>',
     '  <button class="prev-btn" title="Previous">\u00AB</button>',
     '  <button class="play-btn" title="Play">\u25B6</button>',
     '  <button class="next-btn" title="Next">\u00BB</button>',

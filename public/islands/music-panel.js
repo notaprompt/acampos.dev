@@ -620,7 +620,7 @@
     '</div>',
     '<div id="mp-times"><span id="mp-time-cur">0:00</span><span id="mp-time-dur">0:00</span></div>',
     '<div id="mp-controls">',
-    '  <button class="shuffle-btn" title="Shuffle">\uD83D\uDD00</button>',
+    '  <button class="shuffle-btn" title="Shuffle">\u21C4</button>',
     '  <button class="prev-btn" title="Previous">\u00AB</button>',
     '  <button class="play-btn" title="Play">\u25B6</button>',
     '  <button class="next-btn" title="Next">\u00BB</button>',

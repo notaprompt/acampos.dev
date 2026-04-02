@@ -89,7 +89,7 @@
 .retro-marquee-text {
   display: inline-block;
   will-change: transform;
-  animation: cssMarquee 30s linear infinite;
+  animation: cssMarquee 40s linear infinite;
 }
 
 @keyframes cssMarquee {

@@ -792,6 +792,9 @@
   }
   function onEnded() {
     if (repeatMode === 2) return;
+    // Browser fires 'pause' before 'ended', which sets isPlaying=false.
+    // Force it back so nextTrack() auto-plays.
+    isPlaying = true;
     nextTrack();
   }
   audio.addEventListener('timeupdate', onTimeUpdate);

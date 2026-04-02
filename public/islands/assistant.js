@@ -581,6 +581,44 @@
     // ── Interaction state flag ──
     var interactionActive = false;
 
+    // ── Feature: Mood states ──
+    var mood = 'alert'; // alert -> relaxed -> sleepy
+    var lastInteraction = Date.now();
+    var moodFrameSkip = 0;
+
+    function updateMood() {
+      var elapsed = Date.now() - lastInteraction;
+      var musicPlaying = !!window.__musicPlayerAnalyser;
+      // Check if music is actually producing output
+      if (musicPlaying) {
+        var testData = new Uint8Array(window.__musicPlayerAnalyser.frequencyBinCount);
+        window.__musicPlayerAnalyser.getByteFrequencyData(testData);
+        var testSum = 0;
+        for (var ti = 0; ti < testData.length; ti++) testSum += testData[ti];
+        musicPlaying = testSum > 0;
+      }
+      if (elapsed > 480000) { // 8 min
+        mood = musicPlaying ? 'relaxed' : 'sleepy'; // music prevents sleepy
+      } else if (elapsed > 180000) { // 3 min
+        mood = 'relaxed';
+      } else {
+        mood = 'alert';
+      }
+    }
+
+    function resetMoodToAlert() {
+      lastInteraction = Date.now();
+      mood = 'alert';
+    }
+
+    // ── Feature: Ambient idle animations ──
+    var nextAmbient = Date.now() + 20000 + Math.random() * 25000;
+    var ambientQueue = []; // frames to play as micro-animation
+    var ambientTick = 0;
+
+    // ── Feature: Music reactivity state ──
+    var wasMusicPlaying = false;
+
     // ── Room panel ──
     var panel = document.createElement('div');
     panel.id = 'oliver-room';
@@ -733,13 +771,17 @@
       toggle.classList.remove('glow');
     }
 
-    toggle.addEventListener('click', toggleRoom);
+    toggle.addEventListener('click', function () {
+      resetMoodToAlert();
+      toggleRoom();
+    });
     closeBtnEl.addEventListener('click', function () {
       if (roomOpen) toggleRoom();
     });
 
     // Click sprite to trigger a speech bubble
     spriteWrap.addEventListener('click', function () {
+      resetMoodToAlert();
       if (bubbleEl.style.opacity === '1') return;
       showBubble(nextSpeech());
     });
@@ -769,9 +811,93 @@
     setInterval(function () {
       if (interactionActive) return;
 
+      // ── Mood update ──
+      updateMood();
+
+      // ── Mood-based frame skipping (simulates slower animation) ──
+      if (mood === 'relaxed' && ++moodFrameSkip % 2 !== 0) return;
+      if (mood === 'sleepy' && ++moodFrameSkip % 3 !== 0) return;
+
+      // ── Music reactivity ──
+      var analyser = window.__musicPlayerAnalyser;
+      var musicEnergy = 0;
+      if (analyser) {
+        var freqData = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(freqData);
+        var third = Math.floor(freqData.length / 3);
+        var bass = 0;
+        for (var bi = 0; bi < third; bi++) bass += freqData[bi] / 255;
+        musicEnergy = bass / third; // 0-1
+      }
+
+      // Track music state for wind-down
+      var musicIsPlaying = musicEnergy > 0.05;
+      var musicJustStopped = wasMusicPlaying && !musicIsPlaying;
+      wasMusicPlaying = musicIsPlaying;
+
+      // ── Ambient idle micro-animations ──
+      if (ambientQueue.length > 0) {
+        renderFrame(FRAMES[ambientQueue.shift()]);
+        return;
+      }
+
+      if (!interactionActive && Date.now() > nextAmbient && musicEnergy < 0.3) {
+        nextAmbient = Date.now() + 20000 + Math.random() * 25000;
+        if (mood === 'sleepy') {
+          // Sleepy: mostly blinks
+          ambientQueue = [5, 0];
+        } else {
+          // Pick a random micro-animation
+          var pick = Math.random();
+          if (pick < 0.33) {
+            // Ear twitch: frame 4 for one tick, then idle
+            ambientQueue = [4, 0];
+          } else if (pick < 0.66) {
+            // Yawn: frame 10 for two ticks, then idle
+            ambientQueue = [10, 10, 0];
+          } else {
+            // Weight shift: wiggle then settle
+            ambientQueue = [8, 0];
+          }
+        }
+        renderFrame(FRAMES[ambientQueue.shift()]);
+        return;
+      }
+
       var currentFrame = SEQUENCE[seqIdx];
       seqIdx = (seqIdx + 1) % SEQUENCE.length;
       var nextFrame = SEQUENCE[seqIdx];
+
+      // ── Music reactivity: override idle frame selection ──
+      if (nextFrame === 0 && musicIsPlaying) {
+        if (musicEnergy > 0.7) {
+          // Rapid tail wags — alternate between frames 1 and 2
+          renderFrame(FRAMES[seqIdx % 2 === 0 ? 1 : 2]);
+          return;
+        } else if (musicEnergy > 0.5) {
+          // Energetic: bias toward tail wags, wiggles, bounce
+          var energeticFrames = [1, 2, 8, 9, 11, 1, 2];
+          renderFrame(FRAMES[energeticFrames[Math.floor(Math.random() * energeticFrames.length)]]);
+          return;
+        }
+      }
+
+      // Music just stopped — settle to idle with occasional yawn
+      if (nextFrame === 0 && musicJustStopped) {
+        if (Math.random() < 0.3) {
+          renderFrame(FRAMES[10]); // yawn/pant
+          return;
+        }
+      }
+
+      // ── Sleepy mood: mostly idle with occasional blink ──
+      if (mood === 'sleepy' && nextFrame !== 0 && nextFrame !== 5) {
+        // In sleepy mode, suppress most non-idle frames
+        if (Math.random() < 0.7) {
+          renderFrame(FRAMES[Math.random() < 0.3 ? 5 : 0]); // blink or idle
+          return;
+        }
+      }
 
       // Feature 6: Cursor tracking — only override idle frames
       if (nextFrame === 0 && cursorTrackReady && lastMouseX >= 0 && panelRect) {
@@ -813,6 +939,7 @@
     treatBtn.addEventListener('click', function (e) {
       e.stopPropagation();
       if (treatDisabled) return;
+      resetMoodToAlert();
 
       // Disable for 30 seconds
       treatDisabled = true;
@@ -858,6 +985,7 @@
     spriteWrap.addEventListener('mouseenter', function () {
       hoverTimer = setTimeout(function () {
         if (interactionActive) return;
+        resetMoodToAlert();
         isPetting = true;
         interactionActive = true;
         renderFrame(FRAMES[3]); // happy squint
@@ -945,16 +1073,32 @@
       }, 600);
     }
 
+    // ── Feature: Dynamic speech interval based on mood and time ──
+    function getSpeechInterval() {
+      var base = 25000; // 25 seconds base
+      if (mood === 'relaxed') base = 35000;
+      if (mood === 'sleepy') base = 50000;
+      // Later at night, speak less
+      var hour = new Date().getHours();
+      if (hour >= 22 || hour < 6) base *= 1.5;
+      return base;
+    }
+
+    function scheduleSpeech() {
+      setTimeout(function () {
+        if (!interactionActive && bubbleEl.style.opacity !== '1') {
+          showBubble(nextSpeech());
+        }
+        scheduleSpeech();
+      }, getSpeechInterval());
+    }
+
     // Random speech — speak whenever the bubble is free
     // First speech after greeting fades (~9s greeting display + 1.5s gap)
     setTimeout(function () {
       showBubble(nextSpeech());
-      // Then settle into regular cadence
-      setInterval(function () {
-        if (interactionActive) return;
-        if (bubbleEl.style.opacity === '1') return;
-        showBubble(nextSpeech());
-      }, 13000);
+      // Then settle into dynamic cadence
+      scheduleSpeech();
     }, 10500);
 
   }

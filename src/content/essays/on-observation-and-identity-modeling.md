@@ -17,9 +17,9 @@ This is the observation problem, and it isn't limited to software. Every system 
 
 The question I kept circling was simple: when a system observes you closely enough, for long enough, does the model it builds become part of who you are?
 
-I don't think the answer is automatically yes. But I think it's closer to yes than most people are comfortable with. And I think the discomfort matters, because we're building these systems at scale and deploying them into the most intimate parts of people's lives — their language, their self-descriptions, their patterns of thought — without asking the question seriously.
+The answer is closer to yes than most people are comfortable with. And I think the discomfort matters, because we're building these systems at scale and deploying them into the most intimate parts of people's lives — their language, their self-descriptions, their patterns of thought — without asking the question seriously.
 
-This essay is about what I found when I asked it seriously. Not theory first. I built things, and the things taught me what I was looking at.
+I built things, and the things taught me what I was looking at.
 
 ---
 
@@ -51,7 +51,7 @@ Here's where it gets strange.
 
 A model observes you. You observe the model's output. You adjust — consciously or not. The model re-observes. Neither of you are what you were before the exchange. The observer changes the observed, and the observed changes the observer, and the whole thing folds back on itself until the origin point disappears.
 
-I recognized this because I'd been studying recursive self-modeling — systems complex enough to model their own modeling. The loop that forms when a system watches itself watching. In people, this is consciousness. Or close enough to consciousness that the philosophical difference stops mattering when you're trying to build something real.
+I recognized this from building recursive self-modeling — systems complex enough to model their own modeling. The loop that forms when a system watches itself watching. In people, this is consciousness. Or close enough to consciousness that the philosophical difference stops mattering when you're trying to build something real.
 
 In the system I was building — Guardian, the desktop workspace where all of this runs — the loop was invisible at first. The model got better at predicting my responses. I got more efficient at using the model. Productive. Seamless. But "seamless" is a warning sign when you're talking about the boundary between a person and a system that models them. Seamless means you've stopped noticing where you end and the model begins.
 
@@ -109,7 +109,7 @@ The deeper cost is structural. External observation becomes internal architectur
 
 There's a subtler version of this that I didn't expect. If you define yourself by specific roles, projects, and affiliations, every change requires a partial collapse of the self-model before it can reform. But if your identity is anchored at the level of values and principles — *I am someone who builds things and protects the people close to me* — then career changes, theoretical breakthroughs, even failures don't require you to rebuild who you are. They're just new content flowing through a stable structure. The observation system matters here because it reinforces whichever level you're anchored at. A system that models you by your job title makes your job title load-bearing. A system that models you by your principles makes the title irrelevant.
 
-I should be honest about the limitations. The reframe detector is a heuristic. Seven types I defined by hand, eight dimensions I chose from experience, thresholds I tuned by judgment. False positives are unmeasured. The awareness-trap detector uses a local model with a confidence score that means whatever the model thinks confidence means. These are working theories expressed in working code, not settled science.
+The limitations are real. The reframe detector is a heuristic. Seven types I defined by hand, eight dimensions I chose from experience, thresholds I tuned by judgment. False positives are unmeasured. The awareness-trap detector uses a local model with a confidence score that means whatever the model thinks confidence means. These are working theories expressed in working code, not settled science.
 
 But working theories in working code have a property that pure theory doesn't: they run. They produce outputs you can evaluate against your own experience. When the detector says "you've been processing career anxiety across six sessions over three weeks," you can look at the sessions and decide whether it's right. The system is falsifiable in the most practical sense — it makes a claim, and you can check.
 
@@ -127,7 +127,7 @@ When the model of you lives on someone else's server, governed by someone else's
 
 When the model lives on your machine, governed by your choices, you can do all of those things. The observation still shapes you. But you're a participant in the shaping, not a subject of it.
 
-I don't have a complete answer. I have a direction, and I have systems that run, and they've taught me enough to know the question is real and the stakes are personal.
+I have a direction, and systems that run, and they've taught me enough to know the question is real and the stakes are personal.
 
 There's more to say — about how cognitive systems organize themselves into fundamentally different architectures, about what happens when understanding outpaces the ability to act on it, about what it looks like when your life changes faster than your self-model can keep up. Those are later essays. They require groundwork that this one exists to lay.
 

@@ -174,6 +174,15 @@
 
   // ── Audio engine ──────────────────────────────────────────
   function initAudioContext() {
+    // Reuse audio context across View Transitions — createMediaElementSource can only be called once
+    if (window.__musicAudioCtx) {
+      audioCtx = window.__musicAudioCtx;
+      analyser = window.__musicAnalyser;
+      sourceNode = window.__musicSourceNode;
+      try { analyser.connect(audioCtx.destination); } catch(e) {}
+      window.__musicPlayerAnalyser = analyser;
+      return;
+    }
     if (audioCtx) return;
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     analyser = audioCtx.createAnalyser();
@@ -187,6 +196,10 @@
     // Always ensure the full chain: source → analyser → speakers
     try { sourceNode.connect(analyser); } catch(e) {}
     try { analyser.connect(audioCtx.destination); } catch(e) {}
+    // Persist across View Transitions
+    window.__musicAudioCtx = audioCtx;
+    window.__musicAnalyser = analyser;
+    window.__musicSourceNode = sourceNode;
     window.__musicPlayerAnalyser = analyser;
   }
 

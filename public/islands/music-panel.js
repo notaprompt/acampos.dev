@@ -172,12 +172,12 @@
     analyser.smoothingTimeConstant = 0.8;
     try {
       sourceNode = audioCtx.createMediaElementSource(audio);
-      sourceNode.connect(analyser);
-      analyser.connect(audioCtx.destination);
     } catch (e) {
-      // Already connected — but make sure analyser still routes to speakers
-      try { analyser.connect(audioCtx.destination); } catch(e2) {}
+      // Already created — reuse existing sourceNode
     }
+    // Always ensure the full chain: source → analyser → speakers
+    try { sourceNode.connect(analyser); } catch(e) {}
+    try { analyser.connect(audioCtx.destination); } catch(e) {}
     window.__musicPlayerAnalyser = analyser;
   }
 

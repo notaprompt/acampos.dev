@@ -1321,9 +1321,16 @@
     }
     if (o.id === 'books') {
       o.action = function () {
-        // open influences modal
+        // open influences modal — try global, fallback to loading the script
         if (window.__openInfluences) {
           window.__openInfluences();
+        } else {
+          var s = document.createElement('script');
+          s.src = '/islands/influences.js?t=' + Date.now();
+          s.onload = function () {
+            if (window.__openInfluences) window.__openInfluences();
+          };
+          document.body.appendChild(s);
         }
         // toggle vault
         if (!vaultOpen && !vaultAnimating) {

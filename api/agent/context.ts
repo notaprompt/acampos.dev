@@ -77,7 +77,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
       website: 'https://campos.works',
       github: 'https://github.com/notaprompt',
     },
-    availability: 'Open to consulting engagements. Book a 30-minute call to discuss scope.',
+    availability: 'Free 30-minute consultation. No pitch, just a conversation about what you need.',
     discovery: {
       llms_txt: 'https://campos.works/llms.txt',
       agent_json: 'https://campos.works/.well-known/agent.json',

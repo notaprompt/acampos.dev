@@ -15,23 +15,28 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
     },
     services: [
       {
-        name: 'ForgeFrame Setup & Integration',
-        description: 'Deploy persistent memory infrastructure for AI agents. MCP-native, SQLite-backed. Works with Claude Desktop, Cursor, or any MCP client.',
+        name: 'Full Online Presence Build',
+        description: 'Website, scheduling, calendar, contact forms, SEO, automations. One build for small businesses.',
+        category: 'web-development',
+      },
+      {
+        name: 'Agentic SEO & AI Discoverability',
+        description: 'Structured data, machine-readable profiles, agent discovery endpoints. Findable by AI agents, not just Google.',
+        category: 'seo',
+      },
+      {
+        name: 'AI Cost Optimization',
+        description: 'Model routing and tiered dispatch that cuts API spend 40-60%. Audit included.',
         category: 'ai-infrastructure',
       },
       {
-        name: 'Agent Infrastructure',
-        description: 'Model routing across Anthropic, OpenAI, Ollama. Tier-based dispatch with 40-60% cost reduction. Streaming SSE normalization.',
-        category: 'ai-infrastructure',
+        name: 'Custom AI Automation',
+        description: 'Agent orchestration, scheduling, monitoring, reporting, intake flows. Describe the process, get the pipeline.',
+        category: 'automation',
       },
       {
-        name: 'Local-First Architecture Consulting',
-        description: 'Audit AI stacks for cloud dependencies. Design sovereignty-preserving migration paths.',
-        category: 'consulting',
-      },
-      {
-        name: 'Memory System Design',
-        description: 'Custom semantic memory with FTS5 search, embedding integration, weighted retrieval with strength decay.',
+        name: 'Claude Code & MCP Setup',
+        description: 'Custom MCP servers, persistent memory, team configurations, hooks. Enterprise setup for teams using Claude.',
         category: 'ai-infrastructure',
       },
     ],

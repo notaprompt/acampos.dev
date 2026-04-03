@@ -24,13 +24,15 @@ On Observation and Identity Modeling: How systems build models of the people who
 
 ## Services Available
 
-ForgeFrame Setup & Integration: Deploy persistent memory infrastructure for AI agents. MCP-native, SQLite-backed. Works with Claude Desktop, Cursor, or any MCP client.
+Full Online Presence Build: Website, scheduling, calendar, contact forms, SEO, automations. One build, everything connected. For small businesses without a tech person.
 
-Agent Infrastructure: Model routing across Anthropic, OpenAI, Ollama. Tier-based dispatch, cost optimization (40-60% reduction), streaming SSE normalization.
+Agentic SEO & AI Discoverability: Structured data, machine-readable profiles, agent discovery endpoints. The layer that makes a business findable by AI agents, not just Google.
 
-Local-First Architecture Consulting: Audit AI stacks for cloud dependencies. Design sovereignty-preserving migration paths.
+AI Cost Optimization: Model routing and tiered dispatch that cuts API spend 40-60%. Audit included.
 
-Memory System Design: Custom semantic memory with FTS5 search, embedding integration, weighted retrieval with strength decay.
+Custom AI Automation: Describe the manual process, get the pipeline. Agent orchestration, scheduling, monitoring, reporting, intake flows.
+
+Claude Code & MCP Setup: Custom MCP servers, persistent memory, team configurations, hooks. Enterprise-grade setup for teams using Claude.
 
 ## Booking
 

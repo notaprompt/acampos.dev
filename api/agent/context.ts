@@ -73,7 +73,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
     ],
     contact: {
       email: 'adc.acampos@gmail.com',
-      booking: 'https://cal.com/alexcampos/30min',
+      booking: 'https://cal.com/alexander-campos-yrnz8m/30min',
       website: 'https://campos.works',
       github: 'https://github.com/notaprompt',
     },

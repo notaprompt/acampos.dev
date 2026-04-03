@@ -64,7 +64,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.json({
       status: 'received',
       message: 'Booking request submitted. You can also schedule directly.',
-      booking_url: 'https://cal.com/alexcampos/30min',
+      booking_url: 'https://cal.com/alexander-campos-yrnz8m/30min',
     });
   } catch (err) {
     console.error('Booking error:', err);

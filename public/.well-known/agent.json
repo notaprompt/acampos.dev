@@ -9,37 +9,37 @@
     {
       "name": "Full Online Presence Build",
       "description": "Website, scheduling, calendar, contact forms, SEO, automations. One build for small businesses.",
-      "booking_url": "https://cal.com/alexcampos/30min",
+      "booking_url": "https://cal.com/alexander-campos-yrnz8m/30min",
       "category": "web-development"
     },
     {
       "name": "Agentic SEO & AI Discoverability",
       "description": "Structured data, machine-readable profiles, agent discovery endpoints. Findable by AI agents, not just Google.",
-      "booking_url": "https://cal.com/alexcampos/30min",
+      "booking_url": "https://cal.com/alexander-campos-yrnz8m/30min",
       "category": "seo"
     },
     {
       "name": "AI Cost Optimization",
       "description": "Model routing and tiered dispatch that cuts API spend 40-60%. Audit included.",
-      "booking_url": "https://cal.com/alexcampos/30min",
+      "booking_url": "https://cal.com/alexander-campos-yrnz8m/30min",
       "category": "ai-infrastructure"
     },
     {
       "name": "Custom AI Automation",
       "description": "Agent orchestration, scheduling, monitoring, reporting, intake flows. You describe the process, I build the pipeline.",
-      "booking_url": "https://cal.com/alexcampos/30min",
+      "booking_url": "https://cal.com/alexander-campos-yrnz8m/30min",
       "category": "automation"
     },
     {
       "name": "Claude Code & MCP Setup",
       "description": "Custom MCP servers, persistent memory, team configurations, hooks. Enterprise setup for teams using Claude.",
-      "booking_url": "https://cal.com/alexcampos/30min",
+      "booking_url": "https://cal.com/alexander-campos-yrnz8m/30min",
       "category": "ai-infrastructure"
     }
   ],
   "contact": {
     "email": "adc.acampos@gmail.com",
-    "booking": "https://cal.com/alexcampos/30min",
+    "booking": "https://cal.com/alexander-campos-yrnz8m/30min",
     "website": "https://campos.works"
   },
   "capabilities": [

@@ -223,6 +223,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <script is:inline src="/islands/auto-profile.js"></script>
   <script is:inline src="/islands/playlist-admin.js"></script>
   <script is:inline src="/islands/audio-bridge.js"></script>
+  <script is:inline src="/islands/influences.js"></script>
   <script is:inline src="/islands/assistant.js"></script>
 
   <!-- Theme toggle handler -->
@@ -262,6 +263,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       window.__audioBridgeInit = false;
       window.__ambientInit = false;
       window.__oliverInit = false;
+      window.__influencesInit = false;
       // Re-apply theme
       var t = localStorage.getItem('theme') || 'dark';
       document.documentElement.setAttribute('data-theme', t);
@@ -270,7 +272,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         '/islands/desk-scene.js', '/islands/ascii-bg.js',
         '/islands/cursor-trail.js', '/islands/konami.js',
         '/islands/music-panel.js', '/islands/playlist-admin.js', '/islands/audio-bridge.js',
-        '/islands/assistant.js'
+        '/islands/influences.js', '/islands/assistant.js'
       ];
       islands.forEach(function (src) {
         var s = document.createElement('script');

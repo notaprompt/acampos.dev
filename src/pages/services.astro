@@ -15,57 +15,26 @@ import Page from '../layouts/Page.astro';
     <hr />
 
     <div class="services">
-
-      <div class="service-card">
-        <h2>Full Online Presence Build</h2>
-        <p>
-          Website, scheduling, calendar integration, contact forms, SEO baseline,
-          and the automations that keep it running without you. One build, everything
-          connected. Designed for small businesses that don't have a "tech person."
-        </p>
-        <a data-cal-link="alexcampos/30min" class="cta">Book a call &rarr;</a>
-      </div>
-
-      <div class="service-card">
-        <h2>Agentic SEO & AI Discoverability</h2>
-        <p>
-          Search traffic is increasingly driven by agents, not people typing keywords.
-          Structured data, machine-readable profiles, agent discovery endpoints — the
-          layer that makes your business findable by the tools people actually use now.
-        </p>
-        <a data-cal-link="alexcampos/30min" class="cta">Book a call &rarr;</a>
-      </div>
-
-      <div class="service-card">
+      <a data-cal-link="alexcampos/30min" class="service-card">
+        <h2>Online Presence Build</h2>
+        <p>Site, scheduling, forms, SEO, automations — one build, everything connected.</p>
+      </a>
+      <a data-cal-link="alexcampos/30min" class="service-card">
+        <h2>Agentic SEO</h2>
+        <p>Make your business findable by AI agents, not just search engines.</p>
+      </a>
+      <a data-cal-link="alexcampos/30min" class="service-card">
         <h2>AI Cost Optimization</h2>
-        <p>
-          If you're running AI and watching the API bill climb — model routing
-          and tiered dispatch typically cut 40-60% off spend. Same outputs,
-          less money. Audit included.
-        </p>
-        <a data-cal-link="alexcampos/30min" class="cta">Book a call &rarr;</a>
-      </div>
-
-      <div class="service-card">
-        <h2>Custom AI Automation</h2>
-        <p>
-          You describe the manual process. I build the pipeline — agent orchestration,
-          scheduling, monitoring, whatever it takes to remove you from the loop.
-          Processing pipelines, reporting, intake flows.
-        </p>
-        <a data-cal-link="alexcampos/30min" class="cta">Book a call &rarr;</a>
-      </div>
-
-      <div class="service-card">
-        <h2>Claude Code & MCP Setup</h2>
-        <p>
-          Your team just got Claude. Now what? Custom MCP servers, persistent
-          memory across sessions, team-wide configurations, hooks. The setup
-          that makes it actually useful instead of a chatbot with a terminal.
-        </p>
-        <a data-cal-link="alexcampos/30min" class="cta">Book a call &rarr;</a>
-      </div>
-
+        <p>Model routing that cuts API spend 40-60%. Audit included.</p>
+      </a>
+      <a data-cal-link="alexcampos/30min" class="service-card">
+        <h2>Custom Automation</h2>
+        <p>Describe the manual process. Get the pipeline.</p>
+      </a>
+      <a data-cal-link="alexcampos/30min" class="service-card">
+        <h2>Claude & MCP Setup</h2>
+        <p>Persistent memory, custom tools, team config. The setup that makes it useful.</p>
+      </a>
     </div>
 
     <hr />
@@ -91,16 +60,18 @@ import Page from '../layouts/Page.astro';
 
 <style>
   .services {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    margin: 2rem 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
   }
 
   .service-card {
     border: 1px solid var(--white-08);
-    padding: 1.5rem;
-    position: relative;
+    padding: 1rem 1.15rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
     transition: border-color 0.2s;
   }
 
@@ -109,28 +80,22 @@ import Page from '../layouts/Page.astro';
   }
 
   .service-card h2 {
-    font-size: 1.1rem;
-    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    margin: 0 0 0.35rem;
+    color: var(--glow);
   }
 
   .service-card p {
-    font-size: 0.9rem;
-    color: var(--white-60);
-    margin-bottom: 1rem;
+    font-size: 0.78rem;
+    color: var(--white-45);
+    margin: 0;
+    line-height: 1.4;
   }
 
-  .cta {
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--gold-accent);
-    border-bottom: 1px dashed var(--gold-accent);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  .cta:hover {
-    color: var(--glow-hot);
-    border-bottom-color: var(--glow-hot);
+  @media (max-width: 600px) {
+    .services {
+      grid-template-columns: 1fr;
+    }
   }
 
   .pricing {

@@ -19,6 +19,23 @@ const { Content } = await render(entry);
   description={entry.data.tagline}
   ogType="article"
 >
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": entry.data.title,
+    "description": entry.data.tagline,
+    "url": `https://campos.works/projects/${entry.slug}`,
+    ...(entry.data.repo ? { "codeRepository": entry.data.repo } : {}),
+    ...(entry.data.demo ? { "targetProduct": { "@type": "WebApplication", "url": entry.data.demo } } : {}),
+    "programmingLanguage": entry.data.stack,
+    "author": {
+      "@type": "Person",
+      "name": "Alexander Campos",
+      "url": "https://campos.works"
+    },
+    "creativeWorkStatus": entry.data.status === 'shipped' ? 'Published' : entry.data.status === 'active' ? 'In development' : 'Concept'
+  })} />
+
   <article class="project-detail">
     <header class="project-header">
       <h1>{entry.data.title}</h1>

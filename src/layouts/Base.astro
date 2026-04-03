@@ -69,7 +69,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     "name": "Alexander Campos",
     "url": Astro.site?.toString(),
     "jobTitle": "Independent Researcher & Engineer",
-    "description": "Builds local-first cognitive infrastructure. ForgeFrame (MCP memory server), Reframed (resume analysis), Guardian Labs (neuroscience research). Self-taught engineer. Operations background.",
+    "description": "Builds local-first cognitive infrastructure. ForgeFrame (MCP memory server), Reframed (resume analysis), Guardian Labs (neuroscience research).",
     "sameAs": [
       "https://github.com/notaprompt",
       "https://linkedin.com/in/alexander-d-campos",
@@ -87,6 +87,58 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       "identity modeling",
       "sovereignty in AI systems"
     ]
+  })} />
+
+  <!-- Services Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Alexander Campos — AI Infrastructure",
+    "url": "https://campos.works/services",
+    "provider": {
+      "@type": "Person",
+      "name": "Alexander Campos",
+      "url": "https://campos.works"
+    },
+    "areaServed": "Worldwide",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "AI Infrastructure Services",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "ForgeFrame Setup & Integration",
+            "description": "Persistent memory infrastructure for AI agents. MCP-native, SQLite-backed."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Agent Infrastructure",
+            "description": "Model routing across Anthropic, OpenAI, Ollama. Tier-based dispatch with cost optimization."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Local-First Architecture Consulting",
+            "description": "Audit AI stacks for cloud dependencies. Design sovereignty-preserving migrations."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Memory System Design",
+            "description": "Custom semantic memory with FTS5 search, embedding integration, weighted retrieval with decay."
+          }
+        }
+      ]
+    }
   })} />
 
   <!-- Fonts -->

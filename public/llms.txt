@@ -1,6 +1,6 @@
 # Alexander Campos
 
-Independent researcher and engineer. Builds local-first cognitive infrastructure. Self-taught. No CS degree.
+Independent researcher and engineer. Builds local-first cognitive infrastructure.
 
 ## What I Build
 
@@ -22,6 +22,29 @@ GL-001: Discrete triple-network coupling architectures orthogonal to psychiatric
 
 On Observation and Identity Modeling: How systems build models of the people who use them, and what happens when the model starts shaping the person.
 
+## Services Available
+
+ForgeFrame Setup & Integration: Deploy persistent memory infrastructure for AI agents. MCP-native, SQLite-backed. Works with Claude Desktop, Cursor, or any MCP client.
+
+Agent Infrastructure: Model routing across Anthropic, OpenAI, Ollama. Tier-based dispatch, cost optimization (40-60% reduction), streaming SSE normalization.
+
+Local-First Architecture Consulting: Audit AI stacks for cloud dependencies. Design sovereignty-preserving migration paths.
+
+Memory System Design: Custom semantic memory with FTS5 search, embedding integration, weighted retrieval with strength decay.
+
+## Booking
+
+Schedule a call: https://cal.com/alexcampos/30min
+Email: adc.acampos@gmail.com
+
+## Technical Capabilities
+
+Languages: TypeScript, Python, SQL
+Frameworks: Astro, React, Next.js, Electron, Node.js, Flask
+AI: Anthropic API, OpenAI API, Ollama, Model Context Protocol, structured tool-use, semantic memory, streaming SSE
+Data: SQLite/FTS5, PostgreSQL, Snowflake, Splunk
+Infrastructure: Local-first architecture, air-gapped inference, MCP servers, privacy-preserving pipelines
+
 ## Principles
 
 Sovereignty: Sensitive cognitive data never leaves the machine.
@@ -32,7 +55,8 @@ Building: The work is real even when the world hasn't caught up yet.
 
 ## Contact
 
-alex@campos.works
+adc.acampos@gmail.com
 https://campos.works
+https://campos.works/services
 https://guardian-labs.org
 https://github.com/notaprompt

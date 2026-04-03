@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "name": "Alexander Campos",
+  "handle": "alexcampos",
+  "type": "individual",
+  "url": "https://campos.works",
+  "description": "Independent engineer building local-first AI infrastructure. Memory systems, model routing, cognitive architecture. Ships production software.",
+  "services": [
+    {
+      "name": "ForgeFrame Setup & Integration",
+      "description": "Deploy persistent memory infrastructure for AI agents. MCP-native, SQLite-backed, works with Claude Desktop, Cursor, or any MCP client.",
+      "booking_url": "https://cal.com/alexcampos/30min",
+      "category": "ai-infrastructure"
+    },
+    {
+      "name": "Agent Infrastructure",
+      "description": "Model routing across Anthropic, OpenAI, Ollama. Tier-based dispatch with 40-60% cost reduction. Provider adapters, structured tool-use, streaming SSE.",
+      "booking_url": "https://cal.com/alexcampos/30min",
+      "category": "ai-infrastructure"
+    },
+    {
+      "name": "Local-First Architecture Consulting",
+      "description": "Audit AI stacks for cloud dependencies. Design sovereignty-preserving migration paths. Data classification and privacy review.",
+      "booking_url": "https://cal.com/alexcampos/30min",
+      "category": "consulting"
+    },
+    {
+      "name": "Memory System Design",
+      "description": "Custom semantic memory with FTS5 search, embedding integration, weighted retrieval with strength decay. Not a vector DB — a memory system with opinions.",
+      "booking_url": "https://cal.com/alexcampos/30min",
+      "category": "ai-infrastructure"
+    }
+  ],
+  "contact": {
+    "email": "adc.acampos@gmail.com",
+    "booking": "https://cal.com/alexcampos/30min",
+    "website": "https://campos.works"
+  },
+  "capabilities": [
+    "typescript",
+    "python",
+    "model-context-protocol",
+    "ollama",
+    "local-first-architecture",
+    "memory-systems",
+    "model-routing",
+    "sqlite-fts5",
+    "electron",
+    "react",
+    "nextjs",
+    "astro",
+    "streaming-sse",
+    "structured-tool-use"
+  ],
+  "projects": [
+    {
+      "name": "ForgeFrame",
+      "url": "https://github.com/notaprompt/forgeframe",
+      "description": "Open-source memory for AI agents. MCP server with 12 tools. SQLite + FTS5."
+    },
+    {
+      "name": "Reframed",
+      "url": "https://reframed.works",
+      "description": "Resume analysis platform. Voice fingerprinting, multi-reader semantic analysis, streaming AI."
+    },
+    {
+      "name": "Guardian",
+      "description": "Desktop cognitive workspace with reframe detection and awareness-trap detection. Local-only."
+    }
+  ],
+  "links": {
+    "github": "https://github.com/notaprompt",
+    "linkedin": "https://linkedin.com/in/alexander-d-campos",
+    "llms_txt": "https://campos.works/llms.txt",
+    "research": "https://guardian-labs.org"
+  }
+}

@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Allow: /.well-known/agent.json
+Allow: /llms.txt
+Allow: /api/agent/context
 
 Sitemap: https://campos.works/sitemap-index.xml

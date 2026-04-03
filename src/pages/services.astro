@@ -1,0 +1,140 @@
+---
+import Page from '../layouts/Page.astro';
+---
+
+<Page title="services -- alexander campos" description="Local-first AI infrastructure consulting. ForgeFrame setup, agent architecture, memory system design.">
+  <article>
+    <h1>What I Build</h1>
+
+    <p>
+      I build local-first AI infrastructure. If you need memory that persists,
+      models that route without bleeding money, or systems that run on
+      your hardware instead of someone else's — I can help.
+    </p>
+
+    <hr />
+
+    <div class="services">
+
+      <div class="service-card">
+        <h2>ForgeFrame Setup & Integration</h2>
+        <p>
+          Deploy persistent memory infrastructure for your AI agents. MCP-native,
+          SQLite-backed, works with Claude Desktop, Cursor, or any MCP client.
+          Session management, strength decay, constitutional memory — configured
+          for your workflow.
+        </p>
+        <a data-cal-link="alexcampos/30min" class="cta">Book a call &rarr;</a>
+      </div>
+
+      <div class="service-card">
+        <h2>Agent Infrastructure</h2>
+        <p>
+          Model routing across Anthropic, OpenAI, and Ollama. Tier-based dispatch
+          with cost optimization (40-60% reduction). Provider adapters, structured
+          tool-use, streaming SSE normalization. Built to run on your stack, not mine.
+        </p>
+        <a data-cal-link="alexcampos/30min" class="cta">Book a call &rarr;</a>
+      </div>
+
+      <div class="service-card">
+        <h2>Local-First Architecture Consulting</h2>
+        <p>
+          Audit your AI stack for cloud dependencies. Design a migration path to
+          local-first or hybrid architecture. Sovereignty review: what data leaves
+          the machine, what doesn't need to, and what's at risk if it does.
+        </p>
+        <a data-cal-link="alexcampos/30min" class="cta">Book a call &rarr;</a>
+      </div>
+
+      <div class="service-card">
+        <h2>Memory System Design</h2>
+        <p>
+          Custom semantic memory for your application. FTS5 search, embedding
+          integration, weighted retrieval with decay. Not a vector DB — a memory
+          system with opinions about what matters and what fades.
+        </p>
+        <a data-cal-link="alexcampos/30min" class="cta">Book a call &rarr;</a>
+      </div>
+
+    </div>
+
+    <hr />
+
+    <p class="pricing">
+      Pricing depends on scope. Most engagements start with a 30-minute call.
+    </p>
+
+    <p class="contact-alt">
+      Prefer email? <a href="mailto:adc.acampos@gmail.com">adc.acampos@gmail.com</a>
+    </p>
+  </article>
+
+  <script is:inline src="/islands/cal-embed.js"></script>
+
+  <script is:inline>
+    console.log(
+      '%c the infrastructure is the product. ',
+      'color: #E8DCC8; font-family: monospace; font-size: 11px;'
+    );
+  </script>
+</Page>
+
+<style>
+  .services {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 2rem 0;
+  }
+
+  .service-card {
+    border: 1px solid var(--white-08);
+    padding: 1.5rem;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .service-card:hover {
+    border-color: var(--gold-accent);
+  }
+
+  .service-card h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .service-card p {
+    font-size: 0.9rem;
+    color: var(--white-60);
+    margin-bottom: 1rem;
+  }
+
+  .cta {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--gold-accent);
+    border-bottom: 1px dashed var(--gold-accent);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .cta:hover {
+    color: var(--glow-hot);
+    border-bottom-color: var(--glow-hot);
+  }
+
+  .pricing {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--white-45);
+    text-align: center;
+  }
+
+  .contact-alt {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--white-30);
+    text-align: center;
+  }
+</style>

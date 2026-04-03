@@ -1321,11 +1321,9 @@
     }
     if (o.id === 'books') {
       o.action = function () {
-        // toggle influences list
-        var list = document.getElementById('influences-list');
-        if (list) {
-          list.classList.toggle('influences-hidden');
-          list.classList.toggle('influences-visible');
+        // open influences modal
+        if (window.__openInfluences) {
+          window.__openInfluences();
         }
         // toggle vault
         if (!vaultOpen && !vaultAnimating) {
@@ -1762,7 +1760,9 @@
       if (hoveredObj.external) {
         window.open(hoveredObj.url, '_blank', 'noopener');
       } else {
-        window.location.href = hoveredObj.url;
+        // Use a temp <a> click to trigger Astro View Transitions (preserves audio)
+        var a = document.createElement('a'); a.href = hoveredObj.url; a.style.display = 'none';
+        document.body.appendChild(a); a.click(); a.remove();
       }
     }
   });
@@ -1823,7 +1823,8 @@
             if (found.external) {
               window.open(found.url, '_blank', 'noopener');
             } else {
-              window.location.href = found.url;
+              var a = document.createElement('a'); a.href = found.url; a.style.display = 'none';
+              document.body.appendChild(a); a.click(); a.remove();
             }
           }
           // Clear hover state

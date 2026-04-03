@@ -43,20 +43,30 @@ import HitCounter from '../components/HitCounter.astro';
   .splash {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0;
+  }
+
+  .site-name {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--glow);
+    margin: 0 0 0.75rem;
+    letter-spacing: 0.02em;
   }
 
   .tagline {
     font-family: var(--body);
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: var(--glow);
-    line-height: 1.6;
-    margin-bottom: 0;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
   }
 
   .enter-nav {
     display: flex;
-    gap: 2rem;
+    gap: 2.5rem;
+    margin-bottom: 3rem;
   }
 
   .enter-link {
@@ -72,33 +82,29 @@ import HitCounter from '../components/HitCounter.astro';
     transition: none;
   }
 
-  .site-name {
-    font-family: var(--serif);
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--glow);
-    margin: 0;
-    letter-spacing: 0.02em;
-  }
-
-
   .cta-line {
     font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--white-60);
+    font-size: 0.75rem;
+    color: var(--white-30);
     line-height: 1.6;
     margin-bottom: 0;
   }
 
   .cta-line a {
+    color: var(--white-45);
+    font-weight: 400;
+    border-bottom: 1px dashed var(--white-20);
+  }
+
+  .cta-line a:hover {
     color: var(--gold-accent);
-    font-weight: 600;
-    border-bottom: 1px solid var(--gold-accent);
+    border-bottom-color: var(--gold-accent);
   }
 
   .counter-row {
-    padding-top: 1rem;
-    border-top: 1px solid var(--white-08);
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+    border-top: 1px solid var(--white-04);
   }
 
   /* ── Pixel Grid Hover Texture ── */

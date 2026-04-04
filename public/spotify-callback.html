@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>connecting...</title></head>
+<body style="background:#000;color:#fff;font-family:system-ui;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
+<p style="opacity:0.3;font-size:12px;letter-spacing:2px">redirecting to strudelvision...</p>
+<script>
+// Spotify redirects here with ?code=...
+// Forward to localhost StrudelVision
+var params = window.location.search + window.location.hash;
+window.location.href = 'http://localhost:8888/' + params;
+</script>
+</body>
+</html>

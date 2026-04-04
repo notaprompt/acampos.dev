@@ -6,13 +6,11 @@
 <script>
 var code = new URLSearchParams(window.location.search).get('code');
 if (code && window.opener) {
-  // Popup flow — send code back to StrudelVision
   window.opener.postMessage({ type: 'spotify-callback', code: code }, '*');
   document.getElementById('msg').textContent = 'connected. closing...';
   setTimeout(function() { window.close(); }, 1000);
 } else if (code) {
-  // Fallback — redirect to localhost
-  window.location.href = 'http://localhost:8888/?code=' + code;
+  window.location.href = 'http://127.0.0.1:8888/?code=' + code;
 } else {
   document.getElementById('msg').textContent = 'no auth code received.';
 }

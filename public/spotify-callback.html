@@ -2,12 +2,20 @@
 <html>
 <head><title>connecting...</title></head>
 <body style="background:#000;color:#fff;font-family:system-ui;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
-<p style="opacity:0.3;font-size:12px;letter-spacing:2px">redirecting to strudelvision...</p>
+<p id="msg" style="opacity:0.3;font-size:12px;letter-spacing:2px">connecting to strudelvision...</p>
 <script>
-// Spotify redirects here with ?code=...
-// Forward to localhost StrudelVision
-var params = window.location.search + window.location.hash;
-window.location.href = 'http://localhost:8888/' + params;
+var code = new URLSearchParams(window.location.search).get('code');
+if (code && window.opener) {
+  // Popup flow — send code back to StrudelVision
+  window.opener.postMessage({ type: 'spotify-callback', code: code }, '*');
+  document.getElementById('msg').textContent = 'connected. closing...';
+  setTimeout(function() { window.close(); }, 1000);
+} else if (code) {
+  // Fallback — redirect to localhost
+  window.location.href = 'http://localhost:8888/?code=' + code;
+} else {
+  document.getElementById('msg').textContent = 'no auth code received.';
+}
 </script>
 </body>
 </html>

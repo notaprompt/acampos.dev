@@ -1313,6 +1313,24 @@
           }
         }
       };
+    } else if (o.id === 'speakers') {
+      // Left tower: single-click toggles music panel, double-click opens StrudelVision
+      var speakerClicks = 0;
+      var speakerTimer = null;
+      o.action = function () {
+        speakerClicks++;
+        if (speakerClicks === 1) {
+          speakerTimer = setTimeout(function () {
+            speakerClicks = 0;
+            var toggle = document.querySelector('.mp-toggle');
+            if (toggle) toggle.click();
+          }, 300);
+        } else if (speakerClicks >= 2) {
+          clearTimeout(speakerTimer);
+          speakerClicks = 0;
+          window.open('http://127.0.0.1:8888', '_blank');
+        }
+      };
     } else if (o.label === 'audio') {
       o.action = function () {
         var toggle = document.querySelector('.mp-toggle');

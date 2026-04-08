@@ -21,4 +21,4 @@ if (!entry) {
 
 const popoverId = `wtf-${term}`;
 ---
-<span class="wtf-wrap"><slot /><button type="button" class="wtf-marker" aria-expanded="false" aria-controls={popoverId} aria-label="What does this mean?" data-wtf-trigger>wut?</button><span class="wtf-popover" id={popoverId} role="tooltip" data-wtf-popover hidden>{entry.definition}</span></span>
+<span class="wtf-wrap"><slot /><button type="button" class="wtf-marker" aria-expanded="false" aria-controls={popoverId} aria-label="What does this mean?" data-wtf-trigger>wut?</button><span class="wtf-popover" id={popoverId} role="tooltip" data-wtf-popover hidden><strong class="wtf-popover-title">{entry.term}</strong>{entry.definition}</span></span>

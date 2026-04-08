@@ -16,9 +16,9 @@ const micro = (await getCollection('micro')).sort((a, b) => a.data.order - b.dat
 
     <div class="project-list">
       {projects.map(project => (
-        <a href={`/projects/${project.slug}`} class="project-card">
+        <div class="project-card">
           <div class="project-header">
-            <h2>{project.data.title}</h2>
+            <h2><a href={`/projects/${project.slug}`} class="card-main-link">{project.data.title}</a></h2>
             <span class={`status status-${project.data.status}`}>{project.data.status}</span>
           </div>
           <p class="project-tagline">{project.data.tagline}</p>
@@ -28,9 +28,9 @@ const micro = (await getCollection('micro')).sort((a, b) => a.data.order - b.dat
             ))}
           </div>
           {project.data.repo && (
-            <a href={project.data.repo} class="card-repo-link" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">repo</a>
+            <a href={project.data.repo} class="card-repo-link" target="_blank" rel="noopener noreferrer">repo</a>
           )}
-        </a>
+        </div>
       ))}
     </div>
 
@@ -90,7 +90,6 @@ const micro = (await getCollection('micro')).sort((a, b) => a.data.order - b.dat
     padding: 1.25rem;
     background: var(--depth-1);
     border: 1px solid var(--white-08);
-    text-decoration: none;
     transition: border-color 0.2s, background 0.2s;
   }
 
@@ -129,6 +128,18 @@ const micro = (await getCollection('micro')).sort((a, b) => a.data.order - b.dat
     .project-card:hover::after {
       opacity: 1;
     }
+  }
+
+  /* stretch link — covers entire card, sits below repo link */
+  .card-main-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .card-main-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
   }
 
   .project-header {
@@ -179,6 +190,8 @@ const micro = (await getCollection('micro')).sort((a, b) => a.data.order - b.dat
 
   .card-repo-link {
     display: inline-block;
+    position: relative;
+    z-index: 1;
     margin-top: 0.6rem;
     font-family: var(--mono);
     font-size: 0.7rem;

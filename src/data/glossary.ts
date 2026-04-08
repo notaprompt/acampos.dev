@@ -22,7 +22,7 @@ export const glossary: Record<string, GlossaryEntry> = {
   },
   'bold-signal': {
     term: 'BOLD signal',
-    definition: 'Blood-Oxygen-Level-Dependent signal. The actual measurement an fMRI scanner takes. It tracks oxygenated blood flow in the brain — a proxy for neural activity, not the activity itself.',
+    definition: 'Blood-Oxygen-Level-Dependent signal. The actual thing an fMRI scanner measures. It tracks oxygen-rich blood flow in the brain — a stand-in for brain-cell activity, not the activity itself.',
   },
   'sparse-autoencoder-features': {
     term: 'sparse autoencoder features',
@@ -34,7 +34,7 @@ export const glossary: Record<string, GlossaryEntry> = {
   },
   'activation-verbalizers': {
     term: 'activation verbalizers',
-    definition: 'A trick where you ask a smaller model to describe, in plain English, what a larger model is "doing" at a given moment. Imperfect, sometimes confabulated, but useful for spotting patterns the math alone won\u2019t name.',
+    definition: 'A trick where you ask a smaller model to describe, in plain English, what a larger model is "doing" at a given moment. Imperfect — the smaller model sometimes invents something plausible that isn\u2019t actually there — but useful for spotting patterns the math alone won\u2019t name.',
   },
   'phenomenal-consciousness': {
     term: 'phenomenal consciousness',

@@ -147,9 +147,38 @@ const { title, description, ogType } = Astro.props;
     }
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 640px) {
     .wtf-popover {
-      max-width: calc(100vw - 1.5rem);
+      position: fixed;
+      top: auto;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      width: auto;
+      max-width: none;
+      animation: wtf-pop-in-mobile 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    .wtf-marker {
+      position: relative;
+    }
+
+    .wtf-marker::before {
+      content: '';
+      position: absolute;
+      inset: -0.7em -0.3em;
+      z-index: 1;
+    }
+  }
+
+  @keyframes wtf-pop-in-mobile {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 </style>

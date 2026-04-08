@@ -57,6 +57,11 @@ const { Content } = await render(entry);
             launch demo >>
           </a>
         )}
+        {entry.data.hidden_demo && (
+          <button id="hidden-demo-btn" class="demo-link demo-link--hidden" type="button">
+            launch demo >>
+          </button>
+        )}
       </div>
     </header>
 
@@ -176,4 +181,107 @@ const { Content } = await render(entry);
     width: 100%;
     display: block;
   }
+
+  /* hidden demo button — looks like a real link */
+  .demo-link--hidden {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  /* scroll overlay */
+  #scroll-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #scroll-overlay.open {
+    display: flex;
+  }
+
+  #scroll-popup {
+    width: min(420px, 90vw);
+    animation: unroll 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    transform-origin: top center;
+  }
+
+  @keyframes unroll {
+    from {
+      opacity: 0;
+      clip-path: inset(50% 0 50% 0);
+    }
+    to {
+      opacity: 1;
+      clip-path: inset(0% 0 0% 0);
+    }
+  }
+
+  .scroll-cap {
+    height: 18px;
+    background: var(--gold-accent);
+    border-radius: 3px;
+    opacity: 0.85;
+  }
+
+  .scroll-body {
+    background: #0e0b07;
+    border-left: 1px solid var(--gold-accent);
+    border-right: 1px solid var(--gold-accent);
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+
+  .scroll-body p {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--glow);
+    line-height: 1.8;
+    margin: 0;
+  }
+
+  .scroll-body p + p {
+    margin-top: 1.25rem;
+    color: var(--white-45);
+    font-size: 0.75rem;
+  }
 </style>
+
+<!-- hidden demo scroll — only rendered when hidden_demo is true -->
+{entry.data.hidden_demo && (
+  <div id="scroll-overlay" role="dialog" aria-modal="true" aria-label="Hidden demo">
+    <div id="scroll-popup">
+      <div class="scroll-cap"></div>
+      <div class="scroll-body">
+        <p>this link is hidden.</p>
+        <p>if you were this link, where would you hide?</p>
+      </div>
+      <div class="scroll-cap"></div>
+    </div>
+  </div>
+
+  <script is:inline>
+    (function () {
+      var btn = document.getElementById('hidden-demo-btn');
+      var overlay = document.getElementById('scroll-overlay');
+      if (!btn || !overlay) return;
+
+      btn.addEventListener('click', function () {
+        overlay.classList.add('open');
+      });
+
+      overlay.addEventListener('click', function () {
+        overlay.classList.remove('open');
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') overlay.classList.remove('open');
+      });
+    })();
+  </script>
+)}

@@ -3,6 +3,7 @@ title: "StrudelVision"
 tagline: "Started as a Saturday night. Four WebGL shader modes driven by music, Strudel integration, natural-language shader control via Ollama, a synth pad, and a DJ mixer. Better for artisans than craftsmen."
 status: "active"
 stack: ["WebGL2", "Canvas2D", "Web Audio API", "Strudel", "Ollama", "Web Speech API", "WebSocket", "Vanilla JS"]
+hidden_demo: true
 order: 6
 ---
 

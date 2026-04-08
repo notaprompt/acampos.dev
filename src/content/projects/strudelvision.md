@@ -5,7 +5,7 @@ status: "active"
 stack: ["WebGL2", "Canvas2D", "Web Audio API", "Strudel", "Ollama", "Web Speech API", "WebSocket", "Vanilla JS"]
 image: "/images/projects/strudelvision.jpg"
 hidden_demo: true
-order: 6
+order: 5
 ---
 
 ## What happened

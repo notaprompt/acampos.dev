@@ -1,16 +1,16 @@
 ---
 title: "Guardian"
-tagline: "Desktop app that sits between you and the models you use. Keeps context local, detects when language shifts yours."
+tagline: "ForgeFrame configured for people. Local inference control plane with reframe detection, awareness-trap alerts, and sovereign encryption. Keeps your cognitive data on your machine."
 status: "active"
-stack: ["Electron 33", "React 18", "Node.js", "SQLite/FTS5", "Zustand", "xterm.js"]
+stack: ["Electron", "React", "Node.js", "SQLite/FTS5", "Zustand", "xterm.js"]
 image: "/images/projects/guardian.png"
 repo: "https://github.com/notaprompt/guardian-ui-scaffold"
-order: 2
+order: 3
 ---
 
 ## Goals
 
-The question that started everything: when an AI system observes you long enough, does its model of you start shaping who you become? Guardian is the workspace where I tried to answer that — and built the detectors, the memory, and the infrastructure to do something about it.
+Guardian is ForgeFrame configured for people instead of developers. Same engine — memory, decay, constitutional tagging, sovereignty — with a UI built around the question: when an AI system observes you long enough, does its model of you start shaping who you become? Built the detectors, the memory, and the infrastructure to find out.
 
 ## Process
 
@@ -36,7 +36,6 @@ Started as an Electron shell with a chat window and a local Ollama connection. B
 - Memory compression thresholds are hand-tuned, not empirically optimized.
 - No formal user study on reframe detection or awareness-trap accuracy.
 - Sovereign encryption is functional but not audited by a third party.
-- v1.0 gap closing is in progress -- tab disclosure and weekly synthesis still being finalized.
 
 ## Learnings
 

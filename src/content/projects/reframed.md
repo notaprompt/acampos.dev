@@ -2,8 +2,7 @@
 title: "Reframed"
 tagline: "Helps people describe their experience honestly and still get the job. Live at reframed.works."
 status: "shipped"
-stack: ["Next.js", "TypeScript", "Multi-Provider LLM Routing", "Stripe", "React PDF"]
-repo: "https://github.com/notaprompt/resume-tailor"
+stack: ["Next.js", "TypeScript", "Anthropic", "Neon Postgres", "Upstash Redis", "Stripe", "React PDF"]
 demo: "https://reframed.works"
 order: 1
 ---
@@ -18,7 +17,7 @@ Upload a resume (paste, file, or URL scrape), paste a job description. The syste
 
 **Semantic analysis.** Multi-provider routing reads the resume against the job description and returns a confidence score, gap analysis, and per-section annotations. Not keyword matching -- it reads for intent, culture fit, and transferable experience.
 
-**Two versions.** Refined keeps your structure with stronger language. Reframed reshapes it for the specific role. Each version includes a change log showing exactly what was modified and why. We killed the aggressive third version -- two gives you a real choice without decision paralysis.
+**Two versions.** Refined keeps your structure with stronger language. Reframed reshapes it for the specific role. Each version includes a change log showing exactly what was modified and why. Killed the aggressive third version -- two gives you a real choice without decision paralysis.
 
 **No fabrication.** The tailoring prompt explicitly prohibits inventing experience, inflating metrics, or adding skills the user doesn't have. It reframes what exists. The user decides which version to use.
 
@@ -30,6 +29,7 @@ Upload a resume (paste, file, or URL scrape), paste a job description. The syste
 
 - 34 API routes, multi-provider routing with fallback chains
 - Stripe payments, magic-link auth, credit system
+- InstantScore — paste a JD, get a match score before committing to a full tailoring
 - Voice fingerprinting, 14 industry profiles
 - Application tracking board
 - Streaming analysis with real-time progress

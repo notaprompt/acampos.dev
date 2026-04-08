@@ -2,9 +2,9 @@
 title: "ForgeFrame"
 tagline: "Open-source memory for AI agents. Memories decay over time. Principles don't. You decide which is which."
 status: "active"
-stack: ["TypeScript", "Node.js", "MCP Protocol", "SQLite", "FTS5", "Ollama", "MIT/AGPL"]
-repo: "https://github.com/notaprompt/ForgeFrame"
-order: 3
+stack: ["TypeScript", "Node.js", "MCP Protocol", "SQLite", "FTS5", "Ollama"]
+repo: "https://github.com/notaprompt/forgeframe"
+order: 2
 ---
 
 ## Goals
@@ -34,7 +34,7 @@ L1  MCP Protocol (Anthropic's standard)     OPEN
 
 ## In production
 
-ForgeFrame is running in production right now — 295 memories across 88 sessions. The Distillery reads it for relevance scoring. The Business OS reads it for founder receipts and TODO tracking. Every Claude Code session logs to it automatically via a SessionEnd hook. It's not a demo — it's the memory layer for everything else I build.
+ForgeFrame is running in production as the memory layer for everything else built on this machine. The Distillery reads it for relevance scoring. Every Claude Code session logs to it automatically via a SessionEnd hook. It compounds — the longer it runs, the more context it has. It's not a demo.
 
 ## Limitations
 

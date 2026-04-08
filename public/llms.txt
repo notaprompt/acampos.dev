@@ -20,7 +20,13 @@ GL-001: Discrete triple-network coupling architectures orthogonal to psychiatric
 
 ## Writing
 
-On Observation and Identity Modeling: How systems build models of the people who use them, and what happens when the model starts shaping the person.
+On Observation and Identity Modeling (Part I): How systems build models of the people who use them, and what happens when the model starts shaping the person.
+
+On Observation and Identity Modeling (Part II), Where the Difference Is Stored: How the loop became measurable. The mechanism of self-modeling is now documented in three substrates by three different methods. What each of us has to put on the other side of it.
+
+## Glossary
+
+Plain-language definitions for the technical terms used across the writing and projects. Available at /glossary. Covers neuroscience (default mode network, BOLD signal, fMRI), machine learning interpretability (sparse autoencoder features, persona vectors, activation verbalizers), and philosophy of mind (phenomenal consciousness). Each definition is one short paragraph in plain English. Click any "wut?" marker in the writing to surface the gloss inline; the full list lives at the URL above.
 
 ## Services Available
 
@@ -59,6 +65,8 @@ Building: The work is real even when the world hasn't caught up yet.
 
 alex@campos.works
 https://campos.works
+https://campos.works/writing
+https://campos.works/glossary
 https://campos.works/services
 https://guardian-labs.org
 https://github.com/notaprompt

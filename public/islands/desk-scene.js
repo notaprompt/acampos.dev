@@ -1314,16 +1314,28 @@
         }
       };
     } else if (o.id === 'speakers') {
-      // Left tower: single-click toggles music panel, double-click opens StrudelVision
+      // Left tower: single-click shows scroll popup (first time), glistens after dismiss,
+      // next click while glistening launches StrudelVision. Double-click launches directly.
+      var speakerPopupShown = false;
       var speakerClicks = 0;
       var speakerTimer = null;
       o.action = function () {
+        if (speakerGlistening) {
+          speakerGlistening = false;
+          window.open('http://127.0.0.1:8888', '_blank');
+          return;
+        }
         speakerClicks++;
         if (speakerClicks === 1) {
           speakerTimer = setTimeout(function () {
             speakerClicks = 0;
-            var toggle = document.querySelector('.mp-toggle');
-            if (toggle) toggle.click();
+            if (!speakerPopupShown) {
+              speakerPopupShown = true;
+              showScrollPopup(function () { startSpeakerGlisten(); });
+            } else {
+              var toggle = document.querySelector('.mp-toggle');
+              if (toggle) toggle.click();
+            }
           }, 300);
         } else if (speakerClicks >= 2) {
           clearTimeout(speakerTimer);
@@ -1724,6 +1736,118 @@
       }
     }
   }, 80);
+
+  // ── Left tower speaker glisten (activated after scroll popup dismissed) ──
+  var shimmerSpkX = 10, shimmerSpkY = 22, shimmerSpkW = 10, shimmerSpkH = 36;
+  var shimmerSpkOriginal = [];
+  for (var ssi = 0; ssi < shimmerSpkH; ssi++) {
+    for (var ssw = 0; ssw < shimmerSpkW; ssw++) {
+      shimmerSpkOriginal.push(scene[(shimmerSpkY + ssi) * COLS + shimmerSpkX + ssw]);
+    }
+  }
+  var speakerGlistening = false;
+  var speakerGlisterInterval = null;
+  var speakerGlisterTick = 0;
+  var speakerSparkles = [];
+
+  function showScrollPopup(onDismiss) {
+    var old = document.getElementById('strudel-scroll-overlay');
+    if (old) old.remove();
+    if (!document.getElementById('strudel-scroll-styles')) {
+      var st = document.createElement('style');
+      st.id = 'strudel-scroll-styles';
+      st.textContent = '@keyframes scroll-unroll{from{opacity:0;clip-path:inset(50% 0 50% 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}';
+      document.head.appendChild(st);
+    }
+    var overlay = document.createElement('div');
+    overlay.id = 'strudel-scroll-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;';
+
+    var popup = document.createElement('div');
+    popup.style.cssText = 'width:min(420px,90vw);animation:scroll-unroll 0.45s cubic-bezier(0.22,1,0.36,1) forwards;transform-origin:top center;';
+
+    var capTop = document.createElement('div');
+    capTop.style.cssText = 'height:18px;background:#b8965a;border-radius:3px;opacity:0.85;';
+
+    var body = document.createElement('div');
+    body.style.cssText = 'background:#0e0b07;border-left:1px solid #b8965a;border-right:1px solid #b8965a;padding:2.5rem 2rem;text-align:center;';
+
+    var line1 = document.createElement('p');
+    line1.style.cssText = 'font-family:monospace;font-size:0.85rem;color:#E8DCC8;line-height:1.8;margin:0;';
+    line1.textContent = 'this link is hidden.';
+
+    var line2 = document.createElement('p');
+    line2.style.cssText = 'font-family:monospace;font-size:0.75rem;color:rgba(232,220,200,0.45);line-height:1.8;margin:1.25rem 0 0;';
+    line2.textContent = 'if you were this link, where would you hide?';
+
+    var capBot = document.createElement('div');
+    capBot.style.cssText = 'height:18px;background:#b8965a;border-radius:3px;opacity:0.85;';
+
+    body.appendChild(line1);
+    body.appendChild(line2);
+    popup.appendChild(capTop);
+    popup.appendChild(body);
+    popup.appendChild(capBot);
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+
+    function dismiss() {
+      overlay.remove();
+      document.removeEventListener('keydown', escHandler);
+      if (onDismiss) onDismiss();
+    }
+    overlay.addEventListener('click', dismiss);
+    function escHandler(e) { if (e.key === 'Escape') dismiss(); }
+    document.addEventListener('keydown', escHandler);
+  }
+
+  function startSpeakerGlisten() {
+    speakerGlistening = true;
+    speakerGlisterTick = 0;
+    speakerSparkles = [];
+    speakerGlisterInterval = setInterval(function () {
+      if (!speakerGlistening) {
+        clearInterval(speakerGlisterInterval);
+        speakerGlisterInterval = null;
+        for (var ri = 0; ri < shimmerSpkH; ri++) {
+          for (var rw = 0; rw < shimmerSpkW; rw++) {
+            scene[(shimmerSpkY + ri) * COLS + shimmerSpkX + rw] = shimmerSpkOriginal[ri * shimmerSpkW + rw];
+          }
+        }
+        return;
+      }
+      speakerGlisterTick++;
+      for (var ri2 = 0; ri2 < shimmerSpkH; ri2++) {
+        for (var rw2 = 0; rw2 < shimmerSpkW; rw2++) {
+          scene[(shimmerSpkY + ri2) * COLS + shimmerSpkX + rw2] = shimmerSpkOriginal[ri2 * shimmerSpkW + rw2];
+        }
+      }
+      var pulse = Math.sin(speakerGlisterTick * 0.06) * 0.5 + 0.5;
+      if (pulse > 0.65) {
+        for (var pi = 0; pi < shimmerSpkH; pi++) {
+          for (var pw = 0; pw < shimmerSpkW; pw++) {
+            scene[(shimmerSpkY + pi) * COLS + shimmerSpkX + pw] = pulse > 0.8 ? 21 : 22;
+          }
+        }
+      }
+      if (speakerGlisterTick % 8 === 0) {
+        speakerSparkles.push({ x: Math.floor(Math.random() * shimmerSpkW), y: Math.floor(Math.random() * shimmerSpkH), life: 5 });
+      }
+      for (var sp = speakerSparkles.length - 1; sp >= 0; sp--) {
+        var spk = speakerSparkles[sp];
+        spk.life--;
+        if (spk.life <= 0) { speakerSparkles.splice(sp, 1); continue; }
+        var spkx = shimmerSpkX + spk.x, spky = shimmerSpkY + spk.y;
+        scene[spky * COLS + spkx] = spk.life > 2 ? 104 : 21;
+        if (spk.life > 3) {
+          if (spky > shimmerSpkY) scene[(spky - 1) * COLS + spkx] = 21;
+          if (spky < shimmerSpkY + shimmerSpkH - 1) scene[(spky + 1) * COLS + spkx] = 21;
+          if (spkx > shimmerSpkX) scene[spky * COLS + spkx - 1] = 21;
+          if (spkx < shimmerSpkX + shimmerSpkW - 1) scene[spky * COLS + spkx + 1] = 21;
+        }
+      }
+    }, 80);
+  }
 
   // ══════════════════════════════════════════════════════════════
   //  INTERACTION

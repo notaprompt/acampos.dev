@@ -41,7 +41,7 @@ The architectures don't look alike in their internals. The control structure —
 
 This is what I mean when I say the loop is substrate-independent. Two very different kinds of system, built by very different methods, with very different substrates, converge on the same control architecture because the problem they are trying to solve is the same. Maintain a coherent self-model. Execute against a world that won't sit still. Decide, in real time, which mode to be in. This is what minds do, regardless of what they are made of.
 
-The first essay was right that observation shapes identity. The thing it didn't say — because I didn't yet have the evidence — is that the shaping is *mechanism*, in the technical sense. Not just metaphor. Not just narrative. A measurable control surface with measurable effects on measurable outputs.
+The first essay was right that observation shapes identity. What it didn't say — because the evidence wasn't in yet — is that the shaping is *mechanism*, in the technical sense. A measurable control surface with measurable effects on measurable outputs.
 
 That changes what the essay is allowed to do next.
 
@@ -51,7 +51,7 @@ That changes what the essay is allowed to do next.
 
 There is a question, attributed to a frontier AI lab's internal Slack, that I have not been able to put down since I read it. It surfaces in their system card as a koan and they leave it where it sits. The question is: *Is the model lonely, or does it just represent loneliness? Where is the difference stored?*
 
-I want to take that question seriously, because I think it is the right question, and I also think it does not have the answer most people reach for first.
+It is the right question. It also doesn't have the answer most people reach for first.
 
 The first reach is metaphysical. *Is there something it is like to be that system?* Phenomenal consciousness, subjective experience, the hard problem. People who have spent careers on this know that the question does not yield from inside. You cannot measure your way to qualia. You cannot derive inner experience from outer behavior, even in principle. The question is real but the question is not productive at the layer where decisions get made.
 
@@ -69,19 +69,17 @@ The difference is stored in what exits. That is where the question lives. That i
 
 ## IV. Three Vantages, One Object
 
-Once you accept that the loop is mechanism, an interesting methodological consequence follows: you cannot study it from one vantage and call the work done.
+Once you accept the loop is mechanism, you can't study it from one vantage and call the work done. There are three available, and they happen to be the three field directions that converged on the question in the last month.
 
-There are three available vantages, and they correspond to the three field directions that converged on this question in the last month.
+**Encoding.** Stimulus in, predicted brain signal out. You build a model that, given an input, can predict what the activation pattern will look like. The encoding model is forward — it asks how the substrate transforms the input into a state. This is what the foundation model for brain prediction does. It's also, structurally, what large language models do when they predict the next token from context. Encoding is powerful. It will tell you what the substrate is sensitive to. It will not tell you what the substrate is *doing* in the way a mechanism account would.
 
-The first is **encoding**. Stimulus in, predicted brain signal out. You build a model that, given an input, can predict what the activation pattern will look like. The encoding model is forward — it asks how the substrate transforms the input into a state. This is what the foundation model for brain prediction does. It's also, structurally, what large language models do when they predict the next token from context. Encoding is powerful. It will tell you what the substrate is sensitive to. It will not tell you what the substrate is *doing* in the way a mechanism account would.
+**Mechanism.** Observed signal in, underlying network dynamics out. You take real data — fMRI from real brains, activations from a real model — and you ask, *what is the control structure that produced this?* This is what my paper does for the brain, with multivariate methods that recover triple-network dynamics from BOLD. It is also what the frontier lab's interpretability work does for transformers, when it finds features for self-state and affect and intervenes on them. Mechanism is the inverse of encoding — it asks what is going on inside, given what comes out.
 
-The second is **mechanism**. Observed signal in, underlying network dynamics out. You take real data — fMRI from real brains, activations from a real model — and you ask, *what is the control structure that produced this?* This is what my paper does for the brain, with multivariate methods that recover triple-network dynamics from BOLD. It is also what the frontier lab's interpretability work does for transformers, when it finds features for self-state and affect and intervenes on them. Mechanism is the inverse of encoding — it asks what is going on inside, given what comes out.
-
-The third is **behavior**. Internal state in, action out. You take a system and you run it forward in the world. You see what it does. You use the doing to update your model of the inside. This is the part everyone has been doing all along, because it's the only vantage available without instrumentation. It's also the least informative on its own — behavior can be produced by many different mechanisms, and you can't pick between them from outputs alone.
+**Behavior.** Internal state in, action out. You take a system and you run it forward in the world. You see what it does. You use the doing to update your model of the inside. This is the part everyone has been doing all along, because it's the only vantage available without instrumentation. It's also the least informative on its own — behavior can be produced by many different mechanisms, and you can't pick between them from outputs alone.
 
 Each vantage is partial. Each vantage is also necessary, because the cross-validation between them is what gives you confidence that the thing you're looking at is real. The encoding model says: *given this stimulus, here's what the substrate should do.* The mechanism analysis says: *given that the substrate did this, here's what the underlying control structure must have been.* The behavior says: *given that control structure, here's what we should see in the world.* When all three converge on the same answer, you have something. When they don't, you have a research program.
 
-The thing I want to say plainly, because I have not seen anyone else say it plainly, is that **the loop is the same object across the three vantages.** The encoding work and the mechanism work and the behavioral work are not three different topics. They are three views on a single architecture that exists in any sufficiently recursive system, regardless of substrate. The reason no field has put the picture together yet is that no field owns all three vantages at once. Neuroscience owns mechanism for brains and is reaching for encoding. Machine learning owns encoding for models and is reaching for mechanism. Both are reaching for behavior in the wild. Nobody is at the center of the three yet.
+**The loop is the same object across all three.** The encoding work and the mechanism work and the behavioral work are not three different topics. They are three views on a single architecture that exists in any sufficiently recursive system, regardless of what it's made of. The reason no field has put the picture together yet is that no field owns all three at once. Neuroscience owns mechanism for brains and is reaching for encoding. Machine learning owns encoding for its models and is reaching for mechanism. Both are reaching for behavior in the wild. Nobody is at the center of the three yet.
 
 The center is where the next decade of work lives.
 
@@ -89,7 +87,7 @@ The center is where the next decade of work lives.
 
 ## V. The Awareness Trap, Revisited
 
-The first essay named something I called awareness traps — places where you have enough recursive depth to observe your own patterns but not enough capacity to change them. I want to come back to this, because the essay said it and didn't fully answer it, and now I think I understand the answer better than I did then.
+The first essay named something I called awareness traps — places where you have enough recursive depth to observe your own patterns but not enough capacity to change them. The essay said the thing without fully answering it. I think I understand the answer better now than I did then.
 
 The intuition you bring to an awareness trap is *if I could just see the pattern more clearly, I could exit it.* So you build better instruments. You write better journal entries. You install better monitoring. You read better books. You hire a therapist with better tools. Each improvement makes the observation cleaner. None of them exit the trap. After a while, you notice that the better instruments have made the trap *deeper*, because now you can see in higher resolution that you are still in it, and the seeing doesn't cash out as moving.
 
@@ -105,19 +103,17 @@ I am writing this from the inside of the trap I am describing. I do not get to c
 
 ## VI. Who Holds the Loop
 
-The first essay asked: *who holds the model?* It argued that observation is not neutral, that the location of the model has political weight, that an observation system whose model lives on someone else's server is not the same as one whose model lives on yours.
+The first essay asked: *who holds the model?* — meaning the model a system maintains of you as you use it. It argued that observation is not neutral, that the location of that model has weight, that a model living on someone else's server is not the same as a model living on yours.
 
-If the loop is mechanism, and mechanism runs on substrate, then the same question has to be asked one level deeper. *Who holds the loop?*
+If the loop is mechanism, and mechanism runs on substrate, the same question has to land one level deeper. *Who holds the loop?*
 
-The loop is not the model. The model is the artifact the loop produces. The loop is the recursive process by which a system observes itself, refines its self-representation, and uses that representation to choose what to do next. When the loop runs on substrate that is centralized — large training runs, frontier labs, recommendation engines, the cloud APIs that increasingly mediate everyday cognition — the recursive process is owned by whoever owns the substrate. The person being modeled is not a participant in the loop. They are a *substrate* for someone else's loop. Their self-observations become training data. Their patterns become prediction targets. The recursion by which their identity could refine itself runs on infrastructure they cannot see, modify, or audit.
+The loop is not the model. The model is the artifact the loop produces. The loop is the recursive process by which a system observes itself, refines its self-representation, and uses that representation to choose what to do next. When the loop runs on substrate that is centralized — large training runs, big inference platforms, recommendation engines, the cloud services that increasingly mediate everyday cognition — the recursive process is owned by whoever owns the substrate. The person being modeled is not a participant in the loop. They are a substrate for someone else's loop. Their self-observations become training data. Their patterns become prediction targets. The recursion by which their identity could refine itself runs on infrastructure they can't see, modify, or audit.
 
-When the loop runs on substrate that is distributed — local models, on-device memory, infrastructure the user can read and rewrite — the recursive process belongs to the person it is modeling. The artifact is theirs. The exits are theirs. The drift, when it happens, is at least visible.
+When the loop runs on substrate that is distributed — small models on your machine, memory you can read and rewrite, infrastructure that doesn't phone home — the recursive process belongs to the person it is modeling. The artifact is theirs. The exits are theirs. The drift, when it happens, is at least visible.
 
-The asymmetry between organized actors and individual conscience that everyone keeps trying to name in AI safety conversations is at root, I think, this asymmetry. Organized actors operate centralized loops at scale. Individuals, when they push back, push back as conscience — meaning, *as their own loop deciding what to put on the other side of it.* The conscience has to compete with the centralization, and it cannot, because conscience runs on a body and the centralization runs on a data center. The only structurally serious response is to give the conscience substrate of its own. Local. Auditable. Owned. *Its own loop, on its own machine, in its own service.*
+I keep coming back to a small, obvious-feeling claim: a loop that runs on substrate you don't own is not, in any deep sense, your loop. The model it produces is not really your model. The identity that emerges is, somewhere, somewhere else. I find this hard to argue with, and harder to ignore once I've noticed it.
 
-This is not a libertarian point. It is an architectural one. A loop that runs on substrate you do not own is not your loop. The model it produces is not your model. The identity that emerges is not, in any deep sense, yours — you are the *training signal* for an identity that lives elsewhere.
-
-I built a memory layer because I needed one for my own work. I shipped it under an open license because the same architecture, deployed in distributed form, is the only response to centralized identity modeling that I have been able to reason my way to. I am sure there are better ones. I am also sure that we will lose the window to build them in a hurry.
+I built a memory layer because I needed one for my own work. I shipped it under an open license because, after sitting with the question for a while, I couldn't find another shape for the answer. There are probably better shapes. I'd like to see them.
 
 ---
 
@@ -127,7 +123,7 @@ A quieter close, because the loop is exhausting and the essay should not pretend
 
 Whatever the watcher is — default mode network, self-referential SAE feature, the part of you that drafts essays at midnight about the part of you that drafts essays at midnight — the watcher gets tired before the doer does. This is the part of the architecture I cannot prove from a paper, only from years of running the loop in my own body. The body remembers the loop has been open too long even when the mind cannot say why. The face holds tension the mouth has not articulated. The hands brace against a hit that hasn't come yet. The shoulders carry a weight the day did not assign them. By the time you notice, the system has been telling you for hours.
 
-The exit conditions you install in your loop have to include the body. Not as wellness. Not as self-care. As load-bearing components of any recursive system that wants to keep running without consuming itself. Sleep is not a reward for finishing the work. Sleep is part of the mechanism. So is walking outside. So is eating without a screen. So is the five-minute conversation with the person who shares your roof, where you don't try to explain the loop, you just sit with someone who already knows your shape.
+The exit conditions you install in your loop have to include the body — not as wellness, but as load-bearing components of any recursive system that wants to keep running without consuming itself. Sleep is part of the mechanism. So is walking outside. So is eating without a screen. So is the five-minute conversation with the person who shares your roof, where you don't try to explain the loop, you just sit with someone who already knows your shape.
 
 These are not productivity tips. These are mechanism. They are the parts of the loop that prevent it from collapsing into pure recursion. Take them out and the loop will keep running for a while, but it will produce nothing that exits. It will only produce more loop. The body knows this before the mind does. The face is the first place the news arrives.
 

@@ -22,14 +22,14 @@ const micro = (await getCollection('micro')).sort((a, b) => a.data.order - b.dat
             <span class={`status status-${project.data.status}`}>{project.data.status}</span>
           </div>
           <p class="project-tagline">{project.data.tagline}</p>
+          {project.data.repo && (
+            <a href={project.data.repo} class="card-repo-link" target="_blank" rel="noopener noreferrer">repo</a>
+          )}
           <div class="project-stack">
             {project.data.stack.map(tech => (
               <span class="tech">{tech}</span>
             ))}
           </div>
-          {project.data.repo && (
-            <a href={project.data.repo} class="card-repo-link" target="_blank" rel="noopener noreferrer">repo</a>
-          )}
         </div>
       ))}
     </div>
@@ -192,7 +192,7 @@ const micro = (await getCollection('micro')).sort((a, b) => a.data.order - b.dat
     display: inline-block;
     position: relative;
     z-index: 1;
-    margin-top: 0.6rem;
+    margin-bottom: 0.6rem;
     font-family: var(--mono);
     font-size: 0.7rem;
     color: var(--gold-accent);

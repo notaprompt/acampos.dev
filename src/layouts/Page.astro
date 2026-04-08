@@ -58,3 +58,120 @@ const { title, description, ogType } = Astro.props;
     padding: 2rem 0;
   }
 </style>
+
+<style is:global>
+  /* wtf glossary marker — inline disclosure for technical jargon */
+  .wtf-wrap {
+    display: inline;
+    position: relative;
+  }
+
+  .wtf-marker {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 0.25em;
+    cursor: pointer;
+    color: var(--gold-accent);
+    font-family: var(--mono, monospace);
+    font-size: 0.72em;
+    letter-spacing: 0.01em;
+    opacity: 0.65;
+    transition: opacity 0.18s ease;
+    vertical-align: baseline;
+    text-decoration: none;
+    line-height: inherit;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .wtf-marker:hover,
+  .wtf-marker:focus-visible {
+    opacity: 1;
+    outline: none;
+  }
+
+  .wtf-marker[aria-expanded="true"] {
+    opacity: 1;
+  }
+
+  .wtf-popover {
+    position: absolute;
+    top: 1.6em;
+    left: 0;
+    z-index: 200;
+    display: block;
+    width: max-content;
+    max-width: min(320px, calc(100vw - 2rem));
+    padding: 0.85rem 1rem;
+    background: rgba(20, 18, 16, 0.96);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--white-08, rgba(255, 255, 255, 0.08));
+    border-top: 2px solid var(--gold-accent);
+    border-radius: 5px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+    font-family: var(--body, system-ui, sans-serif);
+    font-size: 0.85rem;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1.55;
+    color: var(--white-85, rgba(255, 255, 255, 0.85));
+    text-align: left;
+    white-space: normal;
+    animation: wtf-pop-in 0.16s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+
+  .wtf-popover[hidden] {
+    display: none;
+  }
+
+  @keyframes wtf-pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(-3px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .wtf-popover {
+      max-width: calc(100vw - 1.5rem);
+    }
+  }
+</style>
+
+<script is:inline>
+  // wtf glossary popover — Apple Quick Look-style inline disclosure
+  (function () {
+    function closeAll(except) {
+      document.querySelectorAll('[data-wtf-trigger][aria-expanded="true"]').forEach(function (t) {
+        if (t === except) return;
+        t.setAttribute('aria-expanded', 'false');
+        var pop = t.nextElementSibling;
+        if (pop && pop.hasAttribute('data-wtf-popover')) pop.hidden = true;
+      });
+    }
+
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest('[data-wtf-trigger]');
+      if (trigger) {
+        var isOpen = trigger.getAttribute('aria-expanded') === 'true';
+        closeAll(trigger);
+        var pop = trigger.nextElementSibling;
+        trigger.setAttribute('aria-expanded', String(!isOpen));
+        if (pop && pop.hasAttribute('data-wtf-popover')) pop.hidden = isOpen;
+        e.stopPropagation();
+        return;
+      }
+      if (!e.target.closest('[data-wtf-popover]')) closeAll(null);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeAll(null);
+    });
+  })();
+</script>

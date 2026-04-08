@@ -1,0 +1,24 @@
+---
+// <Wtf term="slug">term as it appears in prose</Wtf>
+// Renders the term inline followed by a small golden "(wtf does this mean?)" marker.
+// Click the marker to open a small popover with the plain-language definition.
+// Definitions live in src/data/glossary.ts. Same source as the /glossary page.
+
+import { glossary } from '../data/glossary';
+
+interface Props {
+  term: string;
+}
+
+const { term } = Astro.props;
+const entry = glossary[term];
+
+if (!entry) {
+  throw new Error(
+    `Unknown glossary term: "${term}". Add it to src/data/glossary.ts.`
+  );
+}
+
+const popoverId = `wtf-${term}`;
+---
+<span class="wtf-wrap"><slot /><button type="button" class="wtf-marker" aria-expanded="false" aria-controls={popoverId} data-wtf-trigger>(wtf does this mean?)</button><span class="wtf-popover" id={popoverId} role="tooltip" data-wtf-popover hidden>{entry.definition}</span></span>

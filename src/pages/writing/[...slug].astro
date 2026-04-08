@@ -1,6 +1,7 @@
 ---
 import Page from '../../layouts/Page.astro';
 import { getCollection } from 'astro:content';
+import Wtf from '../../components/Wtf.astro';
 
 export async function getStaticPaths() {
   const essays = await getCollection('essays');
@@ -22,7 +23,7 @@ const { Content } = await essay.render();
       <span class="date">{essay.data.date}</span>
     </header>
     <div class="essay-body">
-      <Content />
+      <Content components={{ Wtf }} />
     </div>
     <footer class="essay-footer">
       <a href="/writing">&larr; back to writing</a>

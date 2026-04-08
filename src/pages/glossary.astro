@@ -1,0 +1,76 @@
+---
+import Page from '../layouts/Page.astro';
+import { glossary } from '../data/glossary';
+
+const sortedEntries = Object.entries(glossary).sort((a, b) =>
+  a[1].term.localeCompare(b[1].term)
+);
+---
+
+<Page title="glossary -- alexander campos" description="Plain-language definitions for the technical terms used across this site.">
+  <article>
+    <h1>Glossary</h1>
+
+    <p class="intro">
+      The technical terms used across this site, with plain-language definitions. Click any
+      <span class="wtf-marker-static">(wtf does this mean?)</span>
+      in the writing and you'll see one of these in a small popover. They live here too, in case you want to look them up all at once.
+    </p>
+
+    <dl class="glossary-list">
+      {sortedEntries.map(([slug, entry]) => (
+        <div class="glossary-entry" id={`gloss-${slug}`}>
+          <dt>{entry.term}</dt>
+          <dd>{entry.definition}</dd>
+        </div>
+      ))}
+    </dl>
+  </article>
+</Page>
+
+<style>
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .intro {
+    margin-bottom: 2.5rem;
+    color: var(--white-60);
+    line-height: 1.65;
+  }
+
+  .wtf-marker-static {
+    color: var(--gold-accent);
+    font-family: var(--mono);
+    font-size: 0.85em;
+  }
+
+  .glossary-list {
+    margin-top: 1.5rem;
+  }
+
+  .glossary-entry {
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--white-08);
+    scroll-margin-top: 5rem;
+  }
+
+  .glossary-entry:last-child {
+    border-bottom: none;
+  }
+
+  dt {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gold-accent);
+    margin-bottom: 0.4rem;
+  }
+
+  dd {
+    color: var(--glow);
+    line-height: 1.65;
+    margin: 0;
+  }
+</style>

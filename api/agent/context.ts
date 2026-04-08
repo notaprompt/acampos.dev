@@ -11,7 +11,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
       title: 'Independent Engineer',
       location: 'Virginia',
       url: 'https://campos.works',
-      email: 'adc.acampos@gmail.com',
+      email: 'alex@campos.works',
     },
     services: [
       {
@@ -72,7 +72,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
       'streaming-sse', 'structured-tool-use',
     ],
     contact: {
-      email: 'adc.acampos@gmail.com',
+      email: 'alex@campos.works',
       booking: 'https://cal.com/alexander-campos-yrnz8m/30min',
       website: 'https://campos.works',
       github: 'https://github.com/notaprompt',

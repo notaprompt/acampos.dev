@@ -1,7 +1,13 @@
 User-agent: *
 Allow: /
 Allow: /.well-known/agent.json
+Allow: /.well-known/a2a-agent-card.json
+Allow: /.well-known/mcp.json
 Allow: /llms.txt
+Allow: /openapi.json
 Allow: /api/agent/context
+Allow: /api/agent/profile
+Allow: /api/agent/a2a
+Allow: /api/agent/book
 
 Sitemap: https://campos.works/sitemap-index.xml

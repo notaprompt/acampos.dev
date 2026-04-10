@@ -60,11 +60,19 @@ const { Content } = await render(entry);
       </div>
     </header>
 
-    {entry.data.image && (
+    {entry.data.screenshots && entry.data.screenshots.length > 0 ? (
+      <div class={`project-screenshots project-screenshots--${entry.data.screenshots.length}`}>
+        {entry.data.screenshots.map((src, i) => (
+          <div class="project-screenshot">
+            <img src={src} alt={`${entry.data.title} screenshot ${i + 1}`} loading="lazy" />
+          </div>
+        ))}
+      </div>
+    ) : entry.data.image ? (
       <div class="project-screenshot">
         <img src={entry.data.image} alt={`${entry.data.title} screenshot`} loading="lazy" />
       </div>
-    )}
+    ) : null}
 
     <div class="project-content">
       <Content />
@@ -163,9 +171,9 @@ const { Content } = await render(entry);
   }
 
   .project-screenshot {
-    margin-bottom: 2rem;
     border: 1px solid var(--white-08);
     transition: border-color 0.2s;
+    overflow: hidden;
   }
 
   .project-screenshot:hover {
@@ -175,6 +183,48 @@ const { Content } = await render(entry);
   .project-screenshot img {
     width: 100%;
     display: block;
+  }
+
+  /* single image */
+  .project-screenshot:not(.project-screenshots *) {
+    margin-bottom: 2rem;
+  }
+
+  /* screenshots grid */
+  .project-screenshots {
+    margin-bottom: 2rem;
+  }
+
+  .project-screenshots--2 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2px;
+  }
+
+  .project-screenshots--2 .project-screenshot {
+    height: 260px;
+  }
+
+  .project-screenshots--2 .project-screenshot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  @media (max-width: 600px) {
+    .project-screenshots--2 {
+      grid-template-columns: 1fr;
+    }
+
+    .project-screenshots--2 .project-screenshot {
+      height: auto;
+    }
+
+    .project-screenshots--2 .project-screenshot img {
+      height: auto;
+      object-fit: unset;
+    }
   }
 
 </style>

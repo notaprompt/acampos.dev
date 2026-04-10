@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "servers": [
+    {
+      "id": "forgeframe-memory",
+      "name": "ForgeFrame Memory",
+      "description": "Persistent semantic memory for AI agents. SQLite + FTS5, strength decay, constitutional principles that never decay, session tracking. 12 tools. Runs locally.",
+      "version": "0.2.0",
+      "homepage": "https://github.com/notaprompt/forgeframe",
+      "install": {
+        "npm": "@forgeframe/server",
+        "command": "npx @forgeframe/server"
+      },
+      "tools": [
+        "memory_save",
+        "memory_search",
+        "memory_list_recent",
+        "memory_list_by_tag",
+        "memory_update",
+        "memory_status",
+        "session_start",
+        "session_end",
+        "session_current",
+        "session_list",
+        "distillery_sync",
+        "lora_prepare"
+      ],
+      "license": "MIT",
+      "categories": ["memory", "ai-infrastructure", "local-first", "persistence"],
+      "author": {
+        "name": "Alexander Campos",
+        "url": "https://campos.works",
+        "github": "https://github.com/notaprompt"
+      }
+    }
+  ],
+  "discovery": {
+    "profile_endpoint": "https://campos.works/api/agent/profile",
+    "a2a_card": "https://campos.works/.well-known/a2a-agent-card.json",
+    "agent_json": "https://campos.works/.well-known/agent.json",
+    "llms_txt": "https://campos.works/llms.txt"
+  }
+}

@@ -81,5 +81,22 @@
     "writing": "https://campos.works/writing",
     "glossary": "https://campos.works/glossary",
     "research": "https://guardian-labs.org"
+  },
+  "agent_endpoints": {
+    "profile": "https://campos.works/api/agent/profile",
+    "a2a_tasks": "https://campos.works/api/agent/a2a",
+    "book": "https://campos.works/api/agent/book",
+    "openapi": "https://campos.works/openapi.json"
+  },
+  "a2a": {
+    "card": "https://campos.works/.well-known/a2a-agent-card.json",
+    "task_endpoint": "https://campos.works/api/agent/a2a",
+    "protocol_version": "0.2",
+    "skills": ["get-profile", "book-consultation"]
+  },
+  "mcp": {
+    "discovery": "https://campos.works/.well-known/mcp.json",
+    "server_package": "@forgeframe/server",
+    "install": "npx @forgeframe/server"
   }
 }

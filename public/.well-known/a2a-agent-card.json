@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "0.2",
+  "name": "Alexander Campos",
+  "description": "Independent engineer building local-first AI infrastructure. Memory systems, model routing, cognitive architecture. Ships production software.",
+  "url": "https://campos.works",
+  "provider": {
+    "organization": "campos.works",
+    "url": "https://campos.works"
+  },
+  "version": "1.0.0",
+  "documentationUrl": "https://campos.works/llms.txt",
+  "taskEndpoint": "https://campos.works/api/agent/a2a",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "authentication": {
+    "schemes": ["None"]
+  },
+  "defaultInputModes": ["text/plain", "application/json"],
+  "defaultOutputModes": ["application/json", "text/event-stream"],
+  "skills": [
+    {
+      "id": "get-profile",
+      "name": "Get Agent Profile",
+      "description": "Returns full structured capability manifest: services offered, projects built, technical skills, availability, and all discovery endpoints.",
+      "tags": ["discovery", "profile", "capabilities"],
+      "examples": [
+        "What services does this agent offer?",
+        "What are Alexander Campos's technical capabilities?",
+        "Can this agent help with MCP server setup?",
+        "What projects has this person built?"
+      ],
+      "inputModes": ["application/json", "text/plain"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "book-consultation",
+      "name": "Book a Consultation",
+      "description": "Submit a booking request for a free 30-minute consultation. Accepts name, email, service interest, and optional message. Returns a confirmation and direct booking URL.",
+      "tags": ["booking", "consultation", "services"],
+      "examples": [
+        "Book a consultation about AI cost optimization",
+        "Schedule a call to discuss MCP server setup",
+        "I'd like to talk about agentic SEO for my business",
+        "Set up a 30-minute call with Alexander"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    }
+  ]
+}

@@ -9,7 +9,7 @@ order: 2
 
 ## Goals
 
-AI agents forget everything between sessions. ForgeFrame gives them persistent memory that works like yours does — what matters stays, what doesn't fades, and some things are constitutional and never decay. Extracted from Guardian into standalone infrastructure. Memory primitive is MIT. Core is AGPL.
+AI agents forget everything between sessions. ForgeFrame gives them persistent memory that works like yours does - what matters stays, what doesn't fades, and some things are constitutional and never decay. Extracted from Guardian into standalone infrastructure. Memory primitive is MIT. Core is AGPL.
 
 ## Process
 
@@ -32,9 +32,17 @@ L1  MCP Protocol (Anthropic's standard)     OPEN
 
 **Session management.** Full session lifecycle -- start, track, end, query. 12 MCP tools exposed. Provenance logging for every memory operation.
 
+**Forge Cockpit.** Terminal workspace manager built on Zellij. Named tabs, session persistence, tab-level context for every running agent.
+
+**Swarm orchestration.** Multi-agent execution in isolated git worktrees with shared memory and a real-time viewer. Agents coordinate through ForgeFrame memory, not shared filesystems.
+
+**Forge Agent.** Autonomous task execution with self-evaluation. Picks up tasks, executes in isolation, reviews its own output before reporting back.
+
+**Interactive onboarding CLI.** Guided setup that configures memory, MCP connections, and workspace preferences. Gets a new user from clone to running in under two minutes.
+
 ## In production
 
-ForgeFrame is running in production as the memory layer for everything else built on this machine. The Distillery reads it for relevance scoring. Every Claude Code session logs to it automatically via a SessionEnd hook. It compounds — the longer it runs, the more context it has. It's not a demo.
+ForgeFrame is running in production as the memory layer for everything else built on this machine. The Distillery reads it for relevance scoring. Every Claude Code session logs to it automatically via a SessionEnd hook. It compounds - the longer it runs, the more context it has. It's not a demo.
 
 ## Limitations
 

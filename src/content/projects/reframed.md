@@ -27,10 +27,15 @@ Upload a resume (paste, file, or URL scrape), paste a job description. The syste
 
 ## What's live
 
-- 34 API routes, multi-provider routing with fallback chains
+- 53 API routes, multi-provider routing with fallback chains
 - Stripe payments, magic-link auth, credit system
-- InstantScore — paste a JD, get a match score before committing to a full tailoring
+- InstantScore - paste a JD, get a match score before committing to a full tailoring
 - Voice fingerprinting, 14 industry profiles
+- 5-dimension confidence scoring
+- Live job board integration (Adzuna)
+- Artifacts counter
+- Full agent-callable surface (llms.txt, agent.json, AIIA, IndexNow)
+- Hardened payment flow (subscription revocation, checkout recovery)
 - Application tracking board
 - Streaming analysis with real-time progress
 

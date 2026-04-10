@@ -61,6 +61,33 @@ Product: Ship the wedge, expand to the platform.
 Voice: Direct, honest, no corporate-speak.
 Building: The work is real even when the world hasn't caught up yet.
 
+## Machine Actions
+
+Agents can interact with this site programmatically. All endpoints are public (no auth required).
+
+Get full capability profile (JSON):
+GET https://campos.works/api/agent/profile
+
+Submit booking request:
+POST https://campos.works/api/agent/book
+Required fields: name (string), email (string)
+Optional fields: service (string), message (string)
+Returns: { status, message, booking_url }
+
+A2A task delegation (Google A2A Protocol v0.2):
+POST https://campos.works/api/agent/a2a
+Agent Card: https://campos.works/.well-known/a2a-agent-card.json
+Skills: get-profile, book-consultation
+Supports SSE streaming (set Accept: text/event-stream)
+
+MCP server (ForgeFrame Memory):
+Discovery: https://campos.works/.well-known/mcp.json
+Install: npx @forgeframe/server
+GitHub: https://github.com/notaprompt/forgeframe
+
+OpenAPI spec (ChatGPT Actions compatible):
+https://campos.works/openapi.json
+
 ## Contact
 
 alex@campos.works

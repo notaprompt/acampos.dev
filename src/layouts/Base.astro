@@ -86,7 +86,37 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       "transdiagnostic psychiatry",
       "identity modeling",
       "sovereignty in AI systems"
-    ]
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "email": "alex@campos.works",
+      "url": "https://cal.com/alexander-campos-yrnz8m/30min",
+      "availableLanguage": "English"
+    }
+  })} />
+
+  <!-- ForgeFrame Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ForgeFrame",
+    "description": "Open-source persistent memory for AI agents. MCP server with SQLite + FTS5, strength decay, constitutional principles that never decay.",
+    "url": "https://github.com/notaprompt/forgeframe",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "macOS, Linux, Windows",
+    "author": {
+      "@type": "Person",
+      "name": "Alexander Campos",
+      "url": "https://campos.works"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "installUrl": "https://www.npmjs.com/package/@forgeframe/server"
   })} />
 
   <!-- Services Structured Data -->

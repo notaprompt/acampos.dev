@@ -83,13 +83,13 @@
     }
   }
 
-  // Fetch from API (DB-backed), fall back to static JSON, then hardcoded
-  fetch('/api/playlist')
+  // Fetch from static JSON (source of truth), fall back to API, then hardcoded
+  fetch('/playlist.json')
     .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
     .then(onPlaylistLoaded)
     .catch(function() {
-      // API down — try static file
-      return fetch('/playlist.json')
+      // Static file failed — try API
+      return fetch('/api/playlist')
         .then(function(r) { return r.json(); })
         .then(onPlaylistLoaded);
     })

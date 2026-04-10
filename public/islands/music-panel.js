@@ -40,7 +40,7 @@
     // Initialize shuffle order if shuffle is on by default
     if (isShuffled && PLAYLIST.length > 0) {
       shuffleOrder = shuffle(PLAYLIST);
-      // Always start with track 0 (Sekito), then shuffle the rest
+      // Always start with track 0, then shuffle the rest
       var sekitoIdx = shuffleOrder.indexOf(0);
       if (sekitoIdx > 0) {
         shuffleOrder.splice(sekitoIdx, 1);
@@ -52,12 +52,8 @@
     // Pre-load first track so it's ready when autoplay or manual play fires
     var audioHasSrc = audio.src && audio.src !== '' && audio.src !== window.location.href;
     if (!audioHasSrc && PLAYLIST.length > 0) {
-      var idx = 0;
-      try {
-        var s = JSON.parse(localStorage.getItem('mp_state'));
-        if (s && s.idx < PLAYLIST.length) idx = s.idx;
-      } catch(e) {}
-      loadTrack(idx);
+      // Always start on track 0 — the opening track is intentional
+      loadTrack(0);
     }
     // Playlist loaded — reconnect if audio is already playing (View Transition)
     var audioHasSrc = audio.src && audio.src !== '' && audio.src !== window.location.href;

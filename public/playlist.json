@@ -1,5 +1,11 @@
 [
   {
+    "artist": "Boards of Canada",
+    "title": "Music is Math",
+    "url": "/audio/music-is-math.mp3",
+    "profile": { "hitThresh": 0.02, "bendAmp": 1.8, "steerSens": 2.5, "midSnap": 4.0, "flipThresh": 0.6, "smoothing": 0.8 }
+  },
+  {
     "artist": "Shigeo Sekito",
     "title": "the word II",
     "url": "/audio/the-word-ii.mp3",

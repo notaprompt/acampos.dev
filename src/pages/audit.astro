@@ -1,0 +1,211 @@
+---
+import Page from '../layouts/Page.astro';
+---
+
+<Page title="site audit -- campos.works" description="Free site analysis. See what's working, what's broken, and what would change the most.">
+  <article class="audit-page">
+    <!-- Phase 1: Input -->
+    <section id="phase-input" class="phase active">
+      <h1>what's your site doing?</h1>
+      <p class="subtitle">type in a URL. get an honest read in 30 seconds.</p>
+
+      <div class="input-row">
+        <input
+          type="text"
+          id="url-input"
+          placeholder="yourdomain.com"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="analyze-btn">analyze &rarr;</button>
+      </div>
+
+      <p class="note">free. no login. the analysis is the pitch.</p>
+    </section>
+
+    <!-- Phase 2: Crawl Results -->
+    <section id="phase-crawl" class="phase">
+      <div class="crawl-status">
+        <span id="crawl-spinner" class="spinner"></span>
+        <span id="crawl-label">reading the site...</span>
+      </div>
+
+      <div id="crawl-details" class="details-grid"></div>
+      <div id="score-cards" class="score-grid"></div>
+    </section>
+
+    <!-- Phase 3: SWOT + Narrative -->
+    <section id="phase-swot" class="phase">
+      <div id="narrative-block" class="narrative"></div>
+      <div id="swot-grid" class="swot"></div>
+    </section>
+
+    <!-- Phase 4: Questionnaire -->
+    <section id="phase-questions" class="phase">
+      <h2>now tell me about the business</h2>
+      <p class="subtitle">5 questions. takes 3 minutes. helps me build something that fits.</p>
+      <div id="question-container" class="question-flow"></div>
+    </section>
+
+    <!-- Phase 5: Outro -->
+    <section id="phase-outro" class="phase">
+      <h2>here's who's building this</h2>
+      <div class="portfolio-links">
+        <a href="https://campos.works" class="portfolio-card">
+          <span class="label">studio</span>
+          <span class="url">campos.works</span>
+        </a>
+        <a href="https://reframed.works" class="portfolio-card">
+          <span class="label">product</span>
+          <span class="url">reframed.works</span>
+        </a>
+      </div>
+      <div id="share-block" class="share">
+        <p>your audit is saved at:</p>
+        <a id="share-link" href="#" class="share-url"></a>
+      </div>
+      <a data-cal-link="alexander-campos-yrnz8m/30min" class="cta-btn">
+        let's talk about what's next &rarr;
+      </a>
+    </section>
+  </article>
+
+  <script is:inline src="/islands/audit-engine.js"></script>
+  <script is:inline src="/islands/cal-embed.js"></script>
+</Page>
+
+<style>
+  /* ── Phases ── */
+  .phase { display: none; }
+  .phase.active { display: block; animation: auditFadeIn 0.4s ease; }
+  @keyframes auditFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  /* ── Input ── */
+  .audit-page h1 { font-family: var(--serif); font-size: 2rem; color: var(--glow); margin-bottom: 0.25rem; }
+  .audit-page h2 { font-family: var(--serif); font-size: 1.5rem; color: var(--glow); margin-bottom: 0.25rem; }
+  .subtitle { font-family: var(--mono); font-size: 0.82rem; color: var(--white-45); margin-bottom: 1.5rem; }
+  .input-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+  #url-input {
+    flex: 1; background: var(--depth-2); border: 1px solid var(--white-08);
+    color: var(--glow); padding: 0.75rem 1rem; font-family: var(--mono); font-size: 0.9rem;
+    border-radius: 0;
+  }
+  #url-input::placeholder { color: var(--white-30); }
+  #url-input:focus { outline: none; border-color: var(--gold-accent); }
+  #analyze-btn {
+    background: var(--glow); color: var(--void); border: none; padding: 0.75rem 1.5rem;
+    font-family: var(--mono); font-size: 0.85rem; cursor: pointer; white-space: nowrap;
+  }
+  #analyze-btn:hover { background: var(--glow-hot); }
+  .note { font-family: var(--mono); font-size: 0.75rem; color: var(--white-30); }
+
+  /* ── Crawl status ── */
+  .crawl-status { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+  #crawl-label { font-family: var(--mono); font-size: 0.82rem; color: var(--white-45); }
+  .spinner {
+    display: inline-block; width: 12px; height: 12px;
+    border: 2px solid var(--white-15); border-top-color: var(--gold-accent);
+    border-radius: 50%; animation: auditSpin 0.8s linear infinite;
+  }
+  @keyframes auditSpin { to { transform: rotate(360deg); } }
+
+  /* ── Details grid ── */
+  .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem 1.5rem; margin: 1rem 0 1.5rem; }
+  .detail { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid var(--white-04); }
+  .detail-label { font-family: var(--mono); font-size: 0.72rem; color: var(--white-30); }
+  .detail-value { font-family: var(--mono); font-size: 0.72rem; color: var(--glow); text-align: right; }
+  .detail-value.bad { color: var(--danger); }
+  .detail-value.good { color: var(--alive); }
+
+  /* ── Score cards ── */
+  .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin: 1.5rem 0; }
+  .score-card { border: 1px solid var(--white-08); padding: 1rem; background: var(--depth-1); }
+  .score-card .grade { font-family: var(--serif); font-size: 2.5rem; font-weight: 700; line-height: 1; }
+  .score-card .category { font-family: var(--mono); font-size: 0.7rem; color: var(--white-45); text-transform: uppercase; letter-spacing: 0.05em; margin: 0.25rem 0 0.5rem; }
+  .score-bar { height: 3px; background: var(--white-08); margin-bottom: 0.75rem; }
+  .score-bar .fill { height: 100%; transition: width 0.6s ease; }
+  .grade-a .grade, .grade-b .grade { color: var(--alive); }
+  .grade-a .fill, .grade-b .fill { background: var(--alive); }
+  .grade-c .grade { color: var(--gold-accent); }
+  .grade-c .fill { background: var(--gold-accent); }
+  .grade-d .grade, .grade-f .grade { color: var(--danger); }
+  .grade-d .fill, .grade-f .fill { background: var(--danger); }
+  .findings { list-style: none; padding: 0; margin: 0; }
+  .findings li { font-size: 0.75rem; color: var(--white-45); padding: 0.2rem 0; border-top: 1px solid var(--white-04); }
+
+  /* ── Narrative ── */
+  .narrative-headline { font-family: var(--serif); font-size: 1.6rem; color: var(--glow); margin-bottom: 1rem; }
+  .narrative-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+  .narrative-sections h3 { font-family: var(--mono); font-size: 0.72rem; color: var(--white-30); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem; }
+  .narrative-sections p { font-size: 0.85rem; color: var(--white-70); line-height: 1.55; }
+  .big-opp { grid-column: 1 / -1; border-top: 1px solid var(--gold-accent); padding-top: 1rem; margin-top: 0.5rem; }
+  .big-opp h3 { color: var(--gold-accent); }
+
+  /* ── SWOT ── */
+  .swot { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 1.5rem 0; }
+  .swot-quadrant { border: 1px solid var(--white-08); padding: 1rem; background: var(--depth-1); }
+  .swot-quadrant h3 { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .swot-quadrant.s h3 { color: var(--alive); }
+  .swot-quadrant.w h3 { color: var(--danger); }
+  .swot-quadrant.o h3 { color: var(--gold-accent); }
+  .swot-quadrant.t h3 { color: var(--white-45); }
+  .swot-quadrant ul { list-style: none; padding: 0; margin: 0; }
+  .swot-quadrant li { font-size: 0.78rem; color: var(--white-60); padding: 0.25rem 0; }
+
+  /* ── Questionnaire ── */
+  .question-flow { max-width: 520px; }
+  .q-text { font-family: var(--serif); font-size: 1.3rem; color: var(--glow); margin-bottom: 0.75rem; line-height: 1.4; }
+  .q-input {
+    width: 100%; background: var(--depth-2); border: 1px solid var(--white-08);
+    color: var(--glow); padding: 0.75rem; font-family: var(--body); font-size: 0.88rem;
+    resize: none; border-radius: 0; line-height: 1.5;
+  }
+  .q-input::placeholder { color: var(--white-30); }
+  .q-input:focus { outline: none; border-color: var(--gold-accent); }
+  .pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+  .pill {
+    background: var(--depth-2); border: 1px solid var(--white-08); color: var(--white-60);
+    padding: 0.5rem 1rem; font-family: var(--mono); font-size: 0.78rem; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pill:hover { border-color: var(--gold-accent); color: var(--glow); }
+  .pill.selected { background: var(--gold-accent); color: var(--void); border-color: var(--gold-accent); }
+
+  /* ── Buttons ── */
+  .next-q-btn, .continue-btn {
+    background: none; border: 1px solid var(--white-08); color: var(--glow);
+    padding: 0.6rem 1.25rem; font-family: var(--mono); font-size: 0.82rem;
+    cursor: pointer; margin-top: 1rem; transition: all 0.15s;
+  }
+  .next-q-btn:hover, .continue-btn:hover { border-color: var(--gold-accent); color: var(--gold-accent); }
+
+  /* ── Outro ── */
+  .portfolio-links { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 1.25rem 0; }
+  .portfolio-card {
+    border: 1px solid var(--white-08); padding: 1rem; text-decoration: none; display: block;
+    transition: border-color 0.2s;
+  }
+  .portfolio-card:hover { border-color: var(--gold-accent); }
+  .portfolio-card .label { font-family: var(--mono); font-size: 0.65rem; color: var(--white-30); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.25rem; }
+  .portfolio-card .url { font-family: var(--mono); font-size: 0.85rem; color: var(--glow); }
+  .share { margin: 1.5rem 0; text-align: center; }
+  .share p { font-family: var(--mono); font-size: 0.75rem; color: var(--white-30); margin-bottom: 0.35rem; }
+  .share-url { font-family: var(--mono); font-size: 0.8rem; color: var(--gold-accent); }
+  .cta-btn {
+    display: inline-block; margin-top: 1.5rem; background: var(--glow); color: var(--void);
+    padding: 0.75rem 2rem; font-family: var(--mono); font-size: 0.85rem;
+    text-decoration: none; cursor: pointer; border: none; transition: background 0.15s;
+  }
+  .cta-btn:hover { background: var(--glow-hot); }
+
+  /* ── Mobile ── */
+  @media (max-width: 600px) {
+    .score-grid { grid-template-columns: 1fr; }
+    .narrative-sections { grid-template-columns: 1fr; }
+    .swot { grid-template-columns: 1fr; }
+    .details-grid { grid-template-columns: 1fr; }
+    .portfolio-links { grid-template-columns: 1fr; }
+    .input-row { flex-direction: column; }
+    #analyze-btn { width: 100%; }
+  }
+</style>

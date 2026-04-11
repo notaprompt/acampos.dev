@@ -261,14 +261,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // If no sitemap from robots.txt, try common location
     if (!sitemapUrl) sitemapUrl = `${origin}/sitemap.xml`;
 
-    // Fetch sitemap
+    // Fetch sitemap — follow sitemap index if present
     try {
       const sitemapRes = await safeFetch(sitemapUrl, 5000);
       if (sitemapRes && sitemapRes.ok) {
         hasSitemap = true;
         const sitemapText = await sitemapRes.text();
-        const locMatches = sitemapText.match(/<loc>/gi);
-        sitemapUrls = locMatches ? locMatches.length : 0;
+
+        if (sitemapText.includes('<sitemapindex')) {
+          // This is a sitemap index — follow child sitemaps and count total URLs
+          const childLocs = sitemapText.match(/<loc>([^<]+)<\/loc>/gi) || [];
+          let totalUrls = 0;
+          for (const locTag of childLocs) {
+            const childUrl = locTag.replace(/<\/?loc>/gi, '').trim();
+            try {
+              const childRes = await safeFetch(childUrl, 5000);
+              if (childRes && childRes.ok) {
+                const childText = await childRes.text();
+                const childMatches = childText.match(/<loc>/gi);
+                totalUrls += childMatches ? childMatches.length : 0;
+              }
+            } catch { /* skip failed child sitemaps */ }
+          }
+          sitemapUrls = totalUrls;
+        } else {
+          // Regular sitemap — count <loc> entries directly
+          const locMatches = sitemapText.match(/<loc>/gi);
+          sitemapUrls = locMatches ? locMatches.length : 0;
+        }
       }
     } catch { /* ignore */ }
 

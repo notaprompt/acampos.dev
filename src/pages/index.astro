@@ -3,7 +3,7 @@ import Page from '../layouts/Page.astro';
 import HitCounter from '../components/HitCounter.astro';
 ---
 
-<Page title="alexander campos" description="How systems model people — and what happens when people can see the model.">
+<Page title="alexander campos" description="Independent engineer building sovereign tools, production LLM applications, and full online presence builds for small businesses. How systems model people - and what happens when people can see the model.">
   <section class="splash">
     <h1 class="site-name">Alexander Campos</h1>
     <p class="tagline">Mostly interested in how systems model people - and what happens when people can see the model.</p>
@@ -21,8 +21,14 @@ import HitCounter from '../components/HitCounter.astro';
       <a href="/writing" class="enter-link">writing >></a>
     </nav>
 
+    <h2 class="section-heading">what's here</h2>
     <p class="cta-line">
-      The <a href="/resume">resume</a> has the history. The <a href="https://github.com/notaprompt">repos</a> have the code. <a href="/services">Services</a> if you need something built. <a href="mailto:alex@campos.works">Get in touch</a>.
+      <a href="/projects">6 shipped products</a> from resume tools to local inference engines. <a href="/writing">Essays</a> on observation, identity modeling, and what exits the loop. <a href="/services">Services</a> for businesses that need a site, SEO, or something built from scratch. <a href="/audit">Free site audit</a> if you want to see where you stand.
+    </p>
+
+    <h2 class="section-heading">the short version</h2>
+    <p class="cta-line">
+      The <a href="/resume">resume</a> has the history. The <a href="https://github.com/notaprompt">repos</a> have the code. <a href="mailto:alex@campos.works">Get in touch</a>.
     </p>
 
     <div class="counter-row">
@@ -89,6 +95,17 @@ import HitCounter from '../components/HitCounter.astro';
     color: var(--glow-hot);
     border-bottom: none;
     transition: none;
+  }
+
+  .section-heading {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--white-20);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 0.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--white-04);
   }
 
   .cta-line {

@@ -15,6 +15,10 @@ import Page from '../layouts/Page.astro';
     <hr />
 
     <div class="services">
+      <a href="/audit" class="service-card featured">
+        <h2>Free Site Audit</h2>
+        <p>Type in your URL. Get an honest read in 30 seconds - what's working, what's broken, what would change the most.</p>
+      </a>
       <a data-cal-link="alexander-campos-yrnz8m/30min" class="service-card">
         <h2>Online Presence Build</h2>
         <p>Site, scheduling, forms, SEO, automations - one build, everything connected.</p>
@@ -90,6 +94,11 @@ import Page from '../layouts/Page.astro';
     color: var(--white-45);
     margin: 0;
     line-height: 1.4;
+  }
+
+  .service-card.featured {
+    grid-column: 1 / -1;
+    border-color: var(--gold-accent);
   }
 
   @media (max-width: 600px) {

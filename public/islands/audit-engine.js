@@ -38,6 +38,12 @@
     var url = $('#url-input').value.trim();
     if (!url) return;
 
+    // Disable button + show loading state
+    var btn = $('#analyze-btn');
+    btn.disabled = true;
+    btn.classList.add('loading');
+    btn.textContent = 'analyzing...';
+
     showPhase('crawl');
     $('#crawl-label').textContent = 'reading the site...';
     $('#crawl-spinner').style.display = 'inline-block';
@@ -55,6 +61,8 @@
       if (crawl.error) throw new Error(crawl.error);
       auditData.crawl = crawl;
 
+      // Set domain for print header
+      $('#phase-crawl').setAttribute('data-domain', crawl.domain);
       renderCrawlDetails(crawl);
       $('#crawl-label').textContent = 'analyzing with models...';
 
@@ -86,6 +94,10 @@
     } catch (err) {
       $('#crawl-label').textContent = 'failed: ' + err.message;
       $('#crawl-spinner').style.display = 'none';
+      // Reset button
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btn.textContent = 'analyze \u2192';
     }
   }
 
@@ -376,6 +388,7 @@
         auditData.narrative = typeof data.narrative === 'string' ? JSON.parse(data.narrative) : data.narrative;
         auditData.questionnaire = data.questionnaire;
 
+        $('#phase-crawl').setAttribute('data-domain', data.domain);
         renderCrawlDetails(data.crawl);
         if (data.scores) renderScoreCards(data.scores);
         $('#crawl-spinner').style.display = 'none';

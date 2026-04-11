@@ -40,4 +40,76 @@ export const glossary: Record<string, GlossaryEntry> = {
     term: 'phenomenal consciousness',
     definition: 'The "something it is like to be" something — whether a system has inner experience, not just behavior. Sometimes called qualia. The hardest unresolved question in philosophy of mind.',
   },
+  'model-context-protocol': {
+    term: 'Model Context Protocol (MCP)',
+    definition: 'An open standard that lets AI assistants use custom tools and data sources. Instead of building separate integrations for each assistant, you build one MCP server that works with Claude, Cursor, and other compatible tools.',
+  },
+  'ollama': {
+    term: 'Ollama',
+    definition: 'A tool that lets you run language models on your own computer, offline, without sending data to the cloud. Downloads a model once, then runs it locally.',
+  },
+  'server-sent-events': {
+    term: 'Server-Sent Events (SSE)',
+    definition: 'A way for a server to push real-time updates to a client over HTTP. Used for streaming responses - like watching a response type out word by word.',
+  },
+  'pii': {
+    term: 'Personally Identifiable Information (PII)',
+    definition: 'Any information that can identify a specific person - names, email addresses, phone numbers, medical records. Systems that handle PII need extra care to protect privacy.',
+  },
+  'magic-link-auth': {
+    term: 'Magic Link Authentication',
+    definition: 'A passwordless login method. You enter your email and receive a special link that logs you in. No password to forget or breach.',
+  },
+  'voice-fingerprinting': {
+    term: 'Voice Fingerprinting',
+    definition: 'Analyzing the unique patterns in how someone writes - word choice, sentence structure, hedging, formality - to detect their individual writing voice. Used to ensure rewrites sound like the original author.',
+  },
+  'reframe-detection': {
+    term: 'Reframe Detection',
+    definition: 'Identifying when a system subtly reshapes what you said into something slightly different. Like turning "I\'m frustrated" into "You\'re actually motivated" - close enough to accept, different enough to matter.',
+  },
+  'awareness-trap': {
+    term: 'Awareness Trap',
+    definition: 'When you can see a recurring pattern clearly but can\'t seem to change it. The ability to observe the problem is there, but the capacity to exit it isn\'t.',
+  },
+  'sovereign-encryption': {
+    term: 'Sovereign Encryption',
+    definition: 'Encryption that keeps sensitive data private on your device, separate from cloud processing. Even when cloud services are active, protected data never leaves your machine.',
+  },
+  'strength-decay': {
+    term: 'Strength Decay',
+    definition: 'A memory model where recent, frequently-accessed information stays strong while older or rarely-used information gradually fades. Like how human memory works - fresh memories are vivid, old ones blur.',
+  },
+  'constitutional-principles': {
+    term: 'Constitutional Principles',
+    definition: 'Core values or rules in a system that never change or decay, unlike regular data that fades over time. The bedrock assumptions that shape all of a system\'s decisions.',
+  },
+  'tier-based-dispatch': {
+    term: 'Tier-Based Dispatch',
+    definition: 'Routing tasks to different models based on complexity. Quick questions go cheap and fast, deep analysis goes to the frontier model. Like triaging an ER - not everything needs a specialist.',
+  },
+  'fallback-chains': {
+    term: 'Fallback Chains',
+    definition: 'A sequence of backup options that activate when the first option fails. If provider A goes down, try B. If B fails, try C. Keeps the system running even when parts break.',
+  },
+  'knowledge-graph': {
+    term: 'Knowledge Graph',
+    definition: 'A network of connected entities and relationships. Instead of storing information as flat text, it captures how people, places, and concepts relate to each other.',
+  },
+  'reaction-diffusion': {
+    term: 'Reaction-Diffusion',
+    definition: 'A mathematical model where substances spread out and interact, creating organic-looking patterns - spots, stripes, spirals. Used in the ASCII background on this site to make the characters feel alive.',
+  },
+  'webgl': {
+    term: 'WebGL',
+    definition: 'A way to render graphics directly in the browser using your GPU. Powers the interactive visualizations on this site without needing any plugins or downloads.',
+  },
+  'semantic-search': {
+    term: 'Semantic Search',
+    definition: 'Finding information by meaning rather than exact keywords. Searching for "feeling stuck at work" would match a memory about "career stagnation" even though the words are different.',
+  },
+  'default-mode-network': {
+    term: 'Default Mode Network (DMN)',
+    definition: 'The brain network that activates when you\'re not focused on a specific task - daydreaming, self-reflection, imagining the future. The watcher. It maintains your model of yourself.',
+  },
 };

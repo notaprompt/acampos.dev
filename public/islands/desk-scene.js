@@ -302,6 +302,37 @@
   }
   window.__setDeskSceneTheme = setSceneTheme;
 
+  // ── Highlight a desk object by id (pulse glow then fade) ──
+  window.__highlightDeskObject = function(id) {
+    for (var i = 0; i < objects.length; i++) {
+      if (objects[i].id === id) {
+        hoveredObj = objects[i];
+        canvas.style.cursor = 'pointer';
+        render();
+        setTimeout(function() {
+          hoveredObj = null;
+          canvas.style.cursor = 'default';
+          render();
+          // pulse again
+          setTimeout(function() {
+            for (var j = 0; j < objects.length; j++) {
+              if (objects[j].id === id) {
+                hoveredObj = objects[j];
+                render();
+                setTimeout(function() {
+                  hoveredObj = null;
+                  render();
+                }, 600);
+                break;
+              }
+            }
+          }, 400);
+        }, 600);
+        break;
+      }
+    }
+  };
+
   // ── Hex to RGB cache ──
   var rgbCache = {};
   function hexToRgb(str) {

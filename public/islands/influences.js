@@ -44,7 +44,7 @@
   // Styles
   var style = document.createElement('style');
   style.textContent =
-    '#influences-overlay{position:fixed;inset:0;z-index:9999;background:rgba(5,5,5,0.92);display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}' +
+    '#influences-overlay{position:fixed;inset:0;z-index:9999;background:rgba(5,5,5,0.55);display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}' +
     '#influences-overlay.open{display:flex}' +
     '.influences-panel{background:#0a0a0a;border:1px solid #b8965a;max-width:520px;width:90%;max-height:80vh;display:flex;flex-direction:column}' +
     '.influences-header{display:flex;justify-content:space-between;align-items:center;padding:0.75rem 1rem;border-bottom:1px solid rgba(184,150,90,0.2)}' +

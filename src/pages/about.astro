@@ -39,6 +39,7 @@ import Page from '../layouts/Page.astro';
       <li><a href="https://guardian-labs.org">Guardian Labs</a> — independent research</li>
       <li><a href="https://www.linkedin.com/in/alexander-d-campos/">LinkedIn</a></li>
       <li><a href="https://substack.com/@alexinthefield">Substack</a> — writing</li>
+      <li><a href="#" id="influences-hint">Influences</a> — bookshelf</li>
     </ul>
 
     <h2>Contact</h2>
@@ -50,9 +51,6 @@ import Page from '../layouts/Page.astro';
     <p style="font-family: var(--mono); font-size: 0.8rem; color: var(--white-45); text-align: center; margin-top: 2rem;">
       If you made it this far — <a href="/guestbook" style="color: var(--gold-accent); border-bottom: 1px dashed var(--gold-accent);">sign the guestbook</a>.
     </p>
-    <p style="font-family: var(--mono); font-size: 0.65rem; color: var(--white-15); text-align: center; margin-top: 0.5rem;">
-      <a href="#" data-influences style="color: var(--white-15); border-bottom: 1px dashed var(--white-08);">influences</a>
-    </p>
   </article>
 
   <script is:inline>
@@ -60,5 +58,28 @@ import Page from '../layouts/Page.astro';
       '%c same question, different shapes. ',
       'color: #E8DCC8; font-family: monospace; font-size: 11px;'
     );
+
+    // Influences discovery — hint toward the bookshelf on the desk scene
+    var hintLink = document.getElementById('influences-hint');
+    if (hintLink) {
+      hintLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        var canvas = document.getElementById('desk-scene');
+        if (canvas) {
+          canvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Pulse the tooltip to hint at the bookshelf
+          var tip = document.getElementById('ds-tooltip');
+          if (tip) {
+            tip.textContent = 'bookshelf';
+            tip.classList.add('visible');
+            setTimeout(function() { tip.classList.remove('visible'); }, 2500);
+          }
+          // Trigger highlight if desk scene exposes it
+          if (window.__highlightDeskObject) {
+            window.__highlightDeskObject('books');
+          }
+        }
+      });
+    }
   </script>
 </Page>

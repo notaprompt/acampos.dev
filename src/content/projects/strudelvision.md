@@ -4,6 +4,7 @@ tagline: "A Saturday night that kept going. Music visualizer with four WebGL sha
 status: "active"
 stack: ["WebGL2", "Canvas2D", "Web Audio API", "Strudel", "Ollama", "Web Speech API", "WebSocket", "Vanilla JS"]
 image: "/images/projects/strudelvision.jpg"
+demo: "http://127.0.0.1:8888"
 hidden_demo: true
 order: 5
 ---

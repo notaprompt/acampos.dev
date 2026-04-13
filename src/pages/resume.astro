@@ -2,17 +2,13 @@
 import Page from '../layouts/Page.astro';
 ---
 
-<Page title="resume -- alexander campos" description="Senior Process Manager at Capital One. Ships software, publishes research, builds open-source infrastructure.">
+<Page title="resume -- alexander campos" description="Operations and software. Six years regulated finance. Three shipped products. Legal recoveries, compliance, monitoring, resolution.">
   <article class="resume">
     <h1>Resume</h1>
 
     <section class="summary">
       <p>
-        Banking operations - process design, monitoring systems, reporting pipelines,
-        enterprise integration work.
-      </p>
-      <p>
-        Also building software independently. Business degree from George Mason.
+        Operations and software. Six years in regulated finance - BSA, AML, KYC, SCRA, GLBA, NCUA, CFPB, UDAAP, fraud controls. Process design, monitoring systems, reporting pipelines, enterprise integration. Also builds independently: three production products shipped solo, one with paying users. The pattern across everything - own the operation end-to-end, build the tools it needs, hand it off running.
       </p>
     </section>
 
@@ -99,39 +95,21 @@ import Page from '../layouts/Page.astro';
 
       <div class="role">
         <div class="role-header">
-          <h3>Independent Engineering -- Open Source</h3>
-          <span class="dates">June 2025 -- Present</span>
+          <h3>Independent Engineering</h3>
+          <span class="dates">2022 -- Present</span>
         </div>
-        <p>
-          Building tools for problems I keep hitting -- privacy, cost, context loss, vendor lock-in.
-        </p>
         <ul>
           <li>
-            <strong>Resume analysis platform</strong>, live at
-            <a href="https://reframed.works">reframed.works</a>. Stripe payments, magic-link auth,
-            streaming analysis, multi-provider model routing. End to end.
+            <strong><a href="https://reframed.works">Reframed</a></strong> -- resume analysis platform. Live with paying users. Shipped solo in 22 days. 34 API routes, multi-provider LLM routing, Stripe billing, Neon Postgres.
           </li>
           <li>
-            <strong>Local-first desktop application</strong> (Electron, React, Node.js) --
-            chat, terminal, notes, knowledge graph. Multi-stage post-chat pipeline.
-            Supports air-gapped local inference.
+            <strong><a href="https://github.com/notaprompt/forgeframe">ForgeFrame</a></strong> -- open-source persistent memory for agents. MCP server with 12 tools, strength-based decay, constitutional persistence. 40-60% inference cost reduction.
           </li>
           <li>
-            <strong>Designed a model routing engine</strong> -- open-source TypeScript package.
-            Tier-based dispatch across Anthropic, OpenAI, and Ollama. Intent detection, SSE
-            normalization, cost optimization (40-60% reduction).
+            <strong>Guardian</strong> -- local-first cognitive workspace. Desktop application with air-gapped local inference via Ollama. 60+ IPC channels, 20 backend modules. Designed for regulated environments where data residency is required.
           </li>
           <li>
-            <strong>Built a semantic memory system</strong> (SQLite/FTS5) with hierarchical
-            compression. Shipped as an MCP server with 12 tools. Swarm orchestration for
-            multi-agent execution in isolated worktrees. Forge Cockpit for terminal workspace
-            management. Forge Agent for autonomous task execution with self-evaluation. Works
-            with Claude Desktop, Cursor, and any MCP client.
-          </li>
-          <li>
-            <strong>Built cognitive safety tooling</strong> -- reframe detection across 7 influence
-            types and 8 identity dimensions, awareness-trap detection for recurring unresolved
-            patterns. Integrated into the desktop pipeline. Local-only.
+            <strong>Client work</strong> -- bilingual proposal generator for a landscaping company. Built, deployed, in use.
           </li>
         </ul>
       </div>

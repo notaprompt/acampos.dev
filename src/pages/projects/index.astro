@@ -3,7 +3,7 @@ import Page from '../../layouts/Page.astro';
 import { getCollection } from 'astro:content';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-const micro = (await getCollection('micro')).sort((a, b) => a.data.order - b.data.order);
+const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <Page title="projects -- alexander campos" description="Reframed, ForgeFrame, Distillery, Cipher.">

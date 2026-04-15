@@ -8,30 +8,39 @@ order: 4
 
 ## Goals
 
-Process the external content firehose through a personal intellectual lens at compute scale. Share a TikTok, an arXiv paper, an article — from your phone, anywhere — and your Mac extracts the content, runs it through a local LLM loaded with your principles and active projects, and stores what matters.
+Process the external content firehose through a personal intellectual lens. Share a TikTok, an arXiv paper, an article from your phone - the Mac extracts the content, runs it through a local model loaded with your principles and active projects, scores it for novelty, and pushes what's genuinely new into ForgeFrame memory where it participates in dreaming and Hebbian learning.
 
-No cloud. No API calls for the distillation. Ollama runs locally. The lens is your own recorded identity — principles, projects, accumulated thinking from ForgeFrame memory. The system tells you what's relevant to what you're building and why.
+The old version was a confirmation machine. 17 out of 20 distillations said "no change to build." The fix wasn't the pipeline - it was the lens orientation and adding a signal gate.
 
 ## Process
 
-The pipeline:
-
-1. **iOS Shortcut**: Share sheet sends URL to Mac via Tailscale (works from anywhere, not just home WiFi)
-2. **Extractor**: yt-dlp for video transcripts, trafilatura for web articles, arXiv API for papers. No video files saved — transcript only.
-3. **Lens builder**: Loads your constitutional principles, searches ForgeFrame memory for context relevant to this specific content, scans active repos
-4. **Distillation**: Ollama (qwen3:32b) processes through the lens. Returns: resonance score (0-1), reframed insight in your voice, connections to your projects, and an honest action surface assessment.
-5. **Storage**: SQLite. Searchable. Filterable by resonance, status, source type.
-6. **Web UI**: Dark theme, resonance bars, connection tags. Search, delete, re-distill with updated lens.
+1. **iOS Shortcut**: Share sheet sends URL to Mac via Tailscale
+2. **Extractor**: yt-dlp for video transcripts, trafilatura for articles, arXiv API for papers. No video files saved.
+3. **Lens builder**: Searches ForgeFrame memory for context relevant to this specific content, loads constitutional principles, scans active repos. Constitution sits in the user prompt section - content gets a fair hearing before identity filtering.
+4. **Distillation**: Ollama (qwen3:32b). Returns: resonance score (0-1), novelty score (0-1), reframed insight in your voice, connections to active projects, action surface assessment.
+5. **Signal gate**: `signal = resonance × novelty`. Threshold 0.20. Known content filters out (TurboQuant seen before: resonance 0.95, novelty 0.15, signal 0.14 → filtered). Genuinely new ideas pass through (adversarial vision: resonance 0.72, novelty 0.88, signal 0.63 → pushed).
+6. **ForgeFrame writeback**: High-signal items push to ForgeFrame as memories with tiered strength (0.4/0.55/0.7). Co-retrieval edges created immediately - the new memory participates in Hebbian LTP/LTD from the start.
+7. **Temporal context**: Recent distillations injected into the prompt. Detects patterns across the feed ("you've shared 3 compression papers this week").
+8. **Opus meta pass**: High-signal items get a deep reasoning pass from Claude. Sovereignty safe - cloud sees public content only, never ForgeFrame memory contents.
+9. **Storage**: SQLite. Searchable, filterable by resonance, novelty, signal, status, source type.
+10. **Web UI**: Dark theme, resonance/novelty bars, connection tags. Search, delete, re-distill with updated lens.
 
 Always-on via launchd. Server and worker auto-start on login, restart on crash.
 
+## In production
+
+48 distillations total, 1 pushed to ForgeFrame so far. Average resonance 0.37, average novelty 0.52. The signal gate is working - most content is familiar. The one that made it through was genuinely new and is now in the graph.
+
 ## Limitations
 
-- Video extraction depends on yt-dlp supporting the platform. TikTok and YouTube work. Some platforms don't expose transcripts.
-- The lens is only as good as your ForgeFrame memory. Early on, with few memories, the distillation is generic. It sharpens as your memory accumulates.
-- Single-user by design. The constitutional lens is personal. Multi-user would require separate lens configs.
-- Ollama inference on a 32B model takes 30-60 seconds per distillation. Not instant.
+- yt-dlp platform coverage gaps. TikTok and YouTube work. Some platforms don't expose transcripts.
+- The lens sharpens with ForgeFrame memory accumulation. Early on with few memories, distillation is less specific.
+- 30-60 second inference time on 32B model. Not instant.
+- Single-user by design. The constitutional lens is personal.
+- 45 backlog items distilled with the old lens - redistillation pending.
 
 ## Learnings
 
-The distillery taught me that the value isn't in the content — it's in the filter. Everyone has the same firehose. The difference is what you keep and why. A system that filters through your recorded principles produces output that's useful in a way no generic summarizer can match. The lens is the product, not the pipeline.
+The problem wasn't extraction or inference speed. It was that the lens was narcissistic - it checked incoming content against the founder's identity first, and most things don't match perfectly. Moving the constitution to the user prompt and adding a novelty score changed what the system was actually doing: from "does this confirm who I am" to "is this something I haven't seen before."
+
+The lens is the product, not the pipeline. Same data, same model, different frame - different outputs entirely.

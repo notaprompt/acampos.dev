@@ -4,13 +4,13 @@ Independent researcher and engineer. Builds local-first cognitive infrastructure
 
 ## What I Build
 
-ForgeFrame: Local-first memory system for AI agents. Persistent memory with strength decay, constitutional principles that never decay, and MCP-native integration. SQLite + FTS5. Runs on a laptop.
+ForgeFrame: Memory for AI agents that works more like human memory than a database. Things you come back to strengthen. Things you ignore fade. Some things - principles, voice - never decay. Runs locally. MCP-native.
 
 Reframed: Resume analysis platform that preserves your voice instead of replacing it with recruiter-speak. Voice fingerprinting, multi-reader semantic analysis, streaming AI. Live at reframed.works.
 
 Guardian: Desktop cognitive workspace with reframe detection (7 types across 8 identity dimensions), awareness-trap detection, knowledge graph, and local-only inference.
 
-Distillery: Phone-to-local-inference pipeline. Share a URL from iOS, Mac extracts content via yt-dlp, Ollama distills through a constitutional lens, results stored locally.
+Distillery: Share a link from your phone. Your laptop reads it through your own recorded principles and tells you what's actually new - not just what resonates, but what you haven't seen before. What passes the filter writes back to memory.
 
 ## Research
 

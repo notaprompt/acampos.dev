@@ -62,7 +62,7 @@
     {
       "name": "ForgeFrame",
       "url": "https://github.com/notaprompt/forgeframe",
-      "description": "Open-source memory for AI agents. MCP server with 12 tools. SQLite + FTS5."
+      "description": "Open-source memory for AI agents. Things you use strengthen. Things you ignore fade. Principles never decay. Runs locally, MCP-native."
     },
     {
       "name": "Reframed",

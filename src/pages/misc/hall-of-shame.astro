@@ -23,10 +23,10 @@ const entries = [
     years: "2024",
     stack: ["Python", "Flask", "SQLCoder-34B", "Ollama", "Symitar Episys"],
     what: "LLM-powered query engine built for credit union core banking systems. The hard version of NL-to-SQL: Symitar Episys has cryptic abbreviated field names, denormalized record families, integer codes instead of enums, and 22+ record types that can't fit in a single prompt. Built a schema adapter that dynamically selected, annotated, and pruned schema context per query. RBAC enforcement, audit logging, air-gapped deployment. 32 pages of specs.",
-    whatHappened: "The schema adapter was doing what ForgeFrame's routing and context injection already did generically. The domain-specific prompts were the only real differentiation. When you strip that out, VaultQL was a ForgeFrame configuration with credit union vocabulary. Same lesson, different industry.",
-    whatSurvived: "The de-identification pipeline made it into the ForgeFrame proxy. Token mapping, adversarial test suite, three-tier scrubbing - that work was real and got absorbed. The schema introspection approach for Episys is documented and still valid if anyone ever needs it.",
-    lesson: "The moat was the domain knowledge, not the infrastructure. Domain knowledge isn't a product.",
-    status: "dissolved",
+    whatHappened: "The infrastructure needed to support it properly didn't exist yet. The schema adapter, the context pruning, the de-identification pipeline - all of it was being built from scratch at a moment when the underlying models and tooling weren't stable enough to ship to a risk-averse regulated industry. The generic pieces got absorbed into ForgeFrame. The domain-specific layer had nowhere to land.",
+    whatSurvived: "The de-identification pipeline made it into the ForgeFrame proxy. Token mapping, adversarial test suite, three-tier scrubbing - that work was real and got absorbed. The schema introspection approach for Episys is documented and still valid. Snowflake is now deploying NL-to-SQL at enterprise scale for large orgs - different distribution, same gap. The problem was real. The view from inside credit union operations was the edge nobody else had.",
+    lesson: "We were victims of what we knew how to build, not what we knew was missing. The gap was real. The timing wasn't.",
+    status: "early",
   },
 ];
 ---
@@ -175,6 +175,12 @@ const entries = [
   .status-dissolved {
     color: var(--white-30);
     border-color: var(--white-20);
+  }
+
+  .status-early {
+    color: var(--glow);
+    border-color: var(--glow);
+    opacity: 0.5;
   }
 
   .entry-stack {

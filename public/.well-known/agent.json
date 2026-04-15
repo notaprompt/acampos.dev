@@ -75,8 +75,7 @@
     "linkedin": "https://linkedin.com/in/alexander-d-campos",
     "llms_txt": "https://campos.works/llms.txt",
     "writing": "https://campos.works/writing",
-    "glossary": "https://campos.works/glossary",
-    "research": "https://guardian-labs.org"
+    "glossary": "https://campos.works/glossary"
   },
   "agent_endpoints": {
     "profile": "https://campos.works/api/agent/profile",

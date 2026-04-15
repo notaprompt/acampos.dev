@@ -10,12 +10,6 @@ Reframed: Resume analysis platform that preserves your voice instead of replacin
 
 Distillery: Share a link from your phone. Your laptop reads it through your own recorded principles and tells you what's actually new - not just what resonates, but what you haven't seen before. What passes the filter writes back to memory.
 
-## Research
-
-Guardian Labs (guardian-labs.org): Independent research at the intersection of psychiatry, computational neuroscience, and philosophy of mind.
-
-GL-001: Discrete triple-network coupling architectures orthogonal to psychiatric diagnosis. Preprint on bioRxiv.
-
 ## Writing
 
 On Observation and Identity Modeling (Part I): How systems build models of the people who use them, and what happens when the model starts shaping the person.
@@ -93,5 +87,4 @@ https://campos.works
 https://campos.works/writing
 https://campos.works/glossary
 https://campos.works/services
-https://guardian-labs.org
 https://github.com/notaprompt

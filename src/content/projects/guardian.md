@@ -1,6 +1,6 @@
 ---
 title: "Guardian"
-tagline: "ForgeFrame configured for people. Local inference control plane with reframe detection, awareness-trap alerts, and sovereign encryption. Keeps your cognitive data on your machine."
+tagline: "Desktop control plane for local inference. Reframe detection, pattern tracking, encrypted notes. Built for environments where data stays on the machine."
 status: "active"
 stack: ["Electron", "React", "Node.js", "SQLite/FTS5", "Zustand", "xterm.js"]
 image: "/images/projects/guardian.png"
@@ -10,7 +10,7 @@ order: 3
 
 ## Goals
 
-Guardian is ForgeFrame configured for people instead of developers. Same engine — memory, decay, constitutional tagging, sovereignty — with a UI built around the question: when an AI system observes you long enough, does its model of you start shaping who you become? Built the detectors, the memory, and the infrastructure to find out.
+Guardian is ForgeFrame configured for end users instead of developers. Same engine - memory, decay, constitutional tagging - with a desktop UI. Tracks how model responses shift over time and keeps sensitive data local.
 
 ## Process
 

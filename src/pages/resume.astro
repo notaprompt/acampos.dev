@@ -2,13 +2,13 @@
 import Page from '../layouts/Page.astro';
 ---
 
-<Page title="resume -- alexander campos" description="Operations and software. Six years regulated finance. Three shipped products. Legal recoveries, compliance, monitoring, resolution.">
+<Page title="resume -- alexander campos" description="Six years regulated finance. Process operations, compliance, vendor management, monitoring systems. Also builds software independently.">
   <article class="resume">
     <h1>Resume</h1>
 
     <section class="summary">
       <p>
-        Operations and software. Six years in regulated finance. Process design, monitoring systems, reporting pipelines, compliance, enterprise integration. Also builds independently: three production products shipped solo, one with paying users. The pattern across everything - own the operation end-to-end, build the tools it needs, hand it off running.
+        Six years in regulated finance. Process design, monitoring systems, compliance, vendor operations, enterprise integration. Builds software independently - three production products shipped, one with paying users. The through-line: own the operation end-to-end, build the tools it needs, hand it off running.
       </p>
     </section>
 
@@ -17,33 +17,28 @@ import Page from '../layouts/Page.astro';
     <section>
       <h2>Skills</h2>
 
-      <h3>Operations & Systems</h3>
+      <h3>Operations & Compliance</h3>
       <p class="skills">
-        Process Modernization · Failure-Surface Mapping · Dependency Sequencing ·
-        KPI/OKR Frameworks · Executive Reporting · Regulatory Compliance (NCUA, CFPB)
+        Process Design · Vendor Operations · Risk Analysis · Regulatory Compliance (NCUA, CFPB, BSA, UDAAP) ·
+        Failure-Surface Mapping · KPI/OKR Frameworks · Executive Reporting · SLA Governance · Change Control
       </p>
 
-      <h3>Data</h3>
+      <h3>Enterprise Tools</h3>
+      <p class="skills">
+        Salesforce · JIRA · Confluence · Vendor Risk Management ·
+        Power Platform (BI, Apps, Automate)
+      </p>
+
+      <h3>Data & Analytics</h3>
       <p class="skills">
         SQL (Postgres, Snowflake) · Python · Splunk · Pipeline Monitoring ·
-        Looker · QuickSight · Power Platform (BI, Apps, Automate)
+        Looker · QuickSight
       </p>
 
       <h3>Development</h3>
       <p class="skills">
-        TypeScript · Python · React · Node.js · Electron · Next.js · Astro · SQLite/FTS5 · Vite · Zustand ·
-        nilearn · scikit-learn · scipy · matplotlib
-      </p>
-
-      <h3>AI Infrastructure</h3>
-      <p class="skills">
-        Multi-Provider LLM Routing (Anthropic/OpenAI/Ollama) · Model Context Protocol ·
-        Structured Tool-Use · Semantic Memory · Streaming SSE · Local-First Architecture
-      </p>
-
-      <h3>Enterprise</h3>
-      <p class="skills">
-        Salesforce · JIRA · Confluence · SLA Governance · Vendor Risk Management · Change Control
+        TypeScript · React · Node.js · Next.js · Astro · Electron · SQLite ·
+        Python (Pandas, scikit-learn)
       </p>
     </section>
 
@@ -95,8 +90,8 @@ import Page from '../layouts/Page.astro';
 
       <div class="role">
         <div class="role-header">
-          <h3>Independent Engineering</h3>
-          <span class="dates">2022 -- Present</span>
+          <h3>Independent Projects</h3>
+          <span class="dates">2025 -- Present</span>
         </div>
         <ul>
           <li>
@@ -106,7 +101,7 @@ import Page from '../layouts/Page.astro';
             <strong><a href="https://github.com/notaprompt/forgeframe">ForgeFrame</a></strong> -- open-source persistent memory for agents. MCP server with 12 tools, strength-based decay, constitutional persistence. 40-60% inference cost reduction.
           </li>
           <li>
-            <strong>Guardian</strong> -- local-first cognitive workspace. Desktop application with air-gapped local inference via Ollama. 60+ IPC channels, 20 backend modules. Designed for regulated environments where data residency is required.
+            <strong>Guardian</strong> -- desktop application for local inference. 60+ IPC channels, 20 backend modules. Built for environments where data residency matters.
           </li>
           <li>
             <strong>Client work</strong> -- bilingual proposal generator for a landscaping company. Built, deployed, in use.
@@ -156,7 +151,7 @@ import Page from '../layouts/Page.astro';
 
   <script is:inline>
     console.log(
-      '%c you are reading the resume of someone who builds systems like this one. ',
+      '%c same question, different shapes. ',
       'color: #5BF29B; font-family: monospace; font-size: 11px;'
     );
   </script>

@@ -1,0 +1,244 @@
+---
+import Page from '../../layouts/Page.astro';
+
+const currentPath = Astro.url.pathname;
+
+const entries = [
+  {
+    name: "Guardian",
+    slug: "guardian",
+    epitaph: "desktop app for local inference",
+    years: "2024 - 2025",
+    stack: ["Electron", "React", "Node.js", "SQLite", "Zustand"],
+    what: "Desktop Electron application. Reframe detection across 7 types. Awareness-trap detection - finding what you keep circling back to without resolving. Local Ollama inference. Constitutional memory with 4-level compression. The whole stack.",
+    whatHappened: "The engine was the product. Guardian was ForgeFrame with a desktop shell on top. When the memory layer got extracted into standalone infrastructure, the shell had nothing left to justify. The reframe detection logic, the awareness-trap patterns, the constitutional tagging - all of it lives in ForgeFrame now. Guardian was the research environment. ForgeFrame is what it found.",
+    whatSurvived: "The essay. Guardian is where 'On Observation and Identity Modeling' came from. The dependency chain is real: reframe detection needs a user baseline, the baseline needs memory, memory needs local persistence. That chain is why ForgeFrame exists. The name 'Guardian temperature' still lives inside ForgeFrame as a seven-signal composite metric.",
+    lesson: "Knowing when a product is really a configuration is a useful distinction.",
+    status: "absorbed",
+  },
+  {
+    name: "VaultQL",
+    slug: "vaultql",
+    epitaph: "natural language to SQL for credit unions",
+    years: "2024",
+    stack: ["Python", "Flask", "SQLCoder-34B", "Ollama", "Symitar Episys"],
+    what: "LLM-powered query engine built for credit union core banking systems. The hard version of NL-to-SQL: Symitar Episys has cryptic abbreviated field names, denormalized record families, integer codes instead of enums, and 22+ record types that can't fit in a single prompt. Built a schema adapter that dynamically selected, annotated, and pruned schema context per query. RBAC enforcement, audit logging, air-gapped deployment. 32 pages of specs.",
+    whatHappened: "The schema adapter was doing what ForgeFrame's routing and context injection already did generically. The domain-specific prompts were the only real differentiation. When you strip that out, VaultQL was a ForgeFrame configuration with credit union vocabulary. Same lesson, different industry.",
+    whatSurvived: "The de-identification pipeline made it into the ForgeFrame proxy. Token mapping, adversarial test suite, three-tier scrubbing - that work was real and got absorbed. The schema introspection approach for Episys is documented and still valid if anyone ever needs it.",
+    lesson: "The moat was the domain knowledge, not the infrastructure. Domain knowledge isn't a product.",
+    status: "dissolved",
+  },
+];
+---
+
+<Page title="hall of shame -- alexander campos" description="Projects that didn't survive contact with reality. Kept here because the lesson is real even if the thing isn't.">
+  <article>
+    <nav class="subnav" aria-label="Misc sections">
+      <a href="/misc" class:list={[{ active: currentPath === '/misc' || currentPath === '/misc/' }]}>glossary</a>
+      <span class="subnav-sep">/</span>
+      <a href="/misc/hall-of-shame" class:list={[{ active: currentPath.startsWith('/misc/hall-of-shame') }]}>hall of shame</a>
+    </nav>
+
+    <h1>Hall of Shame</h1>
+
+    <p class="intro">
+      Projects that didn't survive contact with reality. Some got absorbed into something better. Some were just wrong. Frankenstein could revive them - the parts are real - but for now, here they lie.
+    </p>
+
+    <div class="entries">
+      {entries.map(entry => (
+        <div class="entry" id={entry.slug}>
+          <div class="entry-header">
+            <span class="entry-name">{entry.name}</span>
+            <span class="entry-meta">{entry.epitaph} · {entry.years}</span>
+            <span class:list={["entry-status", `status-${entry.status}`]}>{entry.status}</span>
+          </div>
+
+          <div class="entry-stack">
+            {entry.stack.map(s => <span class="tag">{s}</span>)}
+          </div>
+
+          <div class="entry-body">
+            <div class="entry-section">
+              <span class="section-label">what it was</span>
+              <p>{entry.what}</p>
+            </div>
+
+            <div class="entry-section">
+              <span class="section-label">what happened</span>
+              <p>{entry.whatHappened}</p>
+            </div>
+
+            <div class="entry-section">
+              <span class="section-label">what survived</span>
+              <p>{entry.whatSurvived}</p>
+            </div>
+
+            <div class="entry-lesson">
+              <span class="lesson-label">lesson</span>
+              <span class="lesson-text">{entry.lesson}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </article>
+</Page>
+
+<style>
+  .subnav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    margin-bottom: 2rem;
+    color: var(--white-30);
+  }
+
+  .subnav a {
+    color: var(--white-45);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color 0.2s;
+  }
+
+  .subnav a:hover {
+    color: var(--gold-accent);
+  }
+
+  .subnav a.active {
+    color: var(--glow);
+  }
+
+  .subnav-sep {
+    color: var(--white-20);
+  }
+
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .intro {
+    margin-bottom: 2.5rem;
+    color: var(--white-60);
+    line-height: 1.65;
+  }
+
+  .entries {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .entry {
+    border-top: 1px solid var(--white-08);
+    padding-top: 2rem;
+  }
+
+  .entry-header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .entry-name {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    color: var(--glow);
+  }
+
+  .entry-meta {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--white-30);
+    text-transform: lowercase;
+  }
+
+  .entry-status {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid;
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-absorbed {
+    color: var(--gold-accent);
+    border-color: var(--gold-accent);
+    opacity: 0.6;
+  }
+
+  .status-dissolved {
+    color: var(--white-30);
+    border-color: var(--white-20);
+  }
+
+  .entry-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--white-30);
+    border: 1px solid var(--white-08);
+    padding: 0.1rem 0.4rem;
+  }
+
+  .entry-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .entry-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    text-transform: lowercase;
+    letter-spacing: 0.08em;
+    color: var(--white-30);
+  }
+
+  .entry-section p {
+    color: var(--white-60);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  .entry-lesson {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding: 0.75rem;
+    border: 1px dashed var(--white-08);
+    margin-top: 0.5rem;
+  }
+
+  .lesson-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--white-30);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .lesson-text {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--gold-accent);
+    line-height: 1.55;
+  }
+</style>

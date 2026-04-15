@@ -1,14 +1,22 @@
 ---
-return Astro.redirect('/misc', 301);
----
+import Page from '../../layouts/Page.astro';
+import { glossary } from '../../data/glossary';
 
 const sortedEntries = Object.entries(glossary).sort((a, b) =>
   a[1].term.localeCompare(b[1].term)
 );
+
+const currentPath = Astro.url.pathname;
 ---
 
-<Page title="glossary -- alexander campos" description="Plain-language definitions for the technical terms used across this site.">
+<Page title="misc -- alexander campos" description="Glossary, graveyard, and other odds and ends.">
   <article>
+    <nav class="subnav" aria-label="Misc sections">
+      <a href="/misc" class:list={[{ active: currentPath === '/misc' || currentPath === '/misc/' }]}>glossary</a>
+      <span class="subnav-sep">/</span>
+      <a href="/misc/hall-of-shame" class:list={[{ active: currentPath.startsWith('/misc/hall-of-shame') }]}>hall of shame</a>
+    </nav>
+
     <h1>Glossary</h1>
 
     <p class="intro">
@@ -27,6 +35,35 @@ const sortedEntries = Object.entries(glossary).sort((a, b) =>
 </Page>
 
 <style>
+  .subnav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    margin-bottom: 2rem;
+    color: var(--white-30);
+  }
+
+  .subnav a {
+    color: var(--white-45);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color 0.2s;
+  }
+
+  .subnav a:hover {
+    color: var(--gold-accent);
+  }
+
+  .subnav a.active {
+    color: var(--glow);
+  }
+
+  .subnav-sep {
+    color: var(--white-20);
+  }
+
   h1 {
     margin-bottom: 0.5rem;
   }
@@ -35,12 +72,6 @@ const sortedEntries = Object.entries(glossary).sort((a, b) =>
     margin-bottom: 2.5rem;
     color: var(--white-60);
     line-height: 1.65;
-  }
-
-  .wtf-marker-static {
-    color: var(--gold-accent);
-    font-family: var(--mono);
-    font-size: 0.85em;
   }
 
   .glossary-list {

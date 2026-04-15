@@ -1,6 +1,6 @@
 ---
 title: "Orellana Tools"
-tagline: "Proposal app for a family landscaping business. Verbal quotes were losing jobs. Now they have PDFs."
+tagline: "Proposal app for a landscaping business. Verbal quotes were losing jobs. Now they have PDFs."
 status: "shipped"
 stack: ["Next.js", "Supabase", "React-PDF", "Vercel"]
 order: 3

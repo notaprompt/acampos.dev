@@ -8,8 +8,6 @@ ForgeFrame: Memory for AI agents that works more like human memory than a databa
 
 Reframed: Resume analysis platform that preserves your voice instead of replacing it with recruiter-speak. Voice fingerprinting, multi-reader semantic analysis, streaming AI. Live at reframed.works.
 
-Guardian: Desktop cognitive workspace with reframe detection (7 types across 8 identity dimensions), awareness-trap detection, knowledge graph, and local-only inference.
-
 Distillery: Share a link from your phone. Your laptop reads it through your own recorded principles and tells you what's actually new - not just what resonates, but what you haven't seen before. What passes the filter writes back to memory.
 
 ## Research

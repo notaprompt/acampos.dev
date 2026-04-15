@@ -69,10 +69,6 @@
       "url": "https://reframed.works",
       "description": "Resume analysis platform. Voice fingerprinting, multi-reader semantic analysis, streaming AI."
     },
-    {
-      "name": "Guardian",
-      "description": "Desktop cognitive workspace with reframe detection and awareness-trap detection. Local-only."
-    }
   ],
   "links": {
     "github": "https://github.com/notaprompt",

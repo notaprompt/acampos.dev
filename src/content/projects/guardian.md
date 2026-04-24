@@ -10,7 +10,7 @@ order: 3
 
 ## Goals
 
-Guardian is ForgeFrame configured for end users instead of developers. Same engine - memory, decay, constitutional tagging - with a desktop UI. Tracks how model responses shift over time and keeps sensitive data local.
+Guardian is ForgeFrame configured for end users instead of developers. Same engine - memory, decay, principle-tier tagging - with a desktop UI. Tracks how model responses shift over time and keeps sensitive data local.
 
 ## Process
 
@@ -20,7 +20,7 @@ Started as an Electron shell with a chat window and a local Ollama connection. B
 
 **Reframe detection.** Classifies when model responses subtly reshape user statements across 7 types. Triggers prompt correction when user-rated inaccuracy exceeds 40%.
 
-**Awareness-trap detection.** Separate from reframe detection -- identifies recurring unresolved patterns in conversations over time. Schema, accessors, and pipeline integration wired into the post-session flow. This is the Guardian layer that watches for what you keep circling back to without resolving.
+**Unresolved-pattern detection.** Separate from reframe detection -- identifies topics that recur across sessions without resolution. Schema, accessors, and pipeline integration wired into the post-session flow. Detects multi-session conversation patterns where the same topic returns without progress toward a decision or action.
 
 **Memory.** 4-level compression pipeline (raw -> summary -> pattern -> principle). Strength decays over time, reinforces on retrieval.
 
@@ -28,13 +28,13 @@ Started as an Electron shell with a chat window and a local Ollama connection. B
 
 **ForgeFrame fusion.** JSON-RPC stdio client bridges Guardian to ForgeFrame's MCP memory server. Sessions sync bidirectionally. Data migration pipeline handles the transition from Guardian's internal SQLite to ForgeFrame's shared memory layer.
 
-**Post-session pipeline.** Fires on conversation end. Extracts decisions, tasks, and code artifacts. Generates typed notes. Indexes into FTS5 for search. Links entities into a knowledge graph. Runs awareness-trap detection.
+**Post-session pipeline.** Fires on conversation end. Extracts decisions, tasks, and code artifacts. Generates typed notes. Indexes into FTS5 for search. Links entities into a knowledge graph. Runs unresolved-pattern detection.
 
 ## Limitations
 
 - Reframe detection uses heuristic classification, not a trained model. False positive rate unmeasured.
 - Memory compression thresholds are hand-tuned, not empirically optimized.
-- No formal user study on reframe detection or awareness-trap accuracy.
+- No formal user study on reframe detection or unresolved-pattern accuracy.
 - Sovereign encryption is functional but not audited by a third party.
 
 ## Learnings
@@ -43,6 +43,6 @@ The hardest problems were state synchronization and process lifecycle management
 
 Reframe detection surfaced a deeper problem: models subtly reshape your language over time. Detecting that requires understanding the user's baseline, which requires memory, which requires local persistence. That dependency chain is why ForgeFrame exists.
 
-Awareness-trap detection surfaced something else: the patterns you avoid aren't in individual conversations — they're in the gaps between them. You need memory that spans sessions to see what you keep not talking about.
+Unresolved-pattern detection surfaced something else: cross-session recurrence isn't visible within any single conversation - it's visible only across them. You need memory that spans sessions to see which topics return without progress.
 
 Guardian is where the essay on observation and identity modeling came from. Everything I describe there — the loop, the reframe types, the four quadrants of who-sees-what — I found by building this and watching what happened.

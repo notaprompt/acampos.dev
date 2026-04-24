@@ -9,7 +9,7 @@ order: 2
 
 ## Goals
 
-AI agents forget everything between sessions. ForgeFrame gives them persistent memory - what gets used strengthens, what gets ignored decays, and some things are constitutional and never change. Four packages: `@forgeframe/memory` (MIT), `@forgeframe/core` (AGPL), `@forgeframe/server` (MIT), and `@forgeframe/proxy` (AGPL).
+AI agents forget everything between sessions. ForgeFrame gives them persistent memory - what gets used strengthens, what gets ignored decays, and some things are principle-tier and never change. Four packages: `@forgeframe/memory` (MIT), `@forgeframe/core` (AGPL), `@forgeframe/server` (MIT), and `@forgeframe/proxy` (AGPL).
 
 ```
 L4  ForgeFrame Proxy (scrub, inject, log)   AGPL
@@ -20,32 +20,32 @@ L1  MCP Protocol (Anthropic's standard)     OPEN
 
 ## Process
 
-**Memory engine.** SQLite + FTS5. Strength decay with 7-day half-life and a 0.1 floor. Retrieval reconsolidates - accessing a memory reinforces it. Ollama-backed semantic search with keyword fallback. Constitutional exemption: `principle` and `voice` tagged memories never decay, never consolidate, never weaken.
+**Memory engine.** SQLite + FTS5. Strength decay with 7-day half-life and a 0.1 floor. Retrieval reconsolidates - accessing a memory reinforces it. Ollama-backed semantic search with keyword fallback. Principle tier: `principle` and `voice` tagged memories are exempt from decay and consolidation - the non-decaying reference layer.
 
-**Hebbian learning.** Co-retrieval strengthening (LTP) and depression (LTD). Edge weight management, refractory periods, pruning below 0.05. Memories that fire together, wire together. Memories that don't, fade.
+**Hebbian learning.** Co-retrieval strengthening (LTP) and depression (LTD). Edge weight management, refractory periods, pruning below 0.05. Co-activated memories strengthen; quiet edges fade.
 
-**Dream engine.** NREM and REM cycles that run when the system is idle.
+**Consolidation engine.** Two scheduled cycles that run when the system is idle. The design converges on the biological compression/recombination pattern; I arrived at it from cognitive-ergonomic intuition rather than the neuroscience literature.
 
-NREM (compression, runs at sleep pressure ≥ 20):
+Compression cycle (runs at consolidation pressure ≥ 20):
 1. Hebbian LTD maintenance - weakens unused edges, prunes below threshold
 2. Strength decay pass
 3. Cluster scan + dedup proposals
-4. Valence backfill - reclassifies memories saved without emotional tagging
-5. Source calibration - survival rates per organ (Distillery, Hermes)
-6. Silence detection - tag domains that went quiet
+4. Valence backfill - reclassifies memories saved without attention-weighting
+5. Source calibration - survival rates per source connector (Distillery, Hermes)
+6. Silence detection - tags domains that went quiet
 7. Drift detection - which belief clusters are strengthening vs weakening
 
-REM (recombination, runs at sleep pressure ≥ 50):
-1. Dream seeding - pairs memories from disconnected graph regions for founder grading
+Recombination cycle (runs at consolidation pressure ≥ 50):
+1. Graph recombination - pairs memories from disconnected regions for user grading
 2. Hindsight review - audits entrenched beliefs with charged-valence scrutiny
 3. Tension detection - surfaces productive friction without resolving it
-4. Dream journal - narrative synthesis of the full cycle
+4. Consolidation summary - narrative synthesis of the full cycle
 
-Constitutional protection at every gate. 16 invariants enforced in code.
+Invariant protection at every gate. 16 invariants enforced in code.
 
-**Emotional valence.** Three states: charged (emotional weight), neutral (factual), grounding (identity). Assigned at save time via local model. Propagates through consolidation priority, Hebbian LTP multiplier, hindsight scrutiny, and dream seeding preference.
+**Memory valence.** Three states: charged (high-signal, attention-weighted), neutral (factual), grounding (foundational). Assigned at save time via local model. Propagates through consolidation priority, Hebbian LTP multiplier, hindsight scrutiny, and recombination preference.
 
-**Guardian temperature.** Seven-signal composite: revisit-without-action, time-since-artifact, contradiction density, orphan ratio, decay velocity, recursion depth, Hebbian imbalance. Three states: calm, warm, trapped. Modulates learning rate and dream eligibility.
+**Guardian state metric.** Seven-signal composite: revisit-without-action, time-since-artifact, contradiction density, orphan ratio, decay velocity, recursion depth, Hebbian imbalance. Three states: nominal, elevated, overloaded. Modulates learning rate and recombination eligibility.
 
 **Routing.** Tier-based model dispatch. Provider adapters for Anthropic, OpenAI-compatible, and Ollama. Pure TypeScript, dependency injection throughout.
 
@@ -57,7 +57,7 @@ Constitutional protection at every gate. 16 invariants enforced in code.
 
 **Forge Cockpit.** Terminal workspace manager built on Zellij. Named tabs, session persistence, tab-level context for every running agent.
 
-**Cockpit UI.** 3,566-line single-file vanilla JS + WebGL2 + Cytoscape.js application. Compound node graph with tag-based clustering, semantic zoom, and nodes colored by TRIM tag. Signal overlay with dream journal, founder grading (real/meh/nothing), productive tensions, hindsight review, graph health, source calibration bars. Sonar waveform in the status bar encodes Guardian state, sleep pressure, urgency, and polarity. Five themes (Olive Glass default), thermal shader background responds to Guardian temperature.
+**Cockpit UI.** 3,566-line single-file vanilla JS + WebGL2 + Cytoscape.js application. Compound node graph with tag-based clustering, semantic zoom, and nodes colored by TRIM tag. Signal overlay with consolidation summary, user grading (real/meh/nothing), productive tensions, hindsight review, graph health, source calibration bars. Sonar waveform in the status bar encodes Guardian state, consolidation pressure, urgency, and polarity. Five themes (Olive Glass default), thermal shader background responds to the Guardian state metric.
 
 **Hermes integration.** Python MemoryProvider for the Hermes agent framework. Guardian tool exposing temperature as opaque state. Model routing config: Gemma local for triage, Sonnet for voice, Opus for deep.
 
@@ -67,7 +67,7 @@ Constitutional protection at every gate. 16 invariants enforced in code.
 
 ## API surface
 
-21 HTTP endpoints across 5 domains (Dream, Hermes, Guardian, Hebbian, Graph). 21 SSE event types for real-time observability. 20 MCP tools.
+21 HTTP endpoints across 5 domains (Consolidation, Hermes, Guardian, Hebbian, Graph). 21 SSE event types for real-time observability. 20 MCP tools.
 
 ## In production
 
@@ -83,6 +83,6 @@ Running as the memory layer for everything else built on this machine. Every Cla
 
 ## Learnings
 
-The Hebbian engine was the right abstraction. Once LTP/LTD was wired in, the dream system had something real to compress. The order mattered - building the learning substrate before the visualization meant the graph shows actual signal, not synthetic structure.
+The Hebbian engine was the right abstraction. Once LTP/LTD was wired in, the consolidation pipeline had something real to compress. The order mattered - building the learning substrate before the visualization meant the graph shows actual signal, not synthetic structure.
 
 The strongest validation wasn't a test suite. It was running Distillery on top of it and having the signal gate work - filtering known content and surfacing genuinely new ideas - without touching the core engine at all. When another system uses your API and the right things happen, the abstraction is holding.

@@ -75,7 +75,6 @@ Supports SSE streaming (set Accept: text/event-stream)
 MCP server (ForgeFrame Memory):
 Discovery: https://campos.works/.well-known/mcp.json
 Install: npx @forgeframe/server
-GitHub: https://github.com/notaprompt/forgeframe
 
 OpenAPI spec (ChatGPT Actions compatible):
 https://campos.works/openapi.json

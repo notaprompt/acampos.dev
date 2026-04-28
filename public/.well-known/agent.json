@@ -60,11 +60,6 @@
   ],
   "projects": [
     {
-      "name": "ForgeFrame",
-      "url": "https://github.com/notaprompt/forgeframe",
-      "description": "Open-source memory for AI agents. Things you use strengthen. Things you ignore fade. Principles never decay. Runs locally, MCP-native."
-    },
-    {
       "name": "Reframed",
       "url": "https://reframed.works",
       "description": "Resume analysis platform. Voice fingerprinting, multi-reader semantic analysis, streaming AI."

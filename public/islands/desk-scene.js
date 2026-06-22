@@ -995,28 +995,13 @@
   }
 
   // ── Second wall art piece (smaller, right of pendant) ──
+  // ── Framed bird picture (X / @flapfinned) — replaces the old decorative wall frame ──
   var ART2_X = 75, ART2_Y = 16, ART2_W = 14, ART2_H = 10;
   function drawWallArt2() {
-    fillRect(ART2_X, ART2_Y, ART2_W, ART2_H, 69);
-    fillRect(ART2_X + 1, ART2_Y + 1, ART2_W - 2, ART2_H - 2, 72);
-    // minimalist abstract — cream and amber on black
-    for (var r = ART2_Y + 2; r < ART2_Y + ART2_H - 2; r++) {
-      for (var c = ART2_X + 2; c < ART2_X + ART2_W - 2; c++) {
-        var h = ((c * 23 + r * 37) & 0xFF);
-        if (h < 30) scene[r * COLS + c] = 71;
-        else if (h < 50) scene[r * COLS + c] = 73;
-      }
-    }
-    registerObject('art', ART1_X, ART1_Y, ART1_W, ART1_H, 'https://instagram.com/notaprompt', 'instagram', true);
-  }
-
-  // ── Small framed bird picture (X / @flapfinned) — open wall gap above the ultrawide ──
-  var BIRD_X = 96, BIRD_Y = 14, BIRD_W = 12, BIRD_H = 11;
-  function drawBirdArt() {
     // frame
-    fillRect(BIRD_X, BIRD_Y, BIRD_W, BIRD_H, 69);
+    fillRect(ART2_X, ART2_Y, ART2_W, ART2_H, 69);
     // pale sky interior
-    fillRect(BIRD_X + 1, BIRD_Y + 1, BIRD_W - 2, BIRD_H - 2, 77);
+    fillRect(ART2_X + 1, ART2_Y + 1, ART2_W - 2, ART2_H - 2, 77);
     // little finch mid-flap — tan body, black outline, amber perch detail
     var bird = [
       [_,_,_,72,72,_,_,_],
@@ -1025,8 +1010,11 @@
       [_,72,44,44,44,72,_,_],
       [_,_,72,72,72,_,73,_],
     ];
-    placeSprite(bird, BIRD_X + 2, BIRD_Y + 3);
-    registerObject('birdart', BIRD_X, BIRD_Y, BIRD_W, BIRD_H, 'https://x.com/flapfinned', '@flapfinned', true);
+    placeSprite(bird, ART2_X + 2, ART2_Y + 2);
+    // instagram hotspot stays on the large left wall art
+    registerObject('art', ART1_X, ART1_Y, ART1_W, ART1_H, 'https://instagram.com/notaprompt', 'instagram', true);
+    // this frame links to X
+    registerObject('birdart', ART2_X, ART2_Y, ART2_W, ART2_H, 'https://x.com/flapfinned', '@flapfinned', true);
   }
 
   // ── Eames Aluminum Group desk chair (rear 3/4, facing 10 o'clock) ──
@@ -1300,7 +1288,6 @@
   drawSwitchPlate();
   drawWallArt();
   drawWallArt2();
-  drawBirdArt();
   drawShelving();
   drawTowerSpeakers();
   drawCredenza();

@@ -1010,6 +1010,25 @@
     registerObject('art', ART1_X, ART1_Y, ART1_W, ART1_H, 'https://instagram.com/notaprompt', 'instagram', true);
   }
 
+  // ── Small framed bird picture (X / @flapfinned) — open wall gap above the ultrawide ──
+  var BIRD_X = 96, BIRD_Y = 14, BIRD_W = 12, BIRD_H = 11;
+  function drawBirdArt() {
+    // frame
+    fillRect(BIRD_X, BIRD_Y, BIRD_W, BIRD_H, 69);
+    // pale sky interior
+    fillRect(BIRD_X + 1, BIRD_Y + 1, BIRD_W - 2, BIRD_H - 2, 77);
+    // little finch mid-flap — tan body, black outline, amber perch detail
+    var bird = [
+      [_,_,_,72,72,_,_,_],
+      [_,72,72,44,44,72,_,_],
+      [72,44,44,44,44,72,72,_],
+      [_,72,44,44,44,72,_,_],
+      [_,_,72,72,72,_,73,_],
+    ];
+    placeSprite(bird, BIRD_X + 2, BIRD_Y + 3);
+    registerObject('birdart', BIRD_X, BIRD_Y, BIRD_W, BIRD_H, 'https://x.com/flapfinned', '@flapfinned', true);
+  }
+
   // ── Eames Aluminum Group desk chair (rear 3/4, facing 10 o'clock) ──
   // Left side closer to viewer — left arm visible dropping 90deg down
   // Right side recedes — foreshortened. Back brace crossbar visible.
@@ -1281,6 +1300,7 @@
   drawSwitchPlate();
   drawWallArt();
   drawWallArt2();
+  drawBirdArt();
   drawShelving();
   drawTowerSpeakers();
   drawCredenza();

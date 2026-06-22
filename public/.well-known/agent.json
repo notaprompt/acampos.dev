@@ -20,7 +20,7 @@
     },
     {
       "name": "AI Cost Optimization",
-      "description": "Model routing and tiered dispatch that cuts API spend 40-60%. Audit included.",
+      "description": "Model routing and tiered dispatch - cheap models for easy calls, frontier models only when the task needs them. Audit included.",
       "booking_url": "https://cal.com/alexander-campos-yrnz8m/30min",
       "category": "ai-infrastructure"
     },
@@ -64,10 +64,19 @@
       "url": "https://reframed.works",
       "description": "Resume analysis platform. Voice fingerprinting, multi-reader semantic analysis, streaming AI."
     },
+    {
+      "name": "Orellana Tools",
+      "description": "A QuickBooks MCP server and bilingual proposal generator for a landscaping business in Woodbridge, VA. Confirm-before-write tools. Demo-stage."
+    },
+    {
+      "name": "Deuce",
+      "description": "Calibration-first pricing instrument for tennis prediction markets. Paper-mode; the deliverable is a signed forecast ledger, not a profit claim."
+    }
   ],
   "links": {
     "github": "https://github.com/notaprompt",
     "linkedin": "https://linkedin.com/in/alexander-d-campos",
+    "x": "https://x.com/finnedfinch",
     "llms_txt": "https://campos.works/llms.txt",
     "writing": "https://campos.works/writing",
     "glossary": "https://campos.works/glossary"

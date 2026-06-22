@@ -29,7 +29,7 @@ Always-on via launchd. Server and worker auto-start on login, restart on crash.
 
 ## In production
 
-48 distillations total, 1 pushed to ForgeFrame so far. Average resonance 0.37, average novelty 0.52. The signal gate is working - most content is familiar. The one that made it through was genuinely new and is now in the graph.
+Running on real input. The signal gate does most of its work by rejecting - most shared content scores familiar and never reaches memory. The few items that clear the resonance × novelty threshold write back to ForgeFrame. The point of the system is the rejection, not the throughput.
 
 ## Limitations
 

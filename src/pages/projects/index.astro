@@ -182,6 +182,12 @@ const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a
     border-color: var(--white-30);
   }
 
+  .status-absorbed {
+    color: var(--gold-accent);
+    border-color: var(--gold-accent);
+    opacity: 0.55;
+  }
+
   .project-tagline {
     color: var(--glow);
     font-size: 0.9rem;

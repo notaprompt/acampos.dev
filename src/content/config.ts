@@ -5,7 +5,7 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     tagline: z.string(),
-    status: z.enum(['active', 'shipped', 'concept']),
+    status: z.enum(['active', 'shipped', 'concept', 'absorbed']),
     stack: z.array(z.string()),
     image: z.string().optional(),
     screenshots: z.array(z.string()).optional(),

@@ -33,7 +33,7 @@ const { Content } = await render(entry);
       "name": "Alexander Campos",
       "url": "https://campos.works"
     },
-    "creativeWorkStatus": entry.data.status === 'shipped' ? 'Published' : entry.data.status === 'active' ? 'In development' : 'Concept'
+    "creativeWorkStatus": entry.data.status === 'shipped' ? 'Published' : entry.data.status === 'active' ? 'In development' : entry.data.status === 'absorbed' ? 'Discontinued' : 'Concept'
   })} />
 
   <article class="project-detail">
@@ -121,6 +121,7 @@ const { Content } = await render(entry);
   .status-active { color: var(--alive); border-color: var(--alive); }
   .status-shipped { color: var(--gold-accent); border-color: var(--gold-accent); }
   .status-concept { color: var(--white-45); border-color: var(--white-30); }
+  .status-absorbed { color: var(--gold-accent); border-color: var(--gold-accent); opacity: 0.55; }
 
   .stack {
     display: flex;

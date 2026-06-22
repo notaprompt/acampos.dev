@@ -1,7 +1,7 @@
 ---
 title: "Guardian"
-tagline: "Desktop control plane for local inference. Reframe detection, pattern tracking, encrypted notes. Built for environments where data stays on the machine."
-status: "active"
+tagline: "A desktop app for local inference that became ForgeFrame. Reframe detection, pattern tracking, encrypted notes - the engine got extracted, the shell didn't survive it."
+status: "absorbed"
 stack: ["Electron", "React", "Node.js", "SQLite/FTS5", "Zustand", "xterm.js"]
 image: "/images/projects/guardian.png"
 repo: "https://github.com/notaprompt/guardian-ui-scaffold"
@@ -10,7 +10,7 @@ order: 3
 
 ## Goals
 
-Guardian is ForgeFrame configured for end users instead of developers. Same engine - memory, decay, principle-tier tagging - with a desktop UI. Tracks how model responses shift over time and keeps sensitive data local.
+Guardian was ForgeFrame before ForgeFrame was a separate thing - the same engine (memory, decay, principle-tier tagging) wrapped in a desktop UI for end users instead of developers. It tracked how model responses shift over time and kept sensitive data local. When the memory layer got extracted into standalone infrastructure, the shell had nothing left to justify, and the engine lives in ForgeFrame now. This page is the research record; the [hall of shame](/misc/hall-of-shame#guardian) has the post-mortem.
 
 ## Process
 

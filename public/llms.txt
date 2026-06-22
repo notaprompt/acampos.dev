@@ -10,6 +10,10 @@ Reframed: Resume analysis platform that preserves your voice instead of replacin
 
 Distillery: Share a link from your phone. Your laptop reads it through your own recorded principles and tells you what's actually new - not just what resonates, but what you haven't seen before. What passes the filter writes back to memory.
 
+Orellana Tools: A QuickBooks MCP server and bilingual proposal generator built for a landscaping business in Woodbridge, VA. Two tools - create an invoice from field notes, record a check payment - both confirm before they write. Demo-stage, built delegation-safe from the first line. Alerts route through Poke.
+
+Deuce: A calibration-first pricing instrument for tennis prediction markets. It prices fair value, then signs each forecast to a tamper-evident ledger before the market resolves. Paper-mode. The signed ledger is the product, not a profit claim. Alerts route through Poke.
+
 ## Writing
 
 On Observation and Identity Modeling (Part I): How systems build models of the people who use them, and what happens when the model starts shaping the person.
@@ -26,7 +30,7 @@ Full Online Presence Build: Website, scheduling, calendar, contact forms, SEO, a
 
 Agentic SEO & AI Discoverability: Structured data, machine-readable profiles, agent discovery endpoints. The layer that makes a business findable by AI agents, not just Google.
 
-AI Cost Optimization: Model routing and tiered dispatch that cuts API spend 40-60%. Audit included.
+AI Cost Optimization: Model routing and tiered dispatch - cheap models for the easy calls, frontier models only when the task needs them. Audit included.
 
 Custom AI Automation: Describe the manual process, get the pipeline. Agent orchestration, scheduling, monitoring, reporting, intake flows.
 
@@ -87,3 +91,4 @@ https://campos.works/writing
 https://campos.works/glossary
 https://campos.works/services
 https://github.com/notaprompt
+https://x.com/finnedfinch

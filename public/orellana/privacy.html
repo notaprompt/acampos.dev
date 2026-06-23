@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Orellana Tools — Privacy Policy</title>
+<style>
+  :root{--green:#108000;--ink:#1f2a36;--soft:#4a5763;--faint:#8a98a6;--line:#e3e6ea;--bg:#f6f7f9}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:48px 24px 90px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--green);letter-spacing:-.01em;margin-bottom:6px}
+  .brand .dot{width:11px;height:11px;border-radius:3px;background:var(--green)}
+  h1{font-size:30px;letter-spacing:-.02em;margin:14px 0 4px}
+  .eff{color:var(--faint);font-size:13px;margin-bottom:30px}
+  h2{font-size:18px;margin:34px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  p,li{color:var(--soft)}
+  a{color:var(--green)}
+  ul{padding-left:20px}
+  .note{background:#fff;border:1px solid var(--line);border-left:3px solid var(--green);border-radius:8px;padding:12px 16px;margin:16px 0;font-size:14.5px}
+  footer{margin-top:46px;padding-top:16px;border-top:1px solid var(--line);color:var(--faint);font-size:13px}
+  .ph{background:#fff7e6;border-bottom:1px dashed #d9b24a;padding:0 2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><span class="dot"></span> Orellana Tools</div>
+  <h1>Privacy Policy</h1>
+  <div class="eff">Effective 22 June 2026</div>
+
+  <p>Orellana Tools ("we," "the Service") connects to your QuickBooks Online ("QBO") company to help you draft and send invoices and record payments — on your instruction. This policy explains exactly what we access, what we store, and what we never do. We collect as little as possible.</p>
+
+  <div class="note">We never sell your data. We never share it for advertising. We never post an invoice or payment to your books without your explicit confirmation.</div>
+
+  <h2>1. What we access</h2>
+  <p>When you connect QuickBooks, you authorize the Service to use Intuit's API with the <strong>accounting</strong> scope (<code>com.intuit.quickbooks.accounting</code>). Through it we may read and write:</p>
+  <ul>
+    <li>Customers (names, email addresses) and service items</li>
+    <li>Invoices and their line items, balances, and status</li>
+    <li>Payments you ask us to record</li>
+    <li>Basic company information</li>
+  </ul>
+  <p>We access this data only to perform actions you request. We do not browse, mine, or analyze your books for any other purpose.</p>
+
+  <h2>2. What we store</h2>
+  <ul>
+    <li><strong>OAuth tokens</strong> for your company, stored with owner-only file permissions and used solely to reach <em>your</em> QBO realm. Tokens are never exposed in any page, log, or response.</li>
+    <li><strong>Your recurring-invoice template</strong>, if you configure one (the repeating customer/service/rate lines you choose to bill each cycle).</li>
+    <li><strong>An audit log</strong> of actions taken (which tool ran, for which company, the resolved action, and the result) so you and we can trace what happened.</li>
+    <li><strong>A minimal run record</strong> noting which invoices a batch created and sent, so we never create or email the same invoice twice.</li>
+  </ul>
+  <p>We do not retain copies of your customers' records beyond what is needed to perform the action you requested.</p>
+
+  <h2>3. How we use it</h2>
+  <p>Solely to provide the features you trigger: drafting invoices from text you provide, generating a batch of invoices from your recurring template, sending invoices through QuickBooks, recording payments, and answering questions about your books that you ask. Text you submit to draft an invoice may be processed automatically to resolve the customer, service, and amount.</p>
+
+  <h2>4. Who we share it with</h2>
+  <ul>
+    <li><strong>Intuit / QuickBooks</strong> — the source and destination of your accounting data.</li>
+    <li><strong>Infrastructure providers</strong> strictly necessary to run the Service (e.g., hosting). They process data on our behalf and may not use it for their own purposes.</li>
+  </ul>
+  <p>That's it. No data brokers, no advertisers, no resale.</p>
+
+  <h2>5. Tenant isolation</h2>
+  <p>Each connected company is isolated. A request scoped to one company can never read or write another company's QuickBooks. This is enforced in the Service's design, not by policy alone.</p>
+
+  <h2>6. Retention &amp; deletion</h2>
+  <p>You can disconnect QuickBooks at any time; on disconnect we delete the stored tokens for your company. To request deletion of any remaining data we hold for you, contact us (below) and we will remove it.</p>
+
+  <h2>7. Security</h2>
+  <p>Tokens are stored owner-only and transmitted over encrypted connections. Access to your QBO realm is gated by the credentials you authorize and revocable by you at any time through Intuit.</p>
+
+  <h2>8. Children</h2>
+  <p>The Service is for businesses and is not directed to children under 13.</p>
+
+  <h2>9. Changes</h2>
+  <p>If this policy changes materially, we will update the effective date above and, where appropriate, notify connected users.</p>
+
+  <h2>10. Contact</h2>
+  <p>Questions or deletion requests: <a href="mailto:alex@campos.works">alex@campos.works</a>. Operated by <span class="ph">Orellana Tools</span>, Virginia, USA.</p>
+
+  <footer>Orellana Tools — Privacy Policy — Effective 22 June 2026. Highlighted fields are placeholders to confirm before publishing.</footer>
+</div>
+</body>
+</html>

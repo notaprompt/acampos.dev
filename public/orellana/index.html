@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Orellana Tools — send a month of invoices in minutes</title>
+<meta name="description" content="Text-driven invoicing over QuickBooks for trades businesses. Send your whole month of invoices in minutes, not days — your books, nothing new to learn." />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="./vendor/mermaid.min.js"></script>
+<style>
+  :root{
+    --green:#2CA01C;--green-700:#108000;--ink:#16201b;--soft:#46554c;--faint:#8a988f;
+    --line:#e2e7e2;--bg:#f4f6f3;--card:#fff;
+    --disp:'Fraunces',Georgia,serif;--body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--green-700)}
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px}
+  /* hero */
+  .hero{background:radial-gradient(1200px 500px at 50% -10%,#1d3a24,#0c1c12);color:#fff;padding:64px 24px 72px;text-align:center}
+  .hero .badge{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:#9fe08f;border:1px solid rgba(159,224,143,.3);border-radius:30px;padding:5px 14px;margin-bottom:22px;letter-spacing:.02em}
+  .hero .dot{width:8px;height:8px;border-radius:50%;background:#2CA01C;box-shadow:0 0 0 4px rgba(44,160,28,.25)}
+  .hero h1{font-family:var(--disp);font-weight:600;font-size:clamp(34px,6vw,56px);line-height:1.04;letter-spacing:-.02em;margin:0 auto 16px;max-width:16ch}
+  .hero p{color:#c4d2c6;font-size:clamp(16px,2.4vw,19px);max-width:54ch;margin:0 auto 28px}
+  .cta{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:12px 22px;border-radius:10px;text-decoration:none;transition:transform .06s,box-shadow .15s}
+  .btn-p{background:#2CA01C;color:#fff;box-shadow:0 6px 20px rgba(44,160,28,.4)}
+  .btn-p:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(44,160,28,.5)}
+  .btn-s{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2)}
+  .btn-s:hover{background:rgba(255,255,255,.14)}
+  /* sections */
+  section{padding:62px 0}
+  .eyebrow{font-family:var(--body);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--green-700);margin:0 0 8px}
+  h2{font-family:var(--disp);font-weight:600;font-size:clamp(26px,4vw,36px);letter-spacing:-.02em;margin:0 0 14px;line-height:1.1}
+  .lead{font-size:18px;color:var(--soft);max-width:60ch}
+  /* problem stat */
+  .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:30px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 22px;border-top:4px solid var(--green)}
+  .stat .big{font-family:var(--disp);font-weight:700;font-size:34px;letter-spacing:-.02em}
+  .stat .lbl{color:var(--faint);font-size:14px;margin-top:2px}
+  .stat .was{color:var(--soft);font-size:14px;text-decoration:line-through;opacity:.7}
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px}
+  .step .n{font-family:var(--disp);font-weight:700;color:var(--green);font-size:15px;border:1.5px solid var(--green);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;margin-bottom:14px}
+  .step h3{font-family:var(--disp);font-weight:600;font-size:19px;margin:0 0 6px}
+  .step p{color:var(--soft);font-size:14.5px;margin:0}
+  /* diagram card */
+  .diagram{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 8px 20px;margin-top:30px;overflow-x:auto;box-shadow:0 1px 3px rgba(20,30,20,.05)}
+  .diagram .cap{font-size:12px;color:var(--faint);text-align:center;padding:8px 0 2px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+  .mermaid{display:flex;justify-content:center;min-width:0}
+  /* features */
+  .feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:30px}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:20px}
+  .feat .ic{width:38px;height:38px;border-radius:10px;background:#e3f4e0;color:var(--green-700);display:grid;place-items:center;font-size:18px;margin-bottom:12px}
+  .feat h3{font-family:var(--disp);font-weight:600;font-size:17px;margin:0 0 5px}
+  .feat p{color:var(--soft);font-size:14px;margin:0}
+  /* trust band */
+  .trust{background:#0c1c12;color:#fff;border-radius:18px;padding:40px 34px;margin-top:10px}
+  .trust h2{color:#fff}
+  .trust .lead{color:#bcccbe}
+  .trust ul{list-style:none;padding:0;margin:22px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  .trust li{display:flex;gap:11px;align-items:flex-start;font-size:14.5px;color:#dfe9e0}
+  .trust li b{color:#fff}
+  .chk{color:#7fd977;font-weight:800;flex:0 0 auto}
+  /* footer */
+  footer{background:#0a160e;color:#9fb0a2;padding:40px 24px;font-size:14px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:center}
+  footer a{color:#cfe0d1;text-decoration:none;margin-left:18px}
+  footer a:hover{color:#fff}
+  .note{background:#fff7e6;border:1px solid #e9d39a;border-radius:10px;padding:12px 16px;font-size:13.5px;color:#7a5f12;margin-top:24px}
+  @media(max-width:680px){.steps{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <span class="badge"><span class="dot"></span> Invoicing for trades, by text</span>
+    <h1>Send a month of invoices in minutes, not days.</h1>
+    <p>Orellana Tools turns the two-week grind of sending invoices into a single review-and-send — straight from a text message, on top of the QuickBooks you already use.</p>
+    <div class="cta">
+      <a class="btn btn-p" href="#how">See how it works</a>
+      <a class="btn btn-s" href="mailto:alex@campos.works">Get in touch</a>
+    </div>
+  </div>
+
+  <section class="wrap">
+    <p class="eyebrow">The problem</p>
+    <h2>Invoicing eats two weeks of every month.</h2>
+    <p class="lead">For a busy landscaping or trades business, billing isn't complicated — it's just relentless. Hundreds of invoices, typed one at a time, every cycle. The work is real; the typing shouldn't be.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="big">~500</div><div class="lbl">invoices a month, by hand</div></div>
+      <div class="stat"><div class="big">~2 weeks</div><div class="lbl">of someone's time, every month</div></div>
+      <div class="stat"><div class="big">minutes</div><div class="was">two weeks</div><div class="lbl">with Orellana Tools</div></div>
+    </div>
+  </section>
+
+  <section class="wrap" id="how">
+    <p class="eyebrow">How it works</p>
+    <h2>Capture once. Review the batch. Send it all.</h2>
+    <p class="lead">The repeating work bills itself into a batch; a person reviews the whole thing on one screen and sends it with a single confirm. Nothing goes out without that confirm.</p>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Capture</h3><p>Recurring jobs are templated; one-off jobs are captured by text from the field — once, at the source.</p></div>
+      <div class="step"><div class="n">2</div><h3>Review</h3><p>The month's invoices are generated as a batch. Anything unclear is held aside for a human, never billed blind.</p></div>
+      <div class="step"><div class="n">3</div><h3>Send all</h3><p>One confirmation sends the whole batch through QuickBooks. Idempotent and resumable — never a double-send.</p></div>
+    </div>
+
+    <div class="diagram">
+      <div class="cap">How the work flows — capture → review → send</div>
+      <pre class="mermaid">
+flowchart LR
+  classDef field fill:#fde7e7,stroke:#c5221f,color:#5a1a18;
+  classDef sysd fill:#e3f4e0,stroke:#108000,color:#0a5e00;
+  classDef human fill:#fff4d6,stroke:#9a6a00,color:#5a4200;
+  classDef client fill:#eef0f2,stroke:#8a98a6,color:#3a4654;
+
+  subgraph U["🧢 Field"]
+    U1["📸 Photo / text<br/>the job"]:::field
+  end
+  subgraph SYS["🤖 Orellana (over QuickBooks)"]
+    S1["Draft invoices<br/>from the recurring book"]:::sysd
+    S2["Auto-sync payments"]:::sysd
+  end
+  subgraph A["✅ Review"]
+    A1["Review the batch<br/>on one screen"]:::human
+    A2["One confirm →<br/>SEND ALL"]:::human
+  end
+  subgraph C["👤 Customer"]
+    C1["Gets the invoice,<br/>pays"]:::client
+  end
+
+  U1 --> S1 --> A1 --> A2 --> C1
+  C1 --> S2 --> A1
+      </pre>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <p class="eyebrow">What it does</p>
+    <h2>A curated set of tools, not another app to learn.</h2>
+    <div class="feats">
+      <div class="feat"><div class="ic">▤</div><h3>Batch invoicing</h3><p>Generate and send the whole month's invoices from your recurring customers in one reviewed pass.</p></div>
+      <div class="feat"><div class="ic">＄</div><h3>Payments</h3><p>Record check payments by text — matched to the right open invoice, never double-recorded.</p></div>
+      <div class="feat"><div class="ic">✎</div><h3>One-off invoices</h3><p>Speak or text a job from the field and get a correct draft invoice, in English or Spanish.</p></div>
+      <div class="feat"><div class="ic">📊</div><h3>Ask your books</h3><p>"Who's overdue?" "How much is outstanding?" Plain questions, instant answers from your live data.</p></div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="trust">
+      <p class="eyebrow" style="color:#9fe08f">Built to be trusted</p>
+      <h2>Your books. Your control. Always.</h2>
+      <p class="lead">Orellana Tools is a careful layer on top of QuickBooks — it never replaces it, and it never acts behind your back.</p>
+      <ul>
+        <li><span class="chk">✓</span><span><b>Confirm-before-send.</b> Every invoice and payment is previewed; nothing posts without your explicit confirmation.</span></li>
+        <li><span class="chk">✓</span><span><b>Never auto-sends.</b> A wrong amount can't go out under your brand — the batch you review is the batch that sends.</span></li>
+        <li><span class="chk">✓</span><span><b>It's your QuickBooks.</b> We read and write your existing books over Intuit's official API. Nothing new to migrate.</span></li>
+        <li><span class="chk">✓</span><span><b>Tenant isolation.</b> One company can never reach another's data — enforced by design.</span></li>
+      </ul>
+    </div>
+    <div class="note"><strong>Status:</strong> Orellana Tools is in active development and onboarding its first trades businesses. This page explains the product and is updated as it evolves.</div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div><strong style="color:#fff">Orellana Tools</strong> — invoicing for trades, by text · Virginia, USA</div>
+      <div>
+        <a href="mailto:alex@campos.works">Contact</a>
+        <a href="./privacy.html">Privacy</a>
+        <a href="./terms.html">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    mermaid.initialize({startOnLoad:true, theme:'base', themeVariables:{
+      fontFamily:'Inter, system-ui, sans-serif', fontSize:'13px',
+      lineColor:'#5c6b7a', clusterBkg:'#fbfdfb', clusterBorder:'#cdd9cd'
+    }});
+  </script>
+</body>
+</html>

@@ -1,93 +1,91 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 660" font-family="ui-monospace, 'SF Mono', Menlo, monospace" role="img" aria-label="CREATURE architecture: a green/red spine router gated by a judgment kernel, feeding memory, the keeper, and organs; cloud is a tool the local mind calls, never its brain.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 726" font-family="ui-monospace, 'SF Mono', Menlo, monospace" role="img" aria-label="CREATURE architecture. Input reaches a spine router that measures embedding distance against private memory centroids and classifies each request green (public) or red (private), escalating to a local judge only when uncertain, and failing closed to local. A judgment kernel compiled from Alex's principles gates the router and rides in every dispatched agent. Green requests may call a frontier cloud model as a tool that carries no memory; red requests stay on local Ollama or are skipped. Below sit three subsystems: a Hebbian memory that consolidates during idle dream cycles, the Keeper that feels needs and arbitrates the GPU, and fail-closed organs.">
   <defs>
-    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="#8a8578"/>
-    </marker>
-    <marker id="arg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="#7c9070"/>
-    </marker>
-    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="#c08457"/>
-    </marker>
+    <marker id="a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8f8a7c"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7c9b6f"/></marker>
+    <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#c58a5c"/></marker>
   </defs>
 
-  <rect x="0" y="0" width="1000" height="660" fill="#12120d"/>
+  <rect x="0" y="0" width="1200" height="726" fill="#100f0b"/>
+  <rect x="0" y="0" width="1200" height="726" fill="none"/>
 
-  <!-- title -->
-  <text x="40" y="46" fill="#b8965a" font-size="20" letter-spacing="3">CREATURE — THE GREEN / RED SPINE</text>
-  <text x="40" y="70" fill="#8a8578" font-size="12.5" letter-spacing="1">sovereign by construction · private cognition never leaves the machine</text>
+  <text x="44" y="50" fill="#e0b957" font-size="21" letter-spacing="4">THE GREEN / RED SPINE</text>
+  <text x="44" y="74" fill="#8f8a7c" font-size="12.5" letter-spacing="0.5">how a request is judged before anything is allowed to act · private cognition never leaves the machine</text>
 
   <!-- input -->
-  <text x="40" y="150" fill="#8a8578" font-size="13">input</text>
-  <line x1="80" y1="145" x2="180" y2="145" stroke="#8a8578" stroke-width="1.5" marker-end="url(#ar)"/>
+  <text x="44" y="168" fill="#8f8a7c" font-size="12.5">a request</text>
+  <line x1="118" y1="163" x2="248" y2="163" stroke="#8f8a7c" stroke-width="1.4" marker-end="url(#a)"/>
 
-  <!-- spine router -->
-  <rect x="182" y="100" width="300" height="92" rx="4" fill="#1b1b13" stroke="#b8965a" stroke-width="1.5"/>
-  <text x="200" y="130" fill="#e6e1d3" font-size="15.5" letter-spacing="1">SPINE ROUTER</text>
-  <text x="200" y="152" fill="#8a8578" font-size="12">embedding-distance classifier</text>
-  <text x="200" y="170" fill="#8a8578" font-size="12">fails closed → local</text>
+  <!-- SPINE ROUTER -->
+  <rect x="250" y="118" width="372" height="92" rx="5" fill="#1a190f" stroke="#e0b957" stroke-width="1.4"/>
+  <text x="270" y="148" fill="#efe8d3" font-size="15" letter-spacing="1">SPINE ROUTER</text>
+  <text x="270" y="171" fill="#9c9788" font-size="12">measures embedding distance to my</text>
+  <text x="270" y="188" fill="#9c9788" font-size="12">private memory centroids · fails closed</text>
 
-  <!-- classify branches -->
-  <!-- green public -> cloud -->
-  <path d="M482 128 L720 128" stroke="#7c9070" stroke-width="1.5" fill="none" marker-end="url(#arg)"/>
-  <text x="560" y="120" fill="#7c9070" font-size="11.5">green · public</text>
-  <rect x="722" y="100" width="238" height="58" rx="4" fill="#161a13" stroke="#7c9070" stroke-width="1.3"/>
-  <text x="740" y="126" fill="#a9bf9c" font-size="13.5">CLOUD — as a TOOL</text>
-  <text x="740" y="145" fill="#7f8a76" font-size="11">self-contained task only · no memory</text>
+  <!-- green lane -> cloud -->
+  <line x1="622" y1="150" x2="758" y2="150" stroke="#7c9b6f" stroke-width="1.5" marker-end="url(#ag)"/>
+  <text x="638" y="142" fill="#7c9b6f" font-size="11">green · public</text>
+  <rect x="760" y="120" width="400" height="60" rx="5" fill="#141a11" stroke="#7c9b6f" stroke-width="1.3"/>
+  <text x="780" y="146" fill="#adc49f" font-size="13.5">CLOUD — a frontier model, as a tool</text>
+  <text x="780" y="166" fill="#7f8c73" font-size="11">given a self-contained task · carries no memory</text>
 
-  <!-- red private -> local -->
-  <path d="M482 165 L720 190" stroke="#c08457" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <text x="558" y="190" fill="#c08457" font-size="11.5">red · private</text>
-  <rect x="722" y="170" width="238" height="52" rx="4" fill="#1e1712" stroke="#c08457" stroke-width="1.3"/>
-  <text x="740" y="195" fill="#d6a179" font-size="13.5">LOCAL ONLY — Ollama</text>
-  <text x="740" y="213" fill="#8a7a6a" font-size="11">stays on the box, or skips</text>
+  <!-- red lane -> local -->
+  <line x1="622" y1="184" x2="758" y2="214" stroke="#c58a5c" stroke-width="1.5" marker-end="url(#ar)"/>
+  <text x="636" y="212" fill="#c58a5c" font-size="11">red · private</text>
+  <rect x="760" y="196" width="400" height="60" rx="5" fill="#1d160f" stroke="#c58a5c" stroke-width="1.3"/>
+  <text x="780" y="222" fill="#d9a575" font-size="13.5">LOCAL ONLY — Ollama, on my hardware</text>
+  <text x="780" y="242" fill="#8f7c6a" font-size="11">or it simply skips the request</text>
 
-  <!-- gate down to kernel -->
-  <path d="M332 192 L332 250" stroke="#8a8578" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
-  <text x="344" y="228" fill="#8a8578" font-size="11.5">gated by</text>
+  <!-- escalation note -->
+  <text x="270" y="236" fill="#6f6a5c" font-size="11">on the fence → a local judge decides, never a guess</text>
 
-  <!-- judgment kernel -->
-  <rect x="182" y="252" width="300" height="86" rx="4" fill="#1b1b13" stroke="#b8965a" stroke-width="1.5"/>
-  <text x="200" y="282" fill="#e6e1d3" font-size="15.5" letter-spacing="1">JUDGMENT KERNEL</text>
-  <text x="200" y="303" fill="#8a8578" font-size="12">my principles, weighted (sovereignty = 1.0)</text>
-  <text x="200" y="321" fill="#8a8578" font-size="12">monotonic ratchet → only tightens</text>
+  <!-- router down to kernel -->
+  <line x1="436" y1="210" x2="436" y2="268" stroke="#8f8a7c" stroke-width="1.4" marker-end="url(#a)"/>
 
-  <!-- kernel injected into cloud/local note -->
-  <path d="M482 295 L718 295" stroke="#5f5a4e" stroke-width="1.1" stroke-dasharray="4 4" fill="none"/>
-  <text x="520" y="288" fill="#6f6a5c" font-size="10.5">rides in every dispatched agent</text>
+  <!-- JUDGMENT KERNEL -->
+  <rect x="250" y="270" width="372" height="94" rx="5" fill="#1a190f" stroke="#e0b957" stroke-width="1.4"/>
+  <text x="270" y="300" fill="#efe8d3" font-size="15" letter-spacing="1">JUDGMENT KERNEL</text>
+  <text x="270" y="323" fill="#9c9788" font-size="12">my principles, compiled and weighted</text>
+  <text x="270" y="341" fill="#9c9788" font-size="12">sovereignty = 1.00 · a ratchet that only</text>
+  <text x="270" y="358" fill="#9c9788" font-size="12">tightens a decision, never loosens it</text>
 
-  <!-- fan out to three subsystems -->
-  <path d="M300 338 L300 390 L200 390 L200 430" stroke="#8a8578" stroke-width="1.4" fill="none" marker-end="url(#ar)"/>
-  <path d="M332 338 L332 430" stroke="#8a8578" stroke-width="1.4" fill="none" marker-end="url(#ar)"/>
-  <path d="M364 338 L364 390 L470 390 L470 430" stroke="#8a8578" stroke-width="1.4" fill="none" marker-end="url(#ar)"/>
+  <!-- kernel rides in dispatched agents (dashed to cloud lane) -->
+  <path d="M622 300 L757 150" stroke="#5f5a4e" stroke-width="1.1" stroke-dasharray="4 5" fill="none"/>
+  <text x="640" y="286" fill="#6f6a5c" font-size="10.5">rides in every dispatched agent</text>
 
-  <!-- memory -->
-  <rect x="70" y="432" width="255" height="120" rx="4" fill="#17170f" stroke="#3f3d33" stroke-width="1.2"/>
-  <text x="88" y="460" fill="#cdbf8f" font-size="14.5" letter-spacing="1">MEMORY</text>
-  <text x="88" y="483" fill="#8a8578" font-size="11.5">Hebbian graph · LTP / LTD</text>
-  <text x="88" y="502" fill="#8a8578" font-size="11.5">strength decay · principle-tier exempt</text>
-  <text x="88" y="521" fill="#8a8578" font-size="11.5">NREM compress · REM recombine</text>
-  <text x="88" y="540" fill="#6f6a5c" font-size="11">SQLite + FTS5, local</text>
+  <!-- fan to three subsystems -->
+  <path d="M340 364 L340 400 L226 400 L226 436" stroke="#8f8a7c" stroke-width="1.3" fill="none" marker-end="url(#a)"/>
+  <path d="M436 364 L436 400 L586 400 L586 436" stroke="#8f8a7c" stroke-width="1.3" fill="none" marker-end="url(#a)"/>
+  <path d="M532 364 L532 400 L946 400 L946 436" stroke="#8f8a7c" stroke-width="1.3" fill="none" marker-end="url(#a)"/>
 
-  <!-- keeper -->
-  <rect x="337" y="432" width="255" height="120" rx="4" fill="#17170f" stroke="#3f3d33" stroke-width="1.2"/>
-  <text x="355" y="460" fill="#cdbf8f" font-size="14.5" letter-spacing="1">THE KEEPER</text>
-  <text x="355" y="483" fill="#8a8578" font-size="11.5">interoception — feels its needs</text>
-  <text x="355" y="502" fill="#8a8578" font-size="11.5">negotiates a GPU mutex</text>
-  <text x="355" y="521" fill="#8a8578" font-size="11.5">homeostat, not a scheduler</text>
-  <text x="355" y="540" fill="#6f6a5c" font-size="11">born from a real starvation bug</text>
+  <!-- MEMORY -->
+  <rect x="56" y="438" width="340" height="150" rx="5" fill="#16150e" stroke="#403d33" stroke-width="1.2"/>
+  <text x="76" y="468" fill="#cdbf8f" font-size="14" letter-spacing="1">MEMORY</text>
+  <text x="76" y="493" fill="#9c9788" font-size="11.5">a Hebbian graph, not a log</text>
+  <text x="76" y="512" fill="#9c9788" font-size="11.5">co-use strengthens · disuse decays</text>
+  <text x="76" y="531" fill="#9c9788" font-size="11.5">principles + voice never decay</text>
+  <text x="76" y="558" fill="#7c9b6f" font-size="11.5">idle → NREM compress · REM recombine</text>
+  <!-- dream loop -->
+  <path d="M356 548 q34 8 34 -22 q0 -30 -34 -22" fill="none" stroke="#7c9b6f" stroke-width="1.2" marker-end="url(#ag)"/>
 
-  <!-- organs -->
-  <rect x="604" y="432" width="326" height="120" rx="4" fill="#17170f" stroke="#3f3d33" stroke-width="1.2"/>
-  <text x="622" y="460" fill="#cdbf8f" font-size="14.5" letter-spacing="1">ORGANS</text>
-  <text x="622" y="483" fill="#8a8578" font-size="11.5">fail-closed contract — membrane · toolbox · genome</text>
-  <text x="622" y="502" fill="#8a8578" font-size="11.5">three laws, default = refuse</text>
-  <text x="622" y="521" fill="#8a8578" font-size="11.5">email · projects · scribe · mirror · journal</text>
-  <text x="622" y="540" fill="#6f6a5c" font-size="11">creature-hands: iOS · browser · headless worker</text>
+  <!-- KEEPER -->
+  <rect x="416" y="438" width="340" height="150" rx="5" fill="#16150e" stroke="#403d33" stroke-width="1.2"/>
+  <text x="436" y="468" fill="#cdbf8f" font-size="14" letter-spacing="1">THE KEEPER</text>
+  <text x="436" y="493" fill="#9c9788" font-size="11.5">interoception — it feels a need</text>
+  <text x="436" y="512" fill="#9c9788" font-size="11.5">arbitrates the GPU like a scarce organ</text>
+  <text x="436" y="531" fill="#9c9788" font-size="11.5">a homeostat, not a scheduler</text>
+  <text x="436" y="558" fill="#c58a5c" font-size="11.5">born from a real starvation bug</text>
+
+  <!-- ORGANS -->
+  <rect x="776" y="438" width="368" height="150" rx="5" fill="#16150e" stroke="#403d33" stroke-width="1.2"/>
+  <text x="796" y="468" fill="#cdbf8f" font-size="14" letter-spacing="1">ORGANS</text>
+  <text x="796" y="493" fill="#9c9788" font-size="11.5">a fail-closed contract each one signs</text>
+  <text x="796" y="512" fill="#9c9788" font-size="11.5">membrane · toolbox · genome</text>
+  <text x="796" y="531" fill="#9c9788" font-size="11.5">three laws, default = refuse</text>
+  <text x="796" y="558" fill="#8f8a7c" font-size="11.5">email · scribe · mirror · journal · hands</text>
 
   <!-- legend -->
-  <text x="40" y="612" fill="#7c9070" font-size="11.5">■ green = public, cloud-eligible</text>
-  <text x="300" y="612" fill="#c08457" font-size="11.5">■ red = private, local-only</text>
-  <text x="560" y="612" fill="#6f6a5c" font-size="11.5">— — kernel travels with every agent</text>
-  <text x="40" y="634" fill="#5f5a4e" font-size="10.5">the law: cloud is a tool the local mind calls with a self-contained task; it is never the brain, and it never carries memory.</text>
+  <rect x="44" y="628" width="11" height="11" fill="#7c9b6f"/><text x="62" y="638" fill="#8f8a7c" font-size="11.5">green — public, may reach the cloud</text>
+  <rect x="330" y="628" width="11" height="11" fill="#c58a5c"/><text x="348" y="638" fill="#8f8a7c" font-size="11.5">red — private, stays on the box</text>
+  <line x1="600" y1="633" x2="626" y2="633" stroke="#5f5a4e" stroke-width="1.1" stroke-dasharray="4 5"/><text x="634" y="638" fill="#8f8a7c" font-size="11.5">the kernel travels with every agent</text>
+  <text x="44" y="668" fill="#6f6a5c" font-size="11">The law, in one line: the cloud is a tool the local mind chooses to call. It is never the mind, and it never carries a memory off the machine.</text>
 </svg>

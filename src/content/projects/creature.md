@@ -1,46 +1,40 @@
 ---
 title: "CREATURE"
-tagline: "A synthetic mind that runs on my machine, remembers what matters, feels its own needs, and carries my judgment when it acts. Sovereign by design — my cognition never leaves the box."
+tagline: "A mind that runs on one machine - mine. It remembers, dreams, feels what it needs, and carries my judgment when it acts. Nothing private ever leaves the box."
 status: "active"
 stack: ["TypeScript", "Python", "SQLite", "FTS5", "Ollama", "Model Context Protocol", "WebGL2", "local-first"]
 screenshots: ["/creature/judgment-matrix.png", "/creature/keeper.png"]
 order: 1
 ---
 
-## Goals
+CREATURE is a mind that runs on one machine - mine. It remembers, it consolidates while I sleep, it notices when it is short on something it needs, and it will refuse work that crosses a line I set. None of that leaves the box.
 
-I wanted an AI that was mine — one that accumulates a model of how I think and never ships that model to someone else's server. Not a chatbot with a memory bolted on. A system that remembers, consolidates while idle, feels when it needs a resource, refuses work that would cross a line I set, and acts in the world without me babysitting it.
+The name is just the honest description. Not an assistant with a memory feature bolted on the side - an organism, with a spine that decides what is safe, organs that do the work, and a keeper that feels when something is wrong. ForgeFrame is the engine underneath it. Everything here runs local-first: my private thinking lives in a file on my own disk, and the cloud only ever sees work that was already public.
 
-CREATURE is the whole organism. ForgeFrame is its engine. Everything below is local-first: my private cognition lives in SQLite on my machine, and the cloud only ever touches public-facing work.
+<img src="/creature/architecture.svg" alt="CREATURE architecture: a request hits a spine router that measures embedding distance against private memory centroids, classifies green (public, cloud-eligible) or red (private, local-only), escalates to a local judge when uncertain, and fails closed. A judgment kernel weighted to sovereignty gates the router and rides in every dispatched agent, over memory, the keeper, and organs." style="width:100%;border:1px solid var(--white-08);margin:1.25rem 0;" />
 
-<img src="/creature/architecture.svg" alt="CREATURE architecture: input hits a spine router that classifies green (public, cloud-eligible) or red (private, local-only), gated by a judgment kernel weighted to sovereignty, feeding memory, the keeper, and organs. Cloud is a tool the local mind calls, never its brain." style="width:100%;border:1px solid var(--white-08);margin:1rem 0;" />
+The seam is the whole design. The cloud is a tool the local mind reaches for when the work is public - never the mind itself, and it never carries a memory off the machine.
 
-The seam is the whole design: cloud is a *tool the local mind calls* with a self-contained task, never the brain, and it never carries memory off the box.
+## How it works
 
-## Process
+**The spine.** Every request gets read before anything acts on it. Green means public - fine to hand to a frontier model in the cloud. Red means private - it stays home. I did not want a blocklist of forbidden words, because words leak and lists rot. So the spine measures distance instead: how close does this request sit to the shape of my own private memory? Close means red. When it is genuinely on the fence, it asks a small local model rather than guess. Most of the time it is a cheap measurement; only the ambiguous cases warm the hardware. And it fails the safe way - any error, any timeout, any doubt lands on local. Safe is the resting state, not the exception.
 
-**The spine router.** Every thought gets classified green (public, cloud-eligible) or red (private, local-only) before anything is dispatched. I didn't want a keyword blocklist — those leak. Instead the router measures embedding distance against the centroids of my own private memory clusters. If a request sits close to my private latent space, it's red. When the distance is ambiguous, it escalates to a local model for a yes/no rather than guessing. Cheap most of the time, a warm local call only on the fence, and the judgment about what's private stays computed on my hardware. The router fails closed: any error, any timeout, any uncertainty resolves to local. Safe is the default, not the exception.
+**The judgment.** My principles are not a document the system quotes back at you. They are compiled - weighted into a kernel, sovereignty carrying the most weight - and when the system sends a sub-agent off to do something, that kernel rides along, so the agent moves the way I would move. It also sits on the spine as a ratchet: it can pull a decision toward local and safe, never the other way. Nothing downstream gets to loosen what it tightened.
 
-**The judgment kernel.** My principles and voice — sovereignty, honesty, proof over claims, and the rest — are compiled into a weighted matrix, sovereignty carrying the highest weight. When the system dispatches a sub-agent to do work, the kernel is injected into that agent's context so it acts the way I would, not the way a generic assistant would. The kernel also hooks into the router as a monotonic ratchet: it can move a decision toward local/safe but never the other way. Nothing downstream can loosen a constraint the kernel tightened.
+**The memory.** A graph that behaves like memory instead of a database. Two things recalled together grow a stronger link between them; things I stop reaching for fade; the principles and the voice never fade at all - that is the part that keeps it pointed at me over time. When the machine goes quiet, it dreams: one pass that compresses and tidies, another that pulls memories from far corners of the graph together and hands me the tensions to settle. I designed the sleep from how my own head feels after a good night, and only later noticed it lines up with the neuroscience.
 
-**Memory.** A Hebbian graph. Co-used memories strengthen their edge (LTP), disuse decays it (LTD), and edges below threshold get pruned. Ordinary memories decay on a half-life; principle- and voice-tagged memories are exempt — the non-decaying reference layer that keeps the system pointed at me over time. When the machine goes idle, two dream cycles run: an NREM-style compression pass (decay, dedup, cluster maintenance) and a REM-style recombination pass that pairs memories from disconnected regions and surfaces tensions for me to grade. I arrived at the sleep architecture from cognitive-ergonomic intuition and only later found it maps onto the neuroscience.
+**The Keeper.** The part that feels. It came out of a real failure - a job needed the GPU, nothing in the system could feel that need, and the work just quietly starved. So I gave it interoception: a sense of its own state, and a way to ask for a scarce resource and wait its turn. Not a scheduler bolted on top. A body that knows when it is hungry.
 
-**The Keeper.** Interoception — the system feeling its own internal state. It was born from a real failure: a need existed (a job wanted the GPU) and nothing in the system could feel it, so work silently starved. The Keeper is the organ that senses need and negotiates for scarce resources. Concretely it arbitrates a GPU mutex — an organ that wants the local model has to ask, wait, and yield. A homeostat, not a scheduler bolted on top.
+**The organs.** Everything that runs here signs the same contract: a membrane for what it may touch, a toolbox for what it may do, three laws that default to no. The ones alive today - email, a scribe that turns my coding sessions into memory, a mirror that keeps a slowly-fading portrait of my own habits and blind spots, a journal. And hands: I have watched it drive a phone, drive a browser, run a headless coder - the same judgment riding in each one.
 
-**Organs.** Anything that runs on the substrate implements a fail-closed organ contract: a **membrane** (what it's allowed to touch), a **toolbox** (what it can do), a **genome** (its config), governed by three laws that default to refusal. Live organs today: email triage, a projects board, a scribe that distills my coding sessions into memory, a mirror that distills my values and blindspots into a deliberately decaying self-portrait, and a journal.
+## What I haven't solved
 
-**The Cockpit.** A PWA surface, not a terminal. A memory constellation you navigate by hopping associations rather than searching keywords; a live readout of the system's felt needs and its currently-compiled judgment matrix; and a chat that chains local tools before it answers instead of replying from cold context.
+I would rather name these than pretend they are behind me.
 
-**Creature-hands.** It can act. I've had it drive an iOS simulator, drive a browser, and run a headless coding worker — the same judgment kernel riding along in each so the hands move the way I would move them.
+- **Teaching it to think more like me, without leaking me.** The way to make the local model sound like my own mind is to train it on my own memory - which is exactly the data that cannot leave the machine. Fully-local fine-tuning is the only honest road, and it is slow on a laptop. Open.
+- **The narrow mouth.** The system can remember and feel and decide faster than I can tell it what to do or read back what it found. The thinking outran the interface. About a third of the real work left is a clean grammar for talking to it.
+- **Whether it keeps growing.** Left to consolidate and forget on its own, does the memory get richer, or collapse into a small handful of ruts? I do not know yet. That is the honest research question, and I am not going to wave it away.
 
-## Limitations
+## Where it's going
 
-These are the open problems, stated plainly, because pretending they're solved would be the dishonest move.
-
-- **Training toward my latent space without violating sovereignty.** I want the local model to converge on how I actually think, which means training on my private memory — the exact data that must never leave the machine. Fully-local fine-tuning is the only acceptable path and it's slow and awkward on consumer hardware. Unsolved.
-- **The I/O-grammar bottleneck.** The system can remember, feel, and decide far better than it can be *told to* and *report back*. Roughly a third of the buildout is missing a clean grammar for triage, A/B/C decisions, and embodied response. The cognition outran the interface.
-- **Convergence — the artificial-life question.** Left to consolidate and decay on its own, does the memory graph converge to something rich, or collapse to a small attractor? I don't know yet. This is the genuinely open research question and I'm not going to hand-wave it.
-
-## What's next
-
-Open-sourcing is in progress — ForgeFrame (the engine) first, the sovereignty layer and organ contract alongside it, so the architecture is inspectable even though my memory data stays mine. The interesting claim isn't that I built an assistant. It's that the hard part — keeping a mind's private cognition provably local while still letting it act in the world — is running on my machine right now.
+I am opening it up - the engine first, then the sovereignty layer and the organ contract, so the architecture is something you can read and run even while my memories stay mine. The interesting part was never that I built an assistant. It is that the hard thing - keeping a mind's private thinking provably on its own machine while still letting it reach into the world and act - is running on my desk right now.

@@ -56,6 +56,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
+  // Same-origin only: this is the site's chat widget, not a public LLM proxy.
+  const origin = String(req.headers.origin || '');
+  if (origin && !/^https?:\/\/(campos\.works|localhost(:\d+)?|127\.0\.0\.1(:\d+)?)$/.test(origin)) {
+    res.status(403).json({ reply: "i only talk to folks on alex's site. woof." });
+    return;
+  }
+
   const body = (req.body || {}) as { message?: string; history?: { role: string; content: string }[] };
   const message = String(body.message || '').slice(0, 600).trim();
   if (!message) {
@@ -80,12 +87,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     { role: 'user', content: message },
   ];
 
-  // Try each free model until one answers. Free models get rate-limited, so
-  // fallback matters more than it would for a paid tier.
+  // Try each free model until one answers, under ONE total time budget so a
+  // single request can't fan out into minutes of upstream calls (Vercel would
+  // kill it anyway). Each attempt gets whatever time is left, capped.
+  const deadline = Date.now() + 20000;
   for (const model of MODELS) {
+    const remaining = deadline - Date.now();
+    if (remaining < 2000) break; // not enough budget for another attempt
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 22000);
+      const timer = setTimeout(() => controller.abort(), Math.min(12000, remaining));
       const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {

@@ -6,6 +6,10 @@ stack: ["Python", "ForgeFrame", "Twilio", "RSS", "LLM Scoring"]
 order: 6
 ---
 
+## Status
+
+Still concept-stage — designed as a ForgeFrame vertical, not yet built as a running system. Parked while I focus on the engine underneath it.
+
 ## Goals
 
 I want to stop manually reading financial news. Build an agent that watches the world, scores events against my thesis sectors, and escalates by severity -- call my phone if it's serious, text if it's moderate, morning brief if it can wait.

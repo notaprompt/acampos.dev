@@ -27,6 +27,12 @@ The old version was a confirmation machine. 17 out of 20 distillations said "no 
 
 Always-on via launchd. Server and worker auto-start on login, restart on crash.
 
+## Status — what stalled
+
+The archive-ingest pipeline is stalled. Roughly 1,900 of 2,600 items are still unprocessed. The cause is a summarize bug: an Ollama route on the resume path returns empty, so batches silently produce nothing instead of failing loudly. I've diagnosed it — the fix is keep-alive on the model, fail-fast on timeout instead of swallowing it, and the correct model id on that route — but I haven't re-run the backlog yet. Until I do, the archive side is incomplete and I'd rather say so than pretend the corpus is whole.
+
+The live share-sheet path below still works. This is only the bulk-archive ingest that's blocked.
+
 ## In production
 
 Running on real input. The signal gate does most of its work by rejecting - most shared content scores familiar and never reaches memory. The few items that clear the resonance × novelty threshold write back to ForgeFrame. The point of the system is the rejection, not the throughput.

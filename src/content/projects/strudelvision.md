@@ -9,6 +9,10 @@ hidden_demo: true
 order: 5
 ---
 
+## Status
+
+Parked, not dead. It runs, it kinda works, and I pick it back up on the odd Saturday night. No active roadmap — it's a toy I made for myself. Local demo only (needs Ollama running).
+
 ## What happened
 
 Saw the tunnel on this site reacting to music. Wanted more of that. Added a second shader. Then a third. Then a synth pad because it seemed reasonable at the time. Then a DJ mixer. Then TouchDesigner because the WebSocket was right there.

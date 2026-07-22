@@ -959,31 +959,21 @@
       'i will remember this. unlike your browser. i will remember.',
     ];
 
-    var treatDisabled = false;
-
+    // Throw the bone -> Oliver lights up, scoots over, and opens the conversation.
     treatBtn.addEventListener('click', function (e) {
       e.stopPropagation();
-      if (treatDisabled) return;
+      if (interactionActive) return;
       resetMoodToAlert();
 
-      // Disable for 30 seconds
-      treatDisabled = true;
-      treatBtn.classList.add('or-treat-disabled');
-      setTimeout(function () {
-        treatDisabled = false;
-        treatBtn.classList.remove('or-treat-disabled');
-      }, 30000);
-
-      // Track treats
+      // Count the bones (kept for flavor)
       var totalTreats = parseInt(localStorage.getItem('oliver_treats') || '0', 10);
       totalTreats++;
       localStorage.setItem('oliver_treats', String(totalTreats));
 
-      // Play treat animation: bounce(11) -> tongue(6) -> wiggle left(8) -> wiggle right(9) -> happy squint(3) -> bounce(11) -> idle(0)
+      // Happy animation, THEN open the chat
       var treatFrames = [11, 6, 8, 9, 3, 11, 0];
       var frameIdx = 0;
       interactionActive = true;
-
       var treatAnim = setInterval(function () {
         if (frameIdx < treatFrames.length) {
           renderFrame(FRAMES[treatFrames[frameIdx]]);
@@ -991,16 +981,9 @@
         } else {
           clearInterval(treatAnim);
           interactionActive = false;
-
-          // Show quote
-          if (totalTreats === 10) {
-            showBubble('you\'ve fed me ten times. i think this means we\'re family now.');
-          } else {
-            var q = TREAT_QUOTES[Math.floor(Math.random() * TREAT_QUOTES.length)];
-            showBubble(q);
-          }
+          openChat();
         }
-      }, 200);
+      }, 130);
     });
 
     // ── Feature 4: Pet mechanic ──

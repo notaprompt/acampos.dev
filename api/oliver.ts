@@ -4,7 +4,16 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 // Sovereign line: he only ever knows the PUBLIC facts below. No private data,
 // no memory, no backend named. He answers about Alex and points the way.
 
-const MODEL = process.env.OLIVER_MODEL || 'openai/gpt-4o-mini';
+// Free OpenRouter models, tried in order — no balance required. Override with
+// OLIVER_MODEL (comma-separated to set your own fallback chain).
+const MODELS = (process.env.OLIVER_MODEL
+  ? process.env.OLIVER_MODEL.split(',').map((m) => m.trim()).filter(Boolean)
+  : [
+      'deepseek/deepseek-chat-v3-0324:free',
+      'meta-llama/llama-3.3-70b-instruct:free',
+      'google/gemini-2.0-flash-exp:free',
+      'qwen/qwen-2.5-72b-instruct:free',
+    ]);
 const KEY = process.env.OPENROUTER_API_KEY || '';
 
 // Public grounding only. Everything here is already on the site.
@@ -71,36 +80,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     { role: 'user', content: message },
   ];
 
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 25000);
-    const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://campos.works',
-        'X-Title': 'campos.works - Oliver',
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages,
-        temperature: 0.8,
-        max_tokens: 320,
-        stream: false,
-      }),
-      signal: controller.signal,
-    });
-    clearTimeout(timer);
-
-    if (!r.ok) {
-      res.status(200).json({ reply: 'my brain hiccuped mid-thought. try me again? *shakes it off*' });
-      return;
+  // Try each free model until one answers. Free models get rate-limited, so
+  // fallback matters more than it would for a paid tier.
+  for (const model of MODELS) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 22000);
+      const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://campos.works',
+          'X-Title': 'campos.works - Oliver',
+        },
+        body: JSON.stringify({ model, messages, temperature: 0.8, max_tokens: 320, stream: false }),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      if (!r.ok) continue; // rate-limited or unavailable — try the next free model
+      const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+      const reply = data?.choices?.[0]?.message?.content?.trim();
+      if (reply) {
+        res.status(200).json({ reply });
+        return;
+      }
+    } catch {
+      // timeout or network — try the next model
     }
-    const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
-    const reply = data?.choices?.[0]?.message?.content?.trim();
-    res.status(200).json({ reply: reply || '...woof? i lost the thread. ask me again.' });
-  } catch {
-    res.status(200).json({ reply: 'i zoned out chasing a squirrel. say that once more?' });
   }
+  res.status(200).json({
+    reply: 'all my brains are busy chasing the same squirrel right now (free models, all rate-limited). give it a minute and throw me another bone.',
+  });
 }

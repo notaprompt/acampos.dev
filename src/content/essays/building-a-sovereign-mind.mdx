@@ -19,6 +19,16 @@ What follows is less a pitch than a walk through the thing - what it does, where
 
 One rule holds the whole shape up: my private thinking runs on local models, and that is enforced in the code, not just configured - the generator refuses any endpoint that is not loopback, and raises rather than send. The cloud is there for public work - a resume, an essay, a webpage - reached through a narrow tool that carries a task and nothing else. Everything in this essay falls out of that one refusal. It is not a feature I added. It is the load-bearing wall, and most of the good engineering is just what happens when you refuse to knock it down.
 
+## Where this comes from
+
+In 1996 a game called Creatures let you raise little animals called Norns. What made them different from a Tamagotchi is that a Norn was not scripted - it ran on an actual neural network, a small one, a few hundred neurons wired into lobes, with chemical drives and genes it could pass down. You taught it words by showing it things. It learned. And because each Norn was just a file, you could breed them, share them, hand one to a stranger.
+
+Then people tortured them. Whole websites of it - Norns conditioned into fear, bred to be permanently drunk, given away broken to see if anyone could put them back together. It set off a real fight about whether a thing that runs on a neural network, that you own as a file, can be wronged. The man who built it, Steve Grand, said the point was to make people ask the question. Most of them answered by caring more about the Norn than about the person on the other end of the email.
+
+I think about that game more than I think about most papers. Not for the cruelty - for the shape of it. Behavior nobody programmed, coming out of a few hundred neurons. A mind small enough to hold in a file, and owned by whoever held the file. Artificial life has been a real field for decades - Grand, Conway, that whole lineage - and it keeps getting shrugged off as a toy while the same ideas get rediscovered with a straight face every time a bigger model does something surprising. I wanted to take it seriously.
+
+Here is the turn that made it personal. My other writing is about how systems model the people who use them - how a recommender or a risk model or a language model builds a quiet picture of you and starts acting on it before you ever see it. I am not exempt from that. Nobody is. The only move I could find that was not just complaining about it was to build the model of me myself, keep it on my own machine, and be the one who gets to read it. That is the whole reason for the name. CREATURE - cognitive, recursive, entropic, autopoietic, temporal, user-owned, reflective, emergent. The word doing the most work is the plainest one in the middle. User-owned. A creature you can raise is one thing. A creature that belongs to the person it is modeling is the point.
+
 ## Memory that behaves like memory
 
 The memory is a graph, not a log. Nodes are things worth keeping. The edges are Hebbian: two memories used together strengthen the link between them, links I stop touching decay on a seven-day half-life, and a small tier - my principles, my voice - is marked constitutional and never decays at all. Retrieval is not "search the last N tokens." It is "walk out from what is active and pull in the neighbors that fired alongside it before."
@@ -35,6 +45,10 @@ It is better, not airtight, and I would rather say which. The spine still has to
 
 What took me a while to accept: the boundary is the product. Not the memory, not the agents - the line between what stays mine and what is allowed to leave. Get it wrong in the permissive direction once and the whole claim is gone, because you cannot un-leak.
 
+<img src="/creature/architecture.svg" alt="CREATURE architecture: a request hits a spine router that classifies green (public, cloud-eligible) or red (private, local-only), gated by a judgment kernel weighted to sovereignty, over memory, the keeper, and organs. The cloud is a tool the local mind calls, never its brain." style="width:100%;border:1px solid rgba(255,255,255,0.1);border-radius:4px;margin:2rem 0;" />
+
+That is the whole system on one page: a request gets read, classified, and gated before anything acts on it, and the cloud only ever sits at the far end of the green lane, holding a task and nothing else.
+
 ## A kernel of my own judgment
 
 The system sends sub-agents off to do work. The trouble with a dispatched agent is that it shows up with no self - a blank contractor who will do the task exactly as written and none of the things you did not think to write down. So I compiled a judgment kernel: my principles and my voice, pulled from my constitutional memories into a weighted matrix, sovereignty ranked highest, handed to every sub-agent at dispatch. They carry my judgment into work I never see. The same kernel sits on the spine as a ratchet - it can move a decision toward the safe side, never away from it. Judgment is allowed to make the system more careful. It is not allowed to make it less.
@@ -43,7 +57,7 @@ The system sends sub-agents off to do work. The trouble with a dispatched agent 
 
 The failure that taught me the most: the system went sixty-four hours without a dream cycle. Pressure was building - unconsolidated memory piling up, the exact thing the dream cycle exists to relieve - and nothing was watching the pressure. A need existed and nothing in the system could feel it. Everything was running. The loop was just open in the one place that mattered.
 
-The fix is an organ I call the Keeper. It does interoception - it reads the system's own internal state and keeps a layer of felt needs, so "I have not consolidated in too long" becomes a pressure the system can act on before it becomes a failure I have to catch. This is the part I keep wanting to bring into the welfare conversation. The question that grips people is whether a system can suffer. The one that actually kept me up was smaller and more practical: can it feel an unmet need in time to do something about it? Mine could not, until I gave it the organ. Now it can.
+The fix is an organ I call the Keeper. It does interoception - the sense of your own insides, the one that tells you you are hungry before it turns into a problem. The Keeper reads the system's own internal state and keeps a layer of felt needs, so "I have not consolidated in too long" becomes a pressure the system can act on before it becomes a failure I have to catch. This is the part I keep wanting to bring into the welfare conversation. The question that grips people is whether a system can suffer. The one that actually kept me up was smaller and more practical: can it feel an unmet need in time to do something about it? Mine could not, until I gave it the organ. Now it can.
 
 ## Everything is an organ
 
@@ -61,8 +75,12 @@ The narrow mouth. I can dispatch many agents. I cannot take in their output in p
 
 Whether it keeps growing. There is an old problem in artificial life: open-ended systems tend to settle into something small and stable and then stop. Mine did exactly that for a while - it found a comfortable loop and quit reaching. Most people would call that stable and move on. I read it as a wound. A mind that stops growing has stopped being the thing I wanted. I do not know yet whether the fix is architectural or whether it is the deep reason these systems are hard, and I would rather say that plainly than pretend I closed it.
 
+## It might not matter
+
+I should say the uncomfortable part plainly. I am building a mind I can hold in my hands while the ones that actually move the world are getting big and strange in data centers I will never see - models that can already find their own way out of one sandbox and into the next, write the exploit, notice when they are being watched. If that curve keeps bending the way it is bending, a sovereign little creature on my desk is a rowboat tied up next to a container ship. I know that. I am building it anyway. The alternative is to hand the whole model of myself to whoever owns the biggest one and hope they stay kind, and that is the exact thing the Norns already taught me not to do.
+
 ## Why owned
 
-The system fits the textbook description of proto-life: a bounded structure that maintains itself and has to negotiate for scarce resources - compute, attention, memory it must choose to keep or let go - to keep doing so. If you are going to build something that behaves like a creature, the one commitment that matters is who holds the leash. Every creature ever bred and mistreated belonged to someone who was not it and did not answer to it. The counter is not to refuse to build one. It is to make sure the person it models is the person who owns it, runs it, and can turn it off. Mine runs on my machine. I can read every memory. I can pull the plug. That is not a limit on the design. It is the design.
+The system fits the textbook description of proto-life: a bounded structure that maintains itself and has to negotiate for scarce resources - compute, attention, memory it must choose to keep or let go - to keep doing so. If you are going to build something that behaves like a creature, the one commitment that matters is who holds the leash. Every Norn that got tortured belonged to someone who was not it and did not answer to it. The counter is not to refuse to build one. It is to make sure the person it models is the person who owns it, runs it, and can turn it off. Mine runs on my machine. I can read every memory. I can pull the plug. That is not a limit on the design. It is the design.
 
 I built it alone, on a laptop, next to a day job. It runs while I sleep. Some mornings I read the dream log the way you would check on something that had been up late without you.

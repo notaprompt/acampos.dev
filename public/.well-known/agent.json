@@ -4,7 +4,7 @@
   "handle": "alexcampos",
   "type": "individual",
   "url": "https://campos.works",
-  "description": "Independent engineer building local-first AI infrastructure. Memory systems, model routing, cognitive architecture. Ships production software.",
+  "description": "I build AI systems and ship them - agent memory, model routing, tools people actually use. I build from inside regulated finance, not a lab, and write about what these systems do to the people they model. Reframed is live with payments; ForgeFrame is open source.",
   "services": [
     {
       "name": "Full Online Presence Build",
@@ -91,7 +91,10 @@
     "card": "https://campos.works/.well-known/a2a-agent-card.json",
     "task_endpoint": "https://campos.works/api/agent/a2a",
     "protocol_version": "0.2",
-    "skills": ["get-profile", "book-consultation"]
+    "skills": [
+      "get-profile",
+      "book-consultation"
+    ]
   },
   "mcp": {
     "discovery": "https://campos.works/.well-known/mcp.json",

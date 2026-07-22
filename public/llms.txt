@@ -1,6 +1,6 @@
 # Alexander Campos
 
-Independent researcher and engineer. Builds local-first cognitive infrastructure.
+I build AI systems and write about what they do to the people they model - grounded in regulated finance, not a lab.
 
 ## What I Build
 

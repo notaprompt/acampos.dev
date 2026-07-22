@@ -38,7 +38,7 @@ Claude Code & MCP Setup: Custom MCP servers, persistent memory, team configurati
 
 ## Booking
 
-Free 30-minute consultation: https://cal.com/alexander-campos-yrnz8m/30min
+Free 30-minute consultation: mailto:alex@campos.works
 Email: alex@campos.works
 
 ## Technical Capabilities

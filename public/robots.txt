@@ -1,3 +1,54 @@
+# campos.works
+# Live agents acting for a person are welcome to read and navigate.
+# Bulk training / corpus crawlers are not.
+
+# --- Live agents: allowed ---
+User-agent: ChatGPT-User
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+
+# --- Training / corpus crawlers: disallowed ---
+User-agent: GPTBot
+Disallow: /
+User-agent: CCBot
+Disallow: /
+User-agent: Google-Extended
+Disallow: /
+User-agent: Applebot-Extended
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+User-agent: ClaudeBot
+Disallow: /
+User-agent: Bytespider
+Disallow: /
+User-agent: Amazonbot
+Disallow: /
+User-agent: FacebookBot
+Disallow: /
+User-agent: meta-externalagent
+Disallow: /
+User-agent: cohere-ai
+Disallow: /
+User-agent: Diffbot
+Disallow: /
+User-agent: Omgilibot
+Disallow: /
+User-agent: ImagesiftBot
+Disallow: /
+User-agent: PanguBot
+Disallow: /
+User-agent: Timpibot
+Disallow: /
+
+# --- Everyone else: allowed, agent surface explicitly open ---
 User-agent: *
 Allow: /
 Allow: /.well-known/agent.json
@@ -8,6 +59,5 @@ Allow: /openapi.json
 Allow: /api/agent/context
 Allow: /api/agent/profile
 Allow: /api/agent/a2a
-Allow: /api/agent/book
 
 Sitemap: https://campos.works/sitemap-index.xml

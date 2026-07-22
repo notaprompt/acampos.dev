@@ -17,7 +17,7 @@ I have been living inside those three questions for about a year, because I buil
 
 What follows is less a pitch than a walk through the thing - what it does, where it breaks, and a couple of problems I ran into that I have not seen named anywhere else.
 
-One rule holds the whole shape up: my private thinking never leaves the machine. Local models only. The cloud is there for public work - a resume, an essay, a webpage - and nothing else. Everything in this essay falls out of that one refusal. It is not a feature I added. It is the load-bearing wall, and most of the good engineering is just what happens when you refuse to knock it down.
+One rule holds the whole shape up: my private thinking runs on local models, and that is enforced in the code, not just configured - the generator refuses any endpoint that is not loopback, and raises rather than send. The cloud is there for public work - a resume, an essay, a webpage - reached through a narrow tool that carries a task and nothing else. Everything in this essay falls out of that one refusal. It is not a feature I added. It is the load-bearing wall, and most of the good engineering is just what happens when you refuse to knock it down.
 
 ## Memory that behaves like memory
 
@@ -30,6 +30,8 @@ The part I can take the least credit for is the dreaming. When the system goes i
 Here is the sub-problem that ate the most of my life. It is also the one I keep waiting to hear someone else talk about: deciding what is sovereign and what is public. Every action the system takes gets routed by sensitivity. A spine sits in front of everything and asks one question - does this touch my cognition, or is it public work? Green goes to the cloud. Red stays home or is refused. And the spine fails closed: when it is unsure, it treats the thing as sovereign. The default always leans the safe way.
 
 The first version matched keywords. It was bad in the way keyword systems are always bad - it missed the sensitive thing phrased a new way and flagged the harmless thing that happened to carry a loaded word. So I moved it to distance. The spine now measures how close a request sits to the shape of my own private memory, and only wakes a local model for a real judgment call when the distance lands in the uncertain band. Most traffic never wakes the model at all. That keeps the machine cool, and - the part I actually care about - it keeps the boundary grounded in my real data instead of a wordlist someone could guess.
+
+It is better, not airtight, and I would rather say which. The spine still has to be right about what counts as private, and when the system does reach the cloud the safeguard is structural on one side and behavioral on the other: the tool has no field to carry a memory, but the task it carries is composed by a local model, so the last mile of judgment is a model's call, not a proof. Memory objects cannot leave. "Sensitive content cannot leave" is a claim I have not earned yet.
 
 What took me a while to accept: the boundary is the product. Not the memory, not the agents - the line between what stays mine and what is allowed to leave. Get it wrong in the permissive direction once and the whole claim is gone, because you cannot un-leak.
 

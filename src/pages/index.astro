@@ -3,9 +3,10 @@ import Page from '../layouts/Page.astro';
 import HitCounter from '../components/HitCounter.astro';
 ---
 
-<Page title="alexander campos" description="Operations, software, and writing about how systems model people.">
+<Page title="alexander campos" description="Alexander Campos - engineer who builds and ships AI systems: agent memory, model routing, and the tools that make them usable. Reframed (live), ForgeFrame (open source).">
   <section class="splash">
     <h1 class="site-name">Alexander Campos</h1>
+    <p class="lede">I build AI systems and ship them - agent memory, model routing, and the tools that make them usable.</p>
     <p class="tagline">Mostly interested in how systems model people - and what happens when people can see the model.</p>
     <p class="warm-line">you are at the front door.</p>
 
@@ -41,11 +42,6 @@ import HitCounter from '../components/HitCounter.astro';
     <h2 class="section-heading">what I think</h2>
 
     <div class="essay-cards">
-      <a href="/writing/your-indifference-is-the-margin" class="essay-card">
-        <span class="essay-title">Your Indifference Is the Margin</span>
-        <span class="essay-line">The systems watching you are training on your indifference. On what it cost in 2026 to finally look at what's looking at you.</span>
-      </a>
-
       <a href="/writing/where-the-difference-is-stored" class="essay-card">
         <span class="essay-title">Where the Difference Is Stored</span>
         <span class="essay-line">The loop became measurable. Three substrates, three methods, one question: what do you put on the other side of it?</span>
@@ -65,7 +61,7 @@ import HitCounter from '../components/HitCounter.astro';
     <h2 class="section-heading">if you need something built</h2>
 
     <p class="home-prose">
-      Sites, search visibility, and the infrastructure that makes a business findable.
+      Sites, search visibility, AI automation, and the infrastructure that makes a business findable - built to ship, not to demo.
     </p>
 
     <div class="service-row">
@@ -114,12 +110,22 @@ import HitCounter from '../components/HitCounter.astro';
     letter-spacing: 0.02em;
   }
 
+  .lede {
+    font-family: var(--body);
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--glow);
+    line-height: 1.6;
+    margin: 0 0 0.9rem;
+  }
+
   .tagline {
     font-family: var(--body);
-    font-size: 1.05rem;
-    color: var(--glow);
+    font-size: 0.95rem;
+    color: var(--white-60, var(--glow));
     line-height: 1.7;
     margin-bottom: 0.75rem;
+    opacity: 0.82;
   }
 
   .warm-line {

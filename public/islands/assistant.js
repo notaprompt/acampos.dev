@@ -735,6 +735,31 @@
     treatBtn.setAttribute('aria-label', 'Give Oliver a treat');
     stage.appendChild(treatBtn);
 
+    // ── Chat: throw me a bone -> actually talk to Oliver ──
+    var chatCta = document.createElement('button');
+    chatCta.className = 'or-chat-cta';
+    chatCta.textContent = 'psst — throw me a bone. ask me something →';
+    stage.appendChild(chatCta);
+
+    var chat = document.createElement('div');
+    chat.className = 'or-chat';
+    chat.innerHTML = [
+      '<div class="or-chat-back">‹ back to the rug</div>',
+      '<div class="or-chat-log"></div>',
+      '<div class="or-chat-input-row">',
+      '  <input class="or-chat-input" type="text" maxlength="600" placeholder="ask oliver about alex…" />',
+      '  <button class="or-chat-send" aria-label="Send message">→</button>',
+      '</div>',
+    ].join('\n');
+    stage.appendChild(chat);
+    var chatLog = chat.querySelector('.or-chat-log');
+    var chatInput = chat.querySelector('.or-chat-input');
+    var chatSend = chat.querySelector('.or-chat-send');
+    var chatBack = chat.querySelector('.or-chat-back');
+    var chatHistory = [];
+    var chatGreeted = false;
+    var chatBusy = false;
+
     var rows = FRAMES[0].length;
     var cols = FRAMES[0][0].length;
     var pixels = [];
@@ -1061,6 +1086,76 @@
       }
     });
 
+    // ── Chat logic ──
+    function appendChatMsg(text, who) {
+      var m = document.createElement('div');
+      m.className = 'or-msg or-msg-' + who;
+      m.textContent = text;                 // textContent — never innerHTML for replies
+      chatLog.appendChild(m);
+      chatLog.scrollTop = chatLog.scrollHeight;
+      return m;
+    }
+
+    function openChat() {
+      resetMoodToAlert();
+      stage.classList.add('chatting');
+      if (!chatGreeted) {
+        chatGreeted = true;
+        appendChatMsg('oh, you actually want to talk. good. ask me about him — the work, the writing, whatever. i have watched him build this stuff for a while. woof.', 'oliver');
+      }
+      setTimeout(function () { chatInput.focus(); }, 120);
+    }
+
+    function closeChat() { stage.classList.remove('chatting'); }
+
+    function sendChat() {
+      if (chatBusy) return;
+      var text = (chatInput.value || '').trim();
+      if (!text) return;
+      chatInput.value = '';
+      appendChatMsg(text, 'user');
+      chatBusy = true;
+      interactionActive = true;
+      renderFrame(FRAMES[6]); // tongue-out, thinking
+      var thinking = appendChatMsg('…', 'oliver');
+      var dots = 0;
+      var dotTimer = setInterval(function () {
+        dots = (dots % 3) + 1;
+        thinking.textContent = '.'.repeat(dots);
+      }, 400);
+      fetch('/api/oliver', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, history: chatHistory.slice(-8) }),
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          var reply = (data && data.reply) || '...woof? something went sideways. try again.';
+          thinking.textContent = reply;
+          chatLog.scrollTop = chatLog.scrollHeight;
+          chatHistory.push({ role: 'user', content: text });
+          chatHistory.push({ role: 'assistant', content: reply });
+          emitHearts(spriteWrap, 1);
+        })
+        .catch(function () {
+          thinking.textContent = 'my brain hiccuped. try that again? *pant*';
+        })
+        .then(function () {
+          clearInterval(dotTimer);
+          chatBusy = false;
+          interactionActive = false;
+          renderFrame(FRAMES[0]);
+        });
+    }
+
+    chatCta.addEventListener('click', function (e) { e.stopPropagation(); openChat(); });
+    chatBack.addEventListener('click', function (e) { e.stopPropagation(); closeChat(); });
+    chatSend.addEventListener('click', function (e) { e.stopPropagation(); sendChat(); });
+    chatInput.addEventListener('keydown', function (e) {
+      e.stopPropagation();
+      if (e.key === 'Enter') { e.preventDefault(); sendChat(); }
+    });
+
     // Greeting — once only, skip if already greeted (hot-reload guard)
     if (!window.__oliverGreeted) {
       window.__oliverGreeted = true;
@@ -1242,6 +1337,60 @@
       '  60% { opacity: 0.8; transform: translateY(-24px) scale(1.1); }',
       '  100% { opacity: 0; transform: translateY(-40px) scale(0.7); }',
       '}',
+      '',
+      '/* Chat — throw me a bone */',
+      '.or-chat-cta {',
+      '  font-family: var(--mono); font-size: 0.6rem; color: var(--white-45);',
+      '  background: none; border: none; cursor: pointer; margin-top: 14px;',
+      '  letter-spacing: 0.04em; opacity: 0.85; transition: color 0.2s, opacity 0.2s;',
+      '  text-align: center; line-height: 1.5; max-width: 300px;',
+      '}',
+      '.or-chat-cta:hover { color: var(--gold-accent); opacity: 1; }',
+      '.or-chat {',
+      '  display: none; flex-direction: column; width: 100%; flex: 1;',
+      '  min-height: 0; margin-top: 10px;',
+      '}',
+      '.or-stage.chatting { justify-content: flex-start; }',
+      '.or-stage.chatting .ol-plant, .or-stage.chatting .ol-rug,',
+      '.or-stage.chatting .or-name, .or-stage.chatting .or-treat,',
+      '.or-stage.chatting .or-chat-cta, .or-stage.chatting .or-bubble { display: none; }',
+      '.or-stage.chatting .ol-scene-row { transform: scale(0.7); margin-bottom: -8px; }',
+      '.or-stage.chatting .or-chat { display: flex; }',
+      '.or-chat-back {',
+      '  font-family: var(--mono); font-size: 0.58rem; color: var(--white-30);',
+      '  cursor: pointer; align-self: flex-start; margin-bottom: 8px; letter-spacing: 0.05em;',
+      '}',
+      '.or-chat-back:hover { color: var(--gold-accent); }',
+      '.or-chat-log {',
+      '  flex: 1; overflow-y: auto; display: flex; flex-direction: column;',
+      '  gap: 8px; padding: 4px 2px; min-height: 0;',
+      '}',
+      '.or-msg {',
+      '  font-family: var(--mono); font-size: 0.72rem; line-height: 1.55;',
+      '  padding: 7px 10px; border-radius: 8px; max-width: 92%;',
+      '  letter-spacing: 0.02em; white-space: pre-wrap; word-break: break-word;',
+      '}',
+      '.or-msg-user {',
+      '  align-self: flex-end; background: rgba(184,150,90,0.14);',
+      '  color: var(--white-70); border: 1px solid rgba(184,150,90,0.22);',
+      '}',
+      '.or-msg-oliver {',
+      '  align-self: flex-start; background: var(--depth-3); color: var(--gold-accent);',
+      '  border: 1px solid var(--white-08); text-shadow: 0 0 8px rgba(184,150,90,0.2);',
+      '}',
+      '.or-chat-input-row { display: flex; gap: 6px; margin-top: 8px; flex-shrink: 0; }',
+      '.or-chat-input {',
+      '  flex: 1; font-family: var(--mono); font-size: 0.72rem; color: var(--white-70);',
+      '  background: var(--void, #0d0d0c); border: 1px solid var(--white-08);',
+      '  border-radius: 6px; padding: 7px 9px; outline: none; min-width: 0;',
+      '}',
+      '.or-chat-input:focus { border-color: var(--gold-accent); }',
+      '.or-chat-send {',
+      '  font-family: var(--mono); font-size: 0.85rem; color: var(--gold-accent);',
+      '  background: none; border: 1px solid rgba(184,150,90,0.3); border-radius: 6px;',
+      '  padding: 0 12px; cursor: pointer; transition: all 0.2s; flex-shrink: 0;',
+      '}',
+      '.or-chat-send:hover { background: rgba(184,150,90,0.1); border-color: var(--gold-accent); }',
       '',
       '/* Mobile: full-width slide-out */',
       '@media (max-width: 768px) {',

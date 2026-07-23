@@ -1,26 +1,51 @@
 // me-mode — Alex's private editorial layer.
-// Activate: visit any page with ?me=<token> (stored in localStorage). ?me=off to leave.
-// Highlight text -> "note" -> type or dictate -> saved to the editorial queue
-// that the next Claude Code pass reads via GET /api/annotate?token=...
+// Activate: visit any page with #me=<token> (hash — never hits the server/logs).
+// The token is exchanged once for an HttpOnly cookie; localStorage keeps only a
+// non-secret on/off flag. #me=off (or the badge) leaves. Highlight -> "note" ->
+// type or dictate -> saved to the queue the next Claude Code pass reads via
+// GET /api/annotate with an `x-me-token: <ME_MODE_TOKEN>` header.
 (function () {
   if (window.__meModeInit) return;
   window.__meModeInit = true;
 
+  // Token arrives via #me=<token> (a hash — never sent to the server or its logs;
+  // legacy ?me= still accepted). It is exchanged ONCE for an HttpOnly cookie and
+  // never stored in JS. localStorage only holds a non-secret on/off flag.
   var url = new URL(location.href);
-  var param = url.searchParams.get('me');
-  if (param === 'off') {
-    localStorage.removeItem('me_mode');
+  var fromQuery = url.searchParams.get('me');
+  var fromHash = (location.hash.match(/(?:^|[#&])me=([^&]+)/) || [])[1];
+  var incoming = fromHash ? decodeURIComponent(fromHash) : fromQuery;
+
+  function stripBootstrap() {
     url.searchParams.delete('me');
-    history.replaceState({}, '', url.pathname + url.search + url.hash);
+    var hash = location.hash.replace(/(?:^#|&)me=[^&]*/, '').replace(/^#$/, '');
+    history.replaceState({}, '', url.pathname + url.search + hash);
+  }
+  function post(body) {
+    return fetch('/api/annotate', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    });
+  }
+
+  if (incoming === 'off') {
+    localStorage.removeItem('me_mode_on');
+    post({ action: 'logout' }).catch(function () {});
+    stripBootstrap();
     return;
   }
-  if (param) {
-    localStorage.setItem('me_mode', param);
-    url.searchParams.delete('me');
-    history.replaceState({}, '', url.pathname + url.search + url.hash);
+  if (incoming) {
+    stripBootstrap(); // drop the secret from the URL before anything else loads
+    post({ action: 'login', token: incoming })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.ok) { localStorage.setItem('me_mode_on', '1'); location.reload(); }
+        else { alert('me-mode: bad token'); }
+      })
+      .catch(function () {});
+    return; // wait for the reload, now carrying the cookie
   }
-  var token = localStorage.getItem('me_mode');
-  if (!token) return;
+  if (localStorage.getItem('me_mode_on') !== '1') return;
 
   // ── styles ──
   var css = document.createElement('style');
@@ -61,7 +86,11 @@
   badge.title = 'editorial mode on — click to leave';
   document.body.appendChild(badge);
   badge.addEventListener('click', function () {
-    if (confirm('leave me-mode?')) { localStorage.removeItem('me_mode'); location.reload(); }
+    if (confirm('leave me-mode?')) {
+      localStorage.removeItem('me_mode_on');
+      post({ action: 'logout' }).catch(function () {});
+      location.reload();
+    }
   });
 
   var fab = document.createElement('button');
@@ -141,11 +170,7 @@
     if (!note) { ta.focus(); return; }
     if (listening && rec) rec.stop();
     save.textContent = 'saving…';
-    fetch('/api/annotate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: token, path: location.pathname, selection: currentSel, note: note }),
-    })
+    post({ path: location.pathname, selection: currentSel, note: note })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
         save.textContent = 'save note';

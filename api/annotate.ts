@@ -24,14 +24,34 @@ async function init() {
   initialized = true;
 }
 
+function cookieVal(req: VercelRequest, name: string): string {
+  const m = String(req.headers.cookie || '').match(new RegExp('(?:^|; )' + name + '=([^;]+)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+
+// Browser auth is the HttpOnly cookie (not JS-readable, not in request bodies).
+// Server-to-server retrieval (the next Claude Code pass) uses the x-me-token header.
 function authed(req: VercelRequest): boolean {
   if (!TOKEN) return false;
-  const t = String(req.query.token || req.headers['x-me-token'] || (req.body && req.body.token) || '');
-  return t === TOKEN;
+  return cookieVal(req, 'mm_session') === TOKEN || String(req.headers['x-me-token'] || '') === TOKEN;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!TOKEN) return res.status(503).json({ error: 'me-mode not configured' });
+
+  // Exchange the one-time token (delivered via #hash, never the query string) for
+  // an HttpOnly cookie. This is the only time the secret is transmitted.
+  const action = req.method === 'POST' && req.body ? String((req.body as { action?: string }).action || '') : '';
+  if (action === 'logout') {
+    res.setHeader('Set-Cookie', 'mm_session=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0');
+    return res.status(200).json({ ok: true });
+  }
+  if (action === 'login') {
+    if (String((req.body as { token?: string }).token || '') !== TOKEN) return res.status(403).json({ error: 'nope' });
+    res.setHeader('Set-Cookie', `mm_session=${encodeURIComponent(TOKEN)}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=2592000`);
+    return res.status(200).json({ ok: true });
+  }
+
   if (!authed(req)) return res.status(403).json({ error: 'nope' });
 
   try {

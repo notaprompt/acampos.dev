@@ -1,6 +1,6 @@
 # Alexander Campos
 
-I build AI systems and write about what they do to the people they model - grounded in regulated finance, not a lab.
+I ship AI that runs where mistakes get audited. Three products live, one taking payments, grounded in regulated finance. Governance built in from the first line - local-first, audit-trailed, accountable.
 
 ## What I Build
 

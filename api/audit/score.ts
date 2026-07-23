@@ -8,10 +8,9 @@ const KEY = process.env.OLIVER_API_KEY || process.env.OPENROUTER_API_KEY || '';
 const MODELS = (process.env.AUDIT_MODEL
   ? process.env.AUDIT_MODEL.split(',').map((m) => m.trim()).filter(Boolean)
   : [
-      'deepseek/deepseek-chat-v3-0324:free',
-      'meta-llama/llama-3.3-70b-instruct:free',
-      'qwen/qwen-2.5-72b-instruct:free',
-      'google/gemma-2-9b-it:free',
+      'google/gemma-4-31b-it:free', // verified available 2026-07
+      'openai/gpt-oss-20b:free',
+      'google/gemma-4-26b-a4b-it:free',
     ]);
 
 const SYSTEM = `You are a sharp, opinionated web strategist analyzing a business website. You've seen thousands of sites and you know exactly what works and what doesn't. Your analysis is honest, specific, and actionable - never generic.

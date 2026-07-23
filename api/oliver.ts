@@ -9,10 +9,9 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 const MODELS = (process.env.OLIVER_MODEL
   ? process.env.OLIVER_MODEL.split(',').map((m) => m.trim()).filter(Boolean)
   : [
-      'deepseek/deepseek-chat-v3-0324:free',
-      'meta-llama/llama-3.3-70b-instruct:free',
-      'google/gemini-2.0-flash-exp:free',
-      'qwen/qwen-2.5-72b-instruct:free',
+      'google/gemma-4-26b-a4b-it:free', // best voice, verified 2026-07
+      'openai/gpt-oss-20b:free',
+      'google/gemma-4-31b-it:free',
     ]);
 // Point Oliver at any OpenAI-compatible endpoint: OpenRouter by default, or a
 // tunneled OmniRoute (set OLIVER_BASE_URL to its public URL + OLIVER_API_KEY).

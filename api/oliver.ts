@@ -14,7 +14,10 @@ const MODELS = (process.env.OLIVER_MODEL
       'google/gemini-2.0-flash-exp:free',
       'qwen/qwen-2.5-72b-instruct:free',
     ]);
-const KEY = process.env.OPENROUTER_API_KEY || '';
+// Point Oliver at any OpenAI-compatible endpoint: OpenRouter by default, or a
+// tunneled OmniRoute (set OLIVER_BASE_URL to its public URL + OLIVER_API_KEY).
+const BASE_URL = (process.env.OLIVER_BASE_URL || 'https://openrouter.ai/api/v1').replace(/\/$/, '');
+const KEY = process.env.OLIVER_API_KEY || process.env.OPENROUTER_API_KEY || '';
 
 // Public grounding only. Everything here is already on the site.
 const FACTS = `
@@ -97,7 +100,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), Math.min(12000, remaining));
-      const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      const r = await fetch(`${BASE_URL}/chat/completions`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${KEY}`,

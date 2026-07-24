@@ -28,7 +28,48 @@ import Page from '../layouts/Page.astro';
       <a href="mailto:alex@campos.works">alex@campos.works</a>
     </p>
 
+    <h2>Who's seen me</h2>
+    <p class="seen-intro">
+      Every system that watches you builds a model of you. Most never show it to you. Here is mine - everyone who has crossed this site, where they were, and what the machine thinks about you, right now.
+    </p>
+    <div id="seen-map"></div>
+    <div id="seen-reveal" class="seen-reveal">reading the field&hellip;</div>
+    <p class="seen-foot">coarse by design - the map holds cities, never anyone else's address. yours it shows only to you.</p>
+
   </article>
+
+  <style>
+    .seen-intro { max-width: 60ch; }
+    #seen-map {
+      margin: 1.25rem 0 0.75rem;
+      border: 1px solid var(--white-08, rgba(255,255,255,0.1));
+      border-radius: 4px;
+      overflow: hidden;
+      background: #0b0b08;
+    }
+    .seen-reveal {
+      font-family: var(--mono, ui-monospace, monospace);
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--white-70, #d8d4c8);
+      background: #0d0d0a;
+      border: 1px solid var(--white-08, rgba(255,255,255,0.1));
+      border-radius: 4px;
+      padding: 14px 16px;
+    }
+    .seen-reveal p { margin: 0 0 0.35rem; }
+    .seen-reveal p:last-child { margin-bottom: 0; }
+    .seen-reveal b { color: var(--gold-accent, #e0b957); font-weight: 500; }
+    .seen-reveal .sr-note { color: var(--white-30, rgba(255,255,255,0.35)); font-style: italic; }
+    .seen-foot {
+      font-family: var(--mono, monospace);
+      font-size: 0.66rem;
+      color: var(--white-30, rgba(255,255,255,0.35));
+      margin-top: 0.6rem;
+    }
+  </style>
+
+  <script is:inline src="/islands/world-map.js"></script>
 
   <script is:inline>
     console.log(

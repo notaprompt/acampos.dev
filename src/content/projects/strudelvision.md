@@ -29,7 +29,7 @@ Four visual modes:
 3. **Prismatic feedback** — rainbow trails, hue matrix, the most chaotic one
 4. **Infinite hall** — Canvas2D feedback zoom, borrowed from this site's tunnel, not actually GLSL
 
-Audio analysis drives all of it: spectral centroid steers color, flux drives intensity, hit accumulation gates cuts. There's also a kinetic text engine, speech-to-text lyrics, an AI chat panel that tells Ollama to edit shader parameters in natural language, and a WebSocket that exports state to TouchDesigner.
+Audio analysis drives all of it: spectral centroid steers color, flux drives intensity, hit accumulation gates cuts. There's also a kinetic text engine, speech-to-text lyrics, a chat panel that tells Ollama to edit shader parameters in natural language, and a WebSocket that exports state to TouchDesigner.
 
 Zero build system. Single `index.html`. `python3 -m http.server 8888`.
 
@@ -39,7 +39,7 @@ Zero build system. Single `index.html`. `python3 -m http.server 8888`.
 - Hall mode can't composite with the shader pipeline. It's a separate renderer and there's no fixing that without rewriting everything. Not rewriting everything.
 - The synth pad records layers but there's no way to delete a layer. Bug. Also kind of a feature.
 - TouchDesigner is a completely different discipline and it shows. The bridge is one-way. That's fine.
-- Ollama has to be running locally for the AI chat. Most people don't have Ollama running locally.
+- Ollama has to be running locally for the chat panel. Most people don't have Ollama running locally.
 - CSS animation is genuinely harder than writing WebGL shaders, which says something about CSS.
 
 Nobody else uses this. That's fine. It's for the Saturday nights.

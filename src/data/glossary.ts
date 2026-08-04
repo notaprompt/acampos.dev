@@ -42,7 +42,7 @@ export const glossary: Record<string, GlossaryEntry> = {
   },
   'model-context-protocol': {
     term: 'Model Context Protocol (MCP)',
-    definition: 'An open standard that lets AI assistants use custom tools and data sources. Instead of building separate integrations for each assistant, you build one MCP server that works with Claude, Cursor, and other compatible tools.',
+    definition: 'An open standard that lets assistants use custom tools and data sources. Instead of building separate integrations for each assistant, you build one MCP server that works with Claude, Cursor, and other compatible tools.',
   },
   'ollama': {
     term: 'Ollama',

@@ -1,6 +1,6 @@
 ---
 title: "ForgeFrame"
-tagline: "Open-source memory for AI agents. Memories decay over time. Principles don't. You decide which is which."
+tagline: "Open-source memory for agents. Memories decay over time. Principles don't. You decide which is which."
 status: "active"
 stack: ["TypeScript", "Node.js", "MCP Protocol", "SQLite", "FTS5", "Ollama", "WebGL2"]
 repo: "https://github.com/notaprompt/forgeframe"
@@ -9,7 +9,7 @@ order: 2
 
 ## Goals
 
-AI agents forget everything between sessions. ForgeFrame gives them persistent memory - what gets used strengthens, what gets ignored decays, and some things are principle-tier and never change. Four packages: `@forgeframe/memory` (MIT), `@forgeframe/core` (AGPL), `@forgeframe/server` (MIT), and `@forgeframe/proxy` (AGPL).
+Agents forget everything between sessions. ForgeFrame gives them persistent memory - what gets used strengthens, what gets ignored decays, and some things are principle-tier and never change. Four packages: `@forgeframe/memory` (MIT), `@forgeframe/core` (AGPL), `@forgeframe/server` (MIT), and `@forgeframe/proxy` (AGPL).
 
 ```
 L4  ForgeFrame Proxy (scrub, inject, log)   AGPL

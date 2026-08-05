@@ -15,7 +15,7 @@ metrics:
   - { label: "consolidation cycles", value: "24,603 nrem · 217 rem", asof: "Aug 2026", source: "daemon log" }
   - { label: "memory classes", value: "2,081 public · 1,772 sensitive · 1,409 local-only", asof: "Aug 2026", source: "memory.db" }
   - { label: "organs", value: "12", asof: "Aug 2026" }
-  - { label: "services under launchd", value: "33", asof: "Aug 2026" }
+  - { label: "services under launchd", value: "32", asof: "Aug 2026" }
 order: 1
 ---
 

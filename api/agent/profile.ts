@@ -36,7 +36,7 @@ export default function handler(_req: VercelRequest, res: VercelResponse) {
       {
         name: 'AI Cost Optimization',
         description:
-          'Model routing and tiered dispatch that cuts API spend 40–60%. Audit included.',
+          'Model routing and tiered dispatch - the cheap calls go local, the hard ones go up. Audit included.',
         category: 'ai-infrastructure',
         booking_url: 'https://cal.com/alexander-campos-yrnz8m/30min',
       },

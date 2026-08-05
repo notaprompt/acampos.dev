@@ -1,10 +1,22 @@
 ---
 import Page from '../layouts/Page.astro';
+import { existsSync } from 'node:fs';
+
+// The office photograph ships whenever the file lands - drop it at
+// public/images/office.jpg and rebuild. Until then the slot renders nothing.
+const hasOfficePhoto = existsSync(new URL('../../public/images/office.jpg', import.meta.url));
 ---
 
 <Page title="about -- alexander campos" description="Alex Campos. 26. Virginia. Operations, software, and writing about what sits underneath both.">
   <article>
     <h1>About</h1>
+
+    {hasOfficePhoto && (
+      <figure class="office-photo">
+        <img src="/images/office.jpg" alt="the office - where all of this runs" loading="lazy" decoding="async" />
+        <figcaption>where all of this runs</figcaption>
+      </figure>
+    )}
 
     <p>
       I'm Alex - 26, Virginia. I ship systems that run where mistakes get audited. Three products live, one taking payments. Six years in regulated finance taught me the part most builders skip: someone has to be accountable for what the system does. So I build that in from the first line - local-first, audit-trailed, answerable to the person it serves. Not a lab. Where it counts.
@@ -67,7 +79,28 @@ import Page from '../layouts/Page.astro';
       color: var(--white-30, rgba(255,255,255,0.35));
       margin-top: 0.6rem;
     }
-  </style>
+    .office-photo {
+    border: 1px solid var(--white-08);
+    margin: 0 0 2rem;
+    transition: border-color 0.2s;
+  }
+
+  .office-photo:hover {
+    border-color: var(--gold-accent);
+  }
+
+  .office-photo img {
+    width: 100%;
+    display: block;
+  }
+
+  .office-photo figcaption {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--white-30);
+    padding: 0.35rem 0.1rem;
+  }
+</style>
 
   <script is:inline src="/islands/world-map.js"></script>
 

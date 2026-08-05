@@ -3,7 +3,19 @@ title: "CREATURE"
 tagline: "A mind that runs on one machine - mine. It remembers, dreams, feels what it needs, and carries my judgment when it acts. Local by construction; the cloud is opt-in and never handed a memory."
 status: "active"
 stack: ["TypeScript", "Python", "SQLite", "FTS5", "Ollama", "Model Context Protocol", "WebGL2", "local-first"]
-screenshots: ["/creature/judgment-matrix.png", "/creature/keeper.png"]
+screenshots:
+  - src: "/creature/judgment-matrix.png"
+    caption: "the judgment matrix - what it may do alone, and what waits for me"
+  - src: "/creature/keeper.png"
+    caption: "the keeper - needs filed by organs, arbitrated in one place"
+metrics:
+  - { label: "memories", value: "5,262", asof: "Aug 2026", source: "memory.db" }
+  - { label: "edges", value: "10,211", asof: "Aug 2026", source: "memory.db" }
+  - { label: "sessions", value: "4,452", asof: "Aug 2026", source: "memory.db" }
+  - { label: "consolidation cycles", value: "24,603 nrem · 217 rem", asof: "Aug 2026", source: "daemon log" }
+  - { label: "memory classes", value: "2,081 public · 1,772 sensitive · 1,409 local-only", asof: "Aug 2026", source: "memory.db" }
+  - { label: "organs", value: "12", asof: "Aug 2026" }
+  - { label: "services under launchd", value: "33", asof: "Aug 2026" }
 order: 1
 ---
 

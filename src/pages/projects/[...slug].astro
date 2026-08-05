@@ -3,8 +3,12 @@ import Page from '../../layouts/Page.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
+  // Micro entries share this route and URL space - every card on the index
+  // leads somewhere real. `hidden` micro entries still build (deep links from
+  // the hall of shame keep working); the index just doesn't advertise them.
   const projects = await getCollection('projects');
-  return projects.map(entry => ({
+  const micro = await getCollection('micro');
+  return [...projects, ...micro].map(entry => ({
     params: { slug: entry.slug },
     props: { entry },
   }));
@@ -12,6 +16,15 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+// Screenshots may be plain paths or {src, caption} - normalize once here.
+type Shot = { src: string; caption?: string };
+const shots: Shot[] = (entry.data.screenshots ?? []).map((s: string | Shot) =>
+  typeof s === 'string' ? { src: s } : s,
+);
+const metrics = entry.data.metrics ?? [];
+// One quiet as-of line collects the distinct sources; dates live per-metric.
+const metricSources = [...new Set(metrics.map((m) => m.source).filter(Boolean))];
+const metricAsof = metrics.length ? metrics[0].asof : null;
 ---
 
 <Page
@@ -60,19 +73,36 @@ const { Content } = await render(entry);
       </div>
     </header>
 
-    {entry.data.screenshots && entry.data.screenshots.length > 0 ? (
-      <div class={`project-screenshots project-screenshots--${entry.data.screenshots.length}`}>
-        {entry.data.screenshots.map((src, i) => (
-          <div class="project-screenshot">
-            <img src={src} alt={`${entry.data.title} screenshot ${i + 1}`} loading="lazy" />
-          </div>
+    {shots.length > 0 ? (
+      <div class={`project-screenshots project-screenshots--${shots.length}`}>
+        {shots.map((shot, i) => (
+          <figure class="project-screenshot">
+            <img src={shot.src} alt={`${entry.data.title} - ${shot.caption ?? `screenshot ${i + 1}`}`} loading="lazy" decoding="async" />
+            {shot.caption && <figcaption>{shot.caption}</figcaption>}
+          </figure>
         ))}
       </div>
     ) : entry.data.image ? (
-      <div class="project-screenshot">
-        <img src={entry.data.image} alt={`${entry.data.title} screenshot`} loading="lazy" />
+      <div class="project-screenshots project-screenshots--1">
+        <figure class="project-screenshot">
+          <img src={entry.data.image} alt={`${entry.data.title} screenshot`} loading="lazy" decoding="async" />
+        </figure>
       </div>
     ) : null}
+
+    {metrics.length > 0 && (
+      <dl class="proof-strip">
+        {metrics.map((m) => (
+          <div class="proof-item">
+            <dt>{m.label}</dt>
+            <dd>{m.value}</dd>
+          </div>
+        ))}
+        <p class="proof-asof">
+          as of {metricAsof}{metricSources.length ? ` · ${metricSources.join(', ')}` : ''}
+        </p>
+      </dl>
+    )}
 
     <div class="project-content">
       <Content />
@@ -213,18 +243,112 @@ const { Content } = await render(entry);
     object-position: center top;
   }
 
+  .project-screenshots--1 .project-screenshot img {
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .project-screenshots--3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .project-screenshots--3 .project-screenshot:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .project-screenshots--3 .project-screenshot img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .project-screenshots--3 .project-screenshot:first-child img {
+    height: 320px;
+  }
+
+  .project-screenshots--4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .project-screenshots--4 .project-screenshot img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .project-screenshot figcaption {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--white-30);
+    padding: 0.35rem 0.1rem;
+  }
+
+  /* proof strip - bookkeeping, not a dashboard. Borders whisper; numbers sit
+     in the glow; the as-of line owns the honesty. */
+  .proof-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 2.2rem;
+    margin: 0 0 2.5rem;
+    padding: 0.9rem 0.2rem 0.7rem;
+    border-top: 1px solid var(--white-08);
+    border-bottom: 1px solid var(--white-08);
+  }
+
+  .proof-item dt {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--white-30);
+    margin-bottom: 0.15rem;
+  }
+
+  .proof-item dd {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--glow);
+    margin: 0;
+  }
+
+  .proof-asof {
+    flex-basis: 100%;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--white-20);
+    margin: 0.4rem 0 0;
+  }
+
   @media (max-width: 600px) {
-    .project-screenshots--2 {
+    .project-screenshots--2,
+    .project-screenshots--3,
+    .project-screenshots--4 {
       grid-template-columns: 1fr;
     }
 
-    .project-screenshots--2 .project-screenshot {
+    .project-screenshots--2 .project-screenshot,
+    .project-screenshots--3 .project-screenshot:first-child {
       height: auto;
     }
 
-    .project-screenshots--2 .project-screenshot img {
+    .project-screenshots--2 .project-screenshot img,
+    .project-screenshots--3 .project-screenshot img,
+    .project-screenshots--3 .project-screenshot:first-child img,
+    .project-screenshots--4 .project-screenshot img {
       height: auto;
       object-fit: unset;
+    }
+
+    .proof-strip {
+      gap: 0.4rem 1.4rem;
     }
   }
 

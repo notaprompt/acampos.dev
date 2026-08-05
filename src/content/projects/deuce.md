@@ -3,7 +3,13 @@ title: "DEUCE"
 tagline: "A calibration-first pricing instrument for tennis prediction markets. It prices fair value, then signs each forecast to a tamper-evident ledger before the market resolves. The ledger is the product, not a profit claim."
 status: "active"
 stack: ["Python", "SQLite", "Polymarket", "Kalshi", "Ed25519", "Ollama"]
-order: 7
+order: 4
+metrics:
+  - { label: "signed forecasts", value: "2,552", asof: "Aug 2026", source: "append-only ledger" }
+  - { label: "committed", value: "before resolution, ed25519", asof: "Aug 2026" }
+  - { label: "deletion", value: "refused by SQL trigger", asof: "Aug 2026" }
+  - { label: "capital at risk", value: "none - paper until calibrated", asof: "Aug 2026" }
+
 ---
 
 DEUCE prices tennis prediction markets. It computes a fair value for each side of an in-play match, signs that forecast to a ledger before the market resolves, and only then lets reality grade it. Most trading writeups show you the wins and quietly bury the log. I wanted the opposite: a record that comes first, an outcome that comes second, and no way for me to rewrite history to look sharper than I was.
@@ -12,7 +18,7 @@ The signed ledger is the deliverable. Whether it makes money is a separate, late
 
 ## How it works
 
-**The price.** For each in-play tennis market, DEUCE builds a fair-value probability independent of the price the market is showing. The edge comes from a few sources stacked together - a model read on the match, live whale tracking to see where size is moving, a winner feed for how favorites are actually resolving, and a working thesis about favored-unders on the WTA and ITF tours. None of those is the answer on its own. The point is a price I arrived at myself, so I can hold it up against the market's and see who was closer.
+**The price.** For each in-play tennis market, DEUCE builds a fair-value probability independent of the price the market is showing. The edge comes from a few sources stacked together - a model read on the match, live whale tracking to see where size is moving, a winner feed for how favorites are actually resolving, and a working thesis about favored-unders on the WTA and ITF tours. None of those is the answer on its own. The point is a price I arrived at myself, so I can hold it up against the market's and see who was closer. A reject-first gate runs before any of it - if a market isn't cleanly scoreable and observable within its own latency, DEUCE leaves it alone. "No trade" is a position, and rejecting a badly-shaped market is half the job.
 
 **The signed ledger.** Before the match resolves, the forecast - probability, timestamp, market id - gets committed to a tamper-evident ledger with an Ed25519 signature. The commitment locks while the outcome is still unknown. That is the load-bearing part: a track record I cannot backdate. If I want to claim I was calibrated, the ledger is the thing I point to, and it was written before I knew how any of it turned out.
 

@@ -45,6 +45,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       h: String(r.h || '').slice(0, 8),
       open: Boolean(r.open),
     })),
+    paper: body.paper && typeof body.paper.equity === 'number' ? {
+      mark: String(body.paper.mark || '').slice(0, 32),
+      equity: Math.round(Number(body.paper.equity) * 100) / 100,
+      open: Number(body.paper.open) || 0,
+      w: Object.fromEntries(['m15', 'h1', 'd1', 'd7', 'd30', 'd60'].map((k) => [
+        k, typeof body.paper.w?.[k] === 'number' ? Math.round(body.paper.w[k] * 100) / 100 : null,
+      ])),
+    } : null,
     whales: {
       watched: Number(body.whales?.watched) || 0,
       feed: (Array.isArray(body.whales?.feed) ? body.whales.feed : []).slice(0, 10)

@@ -385,6 +385,33 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     margin-top: 1rem;
   }
 
+  .deuce-live :global(.dl-windows) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.6rem;
+    border-top: 1px solid var(--white-08);
+    padding: 0.55rem 0 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .deuce-live :global(.dl-wcell) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-size: 0.75rem;
+  }
+
+  .deuce-live :global(.dl-wlabel) {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--white-30);
+  }
+
+  .deuce-live :global(.dl-up) { color: var(--alive); }
+  .deuce-live :global(.dl-down) { color: #d98a7a; }
+  .deuce-live :global(.dl-flat) { color: var(--white-45); }
+
   .deuce-live :global(.dl-wrow) {
     flex-wrap: wrap;
     gap: 0.4rem 0.9rem;

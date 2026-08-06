@@ -41,7 +41,28 @@
       (d.last_commit ? '<div class="dl-last">last commitment ' + esc(ago(d.last_commit)) + '</div>' : '') +
       '<div class="dl-rows">' + rows + '</div>' +
       '<div class="dl-foot">ed25519-signed · committed before resolution · ids shown hashed</div>' +
+      paperSection(d.paper) +
       whaleSection(d.whales);
+  }
+
+  function signed(v) {
+    if (v == null) return '<span class="dl-flat">—</span>';
+    var cls = v > 0 ? 'dl-up' : v < 0 ? 'dl-down' : 'dl-flat';
+    var txt = (v > 0 ? '+' : v < 0 ? '−' : '') + '$' + Math.abs(v).toFixed(2);
+    return '<span class="' + cls + '">' + txt + '</span>';
+  }
+
+  function paperSection(p) {
+    if (!p || typeof p.equity !== 'number') return '';
+    var labels = [['m15', '15m'], ['h1', '1h'], ['d1', '24h'], ['d7', '7d'], ['d30', '30d'], ['d60', '60d']];
+    var cells = labels.map(function (l) {
+      return '<div class="dl-wcell"><span class="dl-wlabel">' + l[1] + '</span>' + signed(p.w ? p.w[l[0]] : null) + '</div>';
+    }).join('');
+    return '<div class="dl-head dl-whead"><span class="dl-title">paper book - live</span>' +
+      '<span class="dl-asof">last mark ' + esc(ago(p.mark)) + '</span></div>' +
+      '<div class="dl-counts">' + signed(p.equity) + ' all-time paper · ' + p.open + ' open position' + (p.open === 1 ? '' : 's') + '</div>' +
+      '<div class="dl-windows">' + cells + '</div>' +
+      '<div class="dl-foot">consensus-follow book, marked every 10 minutes · paper only - no capital at risk</div>';
   }
 
   function whaleSection(w) {

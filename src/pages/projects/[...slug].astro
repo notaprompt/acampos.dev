@@ -90,6 +90,12 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
       </div>
     ) : null}
 
+    {entry.slug === 'deuce' && (
+      <div id="deuce-live" class="deuce-live">
+        <div class="dl-quiet">reading the ledger&hellip;</div>
+      </div>
+    )}
+
     {metrics.length > 0 && (
       <dl class="proof-strip">
         {metrics.map((m) => (
@@ -112,6 +118,8 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
       <a href="/projects">&lt;&lt; all projects</a>
     </nav>
   </article>
+
+  {entry.slug === 'deuce' && <script is:inline src="/islands/deuce-live.js"></script>}
 </Page>
 
 <style>
@@ -299,6 +307,78 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     font-size: 0.65rem;
     color: var(--white-30);
     padding: 0.35rem 0.1rem;
+  }
+
+  /* deuce live panel - the ledger, ticking. Terminal register: mono, dim
+     borders, gold only where something is alive. */
+  .deuce-live {
+    font-family: var(--mono);
+    border: 1px solid var(--white-08);
+    background: var(--depth-2);
+    padding: 0.9rem 1rem 0.7rem;
+    margin: 0 0 2rem;
+  }
+
+  .deuce-live :global(.dl-head) {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+  }
+
+  .deuce-live :global(.dl-title) {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gold-accent);
+  }
+
+  .deuce-live :global(.dl-asof) {
+    font-size: 0.6rem;
+    color: var(--white-30);
+  }
+
+  .deuce-live :global(.dl-counts) {
+    font-size: 0.8rem;
+    color: var(--glow);
+    margin-bottom: 0.2rem;
+  }
+
+  .deuce-live :global(.dl-last) {
+    font-size: 0.65rem;
+    color: var(--white-45);
+    margin-bottom: 0.6rem;
+  }
+
+  .deuce-live :global(.dl-rows) {
+    border-top: 1px solid var(--white-08);
+    padding-top: 0.5rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .deuce-live :global(.dl-row) {
+    display: flex;
+    gap: 1.2rem;
+    font-size: 0.7rem;
+    line-height: 1.7;
+    color: var(--white-45);
+  }
+
+  .deuce-live :global(.dl-hash) { color: var(--white-60); min-width: 5.5em; }
+  .deuce-live :global(.dl-time) { flex: 1; }
+  .deuce-live :global(.dl-state) { color: var(--white-30); }
+  .deuce-live :global(.dl-open) { color: var(--alive); }
+
+  .deuce-live :global(.dl-foot) {
+    font-size: 0.6rem;
+    color: var(--white-20);
+    border-top: 1px solid var(--white-08);
+    padding-top: 0.45rem;
+  }
+
+  .deuce-live :global(.dl-quiet) {
+    font-size: 0.7rem;
+    color: var(--white-30);
   }
 
   /* proof strip - bookkeeping, not a dashboard. Borders whisper; numbers sit

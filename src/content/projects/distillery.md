@@ -1,7 +1,7 @@
 ---
 title: "Distillery"
 tagline: "Share a link from your phone. Your laptop reads it through your own recorded principles and tells you what resonates."
-status: "active"
+status: "shipped"
 stack: ["Python", "Flask", "Ollama", "yt-dlp", "SQLite", "iOS Shortcuts", "Tailscale"]
 order: 5
 screenshots:

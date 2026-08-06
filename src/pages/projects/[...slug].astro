@@ -73,6 +73,21 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
       </div>
     </header>
 
+    {entry.slug === 'creature' && (
+      <>
+        <figure class="creature-constellation-wrap">
+          <div id="creature-constellation" class="creature-constellation">
+            <img src="/images/projects/creature-constellation.jpg" alt="the memory graph - loading the touchable version" loading="eager" decoding="async" />
+            <div class="cc-loading">waking the constellation&hellip;</div>
+          </div>
+          <figcaption>the memory graph, positions only - gold is the principle tier, the sigils mark what refuses to decay</figcaption>
+        </figure>
+        <div id="creature-pulse" class="deuce-live">
+          <div class="dl-quiet">reading the pulse&hellip;</div>
+        </div>
+      </>
+    )}
+
     {shots.length > 0 ? (
       <div class={`project-screenshots project-screenshots--${shots.length}`}>
         {shots.map((shot, i) => (
@@ -89,6 +104,10 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
         </figure>
       </div>
     ) : null}
+
+    {entry.slug === 'deuce' && (
+      <div id="deuce-instrument" class="deuce-instrument"></div>
+    )}
 
     {entry.slug === 'deuce' && (
       <div id="deuce-live" class="deuce-live">
@@ -120,6 +139,9 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
   </article>
 
   {entry.slug === 'deuce' && <script is:inline src="/islands/deuce-live.js"></script>}
+  {entry.slug === 'deuce' && <script is:inline src="/islands/deuce-instrument.js"></script>}
+  {entry.slug === 'creature' && <script is:inline src="/islands/creature-pulse.js"></script>}
+  {entry.slug === 'creature' && <script is:inline src="/islands/creature-constellation.js"></script>}
 </Page>
 
 <style>
@@ -309,6 +331,185 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     padding: 0.35rem 0.1rem;
   }
 
+  /* deuce instrument - the machine, drawn. Interactive architecture map:
+     stations, substrate rail, pulses riding the pipeline, the financing
+     ladder. Same terminal register as the live panel below it. */
+  .deuce-instrument {
+    font-family: var(--mono);
+    border: 1px solid var(--white-08);
+    background: var(--depth-2);
+    padding: 0.9rem 1rem 0.8rem;
+    margin: 0 0 1rem;
+  }
+  .deuce-instrument :global(svg) { display: block; width: 100%; height: auto; }
+  .deuce-instrument :global(.di-head) {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 1rem; margin-bottom: 0.4rem;
+  }
+  .deuce-instrument :global(.di-title) {
+    font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold-accent);
+  }
+  .deuce-instrument :global(.di-hint) {
+    font-size: 0.66rem; color: var(--white-30); text-align: right;
+  }
+  .deuce-instrument :global(.di-edge) {
+    stroke: var(--white-15, rgba(255,255,255,0.15)); stroke-width: 1; fill: none;
+  }
+  .deuce-instrument :global(.di-feed) { stroke-dasharray: 3 4; }
+  .deuce-instrument :global(.di-node rect) {
+    fill: var(--depth-3); stroke: var(--white-15, rgba(255,255,255,0.18));
+    stroke-width: 1; cursor: pointer; transition: stroke 0.15s;
+  }
+  .deuce-instrument :global(.di-node:hover rect),
+  .deuce-instrument :global(.di-node.di-on rect) { stroke: var(--gold-accent); }
+  .deuce-instrument :global(.di-node:focus) { outline: none; }
+  .deuce-instrument :global(.di-node:focus rect) { stroke: var(--gold-accent); }
+  .deuce-instrument :global(.di-label) {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+    fill: var(--white-90); text-anchor: middle; pointer-events: none;
+  }
+  .deuce-instrument :global(.di-sub) {
+    font-family: var(--mono); font-size: 8.5px;
+    fill: var(--white-45, #888); text-anchor: middle; pointer-events: none;
+  }
+  .deuce-instrument :global(.di-locked rect) { stroke-dasharray: 4 3; }
+  .deuce-instrument :global(.di-locked .di-label) { fill: var(--white-45, #888); }
+  .deuce-instrument :global(.di-pulse) { fill: var(--gold-accent); opacity: 0; }
+  .deuce-instrument :global(.di-detail) {
+    border-top: 1px solid var(--white-08); margin-top: 0.3rem;
+    padding: 0.6rem 0.1rem 0.2rem; font-size: 0.74rem; line-height: 1.55;
+    color: var(--white-60); min-height: 5.2em;
+  }
+  .deuce-instrument :global(.di-dim) { color: var(--white-30); }
+  .deuce-instrument :global(.di-dname) {
+    color: var(--gold-accent); font-size: 0.7rem; letter-spacing: 0.14em;
+    margin-bottom: 0.35rem;
+  }
+  .deuce-instrument :global(.di-drow) { margin: 0.15rem 0; }
+  .deuce-instrument :global(.di-drow b) {
+    color: var(--white-45); font-weight: 400; font-size: 0.64rem;
+    letter-spacing: 0.1em; text-transform: uppercase; margin-right: 0.45em;
+  }
+  .deuce-instrument :global(.di-ladder) {
+    border-top: 1px solid var(--white-08); margin-top: 0.5rem; padding-top: 0.6rem;
+  }
+  .deuce-instrument :global(.di-lhead) {
+    font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--white-45); margin-bottom: 0.45rem;
+  }
+  .deuce-instrument :global(.di-leq) { color: var(--gold-accent); text-transform: none; letter-spacing: 0; }
+  .deuce-instrument :global(.di-stage) {
+    display: flex; align-items: baseline; gap: 0.6rem;
+    font-size: 0.72rem; padding: 0.18rem 0; color: var(--white-45);
+  }
+  .deuce-instrument :global(.di-now) { color: var(--white-90); }
+  .deuce-instrument :global(.di-now .di-sdot) { color: var(--alive); }
+  .deuce-instrument :global(.di-st) { min-width: 8.5em; letter-spacing: 0.1em; }
+  .deuce-instrument :global(.di-ss) { flex: 1; color: var(--white-45); }
+  .deuce-instrument :global(.di-gate-glyph) { font-size: 0.62rem; color: var(--white-30); }
+  .deuce-instrument :global(.di-lfoot) {
+    font-size: 0.64rem; color: var(--white-30); margin-top: 0.4rem;
+    padding-top: 0.35rem; border-top: 1px dashed var(--white-08);
+  }
+  .deuce-instrument :global(.di-gap) {
+    border-top: 1px solid var(--white-08); margin-top: 0.5rem; padding-top: 0.6rem;
+  }
+  .deuce-instrument :global(.di-axis) { stroke: var(--white-15); stroke-width: 1; }
+  .deuce-instrument :global(.di-gapband) { fill: rgba(184, 150, 90, 0.18); }
+  .deuce-instrument :global(.di-closemark) { fill: var(--white-45); }
+  .deuce-instrument :global(.di-minemark) { fill: var(--gold-accent); }
+  .deuce-instrument :global(.di-gaplabel) {
+    font-family: var(--mono); font-size: 9.5px; fill: var(--gold-accent);
+    text-anchor: middle;
+  }
+
+  /* touchable constellation - the hero, alive */
+  .creature-constellation-wrap {
+    margin: 0 0 1.2rem;
+  }
+
+  .creature-constellation {
+    position: relative;
+    border: 1px solid var(--white-08);
+    background: #080808;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .creature-constellation:hover {
+    border-color: var(--gold-accent);
+  }
+
+  .creature-constellation img {
+    width: 100%;
+    display: block;
+    opacity: 0.85;
+  }
+
+  .creature-constellation-wrap figcaption {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--white-30);
+    padding: 0.35rem 0.1rem;
+  }
+
+  .creature-constellation :global(.cc-loading) {
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--white-30);
+  }
+
+  .creature-constellation :global(.cc-hint) {
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--white-30);
+    pointer-events: none;
+  }
+
+  /* live badge + arrival flash - shared by the live panels */
+  .deuce-live :global(.dl-live) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    color: var(--alive);
+    margin-left: 0.8rem;
+  }
+
+  .deuce-live :global(.dl-livedot) {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--alive);
+    animation: dl-pulse 1.6s ease-in-out infinite;
+  }
+
+  .deuce-live :global(.dl-asleep) {
+    color: var(--white-30);
+  }
+
+  .deuce-live :global(.dl-arrived) {
+    animation: dl-arrive 1.8s ease-out;
+  }
+
+  @keyframes dl-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+  }
+
+  @keyframes dl-arrive {
+    0% { background: rgba(184, 150, 90, 0.22); }
+    100% { background: transparent; }
+  }
+
   /* deuce live panel - the ledger, ticking. Terminal register: mono, dim
      borders, gold only where something is alive. */
   .deuce-live {
@@ -331,6 +532,25 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: var(--gold-accent);
+  }
+
+  .deuce-live :global(.dl-live) {
+    font-size: 0.62rem; letter-spacing: 0.2em; color: var(--alive);
+    display: inline-flex; align-items: center; gap: 0.4em; margin-left: 0.75rem;
+  }
+  .deuce-live :global(.dl-livedot) {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--alive);
+    animation: dl-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes dl-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(91, 242, 155, 0.45); }
+    50% { opacity: 0.45; box-shadow: 0 0 0 4px rgba(91, 242, 155, 0); }
+  }
+  .deuce-live :global(.dl-asleep) { color: var(--white-30); animation: none; }
+  .deuce-live :global(.dl-arrived) { animation: dl-arrive 2.4s ease-out; }
+  @keyframes dl-arrive {
+    0% { background: rgba(184, 150, 90, 0.22); }
+    100% { background: transparent; }
   }
 
   .deuce-live :global(.dl-asof) {

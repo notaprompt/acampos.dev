@@ -4,8 +4,6 @@ tagline: "A mind that runs on one machine - mine. It remembers, dreams, feels wh
 status: "active"
 stack: ["TypeScript", "Python", "SQLite", "FTS5", "Ollama", "Model Context Protocol", "WebGL2", "local-first"]
 screenshots:
-  - src: "/images/projects/creature-constellation.jpg"
-    caption: "the memory graph, positions only - gold is the principle tier, the sigils mark what refuses to decay"
   - src: "/creature/judgment-matrix.png"
     caption: "the judgment matrix - what it may do alone, and what waits for me"
   - src: "/creature/keeper.png"

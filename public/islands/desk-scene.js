@@ -1251,28 +1251,45 @@
         [G,_,_,_,G],
         [_,G,G,G,_],
       ],
+      w: [
+        [G,_,_,_,G],
+        [G,_,_,_,G],
+        [G,_,_,_,G],
+        [G,_,G,_,G],
+        [G,_,G,_,G],
+        [G,G,_,G,G],
+        [G,_,_,_,G],
+      ],
+      k: [
+        [G,_,_,_,G],
+        [G,_,_,G,_],
+        [G,_,G,_,_],
+        [G,G,_,_,_],
+        [G,_,G,_,_],
+        [G,_,_,G,_],
+        [G,_,_,_,G],
+      ],
+      '.': [
+        [_,_,_,_,_],
+        [_,_,_,_,_],
+        [_,_,_,_,_],
+        [_,_,_,_,_],
+        [_,_,_,_,_],
+        [G,G,_,_,_],
+        [G,G,_,_,_],
+      ],
     };
 
-    var line1 = ['a','l','e','x','a','n','d','e','r'];
-    var line2 = ['c','a','m','p','o','s'];
+    var word = ['c','a','m','p','o','s','.','w','o','r','k','s'];
 
     var sx = 4;   // left margin
-    var sy = 95;   // bottom area of scene
+    var sy = 99;  // single line, bottom area of scene
 
-    // line 1: "alexander"
     var cx = sx;
-    for (var i = 0; i < line1.length; i++) {
-      var glyph = font[line1[i]];
+    for (var i = 0; i < word.length; i++) {
+      var glyph = font[word[i]];
       if (glyph) placeSprite(glyph, cx, sy);
-      cx += 6; // 5 wide + 1 gap
-    }
-
-    // line 2: "campos" — below, same left margin
-    cx = sx;
-    for (var j = 0; j < line2.length; j++) {
-      var glyph2 = font[line2[j]];
-      if (glyph2) placeSprite(glyph2, cx, sy + 8);
-      cx += 6;
+      cx += word[i] === '.' ? 4 : 6; // 5 wide + 1 gap; period is narrow
     }
   }
 

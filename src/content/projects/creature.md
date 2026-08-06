@@ -11,13 +11,8 @@ screenshots:
   - src: "/creature/norn.jpg"
     caption: "the lineage - Creatures (1996), a norn's brain panel open: 954 neurons, 9 lobes, owned as a file"
 metrics:
-  - { label: "memories", value: "5,324", asof: "Aug 2026", source: "memory.db" }
-  - { label: "edges", value: "6,710", asof: "Aug 2026", source: "memory.db" }
-  - { label: "sessions", value: "4,456", asof: "Aug 2026", source: "memory.db" }
   - { label: "consolidation cycles", value: "24,603 nrem · 217 rem", asof: "Aug 2026", source: "daemon log" }
   - { label: "memory classes", value: "2,096 public · 1,818 sensitive · 1,410 local-only", asof: "Aug 2026", source: "memory.db" }
-  - { label: "organs", value: "12", asof: "Aug 2026" }
-  - { label: "services under launchd", value: "32", asof: "Aug 2026" }
 order: 1
 ---
 

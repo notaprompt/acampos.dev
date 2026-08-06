@@ -48,7 +48,7 @@
       '<div class="dl-counts">' + fmt(d.memories) + ' memories · ' + fmt(d.edges) + ' edges · ' +
       fmt(d.sessions) + ' sessions · ' + fmt(d.principle) + ' principle-tier</div>' +
       '<div class="dl-last">' + d.organs + ' organs under contract · ' + d.services +
-      ' services under launchd · local model ' + (d.keeper && d.keeper.model_resident ? 'resident' : 'unloaded') + '</div>' +
+      ' services loaded right now · local model ' + (d.keeper && d.keeper.model_resident ? 'resident' : 'unloaded') + '</div>' +
       '<div class="dl-last">keeper: ' + (d.keeper && d.keeper.needs ? d.keeper.needs + ' need' + (d.keeper.needs === 1 ? '' : 's') + ' filed' : 'quiet') +
       ' · maintainer: ' + (d.findings ? d.findings + ' findings on its desk' : 'clear') + '</div>' +
       '<div class="dl-last">' + esc(DREAM[d.dream] || DREAM.unknown) + '</div>' +

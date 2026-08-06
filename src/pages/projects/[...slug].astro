@@ -271,17 +271,26 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     height: 320px;
   }
 
+  /* 4-up mirrors the 3-up grammar: first shot is the hero, rest sit under it */
   .project-screenshots--4 {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 2px;
+  }
+
+  .project-screenshots--4 .project-screenshot:first-child {
+    grid-column: 1 / -1;
   }
 
   .project-screenshots--4 .project-screenshot img {
     width: 100%;
-    height: 220px;
+    height: 200px;
     object-fit: cover;
     object-position: center top;
+  }
+
+  .project-screenshots--4 .project-screenshot:first-child img {
+    height: 320px;
   }
 
   .project-screenshot figcaption {
@@ -342,7 +351,8 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     .project-screenshots--2 .project-screenshot img,
     .project-screenshots--3 .project-screenshot img,
     .project-screenshots--3 .project-screenshot:first-child img,
-    .project-screenshots--4 .project-screenshot img {
+    .project-screenshots--4 .project-screenshot img,
+    .project-screenshots--4 .project-screenshot:first-child img {
       height: auto;
       object-fit: unset;
     }

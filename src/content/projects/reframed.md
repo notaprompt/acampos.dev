@@ -1,17 +1,26 @@
 ---
 title: "Reframed"
-tagline: "Helps people describe their experience honestly and still get the job. Live at reframed.works."
+tagline: "Helps people describe their experience honestly and still get the job."
 status: "shipped"
 stack: ["Next.js", "TypeScript", "Anthropic", "Neon Postgres", "Upstash Redis", "Stripe", "React PDF"]
 demo: "https://reframed.works"
-order: 1
----
+order: 3
+screenshots:
+  - src: "/images/projects/reframed-landing.jpg"
+    caption: "reframed.works - production"
+  - src: "/images/projects/reframed-receipt.jpg"
+    caption: "an honesty receipt - signed authorship breakdown, verifiable by anyone"
+metrics:
+  - { label: "api routes", value: "76", asof: "Aug 2026" }
+  - { label: "commits", value: "713", asof: "Aug 2026" }
+  - { label: "test files", value: "47", asof: "Aug 2026" }
+  - { label: "status", value: "live · taking payments", asof: "Aug 2026" }
 
-## Goals
+---
 
 I was tailoring resumes by hand and it took too long. Build a tool that does the rewriting -- two versions, refined and reframed -- without fabricating experience. Pay-per-use, magic-link auth, no friction.
 
-## Process
+## How it works
 
 Upload a resume (paste, file, or URL scrape), paste a job description. The system scores the match semantically, then generates two reframed versions with a change log for each.
 
@@ -27,7 +36,7 @@ Upload a resume (paste, file, or URL scrape), paste a job description. The syste
 
 ## What's live
 
-- 53 API routes, multi-provider routing with fallback chains
+- 76 API routes as of Aug 2026, multi-provider routing with fallback chains
 - Stripe payments, magic-link auth, credit system
 - InstantScore - paste a JD, get a match score before committing to a full tailoring
 - Voice fingerprinting, 14 industry profiles
@@ -39,13 +48,13 @@ Upload a resume (paste, file, or URL scrape), paste a job description. The syste
 - Application tracking board
 - Streaming analysis with real-time progress
 
-## Limitations
+## What I haven't solved
 
 - Resume parser handles most formats but unusual layouts can break extraction.
 - Multi-model routing means each step takes a few seconds. The full flow is not instant.
 - Product works. Distribution is the bottleneck.
 
-## Learnings
+## Where it's going
 
 The hardest part was the tailoring prompt. Getting a model to rewrite without fabricating required explicit structural constraints -- not just "don't make things up" but defining what reframing means at the sentence level. The difference between "managed a team" and "led cross-functional execution" is reframing. Adding a team you never managed is fabrication. The prompt encodes that distinction.
 

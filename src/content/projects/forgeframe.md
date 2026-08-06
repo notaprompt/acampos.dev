@@ -5,9 +5,16 @@ status: "active"
 stack: ["TypeScript", "Node.js", "MCP Protocol", "SQLite", "FTS5", "Ollama", "WebGL2"]
 repo: "https://github.com/notaprompt/forgeframe"
 order: 2
----
+screenshots:
+  - src: "/images/projects/forgeframe-door.jpg"
+    caption: "the cockpit's front door - the graph behind it holds real memories, so it asks for a token"
+metrics:
+  - { label: "tests", value: "888 (884 passing)", asof: "Aug 2026", source: "test runner" }
+  - { label: "packages", value: "4", asof: "Aug 2026" }
+  - { label: "commits", value: "188 on main", asof: "Aug 2026" }
+  - { label: "memories under management", value: "5,262", asof: "Aug 2026", source: "memory.db" }
 
-## Goals
+---
 
 Agents forget everything between sessions. ForgeFrame gives them persistent memory - what gets used strengthens, what gets ignored decays, and some things are principle-tier and never change. Four packages: `@forgeframe/memory` (MIT), `@forgeframe/core` (AGPL), `@forgeframe/server` (MIT), and `@forgeframe/proxy` (AGPL).
 
@@ -18,7 +25,7 @@ L2  MCP Memory Server (the primitive)       MIT
 L1  MCP Protocol (Anthropic's standard)     OPEN
 ```
 
-## Process
+## How it works
 
 **Memory engine.** SQLite + FTS5. Strength decay with 7-day half-life and a 0.1 floor. Retrieval reconsolidates - accessing a memory reinforces it. Ollama-backed semantic search with keyword fallback. Principle tier: `principle` and `voice` tagged memories are exempt from decay and consolidation - the non-decaying reference layer.
 
@@ -49,7 +56,7 @@ Invariant protection at every gate. 16 invariants enforced in code.
 
 **Routing.** Tier-based model dispatch. Provider adapters for Anthropic, OpenAI-compatible, and Ollama. Pure TypeScript, dependency injection throughout.
 
-**Proxy.** Localhost proxy for conversation intercept. Scrubs PII before anything reaches a cloud model, rehydrates on the way back. Three tiers: regex, dictionary, local LLM. 101 tests.
+**Proxy.** Localhost proxy for conversation intercept. Scrubs PII before anything reaches a cloud model, rehydrates on the way back. Three tiers: regex, dictionary, local model.
 
 **Source connectors.** Multi-directory ingestion with per-source strength weighting and tag control.
 
@@ -65,15 +72,9 @@ Invariant protection at every gate. 16 invariants enforced in code.
 
 **Forge Agent.** Autonomous task execution with self-evaluation. Picks up tasks, executes in isolation, reviews its own output before reporting back.
 
-## API surface
+The surface: 21 HTTP endpoints across 5 domains, 21 SSE event types, 20 MCP tools. In production it is the memory layer for everything else built on this machine - every Claude Code session logs to it via a SessionEnd hook, and Distillery pushes high-signal distillations back in with co-retrieval edges. It compounds.
 
-21 HTTP endpoints across 5 domains (Consolidation, Hermes, Guardian, Hebbian, Graph). 21 SSE event types for real-time observability. 20 MCP tools.
-
-## In production
-
-Running as the memory layer for everything else built on this machine. Every Claude Code session logs to it via a SessionEnd hook. Distillery pushes high-signal distillations back into it as memories with co-retrieval edges. It compounds.
-
-## Limitations
+## What I haven't solved
 
 - Proxy LLM tier not yet wired to Ollama - regex and dictionary tiers are active
 - Forge Cockpit (Zellij) not yet wired to ForgeFrame directly
@@ -81,7 +82,7 @@ Running as the memory layer for everything else built on this machine. Every Cla
 - Enterprise vertical configurations exist as domain knowledge, not shipped code
 - AGPL core creates friction for some enterprise adopters. Intentional, but still friction
 
-## Learnings
+## Where it's going
 
 The Hebbian engine was the right abstraction. Once LTP/LTD was wired in, the consolidation pipeline had something real to compress. The order mattered - building the learning substrate before the visualization meant the graph shows actual signal, not synthetic structure.
 

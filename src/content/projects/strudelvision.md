@@ -1,17 +1,21 @@
 ---
 title: "StrudelVision"
-tagline: "A Saturday night that kept going. Music visualizer with four WebGL shader modes, a Strudel REPL, a synth pad, a DJ mixer, and a TouchDesigner bridge — all in one index.html. Kinda works."
+tagline: "A Saturday night that kept going. Music visualizer with four WebGL shader modes, a Strudel REPL, a synth pad, a DJ mixer, and a TouchDesigner bridge - all in one index.html. Kinda works."
 status: "active"
 stack: ["WebGL2", "Canvas2D", "Web Audio API", "Strudel", "Ollama", "Web Speech API", "WebSocket", "Vanilla JS"]
-image: "/images/projects/strudelvision.jpg"
-demo: "http://127.0.0.1:8888"
-hidden_demo: true
-order: 5
+screenshots:
+  - src: "/images/projects/strudelvision.jpg"
+    caption: "the visualizer mid-set"
+  - src: "/images/projects/strudelvision-repl.jpg"
+    caption: "the strudel repl"
+  - src: "/images/projects/strudelvision-library.jpg"
+    caption: "the library"
+order: 6
 ---
 
 ## Status
 
-Parked, not dead. It runs, it kinda works, and I pick it back up on the odd Saturday night. No active roadmap — it's a toy I made for myself. Local demo only (needs Ollama running).
+Parked, not dead. It runs, it kinda works, and I pick it back up on the odd Saturday night. No active roadmap - it's a toy I made for myself. Local demo only (needs Ollama running).
 
 ## What happened
 
@@ -24,10 +28,10 @@ The design direction was "Teenage Engineering meets MCM brutalist meets retro DJ
 ## What it does (mostly)
 
 Four visual modes:
-1. **Thermal fractal** — Julia set, heat map, cycles through presets when the math goes bad
-2. **Cyber flow** — domain-warped noise, neon grid, looks cooler than it sounds
-3. **Prismatic feedback** — rainbow trails, hue matrix, the most chaotic one
-4. **Infinite hall** — Canvas2D feedback zoom, borrowed from this site's tunnel, not actually GLSL
+1. **Thermal fractal** - Julia set, heat map, cycles through presets when the math goes bad
+2. **Cyber flow** - domain-warped noise, neon grid, looks cooler than it sounds
+3. **Prismatic feedback** - rainbow trails, hue matrix, the most chaotic one
+4. **Infinite hall** - Canvas2D feedback zoom, borrowed from this site's tunnel, not actually GLSL
 
 Audio analysis drives all of it: spectral centroid steers color, flux drives intensity, hit accumulation gates cuts. There's also a kinetic text engine, speech-to-text lyrics, a chat panel that tells Ollama to edit shader parameters in natural language, and a WebSocket that exports state to TouchDesigner.
 

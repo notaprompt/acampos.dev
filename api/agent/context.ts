@@ -26,7 +26,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
       },
       {
         name: 'AI Cost Optimization',
-        description: 'Model routing and tiered dispatch that cuts API spend 40-60%. Audit included.',
+        description: 'Model routing and tiered dispatch - the cheap calls go local, the hard ones go up. Audit included.',
         category: 'ai-infrastructure',
       },
       {
@@ -44,18 +44,24 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
       {
         name: 'ForgeFrame',
         url: 'https://github.com/notaprompt/forgeframe',
-        description: 'Open-source memory for AI agents. MCP server with 12 tools. SQLite + FTS5.',
+        description: 'Open-source memory for agents. MCP-native. SQLite + FTS5, strength decay, principle tier.',
         status: 'active',
       },
       {
         name: 'Reframed',
         url: 'https://reframed.works',
-        description: 'Resume analysis platform. Voice fingerprinting, multi-reader analysis, streaming AI.',
+        description: 'Resume analysis platform. Voice fingerprinting, multi-reader analysis, signed honesty receipts.',
         status: 'shipped',
       },
       {
         name: 'Guardian',
-        description: 'Desktop cognitive workspace with reframe detection and awareness-trap detection. Local-only.',
+        description: 'Desktop workspace with reframe detection. The engine became ForgeFrame; the shell is retired.',
+        status: 'absorbed',
+      },
+      {
+        name: 'CREATURE',
+        url: 'https://campos.works/projects/creature',
+        description: 'A mind that runs on one machine - memory, dreams, judgment, a maintainer watching the body. Local by construction.',
         status: 'active',
       },
       {

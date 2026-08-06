@@ -1,12 +1,14 @@
 # Alexander Campos
 
-I ship AI that runs where mistakes get audited. Three products live, one taking payments, grounded in regulated finance. Governance built in from the first line - local-first, audit-trailed, accountable.
+I ship systems that run where mistakes get audited - agent memory, model routing, and the tools that make them usable. Grounded in regulated finance. Governance built in from the first line - local-first, audit-trailed, accountable.
 
 ## What I Build
 
-ForgeFrame: Memory for AI agents that works more like human memory than a database. Things you come back to strengthen. Things you ignore fade. Some things - principles, voice - never decay. Runs locally. MCP-native.
+CREATURE: A mind that runs on one machine. It remembers, consolidates while its owner sleeps, dreams from its own memories, and refuses work that crosses a line the owner set. Twelve organs - senses, a voice, a maintainer that watches the body - all local; the cloud is opt-in and never handed a memory.
 
-Reframed: Resume analysis platform that preserves your voice instead of replacing it with recruiter-speak. Voice fingerprinting, multi-reader semantic analysis, streaming AI. Live at reframed.works.
+ForgeFrame: Memory for agents that works more like human memory than a database. Things you come back to strengthen. Things you ignore fade. Some things - principles, voice - never decay. Runs locally. MCP-native.
+
+Reframed: Resume analysis platform that preserves your voice instead of replacing it with recruiter-speak. Voice fingerprinting, multi-reader semantic analysis, signed honesty receipts. Live at reframed.works.
 
 Distillery: Share a link from your phone. Your laptop reads it through your own recorded principles and tells you what's actually new - not just what resonates, but what you haven't seen before. What passes the filter writes back to memory.
 

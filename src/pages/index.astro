@@ -1,6 +1,23 @@
 ---
 import Page from '../layouts/Page.astro';
 import HitCounter from '../components/HitCounter.astro';
+import { getCollection } from 'astro:content';
+import office from '../data/office.json';
+
+// The cards read from the same collections the project pages do - the
+// homepage can no longer drift from the truth it links to.
+const projects = (await getCollection('projects'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+const essays = (await getCollection('essays'))
+  .filter((e) => e.data.status === 'published')
+  .sort((a, b) => b.data.date.localeCompare(a.data.date))
+  .slice(0, 3);
+const officeLine = [
+  office.memories && `${office.memories.toLocaleString('en-US')} memories on this desk`,
+  office.forecasts && `${office.forecasts.toLocaleString('en-US')} signed forecasts`,
+  office.services && `${office.services} services under launchd`,
+].filter(Boolean).join(' · ');
 ---
 
 <Page title="alexander campos" description="Alexander Campos - engineer who builds and ships agent memory, model routing, and the tools that make them usable. Reframed (live), ForgeFrame (open source).">
@@ -22,21 +39,15 @@ import HitCounter from '../components/HitCounter.astro';
     <h2 class="section-heading">what I build</h2>
 
     <div class="project-cards">
-      <a href="/projects/creature" class="project-card">
-        <span class="project-name">CREATURE</span>
-        <span class="project-line">A mind that runs entirely on my own machine - it remembers, dreams, learns my judgment, and keeps my private memory on my own hardware.</span>
-      </a>
-
-      <a href="/projects/reframed" class="project-card">
-        <span class="project-name">Reframed</span>
-        <span class="project-line">Helps people describe their experience honestly and still get the job. Live at <span class="gold">reframed.works</span>.</span>
-      </a>
-
-      <a href="/projects/forgeframe" class="project-card">
-        <span class="project-name">ForgeFrame</span>
-        <span class="project-line">Open-source memory for agents. Memories decay over time. Principles don't. You decide which is which.</span>
-      </a>
-
+      {projects.map((p) => (
+        <a href={`/projects/${p.slug}`} class="project-card">
+          <span class="project-name">{p.data.title}</span>
+          <span class="project-line">
+            {p.data.tagline}
+            {p.data.demo && <> Live at <span class="gold">{new URL(p.data.demo).hostname}</span>.</>}
+          </span>
+        </a>
+      ))}
     </div>
 
     <p class="more-link"><a href="/projects">all projects >></a></p>
@@ -47,20 +58,12 @@ import HitCounter from '../components/HitCounter.astro';
     <h2 class="section-heading">what I think</h2>
 
     <div class="essay-cards">
-      <a href="/writing/building-a-sovereign-mind" class="essay-card">
-        <span class="essay-title">Building a Sovereign Mind</span>
-        <span class="essay-line">Everyone is racing to give agents a past and a conscience they can carry. I built one that keeps both on a laptop I own.</span>
-      </a>
-
-      <a href="/writing/where-the-difference-is-stored" class="essay-card">
-        <span class="essay-title">Where the Difference Is Stored</span>
-        <span class="essay-line">The loop became measurable. Three substrates, three methods, one question: what do you put on the other side of it?</span>
-      </a>
-
-      <a href="/writing/on-observation-and-identity-modeling" class="essay-card">
-        <span class="essay-title">On Observation and Identity Modeling</span>
-        <span class="essay-line">How systems build models of the people who use them - and what happens when the model starts shaping the person.</span>
-      </a>
+      {essays.map((e) => (
+        <a href={`/writing/${e.slug}`} class="essay-card">
+          <span class="essay-title">{e.data.title}</span>
+          <span class="essay-line">{e.data.subtitle}</span>
+        </a>
+      ))}
     </div>
 
     <p class="more-link"><a href="/writing">all writing >></a></p>
@@ -86,6 +89,8 @@ import HitCounter from '../components/HitCounter.astro';
     <p class="home-prose dim">
       The <a href="/resume">resume</a> has the history. The <a href="https://github.com/notaprompt">repos</a> have the code. <a href="mailto:alex@campos.works">Get in touch</a>.
     </p>
+
+    {officeLine && <p class="office-line">{officeLine} - as of {office.asof}</p>}
 
     <div class="counter-row">
       <HitCounter />
@@ -285,6 +290,13 @@ import HitCounter from '../components/HitCounter.astro';
   }
 
   /* ── Counter ── */
+  .office-line {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--white-30);
+    margin: 0.6rem 0 0;
+  }
+
   .counter-row {
     padding-top: 1.5rem;
     margin-top: 1.5rem;

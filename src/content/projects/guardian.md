@@ -5,14 +5,12 @@ status: "absorbed"
 stack: ["Electron", "React", "Node.js", "SQLite/FTS5", "Zustand", "xterm.js"]
 image: "/images/projects/guardian.png"
 repo: "https://github.com/notaprompt/guardian-ui-scaffold"
-order: 3
+order: 7
 ---
-
-## Goals
 
 Guardian was ForgeFrame before ForgeFrame was a separate thing - the same engine (memory, decay, principle-tier tagging) wrapped in a desktop UI for end users instead of developers. It tracked how model responses shift over time and kept sensitive data local. When the memory layer got extracted into standalone infrastructure, the shell had nothing left to justify, and the engine lives in ForgeFrame now. This page is the research record; the [hall of shame](/misc/hall-of-shame#guardian) has the post-mortem.
 
-## Process
+## How it worked
 
 Started as an Electron shell with a chat window and a local Ollama connection. Built outward from there.
 
@@ -30,14 +28,14 @@ Started as an Electron shell with a chat window and a local Ollama connection. B
 
 **Post-session pipeline.** Fires on conversation end. Extracts decisions, tasks, and code artifacts. Generates typed notes. Indexes into FTS5 for search. Links entities into a knowledge graph. Runs unresolved-pattern detection.
 
-## Limitations
+## What was never solved
 
 - Reframe detection uses heuristic classification, not a trained model. False positive rate unmeasured.
 - Memory compression thresholds are hand-tuned, not empirically optimized.
 - No formal user study on reframe detection or unresolved-pattern accuracy.
 - Sovereign encryption is functional but not audited by a third party.
 
-## Learnings
+## What survived
 
 The hardest problems were state synchronization and process lifecycle management, not the models themselves.
 
@@ -45,4 +43,4 @@ Reframe detection surfaced a deeper problem: models subtly reshape your language
 
 Unresolved-pattern detection surfaced something else: cross-session recurrence isn't visible within any single conversation - it's visible only across them. You need memory that spans sessions to see which topics return without progress.
 
-Guardian is where the essay on observation and identity modeling came from. Everything I describe there — the loop, the reframe types, the four quadrants of who-sees-what — I found by building this and watching what happened.
+Guardian is where the essay on observation and identity modeling came from. Everything I describe there - the loop, the reframe types, the four quadrants of who-sees-what - I found by building this and watching what happened.

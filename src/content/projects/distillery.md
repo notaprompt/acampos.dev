@@ -3,16 +3,23 @@ title: "Distillery"
 tagline: "Share a link from your phone. Your laptop reads it through your own recorded principles and tells you what resonates."
 status: "active"
 stack: ["Python", "Flask", "Ollama", "yt-dlp", "SQLite", "iOS Shortcuts", "Tailscale"]
-order: 4
----
+order: 5
+screenshots:
+  - src: "/images/projects/distillery-feed.jpg"
+    caption: "the feed - a tiktok distilled against my own stack; quarantines and errors stay visible"
+metrics:
+  - { label: "items", value: "120", asof: "Aug 2026", source: "distillery.db" }
+  - { label: "distilled", value: "91", asof: "Aug 2026" }
+  - { label: "errored", value: "22", asof: "Aug 2026" }
+  - { label: "quarantined", value: "7", asof: "Aug 2026" }
 
-## Goals
+---
 
 Process the external content firehose through a personal intellectual lens. Share a TikTok, an arXiv paper, an article from your phone - the Mac extracts the content, runs it through a local model loaded with your principles and active projects, scores it for novelty, and pushes what's genuinely new into ForgeFrame memory where it participates in offline consolidation cycles and Hebbian edge reinforcement.
 
 The old version was a confirmation machine. 17 out of 20 distillations said "no change to build." The fix wasn't the pipeline - it was the lens orientation and adding a signal gate.
 
-## Process
+## How it works
 
 1. **iOS Shortcut**: Share sheet sends URL to Mac via Tailscale
 2. **Extractor**: yt-dlp for video transcripts, trafilatura for articles, arXiv API for papers. No video files saved.
@@ -27,17 +34,11 @@ The old version was a confirmation machine. 17 out of 20 distillations said "no 
 
 Always-on via launchd. Server and worker auto-start on login, restart on crash.
 
-## Status — what stalled
+Running on real input. The signal gate does most of its work by rejecting - most shared content scores familiar and never reaches memory. The point of the system is the rejection, not the throughput.
 
-The archive-ingest pipeline is stalled. Roughly 1,900 of 2,600 items are still unprocessed. The cause is a summarize bug: an Ollama route on the resume path returns empty, so batches silently produce nothing instead of failing loudly. I've diagnosed it — the fix is keep-alive on the model, fail-fast on timeout instead of swallowing it, and the correct model id on that route — but I haven't re-run the backlog yet. Until I do, the archive side is incomplete and I'd rather say so than pretend the corpus is whole.
+## What I haven't solved
 
-The live share-sheet path below still works. This is only the bulk-archive ingest that's blocked.
-
-## In production
-
-Running on real input. The signal gate does most of its work by rejecting - most shared content scores familiar and never reaches memory. The few items that clear the resonance × novelty threshold write back to ForgeFrame. The point of the system is the rejection, not the throughput.
-
-## Limitations
+The failure rate above is published on purpose - a pipeline that only reports its successes isn't reporting. The archive side ran a long backlog through a summarize bug earlier this year - batches silently produced nothing instead of failing loudly. The fix is in (keep-alive on the model, fail-fast on timeout, the right model id on that route), and the resume job now runs only when the machine is idle and plugged in. The live share-sheet path never stopped working.
 
 - yt-dlp platform coverage gaps. TikTok and YouTube work. Some platforms don't expose transcripts.
 - The lens sharpens with ForgeFrame memory accumulation. Early on with few memories, distillation is less specific.
@@ -45,7 +46,7 @@ Running on real input. The signal gate does most of its work by rejecting - most
 - Single-user by design. The principle-based lens is personal.
 - 45 backlog items distilled with the old lens - redistillation pending.
 
-## Learnings
+## Where it's going
 
 The problem wasn't extraction or inference speed. It was that the lens was narcissistic - it checked incoming content against the user's identity first, and most things don't match perfectly. Moving the principle layer to the user prompt and adding a novelty score changed what the system was actually doing: from "does this confirm who I am" to "is this something I haven't seen before."
 

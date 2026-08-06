@@ -381,6 +381,39 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     color: var(--white-30);
   }
 
+  .deuce-live :global(.dl-whead) {
+    margin-top: 1rem;
+  }
+
+  .deuce-live :global(.dl-wrow) {
+    flex-wrap: wrap;
+    gap: 0.4rem 0.9rem;
+  }
+
+  .deuce-live :global(.dl-usd) {
+    color: var(--gold-accent);
+    min-width: 4.5em;
+    text-align: right;
+  }
+
+  .deuce-live :global(.dl-move) {
+    color: var(--white-60);
+  }
+
+  .deuce-live :global(.dl-mkt) {
+    color: var(--white-30);
+    flex-basis: 100%;
+    padding-left: 5.9em;
+    font-size: 0.62rem;
+    line-height: 1.1;
+    margin-top: -0.35em;
+    margin-bottom: 0.3em;
+  }
+
+  @media (max-width: 600px) {
+    .deuce-live :global(.dl-mkt) { padding-left: 0; }
+  }
+
   /* proof strip - bookkeeping, not a dashboard. Borders whisper; numbers sit
      in the glow; the as-of line owns the honesty. */
   .proof-strip {

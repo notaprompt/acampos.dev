@@ -40,7 +40,24 @@
       '<div class="dl-counts">' + counts + '</div>' +
       (d.last_commit ? '<div class="dl-last">last commitment ' + esc(ago(d.last_commit)) + '</div>' : '') +
       '<div class="dl-rows">' + rows + '</div>' +
-      '<div class="dl-foot">ed25519-signed · committed before resolution · ids shown hashed</div>';
+      '<div class="dl-foot">ed25519-signed · committed before resolution · ids shown hashed</div>' +
+      whaleSection(d.whales);
+  }
+
+  function whaleSection(w) {
+    if (!w || !w.feed || !w.feed.length) return '';
+    var rows = w.feed.map(function (r) {
+      return '<div class="dl-row dl-wrow">' +
+        '<span class="dl-time">' + esc(r.t) + '</span>' +
+        '<span class="dl-hash">' + esc(r.w) + '</span>' +
+        '<span class="dl-usd">$' + Number(r.usd).toLocaleString('en-US') + '</span>' +
+        '<span class="dl-move">' + esc(r.s.toLowerCase()) + ' ' + esc(r.o) + ' @ ' + esc(r.p) + '</span>' +
+        '<span class="dl-mkt">' + esc(r.m) + '</span></div>';
+    }).join('');
+    return '<div class="dl-head dl-whead"><span class="dl-title">sharp tape - live</span>' +
+      '<span class="dl-asof">' + w.watched + ' validated wallet' + (w.watched === 1 ? '' : 's') + ' under watch</span></div>' +
+      '<div class="dl-rows">' + rows + '</div>' +
+      '<div class="dl-foot">live public flow of wallets the radar validated as sharp - their money, not mine · wallets shown hashed</div>';
   }
 
   function tick() {

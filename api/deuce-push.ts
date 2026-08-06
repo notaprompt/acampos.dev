@@ -45,6 +45,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       h: String(r.h || '').slice(0, 8),
       open: Boolean(r.open),
     })),
+    whales: {
+      watched: Number(body.whales?.watched) || 0,
+      feed: (Array.isArray(body.whales?.feed) ? body.whales.feed : []).slice(0, 10)
+        .map((r: { t?: unknown; w?: unknown; m?: unknown; s?: unknown; o?: unknown; p?: unknown; usd?: unknown }) => ({
+          t: String(r.t || '').slice(0, 20),
+          w: String(r.w || '').slice(0, 12),
+          m: String(r.m || '').slice(0, 48),
+          s: String(r.s || '').slice(0, 4),
+          o: String(r.o || '').slice(0, 20),
+          p: Number(r.p) || 0,
+          usd: Math.round(Number(r.usd) || 0),
+        })),
+    },
   };
 
   try {

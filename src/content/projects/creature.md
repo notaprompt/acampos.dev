@@ -10,6 +10,8 @@ screenshots:
     caption: "the judgment matrix - what it may do alone, and what waits for me"
   - src: "/creature/keeper.png"
     caption: "the keeper - needs filed by organs, arbitrated in one place"
+  - src: "/creature/norn.jpg"
+    caption: "the lineage - Creatures (1996), a norn's brain panel open: 954 neurons, 9 lobes, owned as a file"
 metrics:
   - { label: "memories", value: "5,324", asof: "Aug 2026", source: "memory.db" }
   - { label: "edges", value: "6,710", asof: "Aug 2026", source: "memory.db" }

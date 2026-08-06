@@ -4,6 +4,8 @@ tagline: "A mind that runs on one machine - mine. It remembers, dreams, feels wh
 status: "active"
 stack: ["TypeScript", "Python", "SQLite", "FTS5", "Ollama", "Model Context Protocol", "WebGL2", "local-first"]
 screenshots:
+  - src: "/creature/plate.webp"
+    caption: "an illuminated plate of the office, rendered from thousands of glyphs by one of the creature's own organs"
   - src: "/creature/judgment-matrix.png"
     caption: "the judgment matrix - what it may do alone, and what waits for me"
   - src: "/creature/keeper.png"

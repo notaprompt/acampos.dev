@@ -724,22 +724,6 @@
     nameLabel.textContent = esc(name);
     stage.appendChild(nameLabel);
 
-    // A real photo of the room's owner, hung on the wall
-    var photoLink = document.createElement('a');
-    photoLink.className = 'or-photo';
-    photoLink.href = '/about';
-    var photoImg = document.createElement('img');
-    photoImg.src = '/images/office.jpg';
-    photoImg.alt = 'oliver at the real laptop, reading this very site';
-    photoImg.loading = 'lazy';
-    photoImg.decoding = 'async';
-    photoLink.appendChild(photoImg);
-    var photoCap = document.createElement('span');
-    photoCap.className = 'or-photo-cap';
-    photoCap.textContent = 'me irl';
-    photoLink.appendChild(photoCap);
-    stage.appendChild(photoLink);
-
     // ── Feature 3: Treat button (bone replaces ~) ──
     var treatBtn = document.createElement('button');
     treatBtn.className = 'or-treat';
@@ -1295,19 +1279,6 @@
       '.or-name {',
       '  font-size: 0.55rem; color: var(--white-20); margin-top: 6px;',
       '  letter-spacing: 0.05em;',
-      '}',
-      '',
-      '/* the photo on the wall */',
-      '.or-photo {',
-      '  display: block; width: 86%; margin: 8px auto 0; text-decoration: none;',
-      '  border: 1px solid var(--white-08); padding: 4px 4px 2px;',
-      '  background: var(--depth-2); transition: border-color 0.2s;',
-      '}',
-      '.or-photo:hover { border-color: var(--gold-accent); }',
-      '.or-photo img { width: 100%; display: block; }',
-      '.or-photo-cap {',
-      '  display: block; font-size: 0.55rem; color: var(--white-20);',
-      '  text-align: center; padding: 3px 0 2px; letter-spacing: 0.05em;',
       '}',
       '',
       '/* Treat button */',

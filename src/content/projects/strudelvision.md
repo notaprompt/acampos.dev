@@ -1,7 +1,7 @@
 ---
 title: "StrudelVision"
 tagline: "A Saturday night that kept going. Music visualizer with four WebGL shader modes, a Strudel REPL, a synth pad, a DJ mixer, and a TouchDesigner bridge - all in one index.html. Kinda works."
-status: "active"
+status: "parked"
 stack: ["WebGL2", "Canvas2D", "Web Audio API", "Strudel", "Ollama", "Web Speech API", "WebSocket", "Vanilla JS"]
 screenshots:
   - src: "/images/projects/strudelvision.jpg"

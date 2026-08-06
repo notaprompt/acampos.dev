@@ -5,7 +5,7 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     tagline: z.string(),
-    status: z.enum(['active', 'shipped', 'concept', 'absorbed']),
+    status: z.enum(['active', 'shipped', 'concept', 'absorbed', 'parked']),
     stack: z.array(z.string()),
     image: z.string().optional(),
     // A shot may carry a caption ("fixture data", "production"). Plain strings

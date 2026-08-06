@@ -46,7 +46,7 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
       "name": "Alexander Campos",
       "url": "https://campos.works"
     },
-    "creativeWorkStatus": entry.data.status === 'shipped' ? 'Published' : entry.data.status === 'active' ? 'In development' : entry.data.status === 'absorbed' ? 'Discontinued' : 'Concept'
+    "creativeWorkStatus": entry.data.status === 'shipped' ? 'Published' : entry.data.status === 'active' ? 'In development' : entry.data.status === 'absorbed' ? 'Discontinued' : entry.data.status === 'parked' ? 'Paused' : 'Concept'
   })} />
 
   <article class="project-detail">
@@ -152,6 +152,7 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
   .status-shipped { color: var(--gold-accent); border-color: var(--gold-accent); }
   .status-concept { color: var(--white-45); border-color: var(--white-30); }
   .status-absorbed { color: var(--gold-accent); border-color: var(--gold-accent); opacity: 0.55; }
+  .status-parked { color: var(--white-45); border-color: var(--white-30); opacity: 0.7; }
 
   .stack {
     display: flex;

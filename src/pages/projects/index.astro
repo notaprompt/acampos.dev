@@ -60,6 +60,10 @@ const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a
         </div>
       </div>
     )}
+
+    <nav class="shame-nav">
+      <a href="/misc/hall-of-shame">what didn't survive &gt;&gt;</a>
+    </nav>
   </article>
 
   <script is:inline>
@@ -186,6 +190,28 @@ const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a
     color: var(--gold-accent);
     border-color: var(--gold-accent);
     opacity: 0.55;
+  }
+
+  .status-parked {
+    color: var(--white-45);
+    border-color: var(--white-30);
+    opacity: 0.7;
+  }
+
+  .shame-nav {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--white-08);
+  }
+
+  .shame-nav a {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--white-45);
+  }
+
+  .shame-nav a:hover {
+    color: var(--gold-accent);
   }
 
   .project-tagline {

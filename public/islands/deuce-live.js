@@ -31,11 +31,13 @@
         '<span class="dl-time">' + esc(r.t) + '</span>' +
         '<span class="dl-state' + (r.open ? ' dl-open' : '') + '">' + (r.open ? 'open' : 'resolved') + '</span></div>';
     }).join('');
+    var counts = d.resolved > 0
+      ? fmt(d.total) + ' committed · ' + fmt(d.resolved) + ' resolved · ' + fmt(d.open) + ' open · ' + fmt(d.h24) + ' in the last 24h'
+      : fmt(d.total) + ' committed · ' + fmt(d.h24) + ' in the last 24h · resolutions not recorded yet - the book only appends';
     host.innerHTML =
       '<div class="dl-head"><span class="dl-title">sf ledger - live</span>' +
       '<span class="dl-asof">published ' + esc(ago(d.as_of)) + '</span></div>' +
-      '<div class="dl-counts">' + fmt(d.total) + ' committed · ' + fmt(d.resolved) + ' resolved · ' +
-      fmt(d.open) + ' open · ' + fmt(d.h24) + ' in the last 24h</div>' +
+      '<div class="dl-counts">' + counts + '</div>' +
       (d.last_commit ? '<div class="dl-last">last commitment ' + esc(ago(d.last_commit)) + '</div>' : '') +
       '<div class="dl-rows">' + rows + '</div>' +
       '<div class="dl-foot">ed25519-signed · committed before resolution · ids shown hashed</div>';

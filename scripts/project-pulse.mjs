@@ -45,6 +45,20 @@ const DAYS = parseInt(arg('days', '7'), 10);
 // ── the allowlist: project page → repos that feed it ─────────────────────────
 // PUBLIC BOUNDARY. Never add: career-agent, career-ops, getajobinai,
 // forgefind-job (discreet job search), dad-watch*, nursery (family).
+// ── sites beyond this one ────────────────────────────────────────────────────
+// Each entry: its own git repo, page file, sources. A site publishes only when
+// ITS OWN tree is clean — one dirty site never blocks another.
+// reframed.works is deliberately absent: it has paying users, and publishing a
+// dev commit-log on a product site is a product decision, not a default.
+const EXTRA_SITES = [
+  {
+    site: `${HOME}/Desktop/repos/guardianlabs-site`,
+    page: 'lab.html',
+    html: true,
+    sources: [ `${HOME}/Desktop/repos/guardianlabs-site` ],
+  },
+];
+
 const PROJECTS = {
   // NOTE: ~/CREATURE (the organ workspace) is not a git repo, so its work is
   // invisible here — flagged to Alex 2026-08-07. creature-tui carries the
@@ -152,7 +166,41 @@ for (const [page, repos] of Object.entries(PROJECTS)) {
   changed.push(page);
 }
 
-if (DRY || !changed.length) { console.log(DRY ? '\n(dry run)' : '\nnothing to publish'); process.exit(0); }
+// ── extra sites: same digest, their own repos, their own clean-tree rule ─────
+for (const x of EXTRA_SITES) {
+  const path = resolve(x.site, x.page);
+  if (!existsSync(path)) continue;
+  const d = digest(x.sources);
+  const block = renderPulse(d, today);
+  console.log(`${x.page.padEnd(16)} ${d.commits} commits · ${d.subjects.length} publishable subjects${block ? '' : '  (quiet — untouched)'} [${x.site.split('/').pop()}]`);
+  if (!block) continue;
+  let sHtml = readFileSync(path, 'utf8');
+  const htmlBlock = x.html
+    ? block.replace('**Recent work**', '<strong>Recent work</strong>')
+           .replace(/^- (.*)$/gm, '<li>$1</li>')
+           .replace(/\n\n/g, '\n')
+    : block;
+  if (sHtml.includes('<!-- pulse:start -->')) {
+    sHtml = sHtml.replace(/<!-- pulse:start -->[\s\S]*?<!-- pulse:end -->/, htmlBlock);
+  } else {
+    console.log(`   (no pulse anchor in ${x.page} — add <!-- pulse:start --><!-- pulse:end --> where it should live)`);
+    continue;
+  }
+  if (!DRY) {
+    writeFileSync(path, sHtml);
+    const xd = git(x.site, ['status', '--porcelain']).split('\n').filter(l => l.trim() && !l.includes(x.page));
+    if (!NO_COMMIT && xd.length === 0) {
+      execFileSync('git', ['-C', x.site, 'add', x.page], { stdio: 'inherit' });
+      execFileSync('git', ['-C', x.site, 'commit', '-m', `lab: weekly pulse ${today}`], { stdio: 'inherit' });
+      if (!NO_PUSH) execFileSync('git', ['-C', x.site, 'push'], { stdio: 'inherit' });
+      console.log(`   published [${x.site.split('/').pop()}]`);
+    } else {
+      console.log(`   written, not committed [${x.site.split('/').pop()}]${xd.length ? ' — tree has other changes' : ''}`);
+    }
+  }
+}
+
+if (DRY || !changed.length) { console.log(DRY ? '\n(dry run)' : '\nnothing to publish — this site'); process.exit(0); }
 if (NO_COMMIT) { console.log(`\npulse written for: ${changed.join(', ')} — NOT committed (--no-commit)`); process.exit(0); }
 
 // voice-gate the changed pages if the gate exists (career-agent tool)

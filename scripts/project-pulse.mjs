@@ -39,6 +39,7 @@ const HOME = process.env.HOME;
 const arg = (n, d) => { const i = process.argv.indexOf(`--${n}`); return i > -1 ? (process.argv[i + 1] ?? true) : d; };
 const DRY = process.argv.includes('--dry-run');
 const NO_PUSH = process.argv.includes('--no-push');
+const NO_COMMIT = process.argv.includes('--no-commit');   // write pulse blocks, leave git alone
 const DAYS = parseInt(arg('days', '7'), 10);
 
 // ── the allowlist: project page → repos that feed it ─────────────────────────
@@ -52,6 +53,10 @@ const PROJECTS = {
   'creature.md': [
     `${HOME}/Desktop/repos/creature-tui`,
     `${HOME}/Desktop/repos/creature`,
+    // the site's own creature organ — the plate, the constellation, the pulse
+    // islands are creature work and their commits say so
+    { path: `${HOME}/Desktop/repos/acampos.dev`,
+      only: ['public/creature', 'public/islands/creature-pulse.js', 'src/pages/creature*', 'scripts/constellation'] },
   ],
   'forgeframe.md': [
     `${HOME}/Desktop/repos/ForgeFrame`,
@@ -79,12 +84,14 @@ function digest(repos) {
   const since = `${DAYS} days ago`;
   const out = [];
   let commits = 0, files = new Set();
-  for (const repo of repos) {
+  for (const entry of repos) {
+    const repo = typeof entry === 'string' ? entry : entry.path;
+    const spec = typeof entry === 'string' ? [] : ['--', ...entry.only];
     if (!existsSync(repo)) continue;
-    const log = git(repo, ['log', `--since=${since}`, '--pretty=%s', '--no-merges']);
+    const log = git(repo, ['log', `--since=${since}`, '--pretty=%s', '--no-merges', ...spec]);
     const subjects = log ? log.split('\n').filter(Boolean) : [];
     commits += subjects.length;
-    for (const f of git(repo, ['log', `--since=${since}`, '--name-only', '--pretty=format:', '--no-merges']).split('\n'))
+    for (const f of git(repo, ['log', `--since=${since}`, '--name-only', '--pretty=format:', '--no-merges', ...spec]).split('\n'))
       if (f.trim()) files.add(f.trim());
     for (const s of subjects) {
       if (SECRET_RE.test(s)) continue;
@@ -119,7 +126,7 @@ function renderPulse(d, today) {
 // ── run ──────────────────────────────────────────────────────────────────────
 const today = new Date().toISOString().slice(0, 10);
 const dirty = git(SITE, ['status', '--porcelain']);
-if (dirty && !DRY) { console.error('site tree is dirty — refusing to run (commit or stash first)'); process.exit(1); }
+if (dirty && !DRY && !NO_COMMIT) { console.error('site tree is dirty — refusing to run (commit or stash first, or use --no-commit)'); process.exit(1); }
 
 let changed = [];
 for (const [page, repos] of Object.entries(PROJECTS)) {
@@ -146,6 +153,7 @@ for (const [page, repos] of Object.entries(PROJECTS)) {
 }
 
 if (DRY || !changed.length) { console.log(DRY ? '\n(dry run)' : '\nnothing to publish'); process.exit(0); }
+if (NO_COMMIT) { console.log(`\npulse written for: ${changed.join(', ')} — NOT committed (--no-commit)`); process.exit(0); }
 
 // voice-gate the changed pages if the gate exists (career-agent tool)
 const GATE = `${HOME}/Desktop/repos/career-agent/voice-gate.mjs`;

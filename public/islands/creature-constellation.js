@@ -1,29 +1,30 @@
-// creature-constellation — the memory graph, touchable.
+// creature-constellation — the memory graph in three dimensions, touchable.
 // Topology only (positions, strength, principle flags - no content exists in
-// the file). Drag to pan, wheel/pinch to zoom, hover to light a memory.
-// Perf shape: edges render into a cached offscreen layer in 4 batched style
-// buckets (4 stroke calls, not 9k); panning blits the cache; hover uses a
-// spatial hash. The static image stays until the first real frame succeeds.
+// the file). Drag to orbit, wheel/pinch to approach, hover to light a memory.
+// Raw WebGL - points and lines, no library. Left alone, it turns slowly.
+// If WebGL or the fetch fails, the static image simply stays.
 (function () {
   var host = document.getElementById('creature-constellation');
   if (!host || window.__constInit) return;
   window.__constInit = true;
 
-  var DPR = Math.min(1.5, window.devicePixelRatio || 1);
+  var DPR = Math.min(2, window.devicePixelRatio || 1);
   var canvas = document.createElement('canvas');
   canvas.style.width = '100%';
   canvas.style.display = 'block';
   canvas.style.cursor = 'grab';
   canvas.style.touchAction = 'none';
-  var ctx = canvas.getContext('2d');
-  var edgeLayer = document.createElement('canvas');
-  var ectx = edgeLayer.getContext('2d');
+  var overlay = document.createElement('canvas'); // sigils + hover glow
+  overlay.style.position = 'absolute';
+  overlay.style.inset = '0';
+  overlay.style.width = '100%';
+  overlay.style.pointerEvents = 'none';
+  var gl = canvas.getContext('webgl', { antialias: true, alpha: false });
+  if (!gl) return; // static image stays
 
   var W = 0, H = 0, data = null, sigils = [];
-  var view = { x: 0, y: 0, k: 1 };
-  var snap = null;              // view state the edge layer was rendered at
-  var hover = -1;
-  var grid = null, CELL = 160;  // spatial hash, world units
+  var yaw = 0.6, pitch = 0.25, dist = 2.2, autoSpin = true;
+  var hover = -1, projected = null;
   var SIGGLYPHS = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ☉☽☿♀♂♃♄';
 
   function mulberry32(a) {
@@ -35,212 +36,293 @@
     };
   }
 
-  function size() {
-    W = host.clientWidth;
-    H = Math.round(W * 0.66);
-    canvas.width = W * DPR; canvas.height = H * DPR;
-    canvas.style.height = H + 'px';
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    edgeLayer.width = W * DPR; edgeLayer.height = H * DPR;
-    if (data) { fit(); rebuildEdges(); }
-    dirty = true;
-  }
-
-  function fit() {
-    var m = 26;
-    view.k = Math.min((W - 2 * m) / 4095, (H - 2 * m) / 4095);
-    view.x = (W - 4095 * view.k) / 2;
-    view.y = (H - 4095 * view.k) / 2;
-  }
-
-  function sx(x) { return x * view.k + view.x; }
-  function sy(y) { return y * view.k + view.y; }
-
-  function buildGrid() {
-    grid = {};
-    for (var i = 0; i < data.core.length; i++) {
-      var n = data.core[i];
-      var key = ((n[0] / CELL) | 0) + '_' + ((n[1] / CELL) | 0);
-      (grid[key] = grid[key] || []).push(i);
+  function compile(vsrc, fsrc) {
+    function sh(type, src) {
+      var s = gl.createShader(type);
+      gl.shaderSource(s, src); gl.compileShader(s);
+      return s;
     }
+    var p = gl.createProgram();
+    gl.attachShader(p, sh(gl.VERTEX_SHADER, vsrc));
+    gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fsrc));
+    gl.linkProgram(p);
+    return p;
   }
 
-  function nearest(mx, my) {
-    var wx = (mx - view.x) / view.k, wy = (my - view.y) / view.k;
-    var r = 14 / view.k, best = -1, bd = r * r;
-    var c0x = ((wx - r) / CELL) | 0, c1x = ((wx + r) / CELL) | 0;
-    var c0y = ((wy - r) / CELL) | 0, c1y = ((wy + r) / CELL) | 0;
-    for (var gx = c0x; gx <= c1x; gx++) {
-      for (var gy = c0y; gy <= c1y; gy++) {
-        var cell = grid[gx + '_' + gy];
-        if (!cell) continue;
-        for (var c = 0; c < cell.length; c++) {
-          var n = data.core[cell[c]];
-          var dx = n[0] - wx, dy = n[1] - wy;
-          var dd = dx * dx + dy * dy;
-          if (dd < bd) { bd = dd; best = cell[c]; }
-        }
-      }
+  var lineProg = compile(
+    'attribute vec3 aPos; attribute float aAlpha; uniform mat4 uMVP; varying float vA;' +
+    'void main(){ gl_Position = uMVP * vec4(aPos,1.0); vA = aAlpha; }',
+    'precision mediump float; varying float vA;' +
+    'void main(){ gl_FragColor = vec4(0.886,0.800,0.643,1.0) * vA; }');
+  var pointProg = compile(
+    'attribute vec3 aPos; attribute vec4 aCol; attribute float aSize;' +
+    'uniform mat4 uMVP; uniform float uScale; varying vec4 vC;' +
+    'void main(){ vec4 p = uMVP * vec4(aPos,1.0); gl_Position = p;' +
+    ' gl_PointSize = clamp(aSize * uScale / p.w, 1.0, 14.0); vC = aCol; }',
+    'precision mediump float; varying vec4 vC;' +
+    'void main(){ vec2 d = gl_PointCoord - vec2(0.5);' +
+    ' float r = length(d); if (r > 0.5) discard;' +
+    ' float soft = smoothstep(0.5, 0.18, r);' +
+    ' gl_FragColor = vec4(vC.rgb, 1.0) * (vC.a * soft); }');
+
+  var lineBuf, lineN = 0, nodeBuf, nodeN = 0, dustBuf, dustN = 0;
+  var hoverLineBuf = gl.createBuffer(), hoverLineN = 0;
+
+  function world(n) { // 0-4095 cube -> [-1,1]
+    return [(n[0] - 2048) / 2048, (n[1] - 2048) / 2048, (n[2] - 2048) / 2048];
+  }
+
+  function buildBuffers() {
+    var core = data.core, edges = data.edges;
+    // edges: 2 verts x (pos + alpha)
+    var la = new Float32Array(edges.length * 8);
+    for (var e = 0; e < edges.length; e++) {
+      var a = world(core[edges[e][0]]), b = world(core[edges[e][1]]);
+      var al = 0.05 + (edges[e][2] / 100) * 0.10;
+      la.set([a[0], a[1], a[2], al, b[0], b[1], b[2], al], e * 8);
     }
-    return best;
+    lineBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, lineBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, la, gl.STATIC_DRAW);
+    lineN = edges.length * 2;
+
+    // nodes: pos + rgba + size
+    var na = new Float32Array(core.length * 8);
+    for (var i = 0; i < core.length; i++) {
+      var n = core[i], p = world(n), s = n[3] / 99;
+      var o = i * 8;
+      na[o] = p[0]; na[o + 1] = p[1]; na[o + 2] = p[2];
+      if (n[4]) { na[o + 3] = 0.784; na[o + 4] = 0.651; na[o + 5] = 0.408; na[o + 6] = 0.30 + s * 0.5; }
+      else { na[o + 3] = 0.910; na[o + 4] = 0.863; na[o + 5] = 0.784; na[o + 6] = 0.10 + s * 0.28; }
+      na[o + 7] = 1.6 + s * 2.6;
+    }
+    nodeBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, nodeBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, na, gl.STATIC_DRAW);
+    nodeN = core.length;
+
+    // dust: isolated memories on a far shell
+    var rnd = mulberry32(77);
+    var da = new Float32Array(data.iso * 8);
+    for (var d0 = 0; d0 < data.iso; d0++) {
+      var th = rnd() * Math.PI * 2, ph = Math.acos(2 * rnd() - 1);
+      var r = 1.25 + rnd() * 0.45;
+      var o2 = d0 * 8;
+      da[o2] = r * Math.sin(ph) * Math.cos(th);
+      da[o2 + 1] = r * Math.cos(ph);
+      da[o2 + 2] = r * Math.sin(ph) * Math.sin(th);
+      da[o2 + 3] = 0.910; da[o2 + 4] = 0.863; da[o2 + 5] = 0.784;
+      da[o2 + 6] = 0.05 + rnd() * 0.06;
+      da[o2 + 7] = 1.2;
+    }
+    dustBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, dustBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, da, gl.STATIC_DRAW);
+    dustN = data.iso;
   }
 
   function pickSigils() {
     var cand = [];
     for (var i = 0; i < data.core.length; i++) {
       var n = data.core[i];
-      if (n[3]) cand.push([n[4] + n[2] / 33, i]);
+      if (n[4]) cand.push([n[5] + n[3] / 33, i]);
     }
     cand.sort(function (a, b) { return b[0] - a[0]; });
-    var out = [], MIN = 140;
-    for (var c = 0; c < cand.length && out.length < 46; c++) {
+    var out = [], MIN = 480;
+    for (var c = 0; c < cand.length && out.length < 40; c++) {
       var i2 = cand[c][1], ok = true;
       for (var o = 0; o < out.length; o++) {
         var a = data.core[i2], b = data.core[out[o]];
-        var dx = a[0] - b[0], dy = a[1] - b[1];
-        if (dx * dx + dy * dy < MIN * MIN) { ok = false; break; }
+        var dx = a[0] - b[0], dy = a[1] - b[1], dz = a[2] - b[2];
+        if (dx * dx + dy * dy + dz * dz < MIN * MIN) { ok = false; break; }
       }
       if (ok) out.push(i2);
     }
     return out;
   }
 
-  // edges in 4 alpha buckets - 4 stroke calls total. Density thins when far:
-  // alpha scales with zoom so the fit view reads as texture, not hairball.
-  function rebuildEdges() {
-    snap = { x: view.x, y: view.y, k: view.k };
-    ectx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    ectx.clearRect(0, 0, W, H);
-    var zoomFade = Math.max(0.3, Math.min(1, view.k / 0.5));
-    var buckets = [[], [], [], []];
+  // minimal mat4: perspective * translate(0,0,-dist) * rotX(pitch) * rotY(yaw)
+  function mvp() {
+    var f = 1 / Math.tan(0.45), aspect = W / H;
+    var near = 0.1, far = 20;
+    var cy = Math.cos(yaw), sy = Math.sin(yaw);
+    var cp = Math.cos(pitch), sp = Math.sin(pitch);
+    // rotY then rotX applied to point, then translate z, then perspective
+    // column-major out
+    var m = new Float32Array(16);
+    // combined rotation R = Rx * Ry
+    var r00 = cy, r01 = 0, r02 = sy;
+    var r10 = sp * sy, r11 = cp, r12 = -sp * cy;
+    var r20 = -cp * sy, r21 = sp, r22 = cp * cy;
+    var A = f / aspect, B = f;
+    var C = (far + near) / (near - far), D = (2 * far * near) / (near - far);
+    // proj * view; view z = R*p - dist
+    m[0] = A * r00; m[4] = A * r01; m[8] = A * r02; m[12] = 0;
+    m[1] = B * r10; m[5] = B * r11; m[9] = B * r12; m[13] = 0;
+    m[2] = C * r20; m[6] = C * r21; m[10] = C * r22; m[14] = C * -dist + D;
+    m[3] = -r20; m[7] = -r21; m[11] = -r22; m[15] = dist;
+    return m;
+  }
+
+  function project(p, m) { // -> [sx, sy, w] in css px
+    var x = p[0], y = p[1], z = p[2];
+    var cx = m[0] * x + m[4] * y + m[8] * z + m[12];
+    var cy2 = m[1] * x + m[5] * y + m[9] * z + m[13];
+    var cw = m[3] * x + m[7] * y + m[11] * z + m[15];
+    return [(cx / cw * 0.5 + 0.5) * W, (0.5 - cy2 / cw * 0.5) * H, cw];
+  }
+
+  var octx = overlay.getContext('2d');
+  var last = 0;
+
+  function draw(ts) {
+    requestAnimationFrame(draw);
+    var dt = Math.min(0.05, (ts - last) / 1000 || 0);
+    last = ts;
+    if (autoSpin) yaw += dt * 0.12;
+
+    var m = mvp();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0.031, 0.031, 0.031, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+
+    // edges
+    gl.useProgram(lineProg);
+    gl.uniformMatrix4fv(gl.getUniformLocation(lineProg, 'uMVP'), false, m);
+    gl.bindBuffer(gl.ARRAY_BUFFER, lineBuf);
+    var aPos = gl.getAttribLocation(lineProg, 'aPos');
+    var aAlpha = gl.getAttribLocation(lineProg, 'aAlpha');
+    gl.enableVertexAttribArray(aPos);
+    gl.enableVertexAttribArray(aAlpha);
+    gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 16, 0);
+    gl.vertexAttribPointer(aAlpha, 1, gl.FLOAT, false, 16, 12);
+    gl.drawArrays(gl.LINES, 0, lineN);
+
+    // hover edges, bright
+    if (hover >= 0 && hoverLineN) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, hoverLineBuf);
+      gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 16, 0);
+      gl.vertexAttribPointer(aAlpha, 1, gl.FLOAT, false, 16, 12);
+      gl.drawArrays(gl.LINES, 0, hoverLineN);
+    }
+
+    // nodes + dust
+    gl.useProgram(pointProg);
+    gl.uniformMatrix4fv(gl.getUniformLocation(pointProg, 'uMVP'), false, m);
+    gl.uniform1f(gl.getUniformLocation(pointProg, 'uScale'), DPR * 1.9);
+    var pPos = gl.getAttribLocation(pointProg, 'aPos');
+    var pCol = gl.getAttribLocation(pointProg, 'aCol');
+    var pSize = gl.getAttribLocation(pointProg, 'aSize');
+    [[nodeBuf, nodeN], [dustBuf, dustN]].forEach(function (bn) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, bn[0]);
+      gl.enableVertexAttribArray(pPos);
+      gl.enableVertexAttribArray(pCol);
+      gl.enableVertexAttribArray(pSize);
+      gl.vertexAttribPointer(pPos, 3, gl.FLOAT, false, 32, 0);
+      gl.vertexAttribPointer(pCol, 4, gl.FLOAT, false, 32, 12);
+      gl.vertexAttribPointer(pSize, 1, gl.FLOAT, false, 32, 28);
+      gl.drawArrays(gl.POINTS, 0, bn[1]);
+    });
+
+    // overlay: sigils + hover halo
+    octx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    octx.clearRect(0, 0, W, H);
+    octx.textAlign = 'center'; octx.textBaseline = 'middle';
+    for (var g2 = 0; g2 < sigils.length; g2++) {
+      var sp2 = project(world(data.core[sigils[g2]]), m);
+      if (sp2[2] <= 0.2) continue;
+      var srnd = mulberry32(g2 * 40503 + 77);
+      var depth = Math.max(0.35, Math.min(1.4, 2.0 / sp2[2]));
+      octx.font = ((10 + srnd() * 4) * depth) + 'px Georgia, serif';
+      octx.shadowColor = 'rgba(184,150,90,0.85)';
+      octx.shadowBlur = 8 * depth;
+      octx.fillStyle = 'rgba(216,184,122,' + (0.5 + 0.4 * Math.min(1, depth)) + ')';
+      octx.fillText(SIGGLYPHS[g2 % SIGGLYPHS.length], sp2[0], sp2[1]);
+    }
+    octx.shadowBlur = 0;
+    if (hover >= 0) {
+      var hp = project(world(data.core[hover]), m);
+      if (hp[2] > 0.2) {
+        octx.shadowColor = '#e0b957'; octx.shadowBlur = 16;
+        octx.fillStyle = '#e0b957';
+        octx.beginPath(); octx.arc(hp[0], hp[1], 3.5, 0, 7); octx.fill();
+        octx.shadowBlur = 0;
+      }
+    }
+  }
+
+  function setHover(h) {
+    if (h === hover) return;
+    hover = h;
+    if (h < 0) { hoverLineN = 0; return; }
+    var segs = [];
     for (var e = 0; e < data.edges.length; e++) {
       var ed = data.edges[e];
-      buckets[Math.min(3, (ed[2] / 26) | 0)].push(ed);
+      if (ed[0] !== h && ed[1] !== h) continue;
+      var a = world(data.core[ed[0]]), b = world(data.core[ed[1]]);
+      segs.push(a[0], a[1], a[2], 0.55, b[0], b[1], b[2], 0.55);
     }
-    var alphas = [0.028, 0.05, 0.08, 0.12];
-    ectx.lineWidth = Math.max(0.35, Math.min(1, view.k * 5));
-    for (var b = 0; b < 4; b++) {
-      if (!buckets[b].length) continue;
-      ectx.strokeStyle = 'rgba(226,204,164,' + (alphas[b] * zoomFade) + ')';
-      ectx.beginPath();
-      for (var i = 0; i < buckets[b].length; i++) {
-        var g = buckets[b][i];
-        var a = data.core[g[0]], c = data.core[g[1]];
-        ectx.moveTo(sx(a[0]), sy(a[1]));
-        ectx.lineTo(sx(c[0]), sy(c[1]));
-      }
-      ectx.stroke();
-    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, hoverLineBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(segs), gl.DYNAMIC_DRAW);
+    hoverLineN = segs.length / 4;
   }
 
-  var dirty = true, edgeTimer = 0;
-  function scheduleEdges() {
-    clearTimeout(edgeTimer);
-    edgeTimer = setTimeout(function () { rebuildEdges(); dirty = true; }, 90);
+  function nearest(mx, my) {
+    var m = mvp(), best = -1, bd = 13 * 13;
+    for (var i = 0; i < data.core.length; i++) {
+      var p = project(world(data.core[i]), m);
+      if (p[2] <= 0.2) continue;
+      var dx = p[0] - mx, dy = p[1] - my;
+      var dd = dx * dx + dy * dy;
+      if (dd < bd) { bd = dd; best = i; }
+    }
+    return best;
   }
 
-  function draw() {
-    requestAnimationFrame(draw);
-    if (!dirty || !data) return;
-    dirty = false;
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#080808';
-    ctx.fillRect(0, 0, W, H);
-
-    // cached edge layer, blitted at the pan delta since it was rendered
-    ctx.drawImage(edgeLayer,
-      (view.x - snap.x) * (view.k / snap.k), (view.y - snap.y) * (view.k / snap.k),
-      W * (view.k / snap.k), H * (view.k / snap.k));
-
-    // hover's own edges, live and bright
-    if (hover >= 0) {
-      ctx.strokeStyle = 'rgba(224,185,87,0.5)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (var e = 0; e < data.edges.length; e++) {
-        var ed = data.edges[e];
-        if (ed[0] !== hover && ed[1] !== hover) continue;
-        var a = data.core[ed[0]], b = data.core[ed[1]];
-        ctx.moveTo(sx(a[0]), sy(a[1]));
-        ctx.lineTo(sx(b[0]), sy(b[1]));
-      }
-      ctx.stroke();
-    }
-
-    // nodes - plain rects when tiny, arcs when the zoom earns them
-    var core = data.core;
-    var nodeScale = Math.max(0.6, Math.min(2.4, view.k * 7));
-    var useArcs = view.k > 0.24;
-    for (var i = 0; i < core.length; i++) {
-      var n = core[i];
-      var x = sx(n[0]), y = sy(n[1]);
-      if (x < -6 || x > W + 6 || y < -6 || y > H + 6) continue;
-      var s = n[2] / 99;
-      var r = (0.7 + s * 1.2) * nodeScale;
-      ctx.fillStyle = n[3]
-        ? 'rgba(200,166,104,' + (0.30 + s * 0.45) + ')'
-        : 'rgba(232,220,200,' + (0.10 + s * 0.26) + ')';
-      if (useArcs) {
-        ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
-      } else {
-        ctx.fillRect(x - r / 2, y - r / 2, r, r);
-      }
-    }
-
-    // the hovered memory, lit
-    if (hover >= 0) {
-      var hn = core[hover];
-      var hx = sx(hn[0]), hy = sy(hn[1]);
-      ctx.shadowColor = '#e0b957'; ctx.shadowBlur = 14;
-      ctx.fillStyle = '#e0b957';
-      ctx.beginPath(); ctx.arc(hx, hy, 3.5, 0, 7); ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-
-    // sigils
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    for (var g2 = 0; g2 < sigils.length; g2++) {
-      var sn = core[sigils[g2]];
-      var gx = sx(sn[0]), gy = sy(sn[1]);
-      if (gx < -20 || gx > W + 20 || gy < -20 || gy > H + 20) continue;
-      var srnd = mulberry32(g2 * 40503 + 77);
-      var fs = (11 + srnd() * 5) * Math.max(0.9, Math.min(2.4, view.k * 8));
-      ctx.font = fs + 'px Georgia, serif';
-      ctx.shadowColor = 'rgba(184,150,90,0.85)'; ctx.shadowBlur = 8;
-      ctx.fillStyle = 'rgba(216,184,122,' + (0.62 + srnd() * 0.25) + ')';
-      ctx.fillText(SIGGLYPHS[g2 % SIGGLYPHS.length], gx, gy);
-    }
-    ctx.shadowBlur = 0;
+  function size() {
+    W = host.clientWidth;
+    H = Math.round(W * 0.68);
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.style.height = H + 'px';
+    overlay.width = W * DPR; overlay.height = H * DPR;
+    overlay.style.height = H + 'px';
   }
+  window.addEventListener('resize', size);
 
-  // pointers: drag pan, hover, pinch
-  var pointers = {}, lastPinch = 0, dragging = false;
+  // pointers
+  var pointers = {}, lastPinch = 0, dragging = false, idleTimer = 0;
+  function wake() {
+    autoSpin = false;
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(function () { autoSpin = true; }, 5000);
+  }
   canvas.addEventListener('pointerdown', function (ev) {
     pointers[ev.pointerId] = [ev.offsetX, ev.offsetY];
     dragging = true;
     canvas.setPointerCapture(ev.pointerId);
     canvas.style.cursor = 'grabbing';
+    wake();
   });
   canvas.addEventListener('pointermove', function (ev) {
     var ids = Object.keys(pointers);
     if (dragging && ids.length === 1) {
       var p = pointers[ev.pointerId];
       if (p) {
-        view.x += ev.offsetX - p[0];
-        view.y += ev.offsetY - p[1];
+        yaw += (ev.offsetX - p[0]) * 0.006;
+        pitch = Math.max(-1.4, Math.min(1.4, pitch + (ev.offsetY - p[1]) * 0.006));
         pointers[ev.pointerId] = [ev.offsetX, ev.offsetY];
-        dirty = true;
-        scheduleEdges();
+        wake();
       }
     } else if (ids.length === 2) {
       pointers[ev.pointerId] = [ev.offsetX, ev.offsetY];
       var a = pointers[ids[0]], b = pointers[ids[1]];
-      var dist = Math.hypot(a[0] - b[0], a[1] - b[1]);
-      if (lastPinch) zoomAt((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, dist / lastPinch);
-      lastPinch = dist;
+      var d2 = Math.hypot(a[0] - b[0], a[1] - b[1]);
+      if (lastPinch) { dist = Math.max(0.7, Math.min(5, dist * lastPinch / d2)); wake(); }
+      lastPinch = d2;
     } else if (!dragging) {
-      var h = nearest(ev.offsetX, ev.offsetY);
-      if (h !== hover) { hover = h; dirty = true; }
+      setHover(nearest(ev.offsetX, ev.offsetY));
     }
   });
   function endPointer(ev) {
@@ -250,48 +332,30 @@
   }
   canvas.addEventListener('pointerup', endPointer);
   canvas.addEventListener('pointercancel', endPointer);
-  canvas.addEventListener('pointerleave', function () { if (!dragging) { hover = -1; dirty = true; } });
-
-  function zoomAt(mx, my, f) {
-    f = Math.max(0.5, Math.min(2, f));
-    var nk = Math.max(0.05, Math.min(3, view.k * f));
-    f = nk / view.k;
-    view.x = mx - (mx - view.x) * f;
-    view.y = my - (my - view.y) * f;
-    view.k = nk;
-    dirty = true;
-    scheduleEdges();
-  }
+  canvas.addEventListener('pointerleave', function () { if (!dragging) setHover(-1); });
   canvas.addEventListener('wheel', function (ev) {
     ev.preventDefault();
-    zoomAt(ev.offsetX, ev.offsetY, Math.pow(1.0015, -ev.deltaY));
+    dist = Math.max(0.7, Math.min(5, dist * Math.pow(1.0015, ev.deltaY)));
+    wake();
   }, { passive: false });
-  canvas.addEventListener('dblclick', function () { fit(); rebuildEdges(); dirty = true; });
+  canvas.addEventListener('dblclick', function () { yaw = 0.6; pitch = 0.25; dist = 2.2; });
 
-  window.addEventListener('resize', size);
-
-  fetch('/creature/constellation.json')
+  fetch('/creature/constellation3d.json')
     .then(function (r) { return r.json(); })
     .then(function (d) {
       data = d;
       sigils = pickSigils();
-      buildGrid();
-      // swap in only after one full frame renders without throwing
-      W = host.clientWidth; H = Math.round(W * 0.66);
-      canvas.width = W * DPR; canvas.height = H * DPR;
-      canvas.style.height = H + 'px';
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      edgeLayer.width = W * DPR; edgeLayer.height = H * DPR;
-      fit();
-      rebuildEdges();
+      buildBuffers();
       var hint = document.createElement('div');
       hint.className = 'cc-hint';
-      hint.textContent = 'drag to wander · scroll to lean in · double-click to reset';
+      hint.textContent = 'drag to turn it · scroll to approach · it drifts on its own';
       host.innerHTML = '';
+      host.style.position = 'relative';
       host.appendChild(canvas);
+      host.appendChild(overlay);
       host.appendChild(hint);
-      dirty = true;
+      size();
       requestAnimationFrame(draw);
     })
-    .catch(function () { /* the static image stays - nothing breaks */ });
+    .catch(function () { /* the static image stays */ });
 })();

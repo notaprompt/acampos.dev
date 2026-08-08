@@ -28,3 +28,6 @@ public/audio/*.mp4
 .idea/
 .vercel
 .env*.local
+
+# herald working drafts - never site content
+drafts/

@@ -42,17 +42,30 @@
       host.innerHTML = '<div class="dl-quiet">the pulse publishes when the machine is awake - nothing received yet.</div>';
       return;
     }
+    // Name the thing and say why the numbers exist. Previously this rendered a
+    // bare "1,823 memories · 1,755 edges" under the heading "the pulse" — no
+    // indication of what system it came from, that it was live rather than
+    // decorative, or what a "memory" or "edge" is. A stranger reads an
+    // unexplained number as ornament. Insider words (principle-tier, membrane,
+    // organs under contract) made that worse by sounding like they meant
+    // something without saying what.
     host.innerHTML =
-      '<div class="dl-head"><span class="dl-title">the pulse</span>' + liveBadge(d.as_of) +
+      '<div class="dl-head"><span class="dl-title">CREATURE — live</span>' + liveBadge(d.as_of) +
       '<span class="dl-asof">' + tickspan(d.as_of, 'published ') + '</span></div>' +
-      '<div class="dl-counts">' + fmt(d.memories) + ' memories · ' + fmt(d.edges) + ' edges · ' +
-      fmt(d.sessions) + ' sessions · ' + fmt(d.principle) + ' principle-tier</div>' +
-      '<div class="dl-last">' + d.organs + ' organs under contract · ' + d.services +
-      ' services loaded right now · local model ' + (d.keeper && d.keeper.model_resident ? 'resident' : 'unloaded') + '</div>' +
-      '<div class="dl-last">keeper: ' + (d.keeper && d.keeper.needs ? d.keeper.needs + ' need' + (d.keeper.needs === 1 ? '' : 's') + ' filed' : 'quiet') +
-      ' · maintainer: ' + (d.findings ? d.findings + ' findings on its desk' : 'clear') + '</div>' +
+      '<div class="dl-what">A synthetic memory system running on Alex’s own machine right now. ' +
+      'These numbers are read from it live, not typed in.</div>' +
+      '<div class="dl-counts">' + fmt(d.memories) + ' things it remembers · ' +
+      fmt(d.edges) + ' links between them · ' + fmt(d.sessions) + ' conversations · ' +
+      fmt(d.principle) + ' held as principles (never forgotten)</div>' +
+      '<div class="dl-last">' + fmt(d.organs) + ' organs — separate programs it is built from — and ' +
+      fmt(d.services) + ' running now · its local language model is ' +
+      (d.keeper && d.keeper.model_resident ? 'loaded' : 'unloaded') + '</div>' +
+      '<div class="dl-last">unmet needs it has filed for itself: ' +
+      (d.keeper && d.keeper.needs ? fmt(d.keeper.needs) : 'none') +
+      ' · problems flagged in its own code: ' + (d.findings ? fmt(d.findings) : 'none') + '</div>' +
       '<div class="dl-last">' + esc(DREAM[d.dream] || DREAM.unknown) + '</div>' +
-      '<div class="dl-foot">counts cross the membrane - content never does</div>';
+      '<div class="dl-foot">Only counts leave the machine. Nothing it remembers is ever published — ' +
+      'not to this page, not anywhere.</div>';
   }
 
   function tick() {

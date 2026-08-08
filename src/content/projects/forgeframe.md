@@ -4,6 +4,7 @@ tagline: "Open-source memory for agents. Memories decay over time. Principles do
 status: "active"
 stack: ["TypeScript", "Node.js", "MCP Protocol", "SQLite", "FTS5", "Ollama", "WebGL2"]
 repo: "https://github.com/notaprompt/forgeframe"
+updated: 2026-08-07
 order: 2
 screenshots:
   - src: "/images/projects/forgeframe-door.jpg"
@@ -16,7 +17,20 @@ metrics:
 
 ---
 
-Agents forget everything between sessions. ForgeFrame gives them persistent memory - what gets used strengthens, what gets ignored decays, and some things are principle-tier and never change. Four packages: `@forgeframe/memory` (MIT), `@forgeframe/core` (AGPL), `@forgeframe/server` (MIT), and `@forgeframe/proxy` (AGPL).
+Agents forget everything between sessions. ForgeFrame gives them persistent memory - what gets used strengthens, what gets ignored decays, and some things are principle-tier and never change. The memory never leaves the machine: sensitivity tiers gate every seam, and nothing marked sensitive is ever handed to a cloud model - not summarized, not embedded, not "anonymized." Local is the storage layer and the trust boundary. Four packages: `@forgeframe/memory` (MIT), `@forgeframe/core` (AGPL), `@forgeframe/server` (MIT), and `@forgeframe/proxy` (AGPL).
+
+<!-- pulse:start -->
+**Recent work** · week of 2026-08-07 · 14 commits across 22 files
+
+- load ledger: one board for every heavy tenant (models, training, swarm, leases, eyes) + rule-named conflicts with founder-questions; STATE header gains a load line
+- dream curriculum: REM emits training pairs from the day's episodes
+- scenario in the state header: classify the present (six-value enum from gap+hour+chronicle) and let it key recall
+- dream trigger gets a refractory (the third storm: keeper's 60s drain forced 959 cycles past the daemon guard — journals are now the shared clock) + /api/since reads seconds-era chronicle rows
+- the typed situation header: identity-in-weights, situation-in-context
+- herald verbs in the mind: brief reads pending, approve/reject EXECUTE (explicit-approval-only law) — texted approvals now run instead of being narrated
+
+<sub>this section maintains itself weekly from the commit log - the words are the commit messages</sub>
+<!-- pulse:end -->
 
 ```
 L4  ForgeFrame Proxy (scrub, inject, log)   AGPL

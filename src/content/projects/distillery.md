@@ -15,7 +15,7 @@ metrics:
 
 ---
 
-Process the external content firehose through a personal intellectual lens. Share a TikTok, an arXiv paper, an article from your phone - the Mac extracts the content, runs it through a local model loaded with your principles and active projects, scores it for novelty, and pushes what's genuinely new into ForgeFrame memory where it participates in offline consolidation cycles and Hebbian edge reinforcement.
+Process the external content firehose through a personal intellectual lens. The first filter is not an algorithm's - it is your own recorded principles, applied by a model running on your own hardware. No feed ranking, no engagement objective, no third party deciding what resonates. Share a TikTok, an arXiv paper, an article from your phone - the Mac extracts the content, runs it through a local model loaded with your principles and active projects, scores it for novelty, and pushes what's genuinely new into ForgeFrame memory where it participates in offline consolidation cycles and Hebbian edge reinforcement.
 
 The old version was a confirmation machine. 17 out of 20 distillations said "no change to build." The fix wasn't the pipeline - it was the lens orientation and adding a signal gate.
 

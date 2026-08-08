@@ -48,7 +48,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const count = rows.length > 0 ? Number(rows[0].count) : 0;
     return res.json({ count });
   } catch (e) {
-    // Return error details in dev for debugging
-    return res.json({ count: 0, error: String(e).slice(0, 200) });
+    // Do NOT return count: 0 here. A DB blip would then be indistinguishable
+    // from a site that genuinely has no visitors, and the client would render
+    // (and cache) a zero over a real number. Signal the failure with a status
+    // and no count, so the client keeps showing the last good value.
+    return res.status(503).json({ error: String(e).slice(0, 200) });
   }
 }

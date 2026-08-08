@@ -3,7 +3,8 @@ import { neon } from '@neondatabase/serverless';
 
 const sql = neon(process.env.DATABASE_URL || '');
 
-const ADMIN_HASH = '7dfef7aed2105b7eceb4d34e1ad84fdad4693bd5de041e1b47079efeb6001a83'; // sha256 of "admin"
+// sha256 of a strong admin password — set ADMIN_HASH in Vercel env (no hardcoded secret in the repo).
+const ADMIN_HASH = process.env.ADMIN_HASH || '';
 
 let initialized = false;
 async function init() {

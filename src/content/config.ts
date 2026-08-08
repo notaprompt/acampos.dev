@@ -23,6 +23,8 @@ const projects = defineCollection({
           value: z.string(),
           asof: z.string(),
           source: z.string().optional(),
+          // one line for the cold reader: what this number means in plain speech
+          plain: z.string().optional(),
         }),
       )
       .optional(),

@@ -121,6 +121,7 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
           <div class="proof-item">
             <dt>{m.label}</dt>
             <dd>{m.value}</dd>
+            {m.plain && <p class="proof-plain">{m.plain}</p>}
           </div>
         ))}
         <p class="proof-asof">
@@ -342,6 +343,8 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     margin: 0 0 1rem;
   }
   .deuce-instrument :global(svg) { display: block; width: 100%; height: auto; }
+  .deuce-instrument :global(.di-scroll) { overflow-x: auto; }
+  .deuce-instrument :global(.di-scroll svg) { min-width: 720px; }
   .deuce-instrument :global(.di-head) {
     display: flex; justify-content: space-between; align-items: baseline;
     gap: 1rem; margin-bottom: 0.4rem;
@@ -387,6 +390,12 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     margin-bottom: 0.35rem;
   }
   .deuce-instrument :global(.di-drow) { margin: 0.15rem 0; }
+  .deuce-instrument :global(.di-plain) {
+    font-family: var(--mono); font-size: 0.72rem; line-height: 1.6;
+    color: var(--white-60); font-style: normal; margin: 0.1rem 0 0.4rem;
+    max-width: 60em;
+  }
+
   .deuce-instrument :global(.di-drow b) {
     color: var(--white-45); font-weight: 400; font-size: 0.64rem;
     letter-spacing: 0.1em; text-transform: uppercase; margin-right: 0.45em;
@@ -416,7 +425,7 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     border-top: 1px solid var(--white-08); margin-top: 0.5rem; padding-top: 0.6rem;
   }
   .deuce-instrument :global(.di-axis) { stroke: var(--white-15); stroke-width: 1; }
-  .deuce-instrument :global(.di-gapband) { fill: rgba(184, 150, 90, 0.18); }
+  .deuce-instrument :global(.di-gapband) { fill: rgba(184, 150, 90, 0.3); }
   .deuce-instrument :global(.di-closemark) { fill: var(--white-45); }
   .deuce-instrument :global(.di-minemark) { fill: var(--gold-accent); }
   .deuce-instrument :global(.di-gaplabel) {
@@ -558,6 +567,11 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     color: var(--white-30);
   }
 
+  .deuce-live :global(.dl-gloss) {
+    font-size: 0.68rem; line-height: 1.5; color: var(--white-30);
+    margin: 0.15rem 0 0.35rem; max-width: 46em;
+  }
+
   .deuce-live :global(.dl-counts) {
     font-size: 0.8rem;
     color: var(--glow);
@@ -671,6 +685,14 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     padding: 0.9rem 0.2rem 0.7rem;
     border-top: 1px solid var(--white-08);
     border-bottom: 1px solid var(--white-08);
+  }
+
+  .proof-plain {
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: var(--white-30);
+    margin: 0.25rem 0 0;
+    max-width: 12.5rem;
   }
 
   .proof-item dt {

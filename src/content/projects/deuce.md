@@ -5,35 +5,39 @@ status: "active"
 stack: ["Python", "SQLite", "Polymarket", "Kalshi", "Ed25519", "Ollama"]
 order: 4
 metrics:
-  - { label: "signed forecasts", value: "2,552", asof: "Aug 2026", source: "append-only ledger" }
-  - { label: "committed", value: "before resolution, ed25519", asof: "Aug 2026" }
-  - { label: "deletion", value: "refused by SQL trigger", asof: "Aug 2026" }
-  - { label: "capital at risk", value: "none - paper until calibrated", asof: "Aug 2026" }
+  - { label: "signed forecasts", value: "2,552", asof: "Aug 2026", source: "append-only ledger", plain: "a sample big enough to tell skill from luck - and it exists whether it flatters me or not" }
+  - { label: "committed", value: "before resolution, ed25519", asof: "Aug 2026", plain: "signed before the outcome was known, so a good record cannot be faked - and a bad one cannot be hidden" }
+  - { label: "deletion", value: "refused by SQL trigger", asof: "Aug 2026", plain: "even I cannot erase a bad call - the misses stay, which is what makes the hits mean something" }
+  - { label: "capital at risk", value: "none - paper until calibrated", asof: "Aug 2026", plain: "no money until the record proves skill - the step most trading projects skip, and die by" }
 
 ---
 
-DEUCE prices tennis prediction markets. It computes a fair value for each side of an in-play match, signs that forecast to a ledger before the market resolves, and only then lets reality grade it. Most trading writeups show you the wins and quietly bury the log. I wanted the opposite: a record that comes first, an outcome that comes second, and no way for me to rewrite history to look sharper than I was.
+**Cold read.** People bet real money on live tennis through prediction markets - exchanges for yes/no questions, where the price is the crowd's odds. DEUCE is a program that watches those markets, forms its own opinion of the odds, and seals that opinion in a signed, dated record *before the match ends*. Then reality grades it. No money rides on any of it yet - on purpose.
 
-The signed ledger is the deliverable. Whether it makes money is a separate, later question - and the whole design refuses to answer that question before it has earned the right to.
+Most trading writeups show you the wins and quietly bury the log. This is the opposite: the record comes first, the outcome comes second, and there is no way for me to rewrite history to look sharper than I was. The machine above is the real shape - touch a station. Each one names the engineering feat, the architectural choice, and the thing it refuses to do. The refusals are the design: every hard decision in DEUCE is a "no" enforced by code rather than discipline.
 
-## How it works
+## how to read it
 
-**The price.** For each in-play tennis market, DEUCE builds a fair-value probability independent of the price the market is showing. The edge comes from a few sources stacked together - a model read on the match, live whale tracking to see where size is moving, a winner feed for how favorites are actually resolving, and a working thesis about favored-unders on the WTA and ITF tours. None of those is the answer on its own. The point is a price I arrived at myself, so I can hold it up against the market's and see who was closer. A reject-first gate runs before any of it - if a market isn't cleanly scoreable and observable within its own latency, DEUCE leaves it alone. "No trade" is a position, and rejecting a badly-shaped market is half the job.
+**The price is mine before it is anyone's.** For each in-play match (mid-game, odds still moving), the pricer builds its own probability without looking at the market's price - a model read, whale tracking, a winner feed, and a favored-unders thesis on the WTA and ITF tours, stacked, none trusted alone. It has to be my own number, or holding it against the market's proves nothing.
 
-**The signed ledger.** Before the match resolves, the forecast - probability, timestamp, market id - gets committed to a tamper-evident ledger with an Ed25519 signature. The commitment locks while the outcome is still unknown. That is the load-bearing part: a track record I cannot backdate. If I want to claim I was calibrated, the ledger is the thing I point to, and it was written before I knew how any of it turned out.
+**The signature is the product.** Probability, timestamp, market id - committed with Ed25519 while the outcome is still unknown, into a book whose SQL schema refuses deletion. A track record that cannot be backdated, including by me.
 
-**The scoreboard.** The honest measure is closing-line value - CLV. When I log the gap between my price and the market price, I can ask the only question that matters early: did my forecast beat the price the market settled toward? P&L is noisy and slow to teach you anything. CLV tells you whether the edge is real long before the money does.
+**The grade is the gap.** The scoreboard is closing-line value: the distance between my signed price and the line the market settled toward - the shaded band in the strip above. The market's final price is the best public guess there is, so beating it consistently means the edge is real. P&L is noisy and slow to teach; the gap says it first.
 
-**Paper mode.** No real capital is committed. Every forecast runs against live markets, but the position is paper - deliberate discipline, not a limitation I am waiting to remove. The instrument proves itself against ground truth before it touches a dollar.
+## risk, as refusals
 
-## What I haven't solved
+- The gate rejects first. A market that isn't cleanly scoreable, observable within its own latency, gets left alone. "No trade" is a position.
+- Capital is locked behind the ladder above, and each lock opens only from the left. Paper positions run against live markets and are marked every ten minutes; zero real dollars move until the gap holds positive on a signed sample.
+- The whole financial mind is local. DEUCE runs as an organ of a sovereign system - its theses, positions, and grades live in memory on my machine and never leave it.
+
+## what I haven't solved
 
 I would rather name these than dress them up.
 
-- **The gate is not cleared.** DEUCE has to prove it is calibrated - CLV-positive over a real paper sample - before a single real dollar goes in. It hasn't yet. So it stays in paper mode, and the ledger, not my optimism, decides when that changes.
-- **The fleet is a vision, not a fact.** The long shape is a fleet of these running many markets at once - market-making, covered books, thousands of trades a year. I have built pieces of the scaffolding, but none of it is earned until the calibration holds. Claiming the fleet now would be exactly the backdating the ledger exists to prevent.
-- **Some threads went nowhere, and I kept the record.** Copy-trading and cross-book market-making across Polymarket and Kalshi came back as negative results in backtest. That is the ledger working. A system built to catch me being wrong should sometimes catch me being wrong.
+- **The gate is not cleared.** DEUCE has to prove calibration before a real dollar goes in. It hasn't yet, so it stays paper, and the ledger - not my optimism - decides when that changes.
+- **The fleet is a vision, not a fact.** The long shape is many of these across many markets. Claiming it now would be exactly the backdating the ledger exists to prevent.
+- **Some threads went nowhere, and I kept the record.** Copy-trading and cross-book market-making backtested negative. That is the ledger working - a system built to catch me being wrong should sometimes catch me being wrong.
 
-## Where it's going
+## where it's going
 
-One gate, in order: prove CLV positive in paper, with the signed ledger as the evidence, and only then talk about live capital or a fleet. If the calibration doesn't hold, the ledger will say so plainly - and that is the point of building it this way. I would rather ship the discipline than a screenshot of a good week.
+One gate, in order: prove the gap positive in paper, with the signed ledger as evidence, then - and only then - live capital. If the calibration doesn't hold, the book will say so plainly. I would rather ship the discipline than a screenshot of a good week.

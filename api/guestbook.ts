@@ -16,6 +16,8 @@ async function init() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
+  // Moderation gate: entries are hidden until approved (curated wall, no public spam surface).
+  await sql`ALTER TABLE guestbook ADD COLUMN IF NOT EXISTS approved BOOLEAN DEFAULT false`;
   initialized = true;
 }
 
@@ -26,7 +28,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'GET') {
       const rows = await sql`
         SELECT name, website, message, created_at
-        FROM guestbook ORDER BY created_at DESC LIMIT 100
+        FROM guestbook WHERE approved = true ORDER BY created_at DESC LIMIT 100
       `;
       return res.json(rows);
     }
@@ -53,7 +55,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       await sql`INSERT INTO guestbook (name, website, message, ip) VALUES (${n}, ${w || null}, ${m}, ${ip})`;
-      return res.status(201).json({ ok: true });
+      // approved defaults false — entry is held for review, not shown publicly until approved.
+      return res.status(201).json({ ok: true, pending: true });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

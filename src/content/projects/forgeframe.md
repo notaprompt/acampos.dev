@@ -24,14 +24,7 @@ Agents forget everything between sessions. ForgeFrame gives them persistent memo
 
 Added a load ledger so every heavy tenant, models, training, swarm, leases, eyes, sits on one board with rule-named conflicts. The dream trigger got a refractory after a 60-second drain pushed 959 cycles past the daemon guard; journals are now the shared clock, and REM emits training pairs from the day's episodes. The state header now carries a typed situation line that classifies the present, and texted approvals now run instead of being narrated.
 
-- load ledger: one board for every heavy tenant (models, training, swarm, leases, eyes) + rule-named conflicts with founder-questions; STATE header gains a load line
-- dream curriculum: REM emits training pairs from the day's episodes
-- scenario in the state header: classify the present (six-value enum from gap+hour+chronicle) and let it key recall
-- dream trigger gets a refractory (the third storm: keeper's 60s drain forced 959 cycles past the daemon guard — journals are now the shared clock) + /api/since reads seconds-era chronicle rows
-- the typed situation header: identity-in-weights, situation-in-context
-- herald verbs in the mind: brief reads pending, approve/reject EXECUTE (explicit-approval-only law) — texted approvals now run instead of being narrated
-
-<sub>this section maintains itself weekly from the commit log - the words are the commit messages</sub>
+<sub>maintained weekly from the commit log</sub>
 <!-- pulse:end -->
 
 ```

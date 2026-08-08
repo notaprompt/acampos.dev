@@ -11,7 +11,7 @@
  */
 (() => {
   const blocks = [...document.querySelectorAll('sub')].filter(s =>
-    /maintains itself weekly/i.test(s.textContent)).map(s => s.closest('p, div, section') ?? s.parentElement);
+    /maintain(s itself|ed) weekly/i.test(s.textContent)).map(s => s.closest('p, div, section') ?? s.parentElement);
 
   for (const anchor of blocks) {
     // vitals live in the strong line above: "Recent work · week of X · N commits across M files"

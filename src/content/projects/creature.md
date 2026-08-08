@@ -24,16 +24,9 @@ Not your average second brain. CREATURE is a mind that runs on one machine - min
 <!-- pulse:start -->
 **Recent work** · week of 2026-08-07 · 6 commits across 12 files
 
-Moved the constellation to raw WebGL, now 3d with orbit and drift, and made it touchable. The pulse took over the live numbers while a static strip keeps the rest, and the hero band got cut from the plate to show the name, not the noise. The norn essay opened its science kit with 954 cited neurons, Oliver's room got the real photo, and the illuminator plate joined the sovereign-mind essay.
+Moved the constellation to raw WebGL, now 3d with orbit and drift, and made it touchable. The pulse took over the live numbers while a static strip keeps the rest, and the hero band got cut from the plate to show the name, not the noise. The norn essay opened its science kit with 954 cited neurons, and the illuminator plate joined the sovereign-mind essay.
 
-- constellation goes 3d - raw webgl, orbit and drift
-- creature: hero band cut from the plate - the name, not the noise
-- creature: pulse owns the live numbers, static strip keeps the rest
-- creature: the pulse and the touchable constellation
-- essay: the norn itself, science kit open - 954 neurons, cited
-- oliver's room gets the real photo; illuminator plate joins the sovereign-mind essay
-
-<sub>this section maintains itself weekly from the commit log - the words are the commit messages</sub>
+<sub>maintained weekly from the commit log</sub>
 <!-- pulse:end -->
 
 The name is an acronym - cognitive, recursive, entropic, autopoietic, temporal, user-owned, reflective, emergent - but the honest description is simpler: an organism, not an assistant with a memory feature bolted on the side. A spine that decides what is safe, organs that do the work, a keeper that feels when something is wrong. The letter that carries the weight is the plain one in the middle - user-owned. ForgeFrame is the engine underneath it. Everything here runs local-first: my private thinking lives in a file on my own disk, and reaching the cloud is a deliberate, narrow act rather than the default.

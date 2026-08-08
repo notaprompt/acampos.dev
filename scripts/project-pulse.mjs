@@ -107,6 +107,8 @@ const PROJECTS = {
 
 // Never let these reach a public page even if a commit subject carries them.
 const SECRET_RE = /password|token|secret|api.?key|\.env|salary|comp\b|kalshi|interview|recruit|job.?search|applicat|resume|warm.?note|p&l|pnl|\$\d/i;
+// Family names never reach a public page, even via his own commit subjects.
+const PRIVATE_RE = /\boliver\b/i;
 
 const git = (repo, args) => {
   try { return execFileSync('git', ['-C', repo, ...args], { encoding: 'utf8', timeout: 20000 }).trim(); }
@@ -127,7 +129,7 @@ function digest(repos) {
     for (const f of git(repo, ['log', `--since=${since}`, '--name-only', '--pretty=format:', '--no-merges', ...spec]).split('\n'))
       if (f.trim()) files.add(f.trim());
     for (const s of subjects) {
-      if (SECRET_RE.test(s)) continue;
+      if (SECRET_RE.test(s) || PRIVATE_RE.test(s)) continue;
       if (/^(wip|fixup|merge|bump|typo)/i.test(s)) continue;
       out.push(s);
     }
@@ -156,7 +158,7 @@ async function weave(page, d) {
     ].join('\n\n'), { timeout: 120000 });
     const { checkVoice } = await import(`${HOME}/Desktop/repos/career-agent/voice-gate.mjs`);
     const v = checkVoice(out);
-    if (v.violations?.length || out.length < 60 || out.length > 600) return null;
+    if (v.violations?.length || out.length < 60 || out.length > 600 || PRIVATE_RE.test(out)) return null;
     return out.trim();
   } catch { return null; }
 }
@@ -167,10 +169,11 @@ function renderPulse(d, today, woven) {
     '<!-- pulse:start -->',
     `**Recent work** · week of ${today} · ${d.commits} commit${d.commits === 1 ? '' : 's'} across ${d.filesTouched} files`,
     '',
-    ...(woven ? [woven, ''] : []),
-    ...d.subjects.map(s => `- ${s}`),
+    // The paragraph IS the pulse. Raw commit bullets only appear as the
+    // fallback when the weave is unavailable - never both (his verdict 2026-08-08).
+    ...(woven ? [woven] : d.subjects.map(s => `- ${s}`)),
     '',
-    '<sub>this section maintains itself weekly from the commit log - the words are the commit messages</sub>',
+    '<sub>maintained weekly from the commit log</sub>',
     '<!-- pulse:end -->',
   ].join('\n');
 }

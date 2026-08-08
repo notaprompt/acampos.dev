@@ -15,7 +15,7 @@ screenshots:
 metrics:
   - { label: "consolidation cycles", value: "24,603 nrem · 217 rem", asof: "Aug 2026", source: "daemon log" }
   - { label: "memory classes", value: "2,096 public · 1,818 sensitive · 1,410 local-only", asof: "Aug 2026", source: "memory.db" }
-updated: 2026-08-07
+updated: 2026-08-08
 order: 1
 ---
 
@@ -23,6 +23,8 @@ Not your average second brain. CREATURE is a mind that runs on one machine - min
 
 <!-- pulse:start -->
 **Recent work** · week of 2026-08-07 · 6 commits across 12 files
+
+Moved the constellation to raw WebGL, now 3d with orbit and drift, and made it touchable. The pulse took over the live numbers while a static strip keeps the rest, and the hero band got cut from the plate to show the name, not the noise. The norn essay opened its science kit with 954 cited neurons, Oliver's room got the real photo, and the illuminator plate joined the sovereign-mind essay.
 
 - constellation goes 3d - raw webgl, orbit and drift
 - creature: hero band cut from the plate - the name, not the noise

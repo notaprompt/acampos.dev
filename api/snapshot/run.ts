@@ -101,9 +101,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     report = result.data;
     modelMeta = { model: result.meta.model, costCents: result.meta.costCents, fallback: result.meta.fallback };
   } catch (err) {
-    await track('snapshot_model_fail', { meta: { err: String(err) }, ipHash });
+    const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    // Goes to the platform log. A generic message to the visitor is right; a
+    // generic message in the log means debugging production by guesswork.
+    console.error('[snapshot] model call failed:', detail, err);
+    await track('snapshot_model_fail', { meta: { err: detail }, ipHash });
+    const admin =
+      process.env.ADMIN_TOKEN &&
+      (req.headers['x-admin-token'] === process.env.ADMIN_TOKEN ||
+        req.query.debug === process.env.ADMIN_TOKEN);
     return res.status(503).json({
       error: "The analysis engine didn't come back this time. Try again in a minute, or email alex@campos.works and I'll run it by hand.",
+      ...(admin ? { detail } : {}),
     });
   }
 

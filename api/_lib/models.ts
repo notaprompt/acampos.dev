@@ -138,6 +138,7 @@ export async function structured<T>(call: StructuredCall): Promise<CallResult<T>
   const started = Date.now();
   const model = MODEL_BY_TIER[call.tier];
   const maxTokens = call.maxTokens ?? 8000;
+  let anthropicError: string | null = null;
 
   // Free-first tiers spend nothing unless every free endpoint fails.
   if (FREE_FIRST.has(call.tier) && freeProviders().length) {
@@ -204,12 +205,20 @@ export async function structured<T>(call: StructuredCall): Promise<CallResult<T>
         },
       };
     } catch (err) {
+      const why = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+      console.error(`[models] anthropic ${model} failed:`, why);
       // Fall through to a free provider rather than failing the visitor.
-      if (!freeProviders().length) throw err;
+      if (!freeProviders().length) throw new Error(`anthropic ${model}: ${why}`);
+      anthropicError = why;
     }
   }
 
-  return freeChain<T>(call, started, maxTokens);
+  try {
+    return await freeChain<T>(call, started, maxTokens);
+  } catch (err) {
+    const why = err instanceof Error ? err.message : String(err);
+    throw new Error(anthropicError ? `anthropic(${anthropicError}) + free(${why})` : why);
+  }
 }
 
 // ── Free / OpenAI-compatible inference ──────────────────────────────

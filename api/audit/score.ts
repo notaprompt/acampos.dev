@@ -84,7 +84,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           Authorization: `Bearer ${KEY}`,
           'Content-Type': 'application/json',
           'HTTP-Referer': 'https://campos.works',
-          'X-Title': 'campos.works - Audit',
+          'X-Title': 'campos.works audit',
         },
         body: JSON.stringify({
           model,

@@ -372,7 +372,7 @@ async function runChain<T>(
             Authorization: `Bearer ${p.key}`,
             'Content-Type': 'application/json',
             'HTTP-Referer': 'https://campos.works',
-            'X-Title': 'campos.works — snapshot',
+            'X-Title': 'campos.works snapshot',
           },
           body: JSON.stringify({
             model,

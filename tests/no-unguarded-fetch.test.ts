@@ -149,3 +149,19 @@ test('admin auth goes through the shared helper', () => {
     assert.match(src, /adminHeaderMatches/, `${rel} must use the shared constant-time header check`);
   }
 });
+
+test('no HTTP header value contains non-ASCII', () => {
+  // Header values must be Latin-1. An em-dash in X-Title threw a TypeError
+  // before the request was ever sent, which surfaced at the call site as a
+  // "timeout" and made every gateway fallback look broken.
+  const offenders: string[] = [];
+  for (const rel of walk(API_DIR)) {
+    const lines = readFileSync(join(API_DIR, rel), 'utf8').split('\n');
+    lines.forEach((line, i) => {
+      if (!/'(X-[A-Za-z-]+|HTTP-Referer|Authorization|User-Agent|Accept|Content-Type)'\s*:/.test(line)) return;
+      const bad = [...line].find((c) => c.charCodeAt(0) > 127);
+      if (bad) offenders.push(`${rel}:${i + 1} contains U+${bad.charCodeAt(0).toString(16).toUpperCase()}`);
+    });
+  }
+  assert.deepEqual(offenders, [], `non-ASCII in an HTTP header value:\n  ${offenders.join('\n  ')}`);
+});

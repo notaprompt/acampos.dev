@@ -1,27 +1,15 @@
 // GET /api/leads/export — the warm list, exportable.
 //
-// Auth: ADMIN_TOKEN via ?token= or the x-admin-token header. This returns
-// personal data, so it fails closed — no token configured means no access,
-// rather than open access.
+// Auth: ADMIN_TOKEN via the x-admin-token header only — never a query string.
+// This returns personal data, so it fails closed: no token configured means no
+// access, rather than open access.
 //
 // ?format=csv (default) | json
 // ?since=2026-01-01  ?status=new  ?niche=hvac  ?limit=500
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { timingSafeEqual } from 'crypto';
 import { sql, ensureSchema, dbConfigured } from '../_lib/db.js';
-
-/**
- * Constant-time compare. A plain `!==` leaks the token a character at a time
- * through response timing, which matters here because this endpoint returns
- * every lead's name and email.
- */
-function tokenMatches(provided: string, expected: string): boolean {
-  const a = Buffer.from(provided);
-  const b = Buffer.from(expected);
-  // timingSafeEqual throws on length mismatch, so gate on length first.
-  return a.length === b.length && timingSafeEqual(a, b);
-}
+import { adminHeaderMatches } from '../_lib/adminauth.js';
 
 function csvCell(v: unknown): string {
   if (v == null) return '';
@@ -36,10 +24,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const expected = process.env.ADMIN_TOKEN;
   if (!expected) return res.status(503).json({ error: 'Export is not configured (set ADMIN_TOKEN).' });
 
-  const provided =
-    (req.headers['x-admin-token'] as string | undefined) ||
-    (typeof req.query.token === 'string' ? req.query.token : '');
-  if (!provided || !tokenMatches(provided, expected)) {
+  if (!adminHeaderMatches(req, expected)) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

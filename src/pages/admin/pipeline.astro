@@ -1,6 +1,10 @@
 ---
-// Standalone admin surface — no site layout, noindex, token in the URL.
-// Open as /admin/pipeline?token=YOUR_ADMIN_TOKEN
+// Standalone admin surface — no site layout, noindex.
+//
+// The token is entered once and kept in sessionStorage, then sent as an
+// x-admin-token header. It is deliberately NOT accepted from the URL: a token
+// in a query string ends up in access logs, browser history, and the Referer
+// header of every outbound link.
 ---
 
 <!DOCTYPE html>
@@ -92,7 +96,7 @@
     <div class="tiles" id="funnel"></div>
     <p class="sub" id="funnel-note"></p>
 
-    <h2>leads</h2>
+    <h2>leads <button type="button" class="btn-note" id="export">export csv</button></h2>
     <div class="wrap"><table id="leads"></table></div>
 
     <h2>unclaimed snapshots</h2>
@@ -106,7 +110,22 @@
 
   <script is:inline>
     (function () {
-      var token = new URLSearchParams(location.search).get('token') || sessionStorage.getItem('adminToken') || '';
+      var token = sessionStorage.getItem('adminToken') || '';
+
+      // If a token was pasted into the URL by habit, take it, strip it from the
+      // address bar immediately, and keep it in sessionStorage instead.
+      var fromUrl = new URLSearchParams(location.search).get('token');
+      if (fromUrl) {
+        token = fromUrl;
+        sessionStorage.setItem('adminToken', token);
+        history.replaceState({}, '', location.pathname);
+      }
+
+      function authed(extra) {
+        var h = { 'x-admin-token': token };
+        if (extra) for (var k in extra) h[k] = extra[k];
+        return h;
+      }
       var gate = document.getElementById('gate');
       var app = document.getElementById('app');
 
@@ -127,7 +146,7 @@
 
       function load() {
         if (!token) return showGate('');
-        fetch('/api/admin/pipeline?token=' + encodeURIComponent(token))
+        fetch('/api/admin/pipeline', { headers: authed() })
           .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
           .then(function (res) {
             if (!res.ok) return showGate(res.body.error || 'Unauthorized');
@@ -207,9 +226,9 @@
           });
           sel.addEventListener('change', function () {
             sel.className = 'st-' + sel.value;
-            fetch('/api/admin/pipeline?token=' + encodeURIComponent(token), {
+            fetch('/api/admin/pipeline', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: authed({ 'Content-Type': 'application/json' }),
               body: JSON.stringify({ id: l.id, status: sel.value }),
             }).then(function (r) {
               if (r.ok) { sel.style.borderColor = 'var(--alive)'; setTimeout(function () { sel.style.borderColor = ''; }, 900); }
@@ -276,6 +295,25 @@
           cc.appendChild(el('div', 'corr', date(c.created_at) + ' — ' + (bits.join(' · ') || 'minor')));
         });
       }
+
+      // The export link can no longer carry the token, so fetch it with the
+      // header and hand the browser a blob.
+      document.getElementById('export').addEventListener('click', function () {
+        var btn = this;
+        btn.textContent = 'exporting…';
+        fetch('/api/leads/export?format=csv', { headers: authed() })
+          .then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); })
+          .then(function (blob) {
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'campos-warm-list-' + new Date().toISOString().slice(0, 10) + '.csv';
+            document.body.appendChild(a); a.click(); a.remove();
+            URL.revokeObjectURL(url);
+            btn.textContent = 'export csv';
+          })
+          .catch(function () { btn.textContent = 'export failed'; });
+      });
 
       load();
     })();

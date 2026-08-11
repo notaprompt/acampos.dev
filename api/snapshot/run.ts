@@ -15,6 +15,7 @@ import { gatherPresence, presenceFindings, deriveLocality, type PresenceResult }
 import { frontierMirror, type FrontierMirror } from '../_lib/frontier.js';
 import { analyze, type ModelReport } from '../_lib/analyze.js';
 import { sql, ensureSchema, dbConfigured, track, hashIp, clientIp, overRateLimit, shareToken } from '../_lib/db.js';
+import { adminHeaderMatches } from '../_lib/adminauth.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
@@ -106,10 +107,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // generic message in the log means debugging production by guesswork.
     console.error('[snapshot] model call failed:', detail, err);
     await track('snapshot_model_fail', { meta: { err: detail }, ipHash });
-    const admin =
-      process.env.ADMIN_TOKEN &&
-      (req.headers['x-admin-token'] === process.env.ADMIN_TOKEN ||
-        req.query.debug === process.env.ADMIN_TOKEN);
+    // Header only. A token in a query string lands in access logs, browser
+    // history, and Referer headers — it is a secret written down in public.
+    const admin = Boolean(
+      process.env.ADMIN_TOKEN && adminHeaderMatches(req, process.env.ADMIN_TOKEN)
+    );
     return res.status(503).json({
       error: "The analysis engine didn't come back this time. Try again in a minute, or email alex@campos.works and I'll run it by hand.",
       ...(admin ? { detail } : {}),

@@ -1,28 +1,23 @@
-// GET  /api/admin/pipeline?token=...   — the whole funnel in one payload
-// POST /api/admin/pipeline?token=...   — update a lead's status or notes
+// GET  /api/admin/pipeline   — the whole funnel in one payload
+// POST /api/admin/pipeline   — update a lead's status or notes
 //
 // The warm list has to be workable without downloading a CSV, or it will not get
 // worked. This is the surface Alex actually opens each morning.
 //
-// Auth: ADMIN_TOKEN, compared in constant time. Fails closed when unset.
+// Auth: ADMIN_TOKEN via the x-admin-token header, compared in constant time.
+// Never from a query string — that would put the token in access logs, browser
+// history, and Referer headers. Fails closed when unset.
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { timingSafeEqual } from 'crypto';
 import { sql, ensureSchema, dbConfigured } from '../_lib/db.js';
+import { adminHeaderMatches } from '../_lib/adminauth.js';
 
 const STATUSES = ['new', 'reading', 'contacted', 'replied', 'call_booked', 'won', 'lost', 'ignored'] as const;
 
 function authorized(req: VercelRequest): boolean {
   const expected = process.env.ADMIN_TOKEN;
   if (!expected) return false;
-  const provided =
-    (req.headers['x-admin-token'] as string | undefined) ||
-    (typeof req.query.token === 'string' ? req.query.token : '');
-  if (!provided) return false;
-  const a = Buffer.from(provided);
-  const b = Buffer.from(expected);
-  // timingSafeEqual throws on length mismatch, so compare lengths first.
-  return a.length === b.length && timingSafeEqual(a, b);
+  return adminHeaderMatches(req, expected);
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

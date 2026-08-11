@@ -1,24 +1,22 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { neon } from '@neondatabase/serverless';
-import { createHash } from 'crypto';
+import { adminHeaderMatches } from '../_lib/adminauth.js';
 
 const sql = neon(process.env.DATABASE_URL || '');
-const ADMIN_HASH = '7dfef7aed2105b7eceb4d34e1ad84fdad4693bd5de041e1b47079efeb6001a83';
-
+/**
+ * Auth moved to ADMIN_TOKEN via the x-admin-token header.
+ *
+ * Previously: an unsalted SHA-256 hash committed to the repo, checked against a
+ * password accepted from `?pass=` / `?key=`. That put a brute-forceable hash in
+ * git history and the password itself in access logs and browser history.
+ */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Auth check
-  const auth = req.headers['x-admin-hash'] as string
-    || req.query.key as string;
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
 
-  if (auth !== ADMIN_HASH) {
-    // Also accept raw password as query param for easy browser access
-    if (req.query.pass) {
-      const hash = createHash('sha256').update(String(req.query.pass)).digest('hex');
-      if (hash !== ADMIN_HASH) return res.status(401).json({ error: 'Unauthorized' });
-    } else {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-  }
+  const expected = process.env.ADMIN_TOKEN;
+  if (!expected) return res.status(503).json({ error: 'Admin is not configured (set ADMIN_TOKEN).' });
+  if (!adminHeaderMatches(req, expected)) return res.status(401).json({ error: 'Unauthorized' });
 
   try {
     // Total unique visitors

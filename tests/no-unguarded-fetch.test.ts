@@ -112,8 +112,40 @@ test('IP hashing is keyed, not a bare digest', () => {
 test('admin endpoints compare tokens in constant time', () => {
   // A plain `!==` on a secret leaks it a character at a time through response
   // timing. These endpoints return the whole warm list, so it matters.
+  // The comparison itself lives in _lib/adminauth.ts; call sites must route
+  // through it rather than rolling their own.
+  assert.match(
+    readFileSync(join(API_DIR, '_lib/adminauth.ts'), 'utf8'),
+    /timingSafeEqual/,
+    'the shared admin check must compare in constant time'
+  );
+  for (const rel of ['leads/export.ts', 'admin/pipeline.ts', 'admin/visitors.ts']) {
+    const src = readFileSync(join(API_DIR, rel), 'utf8');
+    assert.match(src, /adminHeaderMatches/, `${rel} must use the shared constant-time header check`);
+  }
+});
+
+test('no endpoint accepts a secret from the query string', () => {
+  // A token in a URL lands in the platform's access logs, the browser's
+  // history, and the Referer header of every outbound link from that page.
+  // Header only, everywhere.
+  const offenders: string[] = [];
+  for (const rel of walk(API_DIR)) {
+    const src = stripComments(readFileSync(join(API_DIR, rel), 'utf8'));
+    if (/req\.query\.(token|debug|key|secret|pass|admin)/.test(src)) {
+      offenders.push(rel);
+    }
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    `these endpoints read a secret from the query string — use the x-admin-token header:\n  ${offenders.join('\n  ')}`
+  );
+});
+
+test('admin auth goes through the shared helper', () => {
   for (const rel of ['leads/export.ts', 'admin/pipeline.ts']) {
     const src = readFileSync(join(API_DIR, rel), 'utf8');
-    assert.match(src, /timingSafeEqual/, `${rel} must compare its admin token in constant time`);
+    assert.match(src, /adminHeaderMatches/, `${rel} must use the shared constant-time header check`);
   }
 });

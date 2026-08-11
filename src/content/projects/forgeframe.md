@@ -19,13 +19,6 @@ metrics:
 
 Agents forget everything between sessions. ForgeFrame gives them persistent memory - what gets used strengthens, what gets ignored decays, and some things are principle-tier and never change. The memory never leaves the machine: sensitivity tiers gate every seam, and nothing marked sensitive is ever handed to a cloud model - not summarized, not embedded, not "anonymized." Local is the storage layer and the trust boundary. Four packages: `@forgeframe/memory` (MIT), `@forgeframe/core` (AGPL), `@forgeframe/server` (MIT), and `@forgeframe/proxy` (AGPL).
 
-<!-- pulse:start -->
-**Recent work** · week of 2026-08-07 · 14 commits across 22 files
-
-Added a load ledger so every heavy tenant, models, training, swarm, leases, eyes, sits on one board with rule-named conflicts. The dream trigger got a refractory after a 60-second drain pushed 959 cycles past the daemon guard; journals are now the shared clock, and REM emits training pairs from the day's episodes. The state header now carries a typed situation line that classifies the present, and texted approvals now run instead of being narrated.
-
-<sub>maintained weekly from the commit log</sub>
-<!-- pulse:end -->
 
 ```
 L4  ForgeFrame Proxy (scrub, inject, log)   AGPL

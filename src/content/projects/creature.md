@@ -21,13 +21,6 @@ order: 1
 
 Not your average second brain. CREATURE is a mind that runs on one machine - mine. It remembers, it consolidates while I sleep, it notices when it is short on something it needs, and it will refuse work that crosses a line I set. None of that leaves the box.
 
-<!-- pulse:start -->
-**Recent work** · week of 2026-08-07 · 6 commits across 12 files
-
-Moved the constellation to raw WebGL, now 3d with orbit and drift, and made it touchable. The pulse took over the live numbers while a static strip keeps the rest, and the hero band got cut from the plate to show the name, not the noise. The norn essay opened its science kit with 954 cited neurons, and the illuminator plate joined the sovereign-mind essay.
-
-<sub>maintained weekly from the commit log</sub>
-<!-- pulse:end -->
 
 The name is an acronym - cognitive, recursive, entropic, autopoietic, temporal, user-owned, reflective, emergent - but the honest description is simpler: an organism, not an assistant with a memory feature bolted on the side. A spine that decides what is safe, organs that do the work, a keeper that feels when something is wrong. The letter that carries the weight is the plain one in the middle - user-owned. ForgeFrame is the engine underneath it. Everything here runs local-first: my private thinking lives in a file on my own disk, and reaching the cloud is a deliberate, narrow act rather than the default.
 

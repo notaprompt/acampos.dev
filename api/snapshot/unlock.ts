@@ -63,6 +63,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: emailVerdict.reason, field: 'email' });
   }
 
+  // The owner testing his own funnel should not land in his own warm list.
+  // Everything else about the unlock is identical — the report opens normally.
+  const ownerEmails = (process.env.OWNER_EMAILS || 'alex@campos.works')
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  const isOwner = ownerEmails.includes(emailVerdict.email);
+
   try {
     await ensureSchema();
 
@@ -79,6 +87,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .map((l) => l.name);
 
     // ── Upsert the lead. One person, many snapshots. ──
+    if (isOwner) {
+      await sql`UPDATE snapshots SET unlocked = true, unlocked_at = now() WHERE id = ${id}::uuid`;
+      await track('unlock_owner', { snapshotId: id, meta: { niche: snap.niche_id }, ipHash });
+      return res.json({ ok: true, shareToken: snap.share_token, returning: false, owner: true, report: full });
+    }
+
     const leadRows = await sql`
       INSERT INTO leads (
         name, email, dedup_key, email_domain, mx_verified, business_name, website,

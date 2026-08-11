@@ -167,21 +167,23 @@ test('no HTTP header value contains non-ASCII', () => {
 });
 
 test('no secret is compared with === or !==', () => {
-  // Every one of these must go through constantTimeEqual. This has regressed
-  // once already: the pattern was fixed across the codebase, then reintroduced
-  // in a cookie check twenty minutes later.
+  // Every secret comparison must go through constantTimeEqual. This has
+  // regressed twice: fixed across the codebase, then reintroduced in a cookie
+  // check, and again on a share token.
+  const SECRET = /(ADMIN_TOKEN|SNAPSHOT_OWNER_KEY|OWNER_KEY|ownerCookie|heldToken|share_token|shareToken)/;
   const offenders: string[] = [];
   for (const rel of walk(API_DIR)) {
     if (rel === '_lib/adminauth.ts') continue; // the helper itself
-    const src = stripComments(readFileSync(join(API_DIR, rel), 'utf8'));
-    if (/(ADMIN_TOKEN|OWNER_KEY|ownerCookie|shareToken|share_token)\s*(===|!==)/.test(src)) {
-      offenders.push(rel);
-    }
-    if (/(===|!==)\s*process\.env\.(ADMIN_TOKEN|SNAPSHOT_OWNER_KEY)/.test(src)) {
-      offenders.push(rel);
-    }
+    const lines = stripComments(readFileSync(join(API_DIR, rel), 'utf8')).split('\n');
+    lines.forEach((line, i) => {
+      // `typeof x === 'string'` is a type guard, not a secret comparison.
+      const cleaned = line.replace(/typeof\s+[\w.]+\s*[=!]==\s*['"][a-z]+['"]/g, '');
+      if (!/[=!]==/.test(cleaned)) return;
+      if (!SECRET.test(cleaned)) return;
+      offenders.push(`${rel}:${i + 1} ${cleaned.trim().slice(0, 80)}`);
+    });
   }
-  assert.deepEqual(offenders, [], `secrets compared non-constant-time:\n  ${[...new Set(offenders)].join('\n  ')}`);
+  assert.deepEqual(offenders, [], `secrets compared non-constant-time:\n  ${offenders.join('\n  ')}`);
 });
 
 test('the owner cookie is not the admin token', () => {

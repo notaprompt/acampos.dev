@@ -22,6 +22,7 @@ import { gatherPresence, presenceFindings, type PresenceResult } from '../_lib/p
 import { frontierMirror } from '../_lib/frontier.js';
 import { analyze, type ModelReport } from '../_lib/analyze.js';
 import { sql, ensureSchema, dbConfigured, track, hashIp, clientIp, overRateLimit } from '../_lib/db.js';
+import { constantTimeEqual } from '../_lib/adminauth.js';
 
 const MAX_REFINES = 6;
 
@@ -73,7 +74,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // precisely the person whose correction is most worth having, because we
     // guessed their industry from outside with nobody to check it.
     const heldToken = typeof body.shareToken === 'string' ? body.shareToken.trim() : '';
-    const holdsLink = Boolean(heldToken) && heldToken === snap.share_token;
+    const holdsLink = constantTimeEqual(heldToken, snap.share_token as string);
     if (!snap.unlocked && !holdsLink) {
       return res.status(403).json({ error: 'Open the report first.' });
     }

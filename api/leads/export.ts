@@ -8,7 +8,20 @@
 // ?since=2026-01-01  ?status=new  ?niche=hvac  ?limit=500
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { timingSafeEqual } from 'crypto';
 import { sql, ensureSchema, dbConfigured } from '../_lib/db.js';
+
+/**
+ * Constant-time compare. A plain `!==` leaks the token a character at a time
+ * through response timing, which matters here because this endpoint returns
+ * every lead's name and email.
+ */
+function tokenMatches(provided: string, expected: string): boolean {
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  // timingSafeEqual throws on length mismatch, so gate on length first.
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 function csvCell(v: unknown): string {
   if (v == null) return '';
@@ -26,7 +39,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const provided =
     (req.headers['x-admin-token'] as string | undefined) ||
     (typeof req.query.token === 'string' ? req.query.token : '');
-  if (provided !== expected) return res.status(401).json({ error: 'Unauthorized' });
+  if (!provided || !tokenMatches(provided, expected)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
   if (!dbConfigured()) return res.status(503).json({ error: 'No database configured.' });
 

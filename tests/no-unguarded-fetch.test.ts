@@ -108,3 +108,12 @@ test('IP hashing is keyed, not a bare digest', () => {
   const fn = db.slice(db.indexOf('export function hashIp'));
   assert.match(fn, /createHmac/, 'the IPv4 space is 2^32 — an unkeyed hash is reversible');
 });
+
+test('admin endpoints compare tokens in constant time', () => {
+  // A plain `!==` on a secret leaks it a character at a time through response
+  // timing. These endpoints return the whole warm list, so it matters.
+  for (const rel of ['leads/export.ts', 'admin/pipeline.ts']) {
+    const src = readFileSync(join(API_DIR, rel), 'utf8');
+    assert.match(src, /timingSafeEqual/, `${rel} must compare its admin token in constant time`);
+  }
+});

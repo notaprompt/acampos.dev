@@ -340,12 +340,36 @@ async function probeAssistantVisibility(
   }
 }
 
-/** Best available locality string from what the crawl found. */
+/**
+ * Best available locality from what the crawl found.
+ *
+ * "City, ST" is preferred over a bare zip because a five-digit number on a page
+ * is very often not a zip — it is a price, a phone fragment, a year, a table
+ * number. A Virginia restaurant was located to an Alabama zip because the first
+ * five digits on the page won.
+ *
+ * A bare zip is only trusted when it appears in zip-shaped context: directly
+ * after a state abbreviation, or after a comma following a place name.
+ */
 export function deriveLocality(zips: string[], states: string[], bodyText: string): string {
-  if (zips.length) return zips[0];
-  const cityState = bodyText.match(/\b([A-Z][a-z]+(?:\s[A-Z][a-z]+)?),\s*(A[LKZR]|C[AOT]|D[EC]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|PA|RI|S[CD]|T[NX]|UT|V[AT]|W[AIVY])\b/);
+  // 1. "Locust Grove, VA" — self-validating, and what a human would say.
+  const cityState = bodyText.match(
+    /\b([A-Z][a-z]+(?:[\s-][A-Z][a-z]+){0,2}),\s*(A[LKZR]|C[AOT]|D[EC]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|PA|RI|S[CD]|T[NX]|UT|V[AT]|W[AIVY])\b/
+  );
   if (cityState) return `${cityState[1]}, ${cityState[2]}`;
+
+  // 2. A zip, but only where the surrounding text makes it a zip.
+  const contextual = bodyText.match(
+    /\b(?:A[LKZR]|C[AOT]|D[EC]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|PA|RI|S[CD]|T[NX]|UT|V[AT]|W[AIVY])[\s,]+(\d{5})(?:-\d{4})?\b/
+  );
+  if (contextual) return contextual[1];
+
+  // 3. State alone is thin but honest — better than a wrong zip.
   if (states.length) return states[0];
+
+  // 4. Deliberately NOT falling back to zips[0]: an unanchored five-digit number
+  //    is as likely to be wrong as right, and a wrong location poisons the
+  //    competitor search and the assistant-visibility check.
   return '';
 }
 

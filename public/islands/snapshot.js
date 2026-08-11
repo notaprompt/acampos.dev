@@ -35,6 +35,21 @@
     return '$' + Math.round(n).toLocaleString();
   }
 
+  // Fire-and-forget. Analytics must never delay or break the visitor's flow.
+  function ev(kind, meta) {
+    try {
+      var payload = JSON.stringify({ kind: kind, snapshotId: state.id || null, meta: meta || {} });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/track', new Blob([payload], { type: 'application/json' }));
+      } else {
+        fetch('/api/track', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: payload, keepalive: true,
+        }).catch(function () {});
+      }
+    } catch (e) { /* never surface */ }
+  }
+
   function phase(name) {
     root.querySelectorAll('.phase').forEach(function (p) { p.classList.remove('phase--active'); });
     var target = root.querySelector('[data-phase="' + name + '"]');
@@ -53,7 +68,13 @@
   var goBtn = $('#go');
   var errNode = $('[data-err]');
 
+  urlInput.addEventListener('focus', function once() {
+    ev('input_focused');
+    urlInput.removeEventListener('focus', once);
+  });
+
   $('[data-toggle-describe]').addEventListener('click', function () {
+    ev('describe_opened');
     var box = $('[data-describe]');
     box.hidden = !box.hidden;
     if (!box.hidden) $('#describe').focus();
@@ -133,6 +154,8 @@
         state.nicheOptions = res.body.nicheOptions || [];
         renderTeaser(res.body.teaser);
         state.gateShownAt = Date.now();
+        state.gateOpen = true;
+        ev('gate_shown', { health: res.body.teaser.health || 0, leaks: res.body.teaser.leakCount || 0 });
         phase('gate');
       })
       .catch(function () {
@@ -243,6 +266,7 @@
         if (!res.ok || res.body.error) {
           var field = res.body.field;
           if (field) {
+            ev('gate_field_error', { field: field });
             var fe = root.querySelector('[data-field-err="' + field + '"]');
             if (fe) fe.textContent = res.body.error;
             var inp = $('#lead-' + field);
@@ -500,6 +524,7 @@
     box.appendChild(form);
 
     toggle.addEventListener('click', function () {
+      if (form.hidden) ev('correction_opened');
       form.hidden = !form.hidden;
       toggle.textContent = form.hidden ? 'Something’s wrong →' : 'Never mind';
       if (!form.hidden) sel.focus();
@@ -665,6 +690,7 @@
   if (clipBtn) {
     clipBtn.addEventListener('click', function () {
       root.classList.toggle('clip');
+      ev('clip_mode', { on: root.classList.contains('clip') });
       clipBtn.textContent = root.classList.contains('clip') ? 'Exit clip mode' : 'Clip mode';
     });
   }
@@ -672,6 +698,7 @@
   var copyBtn = $('[data-copy-link]');
   if (copyBtn) {
     copyBtn.addEventListener('click', function () {
+      ev('link_copied');
       var link = location.origin + '/snapshot' + (state.shareToken ? '?s=' + state.shareToken : '');
       if (navigator.clipboard) {
         navigator.clipboard.writeText(link).then(function () {
@@ -681,6 +708,37 @@
       }
     });
   }
+
+  window.addEventListener('pagehide', function () {
+    if (state.gateOpen) {
+      ev('gate_abandoned', { secondsAtGate: Math.round((Date.now() - state.gateShownAt) / 1000) });
+    }
+  });
+
+  // How far down the report they actually read, and which sections landed.
+  var deepestPct = 0;
+  window.addEventListener('scroll', function () {
+    if (!state.report) return;
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    if (h <= 0) return;
+    var pct = Math.min(100, Math.round((window.scrollY / h) * 100));
+    if (pct > deepestPct) deepestPct = pct;
+  }, { passive: true });
+  window.addEventListener('pagehide', function () {
+    if (state.report && deepestPct > 0) ev('report_scrolled', { pct: deepestPct });
+  });
+
+  // Any CTA or outbound citation click, named.
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a');
+    if (!a || !state.report) return;
+    var href = a.getAttribute('href') || '';
+    if (/^https?:/i.test(href) && href.indexOf(location.host) === -1) {
+      ev('outbound_clicked', { host: (href.split('/')[2] || '').slice(0, 60) });
+    } else if (href.indexOf('/contact') === 0 || href.indexOf('/services') === 0) {
+      ev('cta_clicked', { to: href.slice(0, 60), text: (a.textContent || '').trim().slice(0, 40) });
+    }
+  });
 
   // ── Deep links ──
   var params = new URLSearchParams(location.search);
@@ -721,6 +779,7 @@
         state.shareToken = res.body.shareToken;
         state.prepared = res.body.prepared;
         state.nicheOptions = res.body.nicheOptions || [];
+        ev('report_viewed', { via: res.body.prepared ? 'outreach_link' : 'share_link' });
         renderReport(state.report);
         phase('report');
       })

@@ -67,7 +67,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       FROM events
       WHERE kind IN (
         'snapshot_run','snapshot_ready','unlock_attempt','unlock_success',
-        'snapshot_refined','snapshot_viewed_by_link','ai_visibility_run','unlock_bot'
+        'snapshot_refined','snapshot_viewed_by_link','ai_visibility_run','unlock_bot',
+        'input_focused','describe_opened','gate_shown','gate_abandoned',
+        'report_viewed','clip_mode','printed','link_copied','correction_opened',
+        'unlock_owner','gate_field_error'
       )
         AND created_at > now() - interval '90 days'
       GROUP BY kind
@@ -122,6 +125,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       LIMIT 50
     `;
 
+    // Which trades are actually showing up. If one dominates, that is where the
+    // niche pack should get deeper and where outreach should concentrate.
+    const byNiche = await sql`
+      SELECT niche_label AS label, count(*)::int AS n,
+             count(*) FILTER (WHERE unlocked)::int AS unlocked,
+             round(avg((report->>'health')::numeric))::int AS avg_health
+      FROM snapshots
+      WHERE niche_label IS NOT NULL
+      GROUP BY niche_label ORDER BY count(*) DESC LIMIT 20
+    `;
+
+    // What people press once the report is open.
+    const clicks = await sql`
+      SELECT meta->>'to' AS target, count(*)::int AS n
+      FROM events WHERE kind = 'cta_clicked' AND meta->>'to' IS NOT NULL
+      GROUP BY 1 ORDER BY 2 DESC LIMIT 10
+    `;
+
+    // How far down the report they actually read.
+    const depth = await sql`
+      SELECT
+        round(avg((meta->>'pct')::numeric))::int                                   AS avg_pct,
+        count(*) FILTER (WHERE (meta->>'pct')::int >= 75)::int                     AS read_deep,
+        count(*)::int                                                              AS n
+      FROM events WHERE kind = 'report_scrolled' AND meta->>'pct' IS NOT NULL
+    `;
+
+    // Which field rejects people at the gate.
+    const gateErrors = await sql`
+      SELECT meta->>'field' AS field, count(*)::int AS n
+      FROM events WHERE kind = 'gate_field_error' AND meta->>'field' IS NOT NULL
+      GROUP BY 1 ORDER BY 2 DESC
+    `;
+
     const spend = await sql`
       SELECT
         round(sum(cost_cents)::numeric, 2)  AS cents_total,
@@ -146,10 +183,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         linkViews: f.snapshot_viewed_by_link || 0,
         aiVisibility: f.ai_visibility_run || 0,
         botsBlocked: f.unlock_bot || 0,
+        // The client-side half of the funnel.
+        engaged: f.input_focused || 0,
+        gateShown: f.gate_shown || 0,
+        gateAbandoned: f.gate_abandoned || 0,
+        reportViewed: f.report_viewed || 0,
+        clipMode: f.clip_mode || 0,
+        printed: f.printed || 0,
+        linkCopied: f.link_copied || 0,
+        correctionOpened: f.correction_opened || 0,
+        ownerRuns: f.unlock_owner || 0,
+        // The number that tells you whether the gate is set right.
+        gateConversion: f.gate_shown
+          ? Math.round((100 * (f.unlock_success || 0)) / f.gate_shown)
+          : null,
         readyRate: f.snapshot_run ? Math.round((100 * (f.snapshot_ready || 0)) / f.snapshot_run) : null,
         unlockRate: f.snapshot_ready ? Math.round((100 * (f.unlock_success || 0)) / f.snapshot_ready) : null,
       },
       daily,
+      byNiche,
+      clicks,
+      depth: depth[0] || null,
+      gateErrors,
       leads,
       unclaimed,
       corrections,

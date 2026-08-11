@@ -96,6 +96,12 @@
     <div class="tiles" id="funnel"></div>
     <p class="sub" id="funnel-note"></p>
 
+    <h2>where they drop off</h2>
+    <div class="tiles" id="dropoff"></div>
+
+    <h2>by trade</h2>
+    <div class="wrap"><table id="niches"></table></div>
+
     <h2>leads <button type="button" class="btn-note" id="export">export csv</button></h2>
     <div class="wrap"><table id="leads"></table></div>
 
@@ -186,6 +192,52 @@
             : f.unlockRate < 35
               ? 'Gate conversion is below 35% — the teaser is showing too much or too little.'
               : f.unlockRate >= 45 ? 'Gate conversion is healthy.' : 'Gate conversion is acceptable.';
+
+        // ── drop-off ──
+        var dz = document.getElementById('dropoff');
+        dz.textContent = '';
+        [
+          [f.engaged, 'touched the box', ''],
+          [f.started, 'started a run', ''],
+          [f.ready, 'analysis finished', ''],
+          [f.gateShown, 'saw the gate', ''],
+          [f.unlocked, 'gave an email', ''],
+          [f.gateAbandoned, 'left at the gate', f.gateAbandoned > (f.unlocked || 0) ? 'bad' : ''],
+          [f.gateConversion == null ? '—' : f.gateConversion + '%', 'gate conversion',
+            f.gateConversion == null ? '' : (f.gateConversion >= 45 ? 'good' : f.gateConversion < 35 ? 'bad' : '')],
+          [d.depth && d.depth.avg_pct != null ? d.depth.avg_pct + '%' : '—', 'avg read depth', ''],
+          [f.correctionOpened, 'opened corrections', ''],
+          [f.linkCopied, 'copied the link', ''],
+          [f.clipMode, 'used clip mode', ''],
+          [f.ownerRuns, 'your own runs', ''],
+        ].forEach(function (t) {
+          var n = el('div', 'tile' + (t[2] ? ' ' + t[2] : ''));
+          n.appendChild(el('b', null, t[0])); n.appendChild(el('span', null, t[1]));
+          dz.appendChild(n);
+        });
+
+        if (d.gateErrors && d.gateErrors.length) {
+          var ge = d.gateErrors.map(function (g) { return g.field + ' \u00d7' + g.n; }).join(' · ');
+          document.getElementById('funnel-note').textContent += '  Gate rejections: ' + ge + '.';
+        }
+
+        // ── by trade ──
+        var nt = document.getElementById('niches');
+        nt.textContent = '';
+        var nh = el('tr');
+        ['trade', 'runs', 'unlocked', 'avg health'].forEach(function (h) { nh.appendChild(el('th', null, h)); });
+        nt.appendChild(nh);
+        (d.byNiche || []).forEach(function (n) {
+          var tr = el('tr');
+          tr.appendChild(el('td', null, n.label));
+          tr.appendChild(el('td', 'num', n.n));
+          tr.appendChild(el('td', 'num', n.unlocked));
+          tr.appendChild(el('td', 'num', n.avg_health == null ? '—' : n.avg_health));
+          nt.appendChild(tr);
+        });
+        if (!(d.byNiche || []).length) {
+          var ne = el('tr'); var ntd = el('td', 'muted', 'No runs yet.'); ntd.colSpan = 4; ne.appendChild(ntd); nt.appendChild(ne);
+        }
 
         // ── leads ──
         var lt = document.getElementById('leads');

@@ -130,3 +130,33 @@ test('every finding carries text a human can read', () => {
     }
   }
 });
+
+// ── locality extraction ──
+// A Virginia restaurant was located to an Alabama zip because the first five
+// digits on the page won. Location drives the competitor search and the
+// assistant-visibility check, so a wrong one poisons both.
+import { deriveLocality } from '../api/_lib/presence.ts';
+
+test('prefers "City, ST" over any bare number on the page', () => {
+  const body = 'Lunch specials from 10.99. Call 540-972-2332. Visit us in Locust Grove, VA today. Item 36099.';
+  assert.equal(deriveLocality(['36099'], ['VA'], body), 'Locust Grove, VA');
+});
+
+test('accepts a zip only in zip-shaped context', () => {
+  assert.equal(deriveLocality([], ['VA'], 'Serving the area. VA 22508 and nearby.'), '22508');
+  assert.equal(deriveLocality([], ['VA'], 'Our address is Richmond, VA 23220'), 'Richmond, VA');
+});
+
+test('refuses an unanchored five-digit number', () => {
+  // Prices, SKUs, and years are all five digits. A wrong location is worse
+  // than no location, because the report then names the wrong competitors.
+  assert.equal(deriveLocality(['36099'], [], 'Combo platter 36099 calories, sushi from 12.99'), '');
+});
+
+test('falls back to a state rather than guessing a zip', () => {
+  assert.equal(deriveLocality(['99999'], ['MD'], 'We serve customers across MD.'), 'MD');
+});
+
+test('handles multi-word city names', () => {
+  assert.equal(deriveLocality([], [], 'Located in Virginia Beach, VA near the oceanfront'), 'Virginia Beach, VA');
+});

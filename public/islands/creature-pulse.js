@@ -30,16 +30,19 @@
     return '<span class="dl-live dl-asleep">ASLEEP</span>';
   }
 
+  // "dream gate" is internal shorthand. It consolidates memory on an idle
+  // machine — say that, since a visitor has no way to know a dream is a
+  // scheduled background pass rather than a metaphor.
   var DREAM = {
-    waiting: 'dream gate: waiting - it dreams when he steps away',
-    dreaming: 'dream gate: dreaming right now',
-    idle: 'dream gate: idle',
-    unknown: 'dream gate: unreadable from here',
+    waiting: 'idle — it reorganises its memory when Alex steps away from the machine',
+    dreaming: 'reorganising its memory right now',
+    idle: 'not currently reorganising',
+    unknown: 'cannot tell from here',
   };
 
   function render(d) {
     if (!d || d.empty) {
-      host.innerHTML = '<div class="dl-quiet">the pulse publishes when the machine is awake - nothing received yet.</div>';
+      host.innerHTML = '<div class="dl-quiet">this reads live from Alex’s machine. Nothing received yet — it publishes when the machine is awake.</div>';
       return;
     }
     // Name the thing and say why the numbers exist. Previously this rendered a

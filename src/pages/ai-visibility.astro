@@ -1,0 +1,211 @@
+---
+import Page from '../layouts/Page.astro';
+import { nicheOptions } from '../../api/_lib/niches';
+
+const options = nicheOptions();
+
+const title = 'does ChatGPT know your business? — campos.works';
+const description =
+  'Ask an AI assistant to recommend a business in your trade and town, and see whether it names you. Free, no email, about ten seconds.';
+---
+
+<Page title={title} description={description}>
+  <article class="aiv" data-aiv>
+    <p class="eyebrow">free · no email · about ten seconds</p>
+    <h1>Ask an assistant for a business like yours. See who it names.</h1>
+    <p class="lede">
+      ChatGPT is now the third most common way people find a local business, behind
+      Google and Facebook. But only about <strong>1 in 100</strong> businesses is
+      ever named when someone asks an assistant for a recommendation.
+    </p>
+    <p class="lede muted">
+      This asks the question for real, right now, and shows you the answer. There is
+      no trick to it — you will see the same names your customers would.
+    </p>
+
+    <form class="aiv-form" data-form novalidate>
+      <div class="f">
+        <label for="biz">Your business name</label>
+        <input type="text" id="biz" autocomplete="organization" placeholder="Orellana Landscaping" required />
+      </div>
+      <div class="f">
+        <label for="loc">Town or zip</label>
+        <input type="text" id="loc" autocomplete="address-level2" placeholder="Woodbridge, VA" required />
+      </div>
+      <div class="f">
+        <label for="niche">Your trade</label>
+        <select id="niche" required>
+          {options.map((o) => <option value={o.id}>{o.label}</option>)}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" data-go>Ask the assistant →</button>
+      <p class="err" data-err hidden></p>
+    </form>
+
+    <div class="result" data-result hidden></div>
+
+    <section class="why">
+      <h2>Why this happens</h2>
+      <p>
+        Assistants do not have a business dashboard you can claim. They read the open
+        web. What decides whether you get named is whether your site states plainly
+        what you do, where you do it, and who you are — in a form a machine can parse
+        without guessing.
+      </p>
+      <p>
+        Most local business sites fail that test for a boring reason: the content only
+        appears after JavaScript runs, there is no structured data, and nothing on the
+        page names the actual towns served. Those are all fixable in days, not months,
+        and almost nobody in your category has fixed them yet.
+      </p>
+      <div class="why-cta">
+        <a class="btn btn-primary" href="/snapshot">Get the full read — free</a>
+        <a class="btn btn-ghost" href="/services/front-door">How I fix this</a>
+      </div>
+    </section>
+  </article>
+
+  <script is:inline>
+    (function () {
+      var root = document.querySelector('[data-aiv]');
+      if (!root) return;
+      var form = root.querySelector('[data-form]');
+      var errNode = root.querySelector('[data-err]');
+      var out = root.querySelector('[data-result]');
+      var btn = root.querySelector('[data-go]');
+
+      function el(t, c, x) { var n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = String(x); return n; }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var businessName = root.querySelector('#biz').value.trim();
+        var locality = root.querySelector('#loc').value.trim();
+        var nicheId = root.querySelector('#niche').value;
+        if (!businessName || !locality) {
+          errNode.textContent = 'I need the business name and the town.';
+          errNode.hidden = false;
+          return;
+        }
+        errNode.hidden = true;
+        btn.disabled = true;
+        btn.textContent = 'asking…';
+        out.hidden = true;
+
+        fetch('/api/ai-visibility', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessName: businessName, locality: locality, nicheId: nicheId }),
+        })
+          .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
+          .then(function (res) {
+            btn.disabled = false;
+            btn.textContent = 'Ask the assistant →';
+            if (!res.ok || res.body.error) {
+              errNode.textContent = res.body.error || 'Something went wrong.';
+              errNode.hidden = false;
+              return;
+            }
+            var d = res.body;
+            while (out.firstChild) out.removeChild(out.firstChild);
+
+            out.appendChild(el('p', 'r-prompt', 'Asked: “' + d.prompt + '”'));
+
+            var verdict = el('div', 'verdict ' + (d.found ? 'verdict--yes' : 'verdict--no'));
+            verdict.appendChild(el('span', 'v-lab', d.found ? 'you were named' : 'you were not named'));
+            verdict.appendChild(el('p', 'v-body', d.context));
+            out.appendChild(verdict);
+
+            if (d.named && d.named.length) {
+              out.appendChild(el('p', 'r-sub', d.found ? 'Everyone it named:' : 'Who it named instead:'));
+              var ul = el('ul', 'named');
+              d.named.forEach(function (n) { ul.appendChild(el('li', null, n)); });
+              out.appendChild(ul);
+            }
+
+            var cta = el('div', 'r-cta');
+            var a = el('a', 'btn btn-primary', 'See the full read on your business');
+            a.href = '/snapshot';
+            cta.appendChild(a);
+            out.appendChild(cta);
+
+            out.appendChild(el('p', 'r-fine',
+              'One assistant, one phrasing, one moment in time — results vary by how the question is asked. ' +
+              'The full Snapshot checks this alongside everything else that decides whether you get found.'));
+
+            out.hidden = false;
+            out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          })
+          .catch(function () {
+            btn.disabled = false;
+            btn.textContent = 'Ask the assistant →';
+            errNode.textContent = 'Could not reach the server.';
+            errNode.hidden = false;
+          });
+      });
+    })();
+  </script>
+</Page>
+
+<style>
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold-accent); margin-bottom: 0.8rem;
+  }
+  .aiv h1 { font-size: clamp(1.7rem, 5vw, 2.5rem); line-height: 1.12; margin-bottom: 0.9rem; text-wrap: balance; }
+  .lede { font-size: 1rem; color: var(--white-70); line-height: 1.68; max-width: 58ch; margin-bottom: 0.8rem; }
+  .lede.muted { color: var(--white-60); font-size: 0.92rem; margin-bottom: 1.6rem; }
+  .lede strong { color: var(--gold-accent); font-weight: 600; }
+
+  .aiv-form { max-width: 26rem; margin-bottom: 1.5rem; }
+  .f { margin-bottom: 0.75rem; }
+  .f label {
+    display: block; font-family: var(--mono); font-size: 0.68rem;
+    letter-spacing: 0.09em; text-transform: uppercase; color: var(--white-45); margin-bottom: 0.3rem;
+  }
+  .f input, .f select {
+    width: 100%; background: var(--depth-2); border: 1px solid var(--white-15);
+    color: var(--glow); padding: 0.7rem 0.85rem; font-family: var(--mono);
+    font-size: 0.88rem; border-radius: 0;
+  }
+  .f input:focus, .f select:focus { outline: none; border-color: var(--gold-accent); }
+
+  .btn {
+    display: inline-block; font-family: var(--mono); font-size: 0.82rem;
+    padding: 0.75rem 1.4rem; text-decoration: none; border: 1px solid var(--gold-accent);
+    cursor: pointer; transition: background 0.16s, color 0.16s;
+  }
+  .btn-primary { background: var(--gold-accent); color: var(--void); font-weight: 600; }
+  .btn-primary:hover { background: transparent; color: var(--gold-accent); }
+  .btn-primary:disabled { opacity: 0.55; cursor: wait; }
+  .btn-ghost { background: transparent; color: var(--gold-accent); border-color: var(--white-15); }
+  .btn-ghost:hover { border-color: var(--gold-accent); }
+
+  .err { font-family: var(--mono); font-size: 0.76rem; color: var(--danger); margin-top: 0.5rem; }
+
+  .result { border-top: 1px solid var(--white-08); padding-top: 1.4rem; margin-bottom: 2rem; }
+  .r-prompt { font-family: var(--mono); font-size: 0.76rem; color: var(--white-30); margin-bottom: 0.9rem; }
+  .verdict { border: 1px solid; padding: 1.1rem 1.2rem; margin-bottom: 1.1rem; }
+  .verdict--yes { border-color: var(--alive); background: var(--alive-dim); }
+  .verdict--no { border-color: var(--danger); background: var(--depth-2); }
+  .v-lab {
+    display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.18em;
+    text-transform: uppercase; margin-bottom: 0.5rem;
+  }
+  .verdict--yes .v-lab { color: var(--alive); }
+  .verdict--no .v-lab { color: var(--danger); }
+  .v-body { font-size: 0.92rem; color: var(--white-70); line-height: 1.6; margin: 0; max-width: 56ch; }
+  .r-sub { font-family: var(--mono); font-size: 0.72rem; color: var(--white-45); margin-bottom: 0.4rem; }
+  .named { list-style: none; padding: 0; margin: 0 0 1.1rem; }
+  .named li {
+    font-family: var(--mono); font-size: 0.85rem; color: var(--glow);
+    padding: 0.35rem 0 0.35rem 1.2rem; border-top: 1px solid var(--white-04); position: relative;
+  }
+  .named li::before { content: '·'; position: absolute; left: 0.3rem; color: var(--gold-accent); }
+  .r-cta { margin-bottom: 0.9rem; }
+  .r-fine { font-family: var(--mono); font-size: 0.7rem; color: var(--white-30); line-height: 1.6; max-width: 58ch; }
+
+  .why { border-top: 1px solid var(--white-08); padding-top: 1.5rem; }
+  .why h2 { font-size: 1.3rem; margin-bottom: 0.7rem; }
+  .why p { font-size: 0.92rem; color: var(--white-60); line-height: 1.68; max-width: 60ch; margin-bottom: 0.9rem; }
+  .why-cta { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.2rem; }
+</style>

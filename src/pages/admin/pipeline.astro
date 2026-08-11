@@ -1,0 +1,284 @@
+---
+// Standalone admin surface — no site layout, noindex, token in the URL.
+// Open as /admin/pipeline?token=YOUR_ADMIN_TOKEN
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pipeline</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('/fonts/jetbrains-mono-400.woff2') format('woff2');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    :root {
+      --void:#050505; --d1:#0a0a0a; --d2:#101010;
+      --glow:#E8DCC8; --gold:#b8965a; --alive:#5BF29B; --danger:#c75050;
+      --w60:rgba(255,255,255,.6); --w40:rgba(255,255,255,.42);
+      --w20:rgba(255,255,255,.2); --w08:rgba(255,255,255,.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono','Courier New',monospace;
+      background: var(--void); color: var(--glow);
+      padding: 20px; font-size: 13px; line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1 { font-size: .8rem; color: var(--gold); letter-spacing:.16em; text-transform:uppercase; margin-bottom: 4px; }
+    .sub { color: var(--w40); font-size: .7rem; margin-bottom: 20px; }
+    h2 { font-size: .72rem; color: var(--gold); letter-spacing:.14em; text-transform:uppercase; margin: 28px 0 10px; }
+
+    .gate { max-width: 380px; margin: 60px auto; }
+    .gate input {
+      width:100%; background:var(--d2); border:1px solid var(--w20); color:var(--glow);
+      padding:10px; font-family:inherit; font-size:13px; margin-bottom:8px;
+    }
+    .gate button {
+      width:100%; background:var(--gold); color:var(--void); border:none;
+      padding:10px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer;
+    }
+
+    .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:6px; margin-bottom:8px; }
+    .tile { border:1px solid var(--w08); background:var(--d1); padding:10px 12px; }
+    .tile b { display:block; font-size:1.5rem; color:var(--glow); font-variant-numeric:tabular-nums; font-weight:400; }
+    .tile span { display:block; font-size:.62rem; color:var(--w40); text-transform:uppercase; letter-spacing:.08em; margin-top:4px; }
+    .tile.good b { color:var(--alive); } .tile.bad b { color:var(--danger); }
+
+    table { width:100%; border-collapse:collapse; font-size:.72rem; }
+    th {
+      text-align:left; color:var(--w40); font-weight:400; padding:6px 8px;
+      border-bottom:1px solid var(--w20); font-size:.62rem; text-transform:uppercase; letter-spacing:.08em;
+      position:sticky; top:0; background:var(--void);
+    }
+    td { padding:7px 8px; border-bottom:1px solid var(--w08); vertical-align:top; }
+    tr:hover td { background:var(--d1); }
+    .num { text-align:right; font-variant-numeric:tabular-nums; }
+    a { color:var(--gold); }
+    .muted { color:var(--w40); }
+    .wrap { overflow-x:auto; border:1px solid var(--w08); }
+
+    select, .btn-note {
+      background:var(--d2); border:1px solid var(--w20); color:var(--glow);
+      font-family:inherit; font-size:.68rem; padding:3px 5px; cursor:pointer;
+    }
+    .st-new { color:var(--gold); } .st-replied,.st-call_booked { color:var(--alive); }
+    .st-won { color:var(--alive); font-weight:600; } .st-lost,.st-ignored { color:var(--w40); }
+
+    .pill { display:inline-block; border:1px solid var(--w20); padding:1px 5px; font-size:.6rem; color:var(--w40); margin-right:3px; }
+    .err { color:var(--danger); }
+    .saved { color:var(--alive); }
+    .corr { border-bottom:1px solid var(--w08); padding:6px 8px; font-size:.7rem; color:var(--w60); }
+  </style>
+</head>
+<body>
+  <div id="gate" class="gate" hidden>
+    <h1>pipeline</h1>
+    <p class="sub">admin token</p>
+    <input type="password" id="tok" placeholder="ADMIN_TOKEN" autocomplete="off" />
+    <button type="button" id="enter">open</button>
+    <p class="sub err" id="gate-err"></p>
+  </div>
+
+  <div id="app" hidden>
+    <h1>pipeline</h1>
+    <p class="sub" id="stamp"></p>
+
+    <h2>funnel · 90 days</h2>
+    <div class="tiles" id="funnel"></div>
+    <p class="sub" id="funnel-note"></p>
+
+    <h2>leads</h2>
+    <div class="wrap"><table id="leads"></table></div>
+
+    <h2>unclaimed snapshots</h2>
+    <p class="sub">Bulk-generated, or someone who bounced at the gate. Both are outreach targets.</p>
+    <div class="wrap"><table id="unclaimed"></table></div>
+
+    <h2>what the machine got wrong</h2>
+    <p class="sub">Owner corrections. The only feedback the niche packs ever get — read these.</p>
+    <div class="wrap" id="corrections"></div>
+  </div>
+
+  <script is:inline>
+    (function () {
+      var token = new URLSearchParams(location.search).get('token') || sessionStorage.getItem('adminToken') || '';
+      var gate = document.getElementById('gate');
+      var app = document.getElementById('app');
+
+      function el(t, c, x) { var n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = String(x); return n; }
+      function money(n) { return typeof n === 'number' && n > 0 ? '$' + Math.round(n).toLocaleString() : '—'; }
+      function date(s) { return s ? new Date(s).toISOString().slice(0, 10) : ''; }
+
+      document.getElementById('enter').addEventListener('click', function () {
+        token = document.getElementById('tok').value.trim();
+        sessionStorage.setItem('adminToken', token);
+        load();
+      });
+
+      function showGate(msg) {
+        gate.hidden = false; app.hidden = true;
+        if (msg) document.getElementById('gate-err').textContent = msg;
+      }
+
+      function load() {
+        if (!token) return showGate('');
+        fetch('/api/admin/pipeline?token=' + encodeURIComponent(token))
+          .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
+          .then(function (res) {
+            if (!res.ok) return showGate(res.body.error || 'Unauthorized');
+            sessionStorage.setItem('adminToken', token);
+            gate.hidden = true; app.hidden = false;
+            render(res.body);
+          })
+          .catch(function () { showGate('Could not reach the server.'); });
+      }
+
+      function render(d) {
+        document.getElementById('stamp').textContent =
+          'generated ' + new Date(d.generatedAt).toLocaleString() +
+          (d.spend ? ' · ' + d.spend.n + ' snapshots / 30d · $' + ((d.spend.cents_total || 0) / 100).toFixed(2) + ' inference' : '');
+
+        var f = d.funnel;
+        var tiles = document.getElementById('funnel');
+        tiles.textContent = '';
+        [
+          [f.started, 'started', ''],
+          [f.ready, 'completed', ''],
+          [f.unlocked, 'unlocked', ''],
+          [f.unlockRate == null ? '—' : f.unlockRate + '%', 'gate conversion', f.unlockRate == null ? '' : (f.unlockRate >= 45 ? 'good' : f.unlockRate < 35 ? 'bad' : '')],
+          [f.linkViews, 'link opens', ''],
+          [f.refined, 'corrections', ''],
+          [f.aiVisibility, 'ai checks', ''],
+          [f.botsBlocked, 'bots blocked', ''],
+        ].forEach(function (t) {
+          var n = el('div', 'tile' + (t[2] ? ' ' + t[2] : ''));
+          n.appendChild(el('b', null, t[0]));
+          n.appendChild(el('span', null, t[1]));
+          tiles.appendChild(n);
+        });
+
+        document.getElementById('funnel-note').textContent =
+          f.unlockRate == null ? ''
+            : f.unlockRate < 35
+              ? 'Gate conversion is below 35% — the teaser is showing too much or too little.'
+              : f.unlockRate >= 45 ? 'Gate conversion is healthy.' : 'Gate conversion is acceptable.';
+
+        // ── leads ──
+        var lt = document.getElementById('leads');
+        lt.textContent = '';
+        var head = el('tr');
+        ['when', 'name', 'email', 'business', 'trade', 'health', 'leak', 'top gap', 'status', 'report']
+          .forEach(function (h) { head.appendChild(el('th', null, h)); });
+        lt.appendChild(head);
+
+        if (!d.leads.length) {
+          var empty = el('tr'); var td = el('td', 'muted', 'No leads yet.'); td.colSpan = 10; empty.appendChild(td); lt.appendChild(empty);
+        }
+
+        d.leads.forEach(function (l) {
+          var tr = el('tr');
+          tr.appendChild(el('td', 'muted', date(l.created_at)));
+          tr.appendChild(el('td', null, l.name || ''));
+          var em = el('td');
+          var ea = el('a', null, l.email);
+          ea.href = 'mailto:' + l.email + '?subject=' + encodeURIComponent('your snapshot');
+          em.appendChild(ea);
+          if (!l.mx_verified) em.appendChild(el('span', 'pill', 'unverified'));
+          tr.appendChild(em);
+          tr.appendChild(el('td', null, l.business_name || ''));
+          tr.appendChild(el('td', 'muted', l.niche_label || ''));
+          tr.appendChild(el('td', 'num', l.health_score == null ? '—' : l.health_score));
+          tr.appendChild(el('td', 'num', money(l.est_leak_high)));
+          tr.appendChild(el('td', 'muted', (l.top_gaps || [])[0] || ''));
+
+          var st = el('td');
+          var sel = document.createElement('select');
+          sel.className = 'st-' + (l.status || 'new');
+          d.statuses.forEach(function (s) {
+            var o = document.createElement('option');
+            o.value = s; o.textContent = s.replace('_', ' ');
+            if (s === l.status) o.selected = true;
+            sel.appendChild(o);
+          });
+          sel.addEventListener('change', function () {
+            sel.className = 'st-' + sel.value;
+            fetch('/api/admin/pipeline?token=' + encodeURIComponent(token), {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: l.id, status: sel.value }),
+            }).then(function (r) {
+              if (r.ok) { sel.style.borderColor = 'var(--alive)'; setTimeout(function () { sel.style.borderColor = ''; }, 900); }
+            });
+          });
+          st.appendChild(sel);
+          tr.appendChild(st);
+
+          var rep = el('td');
+          if (l.share_token) {
+            var a = el('a', null, 'open');
+            a.href = '/snapshot?s=' + l.share_token; a.target = '_blank';
+            rep.appendChild(a);
+          } else rep.appendChild(el('span', 'muted', '—'));
+          tr.appendChild(rep);
+
+          lt.appendChild(tr);
+        });
+
+        // ── unclaimed ──
+        var ut = document.getElementById('unclaimed');
+        ut.textContent = '';
+        var uh = el('tr');
+        ['when', 'business', 'domain', 'trade', 'health', 'leak', 'source', 'report']
+          .forEach(function (h) { uh.appendChild(el('th', null, h)); });
+        ut.appendChild(uh);
+
+        if (!d.unclaimed.length) {
+          var ue = el('tr'); var utd = el('td', 'muted', 'None.'); utd.colSpan = 8; ue.appendChild(utd); ut.appendChild(ue);
+        }
+
+        d.unclaimed.forEach(function (s) {
+          var tr = el('tr');
+          tr.appendChild(el('td', 'muted', date(s.created_at)));
+          tr.appendChild(el('td', null, s.business_name || ''));
+          tr.appendChild(el('td', 'muted', s.domain || ''));
+          tr.appendChild(el('td', 'muted', s.niche_label || ''));
+          tr.appendChild(el('td', 'num', s.health == null ? '—' : s.health));
+          tr.appendChild(el('td', 'num', money(s.leak_high)));
+          tr.appendChild(el('td', 'muted', s.channel || 'web'));
+          var rep = el('td');
+          if (s.share_token) {
+            var a = el('a', null, 'open');
+            a.href = '/snapshot?s=' + s.share_token; a.target = '_blank';
+            rep.appendChild(a);
+          } else rep.appendChild(el('span', 'muted', '—'));
+          tr.appendChild(rep);
+          ut.appendChild(tr);
+        });
+
+        // ── corrections ──
+        var cc = document.getElementById('corrections');
+        cc.textContent = '';
+        if (!d.corrections.length) {
+          cc.appendChild(el('div', 'corr muted', 'No corrections yet.'));
+        }
+        d.corrections.forEach(function (c) {
+          var m = c.meta || {};
+          var bits = [];
+          if (m.nicheChanged) bits.push('trade: ' + m.from + ' → ' + m.to);
+          if (m.correctedName) bits.push('name corrected');
+          if (m.correctedLocality) bits.push('location corrected');
+          if (m.gaveContext) bits.push('added context');
+          cc.appendChild(el('div', 'corr', date(c.created_at) + ' — ' + (bits.join(' · ') || 'minor')));
+        });
+      }
+
+      load();
+    })();
+  </script>
+</body>
+</html>

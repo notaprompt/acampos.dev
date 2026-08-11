@@ -138,42 +138,78 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       "itemListElement": [
         {
           "@type": "Offer",
+          "name": "The Snapshot",
+          "price": "0",
+          "priceCurrency": "USD",
+          "url": "https://campos.works/snapshot",
           "itemOffered": {
             "@type": "Service",
-            "name": "Full Online Presence Build",
-            "description": "Website, scheduling, calendar, contact forms, SEO, automations for small businesses."
+            "name": "The Snapshot",
+            "description": "Free automated diagnostic of a small business across eight parts: being found, intake, quoting, follow-up, scheduling, getting paid, records, and the owner's operating picture. No account required."
           }
         },
         {
           "@type": "Offer",
+          "name": "The Teardown",
+          "price": "500",
+          "priceCurrency": "USD",
+          "url": "https://campos.works/contact?offer=teardown",
           "itemOffered": {
             "@type": "Service",
-            "name": "Agentic SEO & AI Discoverability",
-            "description": "Structured data, agent discovery endpoints, machine-readable profiles."
+            "name": "The Teardown",
+            "description": "A week of analysis plus a 90-minute working session. Prioritized plan with costs attached, credited against a later build."
           }
         },
         {
           "@type": "Offer",
+          "name": "Fix One Thing",
+          "priceCurrency": "USD",
+          "url": "https://campos.works/contact?offer=fix-one-thing",
+          "priceSpecification": {
+            "@type": "PriceSpecification",
+            "minPrice": "1500",
+            "maxPrice": "8000",
+            "priceCurrency": "USD"
+          },
           "itemOffered": {
             "@type": "Service",
-            "name": "AI Cost Optimization",
-            "description": "Model routing and tiered dispatch. Cheap models for easy calls, frontier models only when needed."
+            "name": "Fix One Thing",
+            "description": "One business system built end to end, integrated, team trained, handed over running. Fixed scope and price."
           }
         },
         {
           "@type": "Offer",
+          "name": "The Modern Build",
+          "priceCurrency": "USD",
+          "url": "https://campos.works/contact?offer=modern-build",
+          "priceSpecification": {
+            "@type": "PriceSpecification",
+            "minPrice": "9000",
+            "maxPrice": "25000",
+            "priceCurrency": "USD"
+          },
           "itemOffered": {
             "@type": "Service",
-            "name": "Custom AI Automation",
-            "description": "Agent orchestration, scheduling, monitoring, reporting, intake flows."
+            "name": "The Modern Build",
+            "description": "Front door, intake, quoting and follow-up built as one connected system with a single customer record."
           }
         },
         {
           "@type": "Offer",
+          "name": "Operator",
+          "priceCurrency": "USD",
+          "url": "https://campos.works/contact?offer=operator",
+          "priceSpecification": {
+            "@type": "PriceSpecification",
+            "minPrice": "800",
+            "maxPrice": "2500",
+            "priceCurrency": "USD",
+            "unitText": "MONTH"
+          },
           "itemOffered": {
             "@type": "Service",
-            "name": "Claude Code & MCP Setup",
-            "description": "Custom MCP servers, persistent memory, team configurations for enterprise Claude deployments."
+            "name": "Operator",
+            "description": "Maintenance, monitoring, a monthly operating picture, and standing build hours. Month to month."
           }
         }
       ]

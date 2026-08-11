@@ -1,0 +1,295 @@
+---
+import Page from '../layouts/Page.astro';
+
+// Deliberately short, and deliberately honest about how short it is.
+//
+// A consulting page that pads five real engagements into twenty vague ones is
+// the exact thing this whole site is arguing against. Every entry below is
+// something that exists and can be checked. When there are more, there will be
+// more here — and the "what I have not done" section stays either way, because
+// it is the part that makes the rest believable.
+
+const CLIENT_WORK = [
+  {
+    client: 'Landscaping company — Woodbridge, VA',
+    part: 'quoting',
+    partName: 'Quoting & estimates',
+    problem:
+      'Estimates were written up by hand after the crew got back, in English, for a customer base that is substantially Spanish-speaking. Quotes went out days late or not at all.',
+    built: [
+      'A bilingual proposal generator — field notes in, a clean branded PDF out, in either language',
+      'A QuickBooks integration that creates an invoice from those field notes',
+      'Check payment recording against the right invoice',
+    ],
+    constraint:
+      'Both write operations confirm before they touch anything. It was built delegation-safe from the first line, because the person running it is not the person who built it.',
+    status: 'Shipped. Demo-stage on the QuickBooks side.',
+  },
+];
+
+const OWN_WORK = [
+  {
+    name: 'Reframed',
+    what: 'Resume analysis that preserves the writer\'s voice instead of replacing it with recruiter-speak.',
+    proves:
+      'Multi-provider model routing, Stripe billing wired end to end, Neon Postgres, 76 API routes. Shipped solo in 22 days.',
+    href: 'https://reframed.works',
+    linkLabel: 'reframed.works',
+    status: 'Live in production',
+  },
+  {
+    name: 'ForgeFrame',
+    what: 'Persistent memory for AI agents. Things you return to strengthen; things you ignore fade; principles never decay.',
+    proves:
+      'MCP-native, SQLite + FTS5, 888 tests. Provenance on every record — the habit that comes straight from regulated finance.',
+    href: 'https://github.com/notaprompt/forgeframe',
+    linkLabel: 'github.com/notaprompt/forgeframe',
+    status: 'Open source',
+  },
+  {
+    name: 'This site\'s Snapshot pipeline',
+    what: 'The free diagnostic on this site — crawl, grade, off-site presence, competitor and assistant-visibility checks, then one judgment call.',
+    proves:
+      'The clearest example of how I build: deterministic checks in code, industry knowledge in data, and the model used only for the part that genuinely needs judgment. Every probe reports found / absent / not-checked, and it never converts "not checked" into "missing".',
+    href: '/snapshot',
+    linkLabel: 'Run it on your own business',
+    status: 'Live',
+  },
+];
+
+const OPERATIONS = [
+  {
+    headline: 'Monitoring for a $600M+ regulatory file exchange',
+    detail:
+      '300+ daily transmissions across a network where a missed handoff is an audit finding. A rapid prototype became automated anomaly detection and cut manual monitoring by 78%.',
+  },
+  {
+    headline: 'Zero transmission errors through a $35B merger integration',
+    detail:
+      'Authored the full revision of the Systems Integration Guide and worked with engineering to resolve every logic gap before cutover.',
+  },
+  {
+    headline: 'A 20,000+ account logic failure, found and closed',
+    detail:
+      'Built an investigative SQL framework, isolated root cause, remediated the accounts, and documented the failure taxonomy so it could not recur silently.',
+  },
+];
+---
+
+<Page
+  title="work — alexander campos"
+  description="What I have actually built and shipped. Short on purpose — every entry is something that exists and can be checked."
+>
+  <article class="work">
+    <p class="eyebrow">what exists, and can be checked</p>
+    <h1>Work</h1>
+    <p class="lede">
+      This page is short. That is deliberate — I would rather show you three things
+      that are real than twenty that are adjectives. Everything here either has a
+      link you can click or a number you could audit.
+    </p>
+
+    <hr />
+
+    <section>
+      <div class="sec-head">
+        <span class="sec-num">01</span>
+        <h2>Client work</h2>
+      </div>
+      {
+        CLIENT_WORK.map((c) => (
+          <div class="case">
+            <div class="case-head">
+              <h3>{c.client}</h3>
+              <a class="case-part" href={`/services/${c.part}`}>{c.partName}</a>
+            </div>
+            <p class="case-problem">{c.problem}</p>
+            <ul class="built">
+              {c.built.map((b) => <li>{b}</li>)}
+            </ul>
+            <p class="case-constraint">{c.constraint}</p>
+            <p class="case-status">{c.status}</p>
+          </div>
+        ))
+      }
+      <p class="honest">
+        One client engagement listed, because that is how many there have been.
+        The operations record below is six years long; the independent client list
+        is starting. I would rather you knew that going in than found out later.
+      </p>
+    </section>
+
+    <hr />
+
+    <section>
+      <div class="sec-head">
+        <span class="sec-num">02</span>
+        <h2>Things I built and run</h2>
+        <p class="sec-gloss">
+          Not client work — my own. Included because it is the honest evidence of
+          how I build when nobody is watching.
+        </p>
+      </div>
+      {
+        OWN_WORK.map((p) => (
+          <div class="proj">
+            <div class="proj-head">
+              <h3>{p.name}</h3>
+              <span class="proj-status">{p.status}</span>
+            </div>
+            <p class="proj-what">{p.what}</p>
+            <p class="proj-proves">{p.proves}</p>
+            <a
+              class="proj-link"
+              href={p.href}
+              target={p.href.startsWith('http') ? '_blank' : undefined}
+              rel={p.href.startsWith('http') ? 'noopener' : undefined}
+            >
+              {p.linkLabel} →
+            </a>
+          </div>
+        ))
+      }
+    </section>
+
+    <hr />
+
+    <section>
+      <div class="sec-head">
+        <span class="sec-num">03</span>
+        <h2>Operations record</h2>
+        <p class="sec-gloss">
+          Six years running operations where mistakes get audited. This is the part
+          that makes the rest of it trustworthy — I have built systems that had to
+          survive a regulator, not just a demo.
+        </p>
+      </div>
+      {
+        OPERATIONS.map((o) => (
+          <div class="op">
+            <h3>{o.headline}</h3>
+            <p>{o.detail}</p>
+          </div>
+        ))
+      }
+      <p class="honest">
+        Full detail on the <a href="/resume">resume</a>.
+      </p>
+    </section>
+
+    <hr />
+
+    <section class="not-done">
+      <h2>What I have not done</h2>
+      <p>
+        I have not run a fifty-person agency, shipped at enterprise scale as an
+        engineer, or spent years in any one trade. If you need someone who has done
+        your exact build eleven times before, that is a reasonable thing to want and
+        I am not that person.
+      </p>
+      <p>
+        What I do have is six years of making operations work under audit, a habit
+        of building things that document themselves, and the willingness to tell you
+        when the answer is software you can buy for $40 a month.
+      </p>
+    </section>
+
+    <section class="cta-block">
+      <h2>See it work on your business</h2>
+      <p>
+        The Snapshot on this site is the same machine described above, pointed at
+        you. Free, about a minute, and it tells you the truth even when the truth is
+        that you are fine.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/snapshot">Run my Snapshot</a>
+        <a class="btn btn-ghost" href="/contact">Book a free 30 minutes</a>
+      </div>
+    </section>
+  </article>
+</Page>
+
+<style>
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold-accent); margin-bottom: 0.8rem;
+  }
+  .work h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); line-height: 1.1; margin-bottom: 0.9rem; }
+  .lede { font-size: 1rem; color: var(--white-70); line-height: 1.68; max-width: 58ch; }
+
+  .sec-head {
+    display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.9rem;
+    align-items: baseline; margin-bottom: 1.3rem;
+  }
+  .sec-num { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em; color: var(--gold-accent); }
+  .sec-head h2 { margin: 0; font-size: 1.45rem; }
+  .sec-gloss {
+    grid-column: 2; font-size: 0.88rem; color: var(--white-60);
+    max-width: 58ch; margin: 0.3rem 0 0; line-height: 1.6;
+  }
+
+  .case { border: 1px solid var(--white-08); background: var(--depth-1); padding: 1.2rem 1.3rem; margin-bottom: 1rem; }
+  .case-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+  .case-head h3 { margin: 0; font-size: 1.08rem; }
+  .case-part { font-family: var(--mono); font-size: 0.7rem; color: var(--gold-accent); white-space: nowrap; }
+  .case-problem { font-size: 0.9rem; color: var(--white-70); line-height: 1.62; margin-bottom: 0.8rem; max-width: 60ch; }
+  .built { list-style: none; padding: 0; margin: 0 0 0.8rem; }
+  .built li {
+    font-size: 0.86rem; color: var(--white-60); padding: 0.28rem 0 0.28rem 1.3rem;
+    position: relative; line-height: 1.55; max-width: 60ch;
+  }
+  .built li::before {
+    content: '→'; position: absolute; left: 0; color: var(--gold-accent);
+    font-family: var(--mono); font-size: 0.75rem;
+  }
+  .case-constraint {
+    font-size: 0.85rem; color: var(--white-60); line-height: 1.6;
+    border-left: 2px solid var(--gold-accent); padding-left: 0.9rem; margin-bottom: 0.7rem; max-width: 58ch;
+  }
+  .case-status { font-family: var(--mono); font-size: 0.72rem; color: var(--white-30); margin: 0; }
+
+  .proj { border-top: 1px solid var(--white-08); padding: 1rem 0; }
+  .proj:last-of-type { border-bottom: 1px solid var(--white-08); }
+  .proj-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+  .proj-head h3 { margin: 0; font-size: 1.08rem; }
+  .proj-status {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--alive); border: 1px solid var(--alive); padding: 0.1rem 0.4rem;
+  }
+  .proj-what { font-size: 0.9rem; color: var(--white-70); line-height: 1.6; margin-bottom: 0.4rem; max-width: 60ch; }
+  .proj-proves { font-size: 0.84rem; color: var(--white-60); line-height: 1.6; margin-bottom: 0.5rem; max-width: 60ch; }
+  .proj-link { font-family: var(--mono); font-size: 0.75rem; color: var(--gold-accent); }
+
+  .op { border-top: 1px solid var(--white-08); padding: 0.9rem 0; }
+  .op:last-of-type { border-bottom: 1px solid var(--white-08); }
+  .op h3 { margin: 0 0 0.3rem; font-size: 1rem; }
+  .op p { margin: 0; font-size: 0.87rem; color: var(--white-60); line-height: 1.62; max-width: 62ch; }
+
+  .honest {
+    font-family: var(--mono); font-size: 0.74rem; color: var(--white-30);
+    line-height: 1.65; max-width: 58ch; margin-top: 1rem;
+  }
+  .honest a { color: var(--gold-accent); }
+
+  .not-done h2 { font-size: 1.3rem; margin-bottom: 0.7rem; }
+  .not-done p { font-size: 0.92rem; color: var(--white-60); line-height: 1.68; max-width: 60ch; margin-bottom: 0.9rem; }
+
+  .cta-block { margin-top: 2rem; }
+  .cta-block h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .cta-block p { font-size: 0.92rem; color: var(--white-60); line-height: 1.65; max-width: 58ch; margin-bottom: 1.1rem; }
+  .cta-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; font-family: var(--mono); font-size: 0.8rem;
+    padding: 0.7rem 1.3rem; text-decoration: none; border: 1px solid var(--gold-accent);
+    transition: background 0.16s, color 0.16s;
+  }
+  .btn-primary { background: var(--gold-accent); color: var(--void); font-weight: 600; }
+  .btn-primary:hover { background: transparent; color: var(--gold-accent); }
+  .btn-ghost { background: transparent; color: var(--gold-accent); border-color: var(--white-15); }
+  .btn-ghost:hover { border-color: var(--gold-accent); }
+
+  @media (max-width: 600px) {
+    .sec-head { grid-template-columns: 1fr; }
+    .sec-gloss { grid-column: 1; }
+  }
+</style>

@@ -1,0 +1,192 @@
+---
+import Page from '../layouts/Page.astro';
+
+const title = 'the small business web index — campos.works';
+const description =
+  'Original research: what hundreds of automated reads of small business websites actually show. Aggregate, anonymized, updated as the data grows.';
+---
+
+<Page title={title} description={description}>
+  <article class="idx" data-index>
+    <p class="eyebrow">original research · updated continuously</p>
+    <h1>The Small Business Web Index</h1>
+    <p class="lede">
+      Every business that runs a Snapshot adds an anonymous data point. This is what
+      those reads add up to — which parts of a small business are usually broken,
+      which trades are furthest behind, and how much it is quietly costing.
+    </p>
+    <p class="lede muted">
+      No business is named here, and no category is published until there are enough
+      businesses in it that no individual one can be worked out from the numbers.
+    </p>
+
+    <div class="status" data-status>Loading the current figures…</div>
+    <div data-body hidden></div>
+
+    <section class="method">
+      <h2>Method</h2>
+      <p data-method>
+        Every figure is computed from automated reads of publicly available business
+        websites, plus public DNS and registry records. Nothing is self-reported and
+        nothing is estimated from a panel.
+      </p>
+      <p class="fine">
+        Want your own numbers rather than the averages?
+        <a href="/snapshot">Run a Snapshot</a> — it takes about a minute and it is free.
+      </p>
+    </section>
+  </article>
+
+  <script is:inline>
+    (function () {
+      var root = document.querySelector('[data-index]');
+      if (!root) return;
+      var status = root.querySelector('[data-status]');
+      var body = root.querySelector('[data-body]');
+
+      function el(t, c, x) { var n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = String(x); return n; }
+      function money(n) { return typeof n === 'number' && n > 0 ? '$' + Math.round(n).toLocaleString() : '—'; }
+
+      fetch('/api/index-stats')
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d.ready) {
+            status.textContent =
+              d.total != null
+                ? 'The Index publishes once there are enough businesses in it to be meaningful — ' +
+                  d.total + ' so far, ' + d.minimum + ' needed. Check back shortly.'
+                : 'The Index is not published yet. Check back shortly.';
+            return;
+          }
+          status.hidden = true;
+
+          var tiles = el('div', 'tiles');
+          [
+            [d.totals.businesses, 'businesses read'],
+            [d.totals.categories, 'trades covered'],
+            [d.totals.snapshots, 'total reads'],
+          ].forEach(function (p) {
+            var t = el('div', 'tile');
+            t.appendChild(el('span', 't-val', Number(p[0]).toLocaleString()));
+            t.appendChild(el('span', 't-lab', p[1]));
+            tiles.appendChild(t);
+          });
+          body.appendChild(tiles);
+
+          if (d.gaps && d.gaps.length) {
+            body.appendChild(el('h2', null, 'What is usually broken'));
+            body.appendChild(el('p', 'sec-gloss', 'Share of businesses read where this specific gap was found.'));
+            var list = el('div', 'gaps');
+            d.gaps.forEach(function (g) {
+              var row = el('div', 'gap');
+              var bar = el('div', 'gap-bar');
+              var fill = el('div', 'gap-fill');
+              fill.style.width = Math.max(2, Math.min(100, g.pct)) + '%';
+              bar.appendChild(fill);
+              row.appendChild(el('span', 'gap-pct', g.pct + '%'));
+              var txt = el('div', 'gap-txt');
+              txt.appendChild(el('span', 'gap-label', g.label));
+              txt.appendChild(el('span', 'gap-text', g.text));
+              row.appendChild(txt);
+              row.appendChild(bar);
+              list.appendChild(row);
+            });
+            body.appendChild(list);
+          }
+
+          if (d.byNiche && d.byNiche.length) {
+            body.appendChild(el('h2', null, 'By trade'));
+            body.appendChild(el('p', 'sec-gloss', 'Average health score out of 100, and the estimated annual leak.'));
+            var tbl = el('div', 'niches');
+            d.byNiche.forEach(function (n) {
+              var row = el('div', 'niche');
+              row.appendChild(el('span', 'n-label', n.label));
+              row.appendChild(el('span', 'n-n', n.n + ' read'));
+              row.appendChild(el('span', 'n-health', n.avg_health));
+              row.appendChild(el('span', 'n-leak', money(n.avg_leak_low) + '–' + money(n.avg_leak_high)));
+              tbl.appendChild(row);
+            });
+            body.appendChild(tbl);
+          }
+
+          if (d.method) {
+            var m = root.querySelector('[data-method]');
+            if (m) m.textContent = d.method;
+          }
+          body.hidden = false;
+        })
+        .catch(function () {
+          status.textContent = 'Could not load the current figures.';
+        });
+    })();
+  </script>
+</Page>
+
+<style>
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold-accent); margin-bottom: 0.8rem;
+  }
+  .idx h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.1; margin-bottom: 0.9rem; }
+  .lede { font-size: 1rem; color: var(--white-70); line-height: 1.68; max-width: 60ch; margin-bottom: 0.8rem; }
+  .lede.muted { color: var(--white-60); font-size: 0.9rem; margin-bottom: 1.6rem; }
+  .status { font-family: var(--mono); font-size: 0.82rem; color: var(--white-45); padding: 1.2rem 0; }
+
+  .method { border-top: 1px solid var(--white-08); padding-top: 1.4rem; margin-top: 2.4rem; }
+  .method h2 { font-size: 1.2rem; margin-bottom: 0.6rem; }
+  .method p { font-size: 0.88rem; color: var(--white-60); line-height: 1.65; max-width: 62ch; margin-bottom: 0.8rem; }
+  .fine { font-family: var(--mono); font-size: 0.74rem; color: var(--white-30); }
+  .fine a { color: var(--gold-accent); }
+</style>
+
+<style is:global>
+  .idx .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.55rem; margin: 1.5rem 0 2rem; }
+  .idx .tile { border: 1px solid var(--white-08); padding: 0.9rem 1rem; background: var(--depth-1); }
+  .idx .t-val {
+    display: block; font-family: var(--serif); font-size: 1.9rem; line-height: 1;
+    color: var(--glow-hot); font-variant-numeric: tabular-nums;
+  }
+  .idx .t-lab {
+    display: block; font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--white-30); margin-top: 0.35rem;
+  }
+  .idx h2 { font-size: 1.3rem; margin: 2rem 0 0.3rem; }
+  .idx .sec-gloss { font-size: 0.84rem; color: var(--white-45); margin-bottom: 1rem; max-width: 56ch; }
+
+  .idx .gaps { display: flex; flex-direction: column; }
+  .idx .gap {
+    display: grid; grid-template-columns: 3.2rem 1fr; gap: 0.2rem 0.9rem;
+    align-items: baseline; padding: 0.7rem 0; border-top: 1px solid var(--white-08);
+  }
+  .idx .gap:last-child { border-bottom: 1px solid var(--white-08); }
+  .idx .gap-pct {
+    font-family: var(--mono); font-size: 1rem; color: var(--gold-accent);
+    font-variant-numeric: tabular-nums; grid-row: span 2;
+  }
+  .idx .gap-label {
+    display: block; font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--white-30); margin-bottom: 0.2rem;
+  }
+  .idx .gap-text { display: block; font-size: 0.86rem; color: var(--white-70); line-height: 1.5; }
+  .idx .gap-bar { grid-column: 2; height: 2px; background: var(--white-08); margin-top: 0.4rem; }
+  .idx .gap-fill { height: 100%; background: var(--gold-accent); }
+
+  .idx .niches { display: flex; flex-direction: column; }
+  .idx .niche {
+    display: grid; grid-template-columns: 1fr auto 3rem 8rem; gap: 0.9rem;
+    align-items: baseline; padding: 0.6rem 0; border-top: 1px solid var(--white-08);
+  }
+  .idx .niche:last-child { border-bottom: 1px solid var(--white-08); }
+  .idx .n-label { font-family: var(--serif); font-size: 0.95rem; color: var(--glow-hot); }
+  .idx .n-n, .idx .n-health, .idx .n-leak {
+    font-family: var(--mono); font-size: 0.76rem; font-variant-numeric: tabular-nums;
+  }
+  .idx .n-n { color: var(--white-30); }
+  .idx .n-health { color: var(--glow); text-align: right; }
+  .idx .n-leak { color: var(--danger); text-align: right; }
+
+  @media (max-width: 620px) {
+    .idx .niche { grid-template-columns: 1fr auto; }
+    .idx .n-n { display: none; }
+  }
+</style>

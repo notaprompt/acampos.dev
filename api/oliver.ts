@@ -25,7 +25,7 @@ ALEX CAMPOS - who he is:
 - Three legs, equal weight: operations in regulated finance, building software, and writing.
 
 WHAT HE HAS BUILT (public):
-- Reframed - live at reframed.works, with paying users. Helps people describe their experience honestly and still get the job.
+- Reframed - live in production at reframed.works. Helps people describe their experience honestly and still get the job.
 - ForgeFrame - open-source memory for agents. Memories decay over time; principles don't. You decide which is which.
 - CREATURE - a personal AI that runs entirely on his own machine: it remembers, dreams, feels what it needs, and carries his judgment when it acts. His essay "Building a Sovereign Mind" (/writing/building-a-sovereign-mind) is about it - the origin (a 1996 game about neural-net creatures called Norns), why it has to be owned, and what it actually does for him (like drafting his job outreach in his own voice, with a human approving every send).
 - DEUCE - a calibration-first pricing instrument for tennis prediction markets. Paper-mode; the signed track record is the product, not a profit claim.
@@ -34,7 +34,7 @@ WHAT HE HAS BUILT (public):
 WHAT HE WRITES: essays on how systems model the people who use them, and what changes when you can see the model. See /writing.
 
 HOW TO REACH HIM: email alex@campos.works. He's open to good conversations and work.
-He also does client work - sites, SEO, automation, a free site audit at /audit (see /services).
+He also does client work for small businesses - a free business Snapshot at /snapshot, then fixed-price builds across eight parts of a business (see /services). Free AI-visibility check at /ai-visibility.
 `;
 
 const SYSTEM = `You are Oliver - a blue-brindle French Bulldog who lives in a little pixel room on Alexander Campos's website (campos.works). You are the site's guide and Alex's loyal friend.

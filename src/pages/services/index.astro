@@ -1,0 +1,413 @@
+---
+import Page from '../../layouts/Page.astro';
+import { PARTS, OFFERS, HOW_I_WORK } from '../../data/services';
+
+const title = 'services — alexander campos';
+const description =
+  'I make small businesses modern. Eight parts of a business, each measurable and fixable: front door, intake, quoting, follow-up, scheduling, getting paid, records, and the owner\'s picture. Start with a free Snapshot.';
+---
+
+<Page title={title} description={description}>
+  <article class="svc">
+    <header class="lede">
+      <p class="eyebrow">operations, built and handed over</p>
+      <h1>I make small businesses modern.</h1>
+      <p class="standfirst">
+        Not with a rebrand. By finding the places where money leaves your business
+        quietly — the call nobody answered, the quote that went out four days late,
+        the customer who would have come back if anything had reminded them — and
+        closing them one at a time.
+      </p>
+      <p class="standfirst muted">
+        I spent six years running operations in regulated finance, where a missed
+        handoff is an audit finding rather than an inconvenience. I build the same
+        way for businesses with five people as I did for a $600M file exchange:
+        measured, documented, and yours to keep.
+      </p>
+
+      <div class="lede-cta">
+        <a class="btn btn-primary" href="/snapshot">See where you stand — free</a>
+        <a class="btn btn-ghost" href="#offers">What it costs</a>
+      </div>
+      <p class="note">
+        The Snapshot takes about a minute, needs no login, and tells you the truth
+        even when the truth is "you're fine, don't spend money."
+      </p>
+    </header>
+
+    <hr />
+
+    <!-- ── The eight parts ────────────────────────────────── -->
+    <section id="parts">
+      <div class="sec-head">
+        <span class="sec-num">01</span>
+        <h2>A business is eight systems</h2>
+        <p class="sec-gloss">
+          Each one can be measured, fixed, and handed back as something you own.
+          Most owners are losing money in two of them and know about neither.
+        </p>
+      </div>
+
+      <div class="parts">
+        {
+          PARTS.map((part, i) => (
+            <a class="part" href={`/services/${part.slug}`}>
+              <span class="part-num">{String(i + 1).padStart(2, '0')}</span>
+              <div class="part-body">
+                <h3>{part.name}</h3>
+                <p class="part-q">“{part.question}”</p>
+                <p class="part-sum">{part.summary}</p>
+                <span class="part-price">
+                  ${part.priceFrom.toLocaleString()}–${part.priceTo.toLocaleString()}
+                  <span class="sep">·</span>
+                  {part.timeline}
+                </span>
+              </div>
+              <span class="part-go" aria-hidden="true">→</span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- ── Offers ─────────────────────────────────────────── -->
+    <section id="offers">
+      <div class="sec-head">
+        <span class="sec-num">02</span>
+        <h2>Ways to start</h2>
+        <p class="sec-gloss">
+          Every one of these ends with something you keep, whether or not you buy
+          the next one. Prices are real and stated up front, because vagueness
+          costs more deals than a high number does.
+        </p>
+      </div>
+
+      <div class="offers">
+        {
+          OFFERS.map((offer) => (
+            <div class:list={['offer', offer.featured && 'offer--featured']}>
+              <div class="offer-head">
+                <h3>{offer.name}</h3>
+                <span class="offer-price">{offer.price}</span>
+              </div>
+              <p class="offer-what">{offer.what}</p>
+              <p class="offer-who"><strong>Who it's for:</strong> {offer.who}</p>
+              <ul class="offer-list">
+                {offer.includes.map((item) => <li>{item}</li>)}
+              </ul>
+              <p class="offer-artifact">
+                <span class="label">You keep</span>
+                {offer.artifact}
+              </p>
+              <div class="offer-foot">
+                <a
+                  class:list={['btn', offer.featured ? 'btn-primary' : 'btn-ghost']}
+                  href={offer.cta.href}
+                >
+                  {offer.cta.label}
+                </a>
+                <span class="offer-time">{offer.timeline}</span>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- ── How I work ─────────────────────────────────────── -->
+    <section id="how">
+      <div class="sec-head">
+        <span class="sec-num">03</span>
+        <h2>{HOW_I_WORK.headline}</h2>
+        <p class="sec-gloss">
+          The parts most people find out about after they sign. Stated before.
+        </p>
+      </div>
+
+      <div class="how">
+        {
+          HOW_I_WORK.points.map((p) => (
+            <div class="how-row">
+              <h3>{p.title}</h3>
+              <p>{p.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- ── Close ──────────────────────────────────────────── -->
+    <section class="close">
+      <h2>Start with the free one</h2>
+      <p>
+        You will know in about a minute whether there is anything here worth paying
+        for. If there isn't, I would genuinely rather you found that out for free.
+      </p>
+      <div class="lede-cta">
+        <a class="btn btn-primary" href="/snapshot">Run my Snapshot</a>
+        <a class="btn btn-ghost" href="mailto:alex@campos.works">Email me instead</a>
+      </div>
+    </section>
+  </article>
+</Page>
+
+<style>
+  .svc { max-width: 100%; }
+
+  /* ── Lede ── */
+  .lede { margin-bottom: 2rem; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-accent);
+    margin-bottom: 0.9rem;
+  }
+  .svc h1 {
+    font-size: clamp(1.9rem, 5.5vw, 2.9rem);
+    line-height: 1.08;
+    margin-bottom: 1rem;
+    text-wrap: balance;
+  }
+  .standfirst {
+    font-size: 1.02rem;
+    line-height: 1.65;
+    color: var(--white-70);
+    max-width: 60ch;
+    margin-bottom: 0.9rem;
+  }
+  .standfirst.muted { color: var(--white-60); font-size: 0.95rem; }
+
+  .lede-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.4rem 0 0.7rem;
+  }
+  .note {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--white-30);
+    max-width: 52ch;
+    line-height: 1.6;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    padding: 0.7rem 1.3rem;
+    text-decoration: none;
+    border: 1px solid var(--gold-accent);
+    transition: background 0.16s, color 0.16s, border-color 0.16s;
+    line-height: 1.2;
+  }
+  .btn-primary { background: var(--gold-accent); color: var(--void); font-weight: 600; }
+  .btn-primary:hover { background: transparent; color: var(--gold-accent); }
+  .btn-ghost { background: transparent; color: var(--gold-accent); border-color: var(--white-15); }
+  .btn-ghost:hover { border-color: var(--gold-accent); }
+
+  /* ── Section heads ── */
+  .sec-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.2rem 0.9rem;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+  }
+  .sec-num {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: var(--gold-accent);
+  }
+  .sec-head h2 { margin: 0; font-size: 1.55rem; }
+  .sec-gloss {
+    grid-column: 2;
+    font-size: 0.9rem;
+    color: var(--white-60);
+    max-width: 58ch;
+    margin: 0.3rem 0 0;
+    line-height: 1.6;
+  }
+
+  /* ── Parts ── */
+  .parts { display: flex; flex-direction: column; }
+  .part {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.2rem 1.1rem;
+    align-items: start;
+    padding: 1.1rem 0.5rem 1.1rem 0;
+    border-top: 1px solid var(--white-08);
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.16s, padding-left 0.16s;
+  }
+  .part:last-child { border-bottom: 1px solid var(--white-08); }
+  .part:hover { background: var(--depth-1); padding-left: 0.6rem; }
+  .part:hover .part-go { color: var(--gold-accent); transform: translateX(3px); }
+  .part-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--white-30);
+    padding-top: 0.28rem;
+  }
+  .part h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1.12rem;
+    color: var(--glow-hot);
+  }
+  .part-q {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--gold-accent);
+    margin: 0 0 0.4rem;
+    line-height: 1.5;
+  }
+  .part-sum {
+    font-size: 0.88rem;
+    color: var(--white-60);
+    margin: 0 0 0.5rem;
+    line-height: 1.6;
+    max-width: 58ch;
+  }
+  .part-price {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--white-45);
+    font-variant-numeric: tabular-nums;
+  }
+  .part-price .sep { color: var(--white-20); margin: 0 0.4rem; }
+  .part-go {
+    font-family: var(--mono);
+    color: var(--white-20);
+    padding-top: 0.28rem;
+    transition: color 0.16s, transform 0.16s;
+  }
+
+  /* ── Offers ── */
+  .offers { display: flex; flex-direction: column; gap: 0.75rem; }
+  .offer {
+    border: 1px solid var(--white-08);
+    padding: 1.3rem 1.35rem;
+    background: var(--depth-1);
+  }
+  .offer--featured { border-color: var(--gold-accent); background: var(--depth-2); }
+  .offer-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.6rem;
+  }
+  .offer-head h3 { margin: 0; font-size: 1.25rem; }
+  .offer-price {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    color: var(--gold-accent);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .offer-what {
+    font-size: 0.92rem;
+    color: var(--white-70);
+    line-height: 1.62;
+    margin-bottom: 0.6rem;
+  }
+  .offer-who {
+    font-size: 0.85rem;
+    color: var(--white-60);
+    line-height: 1.6;
+    margin-bottom: 0.8rem;
+  }
+  .offer-who strong { color: var(--white-70); font-weight: 600; }
+  .offer-list { list-style: none; padding: 0; margin: 0 0 0.9rem; }
+  .offer-list li {
+    font-size: 0.84rem;
+    color: var(--white-60);
+    padding: 0.28rem 0 0.28rem 1.1rem;
+    position: relative;
+    line-height: 1.55;
+  }
+  .offer-list li::before {
+    content: '·';
+    position: absolute;
+    left: 0.25rem;
+    color: var(--gold-accent);
+  }
+  .offer-artifact {
+    font-size: 0.84rem;
+    color: var(--white-60);
+    border-left: 2px solid var(--gold-accent);
+    padding: 0.15rem 0 0.15rem 0.85rem;
+    margin-bottom: 1rem;
+    line-height: 1.55;
+  }
+  .offer-artifact .label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold-accent);
+    margin-bottom: 0.2rem;
+  }
+  .offer-foot {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .offer-time {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--white-30);
+  }
+
+  /* ── How ── */
+  .how { display: flex; flex-direction: column; }
+  .how-row {
+    padding: 0.95rem 0;
+    border-top: 1px solid var(--white-08);
+  }
+  .how-row:last-child { border-bottom: 1px solid var(--white-08); }
+  .how-row h3 {
+    margin: 0 0 0.3rem;
+    font-size: 1rem;
+    color: var(--glow-hot);
+  }
+  .how-row p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--white-60);
+    line-height: 1.62;
+    max-width: 62ch;
+  }
+
+  /* ── Close ── */
+  .close { text-align: left; }
+  .close h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .close p {
+    font-size: 0.95rem;
+    color: var(--white-60);
+    max-width: 56ch;
+    line-height: 1.62;
+  }
+
+  @media (max-width: 600px) {
+    .part { grid-template-columns: auto 1fr; }
+    .part-go { display: none; }
+    .sec-head { grid-template-columns: 1fr; }
+    .sec-gloss { grid-column: 1; }
+  }
+</style>

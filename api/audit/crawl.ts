@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { CrawlResult } from '../../src/lib/audit-types';
+import { safeFetch as guardedFetch, assertPublicUrl, BlockedUrlError } from '../_lib/ssrf.js';
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';
 
@@ -175,13 +176,26 @@ function buildIndexablePages(internalLinks: string[], baseUrl: string): string[]
   return pages;
 }
 
-async function safeFetch(url: string, timeoutMs: number): Promise<Response | null> {
+/**
+ * Was previously a plain fetch with redirect:'follow' and no address checks —
+ * i.e. an SSRF wearing a reassuring name. Now delegates to the real guard,
+ * which validates scheme, port, and every resolved address on the initial
+ * request and on each redirect hop.
+ *
+ * Returns a Response-shaped shim so existing call sites are unchanged.
+ */
+interface FetchShim { ok: boolean; status: number; text: () => Promise<string>; headers: { get: (k: string) => string | null } }
+
+async function safeFetch(url: string, timeoutMs: number): Promise<FetchShim | null> {
   try {
-    return await fetch(url, {
-      headers: { 'User-Agent': UA },
-      signal: AbortSignal.timeout(timeoutMs),
-      redirect: 'follow',
-    });
+    const r = await guardedFetch(url, { timeoutMs, userAgent: UA });
+    if (!r) return null;
+    return {
+      ok: r.status >= 200 && r.status < 300,
+      status: r.status,
+      text: async () => r.text,
+      headers: { get: (k: string) => (k.toLowerCase() === 'content-type' ? r.contentType : null) },
+    };
   } catch {
     return null;
   }
@@ -199,17 +213,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const url = normalizeUrl(rawUrl);
-    const parsedUrl = new URL(url);
+    // Validate before any fetch: this endpoint is public and takes a stranger's URL.
+    const parsedUrl = await assertPublicUrl(url);
     const domain = parsedUrl.hostname;
     const origin = parsedUrl.origin;
 
     // Fetch main page with timing
     const start = Date.now();
-    const response = await fetch(url, {
-      headers: { 'User-Agent': UA },
-      signal: AbortSignal.timeout(15000),
-      redirect: 'follow',
-    });
+    const response = await safeFetch(url, 15000);
+    if (!response) {
+      return res.status(422).json({ error: 'Could not reach that site.' });
+    }
     const responseTimeMs = Date.now() - start;
     const html = await response.text();
     const contentType = response.headers.get('content-type') || 'unknown';
@@ -336,6 +350,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.status(200).json(result);
   } catch (e: any) {
+    if (e instanceof BlockedUrlError) return res.status(400).json({ error: e.message });
     return res.status(500).json({ error: e.message || 'Crawl failed' });
   }
 }

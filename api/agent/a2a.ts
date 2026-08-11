@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { OFFERS, ENTRY_POINT, HEADLINE } from '../_lib/offering.js';
 
 // ── A2A Protocol v0.2 types ──────────────────────────────────────────────────
 
@@ -62,23 +63,18 @@ function handleGetProfile(): Record<string, unknown> {
       name: 'Alexander Campos',
       title: 'Independent Researcher & Engineer',
       description:
-        'Builds local-first cognitive infrastructure. Memory systems, model routing, cognitive architecture.',
+        HEADLINE,
       email: 'alex@campos.works',
       website: 'https://campos.works',
     },
-    services: [
-      { name: 'Full Online Presence Build', category: 'web-development' },
-      { name: 'Agentic SEO & AI Discoverability', category: 'seo' },
-      { name: 'AI Cost Optimization', category: 'ai-infrastructure' },
-      { name: 'Custom AI Automation', category: 'automation' },
-      { name: 'Claude Code & MCP Setup', category: 'ai-infrastructure' },
-    ],
+    services: OFFERS.map((o) => ({ name: o.name, category: o.category, price: o.price, url: o.url })),
+    entryPoint: ENTRY_POINT,
     capabilities: [
       'typescript', 'python', 'model-context-protocol', 'ollama',
       'local-first-architecture', 'memory-systems', 'model-routing',
     ],
     availability: 'Free 30-minute consultation. No pitch — just a conversation about what you need.',
-    booking_url: 'https://cal.com/alexander-campos-yrnz8m/30min',
+    booking_url: 'https://calendly.com/alex-campos-8chs/30min',
     full_profile: 'https://campos.works/api/agent/profile',
   };
 }
@@ -99,7 +95,7 @@ function handleBookConsultation(
   return {
     status: 'received',
     message: `Got it, ${nameStr}. Use the link below to pick a time that works for you.`,
-    booking_url: 'https://cal.com/alexander-campos-yrnz8m/30min',
+    booking_url: 'https://calendly.com/alex-campos-8chs/30min',
   };
 }
 

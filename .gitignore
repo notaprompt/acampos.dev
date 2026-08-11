@@ -32,3 +32,4 @@ public/audio/*.mp4
 # herald working drafts - never site content
 drafts/
 scripts/pulse.log
+out/

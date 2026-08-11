@@ -1,0 +1,189 @@
+---
+import Page from '../layouts/Page.astro';
+import { OFFERS, PARTS, offerBySlug, partBySlug } from '../data/services';
+
+// Context comes in from every CTA on the site, so the page can open already
+// knowing what the visitor was reading.
+const offerSlug = Astro.url.searchParams.get('offer');
+const partSlug = Astro.url.searchParams.get('part');
+const from = Astro.url.searchParams.get('from');
+
+const offer = offerSlug ? offerBySlug(offerSlug) : undefined;
+const part = partSlug ? partBySlug(partSlug) : undefined;
+
+let context = '';
+if (offer) context = `about ${offer.name}`;
+else if (part) context = `about ${part.name.toLowerCase()}`;
+else if (from === 'snapshot') context = 'about your Snapshot';
+
+const subject = offer
+  ? `${offer.name} — enquiry`
+  : part
+    ? `${part.name} — enquiry`
+    : from === 'snapshot'
+      ? 'My Snapshot'
+      : 'Enquiry from campos.works';
+
+const CAL = 'https://calendly.com/alex-campos-8chs/30min';
+---
+
+<Page
+  title="contact — alexander campos"
+  description="Book a free 30 minutes, or just email. I answer these myself."
+>
+  <article class="contact">
+    <p class="eyebrow">no sales process</p>
+    <h1>Let's talk {context}</h1>
+    <p class="lede">
+      Thirty minutes, free, no deck. Bring the thing that is annoying you most and
+      I will tell you what I would do about it — including when the answer is
+      software you can buy for $40 a month instead of hiring me.
+    </p>
+
+    {
+      offer && (
+        <div class="ctx">
+          <span class="ctx-lab">You were looking at</span>
+          <strong>{offer.name}</strong>
+          <span class="ctx-price">{offer.price}</span>
+          <p>{offer.what}</p>
+        </div>
+      )
+    }
+    {
+      part && (
+        <div class="ctx">
+          <span class="ctx-lab">You were looking at</span>
+          <strong>{part.name}</strong>
+          <span class="ctx-price">
+            ${part.priceFrom.toLocaleString()}–${part.priceTo.toLocaleString()}
+          </span>
+          <p>{part.summary}</p>
+        </div>
+      )
+    }
+
+    <div class="routes">
+      <a class="route route--primary" href={CAL} target="_blank" rel="noopener">
+        <span class="r-lab">Book a time</span>
+        <span class="r-detail">30 minutes, free, on my calendar</span>
+      </a>
+      <a class="route" href={`mailto:alex@campos.works?subject=${encodeURIComponent(subject)}`}>
+        <span class="r-lab">alex@campos.works</span>
+        <span class="r-detail">I answer these myself, usually within a day</span>
+      </a>
+      <a class="route" href="/snapshot">
+        <span class="r-lab">Run a Snapshot first</span>
+        <span class="r-detail">About a minute. Gives us both something concrete to talk about.</span>
+      </a>
+    </div>
+
+    <hr />
+
+    <section class="expect">
+      <h2>What happens on the call</h2>
+      <ol>
+        <li>You tell me what is actually annoying you. Not a briefing — the real thing.</li>
+        <li>I ask about how work currently reaches you, and how it gets priced and billed.</li>
+        <li>I tell you what I would fix first, roughly what it costs, and what I would leave alone.</li>
+        <li>If there is a fit, I send a fixed scope and a fixed price. If there isn't, I say so.</li>
+      </ol>
+      <p class="fine">
+        No follow-up sequence, no "checking in" emails. If you go quiet I assume the
+        answer is no, and that is fine.
+      </p>
+    </section>
+
+    <section class="ladder">
+      <h2>What things cost</h2>
+      <div class="ladder-rows">
+        {
+          OFFERS.map((o) => (
+            <a class="lrow" href={`/services#offers`}>
+              <span class="l-name">{o.name}</span>
+              <span class="l-price">{o.price}</span>
+              <span class="l-time">{o.timeline}</span>
+            </a>
+          ))
+        }
+      </div>
+      <p class="fine">
+        Full detail on <a href="/services">the services page</a>, including which of
+        the eight parts of a business each one covers.
+      </p>
+    </section>
+  </article>
+</Page>
+
+<style>
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-accent);
+    margin-bottom: 0.8rem;
+  }
+  .contact h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); line-height: 1.12; margin-bottom: 0.8rem; }
+  .lede { font-size: 1rem; color: var(--white-70); line-height: 1.68; max-width: 58ch; margin-bottom: 1.6rem; }
+
+  .ctx {
+    border-left: 2px solid var(--gold-accent);
+    padding: 0.5rem 0 0.5rem 1.1rem;
+    margin-bottom: 1.6rem;
+  }
+  .ctx-lab {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.63rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--white-30);
+    margin-bottom: 0.3rem;
+  }
+  .ctx strong { font-family: var(--serif); font-size: 1.1rem; color: var(--glow-hot); font-weight: 600; }
+  .ctx-price { font-family: var(--mono); font-size: 0.8rem; color: var(--gold-accent); margin-left: 0.6rem; }
+  .ctx p { font-size: 0.87rem; color: var(--white-60); line-height: 1.6; margin: 0.4rem 0 0; max-width: 58ch; }
+
+  .routes { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
+  .route {
+    border: 1px solid var(--white-08);
+    padding: 1rem 1.15rem;
+    text-decoration: none;
+    display: block;
+    transition: border-color 0.18s, background 0.18s;
+  }
+  .route:hover { border-color: var(--gold-accent); background: var(--depth-1); }
+  .route--primary { border-color: var(--gold-accent); background: var(--depth-2); }
+  .r-lab { display: block; font-family: var(--mono); font-size: 0.92rem; color: var(--gold-accent); margin-bottom: 0.25rem; }
+  .r-detail { display: block; font-size: 0.82rem; color: var(--white-45); line-height: 1.55; }
+
+  .expect h2, .ladder h2 { font-size: 1.3rem; margin-bottom: 0.8rem; }
+  .expect ol { padding-left: 1.2rem; margin-bottom: 0.9rem; }
+  .expect li { font-size: 0.9rem; color: var(--white-60); line-height: 1.65; padding: 0.25rem 0; max-width: 60ch; }
+  .fine { font-family: var(--mono); font-size: 0.72rem; color: var(--white-30); line-height: 1.6; max-width: 56ch; }
+  .fine a { color: var(--gold-accent); }
+
+  .ladder { margin-top: 2rem; }
+  .ladder-rows { display: flex; flex-direction: column; margin-bottom: 0.9rem; }
+  .lrow {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 0.65rem 0;
+    border-top: 1px solid var(--white-08);
+    text-decoration: none;
+    transition: padding-left 0.16s;
+  }
+  .lrow:last-child { border-bottom: 1px solid var(--white-08); }
+  .lrow:hover { padding-left: 0.4rem; }
+  .l-name { font-family: var(--serif); font-size: 0.98rem; color: var(--glow-hot); }
+  .l-price { font-family: var(--mono); font-size: 0.8rem; color: var(--gold-accent); font-variant-numeric: tabular-nums; }
+  .l-time { font-family: var(--mono); font-size: 0.72rem; color: var(--white-30); }
+
+  @media (max-width: 560px) {
+    .lrow { grid-template-columns: 1fr auto; }
+    .l-time { display: none; }
+  }
+</style>

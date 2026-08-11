@@ -136,7 +136,7 @@
           "service": {
             "type": "string",
             "maxLength": 200,
-            "description": "Service category of interest (e.g. 'AI Cost Optimization', 'Claude Code & MCP Setup')"
+            "description": "Service of interest (e.g. 'The Snapshot', 'The Teardown', 'Fix One Thing', 'The Modern Build', 'Operator')"
           },
           "message": {
             "type": "string",

@@ -6,7 +6,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "node --experimental-strip-types --no-warnings --import ./scripts/register-ts.mjs --test tests/*.test.ts",
+    "test:watch": "node --experimental-strip-types --no-warnings --import ./scripts/register-ts.mjs --test --watch tests/*.test.ts",
+    "typecheck": "tsc --noEmit --skipLibCheck --module esnext --target es2022 --moduleResolution bundler --strict api/_lib/*.ts api/snapshot/*.ts api/leads/*.ts api/admin/*.ts api/*.ts",
+    "bulk": "node --experimental-strip-types --no-warnings scripts/bulk-snapshot.mjs",
+    "verify": "npm run typecheck && npm run build && npm test"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.88.0",

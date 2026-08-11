@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { OFFERS, PARTS, FREE_TOOLS, ENTRY_POINT, HEADLINE, USAGE_POLICY } from '../_lib/offering.js';
 
 export default function handler(_req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/json');
@@ -12,49 +13,23 @@ export default function handler(_req: VercelRequest, res: VercelResponse) {
     schema_version: '2.0',
     person: {
       name: 'Alexander Campos',
-      title: 'Independent Researcher & Engineer',
+      title: 'Independent Operator & Builder',
       description:
-        'Builds local-first cognitive infrastructure. Memory systems, model routing, cognitive architecture.',
+        HEADLINE,
       email: 'alex@campos.works',
       website: 'https://campos.works',
     },
-    services: [
-      {
-        name: 'Full Online Presence Build',
-        description:
-          'Website, scheduling, calendar, contact forms, SEO, automations. One build, everything connected. For small businesses without a tech person.',
-        category: 'web-development',
-        booking_url: 'https://cal.com/alexander-campos-yrnz8m/30min',
-      },
-      {
-        name: 'Agentic SEO & AI Discoverability',
-        description:
-          'Structured data, machine-readable profiles, agent discovery endpoints. The layer that makes a business findable by AI agents, not just Google.',
-        category: 'seo',
-        booking_url: 'https://cal.com/alexander-campos-yrnz8m/30min',
-      },
-      {
-        name: 'AI Cost Optimization',
-        description:
-          'Model routing and tiered dispatch - the cheap calls go local, the hard ones go up. Audit included.',
-        category: 'ai-infrastructure',
-        booking_url: 'https://cal.com/alexander-campos-yrnz8m/30min',
-      },
-      {
-        name: 'Custom AI Automation',
-        description:
-          'Agent orchestration, scheduling, monitoring, reporting, intake flows. Describe the process, get the pipeline.',
-        category: 'automation',
-        booking_url: 'https://cal.com/alexander-campos-yrnz8m/30min',
-      },
-      {
-        name: 'Claude Code & MCP Setup',
-        description:
-          'Custom MCP servers, persistent memory, team configurations, hooks. Enterprise-grade setup for teams using Claude.',
-        category: 'ai-infrastructure',
-        booking_url: 'https://cal.com/alexander-campos-yrnz8m/30min',
-      },
-    ],
+    services: OFFERS.map((o) => ({
+      name: o.name,
+      description: o.description,
+      category: o.category,
+      price: o.price,
+      booking_url: o.url,
+    })),
+    businessParts: PARTS,
+    freeTools: FREE_TOOLS,
+    entryPoint: ENTRY_POINT,
+    usagePolicy: USAGE_POLICY,
     projects: [
       {
         name: 'ForgeFrame',

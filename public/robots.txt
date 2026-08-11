@@ -51,6 +51,7 @@ Disallow: /
 # --- Everyone else: allowed, agent surface explicitly open ---
 User-agent: *
 Allow: /
+Allow: /agent.json
 Allow: /.well-known/agent.json
 Allow: /.well-known/a2a-agent-card.json
 Allow: /.well-known/mcp.json
@@ -59,5 +60,11 @@ Allow: /openapi.json
 Allow: /api/agent/context
 Allow: /api/agent/profile
 Allow: /api/agent/a2a
+
+# Admin and internal surfaces — never index these.
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/admin/
+Disallow: /api/leads/
 
 Sitemap: https://campos.works/sitemap-index.xml

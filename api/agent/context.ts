@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { OFFERS, PARTS, FREE_TOOLS, ENTRY_POINT } from '../_lib/offering.js';
 
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/json');
@@ -13,33 +14,16 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
       url: 'https://campos.works',
       email: 'alex@campos.works',
     },
-    services: [
-      {
-        name: 'Full Online Presence Build',
-        description: 'Website, scheduling, calendar, contact forms, SEO, automations. One build for small businesses.',
-        category: 'web-development',
-      },
-      {
-        name: 'Agentic SEO & AI Discoverability',
-        description: 'Structured data, machine-readable profiles, agent discovery endpoints. Findable by AI agents, not just Google.',
-        category: 'seo',
-      },
-      {
-        name: 'AI Cost Optimization',
-        description: 'Model routing and tiered dispatch - the cheap calls go local, the hard ones go up. Audit included.',
-        category: 'ai-infrastructure',
-      },
-      {
-        name: 'Custom AI Automation',
-        description: 'Agent orchestration, scheduling, monitoring, reporting, intake flows. Describe the process, get the pipeline.',
-        category: 'automation',
-      },
-      {
-        name: 'Claude Code & MCP Setup',
-        description: 'Custom MCP servers, persistent memory, team configurations, hooks. Enterprise setup for teams using Claude.',
-        category: 'ai-infrastructure',
-      },
-    ],
+    services: OFFERS.map((o) => ({
+      name: o.name,
+      description: o.description,
+      category: o.category,
+      price: o.price,
+      url: o.url,
+    })),
+    businessParts: PARTS,
+    freeTools: FREE_TOOLS,
+    entryPoint: ENTRY_POINT,
     projects: [
       {
         name: 'ForgeFrame',
@@ -79,7 +63,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
     ],
     contact: {
       email: 'alex@campos.works',
-      booking: 'https://cal.com/alexander-campos-yrnz8m/30min',
+      booking: 'https://calendly.com/alex-campos-8chs/30min',
       website: 'https://campos.works',
       github: 'https://github.com/notaprompt',
     },

@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import type { CrawlResult, ScoreCard, SWOT, AuditNarrative } from '../../src/lib/audit-types';
+import type { CrawlResult, ScoreCard, SWOT, AuditNarrative } from '../../src/lib/audit-types.js';
 
 // OpenAI-compatible endpoint (OpenRouter by default, or a tunneled OmniRoute).
 const BASE_URL = (process.env.OLIVER_BASE_URL || 'https://openrouter.ai/api/v1').replace(/\/$/, '');

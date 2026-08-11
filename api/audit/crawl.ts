@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import type { CrawlResult } from '../../src/lib/audit-types';
+import type { CrawlResult } from '../../src/lib/audit-types.js';
 import { safeFetch as guardedFetch, assertPublicUrl, BlockedUrlError } from '../_lib/ssrf.js';
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';

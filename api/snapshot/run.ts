@@ -32,15 +32,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // The owner has to be able to test his own funnel. A valid admin header
-  // skips the throttle; everyone else is limited as normal.
+  // skips the throttle — and so does an owner cookie, because a browser will
+  // not send a custom header and the owner is the person most likely to run
+  // this repeatedly.
+  const cookies = String(req.headers.cookie || '');
+  const ownerCookie = /(?:^|;\s*)cw_owner=([^;]+)/.exec(cookies)?.[1];
   const isAdmin = Boolean(
-    process.env.ADMIN_TOKEN && adminHeaderMatches(req, process.env.ADMIN_TOKEN)
+    process.env.ADMIN_TOKEN &&
+      (adminHeaderMatches(req, process.env.ADMIN_TOKEN) ||
+        (ownerCookie && ownerCookie === process.env.ADMIN_TOKEN))
   );
+
+  // 6/hour turned out to be too tight: a genuinely curious owner checks their
+  // own site, a competitor, and a second location before they have decided
+  // anything. It is also per-IP, so everyone behind one office NAT shares it.
+  const RATE_MAX = parseInt(process.env.SNAPSHOT_RATE_LIMIT || '30', 10) || 30;
 
   if (dbConfigured()) {
     try {
       await ensureSchema();
-      if (!isAdmin && await overRateLimit(ipHash, 'snapshot_run', 6, 60)) {
+      if (!isAdmin && await overRateLimit(ipHash, 'snapshot_run', RATE_MAX, 60)) {
         return res.status(429).json({
           error: "That's a few too many in an hour. Email alex@campos.works and I'll just run it for you.",
         });

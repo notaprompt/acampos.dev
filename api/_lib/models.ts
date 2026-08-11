@@ -358,7 +358,9 @@ async function runChain<T>(
 ): Promise<CallResult<T>> {
   if (!providers.length) throw new Error('no model provider configured');
 
-  let lastErr = 'all providers failed';
+  // Collect every failure. Keeping only the last one, and labelling every
+  // exception "timeout", hid a 401 behind a misleading message once already.
+  const failures: string[] = [];
   for (const p of providers) {
     for (const model of p.models) {
       try {
@@ -390,10 +392,18 @@ async function runChain<T>(
           signal: controller.signal,
         });
         clearTimeout(timer);
-        if (!r.ok) { lastErr = `${p.name}/${model}: ${r.status}`; continue; }
-        const body = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+        if (!r.ok) {
+          const detail = await r.text().catch(() => '');
+          failures.push(`${p.name}/${model}: HTTP ${r.status}${detail ? ` ${detail.slice(0, 160)}` : ''}`);
+          continue;
+        }
+        const body = (await r.json()) as { choices?: { message?: { content?: string } }[]; error?: unknown };
+        if (body?.error) {
+          failures.push(`${p.name}/${model}: ${JSON.stringify(body.error).slice(0, 160)}`);
+          continue;
+        }
         const parsed = extractJson<T>(body?.choices?.[0]?.message?.content || '');
-        if (!parsed) { lastErr = `${p.name}/${model}: unparseable`; continue; }
+        if (!parsed) { failures.push(`${p.name}/${model}: unparseable output`); continue; }
         return {
           data: parsed,
           meta: {
@@ -406,10 +416,13 @@ async function runChain<T>(
             fallback: true,
           },
         };
-      } catch {
-        lastErr = `${p.name}/${model}: timeout`;
+      } catch (err) {
+        const why = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+        failures.push(`${p.name}/${model}: ${why}`);
       }
     }
   }
-  throw new Error(lastErr);
+  const summary = failures.join(' | ');
+  console.error('[models] every provider failed:', summary);
+  throw new Error(summary || 'all providers failed');
 }

@@ -31,10 +31,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Give me a website, or tell me about the business in a sentence or two.' });
   }
 
+  // The owner has to be able to test his own funnel. A valid admin header
+  // skips the throttle; everyone else is limited as normal.
+  const isAdmin = Boolean(
+    process.env.ADMIN_TOKEN && adminHeaderMatches(req, process.env.ADMIN_TOKEN)
+  );
+
   if (dbConfigured()) {
     try {
       await ensureSchema();
-      if (await overRateLimit(ipHash, 'snapshot_run', 6, 60)) {
+      if (!isAdmin && await overRateLimit(ipHash, 'snapshot_run', 6, 60)) {
         return res.status(429).json({
           error: "That's a few too many in an hour. Email alex@campos.works and I'll just run it for you.",
         });
@@ -109,9 +115,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await track('snapshot_model_fail', { meta: { err: detail }, ipHash });
     // Header only. A token in a query string lands in access logs, browser
     // history, and Referer headers — it is a secret written down in public.
-    const admin = Boolean(
-      process.env.ADMIN_TOKEN && adminHeaderMatches(req, process.env.ADMIN_TOKEN)
-    );
+    const admin = isAdmin;
     return res.status(503).json({
       error: "The analysis engine didn't come back this time. Try again in a minute, or email alex@campos.works and I'll run it by hand.",
       ...(admin ? { detail } : {}),

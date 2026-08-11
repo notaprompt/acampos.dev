@@ -15,7 +15,7 @@ import { gatherPresence, presenceFindings, deriveLocality, type PresenceResult }
 import { frontierMirror, type FrontierMirror } from '../_lib/frontier.js';
 import { analyze, type ModelReport } from '../_lib/analyze.js';
 import { sql, ensureSchema, dbConfigured, track, hashIp, clientIp, overRateLimit, shareToken } from '../_lib/db.js';
-import { adminHeaderMatches } from '../_lib/adminauth.js';
+import { adminHeaderMatches, ownerCookieMatches } from '../_lib/adminauth.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
@@ -35,13 +35,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // skips the throttle — and so does an owner cookie, because a browser will
   // not send a custom header and the owner is the person most likely to run
   // this repeatedly.
-  const cookies = String(req.headers.cookie || '');
-  const ownerCookie = /(?:^|;\s*)cw_owner=([^;]+)/.exec(cookies)?.[1];
-  const isAdmin = Boolean(
-    process.env.ADMIN_TOKEN &&
-      (adminHeaderMatches(req, process.env.ADMIN_TOKEN) ||
-        (ownerCookie && ownerCookie === process.env.ADMIN_TOKEN))
-  );
+  const isAdmin =
+    (Boolean(process.env.ADMIN_TOKEN) && adminHeaderMatches(req, process.env.ADMIN_TOKEN as string)) ||
+    ownerCookieMatches(req);
 
   // 6/hour turned out to be too tight: a genuinely curious owner checks their
   // own site, a competitor, and a second location before they have decided

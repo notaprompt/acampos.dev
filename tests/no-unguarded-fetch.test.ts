@@ -165,3 +165,30 @@ test('no HTTP header value contains non-ASCII', () => {
   }
   assert.deepEqual(offenders, [], `non-ASCII in an HTTP header value:\n  ${offenders.join('\n  ')}`);
 });
+
+test('no secret is compared with === or !==', () => {
+  // Every one of these must go through constantTimeEqual. This has regressed
+  // once already: the pattern was fixed across the codebase, then reintroduced
+  // in a cookie check twenty minutes later.
+  const offenders: string[] = [];
+  for (const rel of walk(API_DIR)) {
+    if (rel === '_lib/adminauth.ts') continue; // the helper itself
+    const src = stripComments(readFileSync(join(API_DIR, rel), 'utf8'));
+    if (/(ADMIN_TOKEN|OWNER_KEY|ownerCookie|shareToken|share_token)\s*(===|!==)/.test(src)) {
+      offenders.push(rel);
+    }
+    if (/(===|!==)\s*process\.env\.(ADMIN_TOKEN|SNAPSHOT_OWNER_KEY)/.test(src)) {
+      offenders.push(rel);
+    }
+  }
+  assert.deepEqual(offenders, [], `secrets compared non-constant-time:\n  ${[...new Set(offenders)].join('\n  ')}`);
+});
+
+test('the owner cookie is not the admin token', () => {
+  // The cookie is XSS-readable and sent on every request. It must grant only
+  // the rate-limit bypass, never warm-list access.
+  const src = readFileSync(join(API_DIR, '_lib/adminauth.ts'), 'utf8');
+  const fn = src.slice(src.indexOf('export function ownerCookieMatches'));
+  assert.match(fn, /SNAPSHOT_OWNER_KEY/, 'the cookie must compare against its own scoped key');
+  assert.doesNotMatch(fn, /ADMIN_TOKEN/, 'the owner cookie must never be the admin token');
+});

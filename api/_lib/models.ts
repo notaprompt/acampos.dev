@@ -207,9 +207,21 @@ export async function structured<T>(call: StructuredCall): Promise<CallResult<T>
     } catch (err) {
       const why = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
       console.error(`[models] anthropic ${model} failed:`, why);
-      // Fall through to a free provider rather than failing the visitor.
-      if (!freeProviders().length) throw new Error(`anthropic ${model}: ${why}`);
       anthropicError = why;
+      if (!qualityProviders().length && !freeProviders().length) {
+        throw new Error(`anthropic ${model}: ${why}`);
+      }
+    }
+  }
+
+  // Quality rung first — a real visitor should not be served by a free tier
+  // just because one key expired.
+  const quality = qualityProviders();
+  if (quality.length) {
+    try {
+      return await runChain<T>(quality, call, started, maxTokens);
+    } catch (err) {
+      console.error('[models] gateway quality models failed:', err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -235,6 +247,28 @@ interface Provider {
   base: string;
   key: string;
   models: string[];
+}
+
+/**
+ * Paid-quality models reachable through an OpenAI-compatible gateway.
+ *
+ * This is the rung between the direct Anthropic API and the free tiers. If the
+ * Anthropic key is missing, dead, or rate-limited, a visitor's Snapshot should
+ * still be produced by a capable model — dropping straight to free endpoints at
+ * the conversion moment is the wrong trade.
+ *
+ * Tried in order; an unavailable model id just 404s and the chain moves on, so
+ * the list can safely name models that may not exist on a given gateway.
+ */
+function qualityProviders(): Provider[] {
+  const env = (k: string) => process.env[k] || '';
+  const key = env('OLIVER_API_KEY') || env('OMNIROUTE_API_KEY') || env('OPENROUTER_API_KEY');
+  if (!key) return [];
+  const base = (env('OLIVER_BASE_URL') || env('OMNIROUTE_BASE_URL') || 'https://openrouter.ai/api/v1').replace(/\/$/, '');
+  const models = (process.env.SNAPSHOT_MODELS ||
+    'anthropic/claude-sonnet-4.5,anthropic/claude-3.7-sonnet,openai/gpt-4o,google/gemini-2.0-flash-001'
+  ).split(',').map((m) => m.trim()).filter(Boolean);
+  return [{ name: 'gateway', base, key, models }];
 }
 
 function freeProviders(): Provider[] {
@@ -313,10 +347,18 @@ function freeProviders(): Provider[] {
  * endpoint was rate-limited.
  */
 async function freeChain<T>(call: StructuredCall, started: number, maxTokens: number): Promise<CallResult<T>> {
-  const providers = freeProviders();
+  return runChain<T>(freeProviders(), call, started, maxTokens);
+}
+
+async function runChain<T>(
+  providers: Provider[],
+  call: StructuredCall,
+  started: number,
+  maxTokens: number
+): Promise<CallResult<T>> {
   if (!providers.length) throw new Error('no model provider configured');
 
-  let lastErr = 'all free providers failed';
+  let lastErr = 'all providers failed';
   for (const p of providers) {
     for (const model of p.models) {
       try {

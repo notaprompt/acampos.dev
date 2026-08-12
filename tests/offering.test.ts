@@ -10,6 +10,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { OFFERS as HUMAN_OFFERS, PARTS as HUMAN_PARTS } from '../src/data/services.ts';
 import { OFFERS as AGENT_OFFERS, PARTS as AGENT_PARTS, ENTRY_POINT, FREE_TOOLS } from '../api/_lib/offering.ts';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 
 test('the same offers exist on both surfaces, in the same order', () => {
   assert.deepEqual(
@@ -98,4 +100,38 @@ test('no offer makes a revenue claim we cannot back', () => {
   ].join('\n');
   const hit = corpus.split('\n').find((line) => banned.test(line));
   assert.equal(hit, undefined, `unbacked revenue claim: ${hit}`);
+});
+
+test('no hardcoded product or organ counts in public copy', () => {
+  // A number here is a promise to keep updating it. Ship a fourth product or
+  // fold two together and every one of these silently becomes a lie.
+  const roots = [
+    new URL('../src/pages', import.meta.url).pathname,
+    new URL('../public', import.meta.url).pathname,
+  ];
+  const walk = (dir: string): string[] => {
+    const out: string[] = [];
+    for (const e of readdirSync(dir)) {
+      if (e === 'node_modules' || e.startsWith('_astro') || e === 'islands' || e === 'fonts') continue;
+      const full = join(dir, e);
+      if (statSync(full).isDirectory()) out.push(...walk(full));
+      else if (/\.(astro|txt|json|md)$/.test(e)) out.push(full);
+    }
+    return out;
+  };
+
+  const COUNT = /\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|\d{1,2})\s+(products?|organs?|tools?|apps?)\s+(live|shipped|running|built)\b/i;
+  const offenders: string[] = [];
+  for (const root of roots) {
+    for (const file of walk(root)) {
+      const src = readFileSync(file, 'utf8');
+      const m = src.match(COUNT);
+      if (m) offenders.push(`${file.split('/').slice(-2).join('/')}: "${m[0]}"`);
+    }
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    `hardcoded counts go stale — keep it agnostic:\n  ${offenders.join('\n  ')}`
+  );
 });

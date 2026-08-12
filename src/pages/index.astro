@@ -23,8 +23,8 @@ const officeLine = [
 <Page title="alexander campos" description="Alexander Campos - engineer who builds and ships agent memory, model routing, and the tools that make them usable. Reframed (live), ForgeFrame (open source).">
   <section class="splash">
     <h1 class="site-name">Alexander Campos</h1>
-    <p class="lede">I make small businesses modern.</p>
-    <p class="tagline">I find where a business quietly loses money — the call nobody answered, the quote that went out four days late — and I close those gaps one system at a time. Six years running operations in regulated finance.</p>
+    <p class="lede">I ship systems that run where mistakes get audited.</p>
+    <p class="tagline">Six years running operations in regulated finance — a $600M file exchange, a $35B merger integration — and three products of my own live in production. I build the whole stack myself. These days that mostly means making small businesses modern: same discipline, smaller blast radius, faster payoff.</p>
     <p class="warm-line">you are at the front door.</p>
 
     <div class="retro-marquee-wrap" aria-hidden="true">
@@ -48,6 +48,9 @@ const officeLine = [
     </a>
     <p class="offer-alt">
       Or see <a href="/services">what I build and what it costs</a>.
+      <span class="alt-sep" aria-hidden="true">·</span>
+      Here to read rather than hire? <a href="/work">the work</a> and
+      <a href="/writing">the writing</a>.
     </p>
   </section>
 
@@ -172,6 +175,7 @@ const officeLine = [
     margin-top: 0.85rem;
   }
   .offer-alt a { color: var(--gold-accent); }
+  .offer-alt .alt-sep { color: var(--white-15); margin: 0 0.45rem; }
 
   @media (prefers-reduced-motion: reduce) {
     .home-offer, .offer-go, .offer-go span { transition: none; }

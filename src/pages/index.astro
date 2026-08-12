@@ -24,7 +24,7 @@ const officeLine = [
   <section class="splash">
     <h1 class="site-name">Alexander Campos</h1>
     <p class="lede">I build tools for you, your agents, and your business — memory, automations, and the operations underneath.</p>
-    <p class="tagline">Operator by trade, builder by habit. Six years running operations in regulated finance, where a missed handoff is an audit finding rather than an inconvenience. Three products live. I build the whole stack myself, mostly at night.</p>
+    <p class="tagline">Operator by trade, builder by habit. Six years running operations in regulated finance, where a missed handoff is an audit finding rather than an inconvenience. Three products live. I build the whole stack myself, mostly at night. It's most of what I think about, and sometimes I <a href="/writing">write it down</a>.</p>
     <p class="warm-line">you are at the front door.</p>
 
     <div class="retro-marquee-wrap" aria-hidden="true">
@@ -116,6 +116,15 @@ const officeLine = [
 </Page>
 
 <style>
+  /* A link inside the tagline should read as a word, not a call to action. */
+  .tagline a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--white-20);
+    transition: border-color 0.18s ease, color 0.18s ease;
+  }
+  .tagline a:hover { color: var(--gold-accent); border-bottom-color: var(--gold-accent); }
+
   /* ── The one action ──
      A single bordered block instead of a row of pills. One decision, made
      obvious, with the reason to press it sitting inside it rather than three

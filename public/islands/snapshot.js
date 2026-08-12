@@ -444,6 +444,9 @@
     cta.appendChild(row);
     host.appendChild(cta);
 
+    var keep = document.querySelector('[data-keep-note]');
+    if (keep) keep.hidden = false;
+
     var caveat = el('p', 'caveat',
       'How this was made: your site was read directly, graded against checks that are the same for everyone, ' +
       'and interpreted against how businesses in your trade actually make money. Anything marked "not checked" was not looked at ' +
@@ -695,16 +698,55 @@
     });
   }
 
+  var printBtn = $('[data-print]');
+  if (printBtn) {
+    printBtn.addEventListener('click', function () { ev('printed'); window.print(); });
+  }
+
+  // No email provider is wired yet, so rather than promise delivery we hand
+  // the visitor a prefilled message in their own mail client. It works today,
+  // it needs nothing, and it is honest about who is sending it.
+  var emailBtn = $('[data-email-me]');
+  if (emailBtn) {
+    emailBtn.addEventListener('click', function () {
+      ev('cta_clicked', { to: 'email_self' });
+      var link = shareLink();
+      var r = (state.report && state.report.report) || {};
+      var subject = 'Snapshot: ' + (r.businessName || 'my business');
+      var body = [
+        r.headline || '',
+        '',
+        'Full report: ' + link,
+        '',
+        'Run by campos.works — free, no account.',
+      ].join('\n');
+      window.location.href =
+        'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    });
+  }
+
+  function shareLink() {
+    return location.origin + '/snapshot' + (state.shareToken ? '?s=' + state.shareToken : '');
+  }
+
   var copyBtn = $('[data-copy-link]');
   if (copyBtn) {
     copyBtn.addEventListener('click', function () {
       ev('link_copied');
-      var link = location.origin + '/snapshot' + (state.shareToken ? '?s=' + state.shareToken : '');
+      var link = shareLink();
+      var restore = copyBtn.innerHTML;
+      function done() {
+        copyBtn.classList.add('copied');
+        copyBtn.textContent = 'copied \u2713';
+        setTimeout(function () {
+          copyBtn.classList.remove('copied');
+          copyBtn.innerHTML = restore;
+        }, 1800);
+      }
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(link).then(function () {
-          copyBtn.textContent = 'copied';
-          setTimeout(function () { copyBtn.textContent = 'Copy link'; }, 1800);
-        });
+        navigator.clipboard.writeText(link).then(done, function () { window.prompt('Copy this link:', link); });
+      } else {
+        window.prompt('Copy this link:', link);
       }
     });
   }

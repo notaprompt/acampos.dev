@@ -120,12 +120,24 @@ const description =
       <div class="report-bar no-print">
         <span class="report-badge" data-report-meta></span>
         <div class="report-actions">
-          <button type="button" class="mini" data-clip>Clip mode</button>
-          <button type="button" class="mini" onclick="window.print()" data-print>Download PDF</button>
-          <button type="button" class="mini" data-copy-link>Copy link</button>
+          <button type="button" class="mini mini--primary" data-print>
+            <span aria-hidden="true">↓</span> Save as PDF
+          </button>
+          <button type="button" class="mini" data-email-me>
+            <span aria-hidden="true">✉</span> Email it to me
+          </button>
+          <button type="button" class="mini" data-copy-link>
+            <span aria-hidden="true">⧉</span> Copy link
+          </button>
+          <button type="button" class="mini mini--quiet" data-clip>Clip mode</button>
         </div>
       </div>
       <div data-report></div>
+
+      <p class="keep-note no-print" data-keep-note hidden>
+        This report is yours to keep. The link works forever and you can forward it
+        to anyone — a partner, your accountant, whoever actually fixes things.
+      </p>
     </section>
   </article>
 
@@ -383,6 +395,20 @@ const description =
     transition: border-color 0.16s, color 0.16s;
   }
   .mini:hover { border-color: var(--gold-accent); color: var(--gold-accent); }
+  .mini--primary { border-color: var(--gold-accent); color: var(--gold-accent); }
+  .mini--primary:hover { background: var(--gold-accent); color: var(--void); }
+  .mini--quiet { color: var(--white-30); border-color: var(--white-08); }
+  .mini.copied { border-color: var(--alive); color: var(--alive); }
+  .keep-note {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--white-30);
+    line-height: 1.6;
+    max-width: 58ch;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--white-08);
+  }
 
   @media print {
     .no-print, header, footer, nav { display: none !important; }

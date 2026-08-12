@@ -1,61 +1,202 @@
 ---
+// Grouped, not a flat list.
+//
+// This had grown to ten links in one line — every new surface got appended
+// until nothing had priority and the whole thing read as noise. A footer's job
+// is one obvious next step plus a quiet index, not an inventory.
 const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: 'work with me',
+    links: [
+      { href: '/services', label: 'services' },
+      { href: '/work', label: 'what I have built' },
+      { href: '/contact', label: 'get in touch' },
+    ],
+  },
+  {
+    title: 'free',
+    links: [
+      { href: '/snapshot', label: 'business snapshot' },
+      { href: '/ai-visibility', label: 'ai visibility check' },
+      { href: '/the-index', label: 'the index' },
+    ],
+  },
+  {
+    title: 'elsewhere',
+    links: [
+      { href: '/writing', label: 'writing' },
+      { href: '/projects', label: 'projects' },
+      { href: '/resume', label: 'resume' },
+      { href: '/misc', label: 'glossary' },
+    ],
+  },
+];
 ---
 
 <footer>
-  <p class="copyright">alexander campos {year}.</p>
-  <p class="contact"><a href="mailto:alex@campos.works">alex@campos.works</a> · <a href="https://x.com/flapfinned" target="_blank" rel="noopener noreferrer">x</a> · <a href="/services">services</a> · <a href="/work">work</a> · <a href="/snapshot">free snapshot</a> · <a href="/ai-visibility">ai visibility</a> · <a href="/the-index">the index</a> · <a href="/contact">contact</a> · <a href="/links">links</a> · <a href="/misc">glossary</a></p>
-  <p class="guestbook-link"><a href="/guestbook">sign the guestbook</a></p>
-  <p class="best-viewed">best viewed in a browser that respects view-source.</p>
+  <!-- One obvious next step. Everything else is an index. -->
+  <a class="footer-cta" href="/snapshot">
+    <span class="cta-lead">See where your business stands</span>
+    <span class="cta-sub">free · about a minute · no login</span>
+    <span class="cta-arrow" aria-hidden="true">→</span>
+  </a>
+
+  <nav class="footer-cols" aria-label="Footer">
+    {
+      columns.map((col) => (
+        <div class="col">
+          <h2>{col.title}</h2>
+          <ul>
+            {col.links.map((l) => (
+              <li><a href={l.href}>{l.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </nav>
+
+  <div class="footer-base">
+    <p class="copyright">alexander campos {year}</p>
+    <p class="contact">
+      <a href="mailto:alex@campos.works">alex@campos.works</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://x.com/flapfinned" target="_blank" rel="noopener noreferrer">x</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://github.com/notaprompt" target="_blank" rel="noopener noreferrer">github</a>
+      <span aria-hidden="true">·</span>
+      <a href="/guestbook">guestbook</a>
+    </p>
+    <p class="best-viewed">best viewed in a browser that respects view-source.</p>
+  </div>
 </footer>
 
 <style>
   footer {
-    border-top: 2px dashed var(--white-08);
-    padding-top: 1.5rem;
-    margin-top: 3rem;
+    border-top: 1px solid var(--white-08);
+    padding-top: 2rem;
+    margin-top: 4rem;
+  }
+
+  /* ── The one thing worth pressing ── */
+  .footer-cta {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.2rem 1rem;
+    padding: 1.1rem 1.3rem;
+    border: 1px solid var(--white-15);
+    text-decoration: none;
+    margin-bottom: 2.4rem;
+    transition: border-color 0.22s ease, background 0.22s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .footer-cta::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, var(--glow-dim) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
+    pointer-events: none;
+  }
+  .footer-cta:hover { border-color: var(--gold-accent); background: var(--depth-1); }
+  .footer-cta:hover::after { transform: translateX(100%); }
+  .footer-cta:hover .cta-arrow { transform: translateX(4px); color: var(--gold-accent); }
+
+  .cta-lead {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    color: var(--glow-hot);
+    line-height: 1.25;
+  }
+  .cta-sub {
+    grid-column: 1;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--white-30);
+  }
+  .cta-arrow {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    color: var(--white-20);
+    transition: transform 0.22s ease, color 0.22s ease;
+  }
+
+  /* ── Grouped index ── */
+  .footer-cols {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.6rem 2rem;
+    margin-bottom: 2.2rem;
+    text-align: left;
+  }
+  .col h2 {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-accent);
+    margin: 0 0 0.6rem;
+    font-weight: 400;
+  }
+  .col ul { list-style: none; padding: 0; margin: 0; }
+  .col li { margin-bottom: 0.32rem; }
+  .col a {
+    font-size: 0.84rem;
+    color: var(--white-60);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.16s, border-color 0.16s;
+  }
+  .col a:hover { color: var(--glow-hot); border-bottom-color: var(--gold-accent); }
+
+  /* ── Base line ── */
+  .footer-base {
+    border-top: 1px solid var(--white-04);
+    padding-top: 1.1rem;
     text-align: center;
   }
-
   .copyright {
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--white-30);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.3rem;
   }
-
   .contact {
     font-family: var(--mono);
     font-size: 0.7rem;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.4rem;
+    color: var(--white-20);
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
-
-  .contact a {
-    color: var(--white-30);
-    transition: color 0.2s;
-  }
-
-  .contact a:hover {
-    color: var(--gold-accent);
-  }
-
-  .guestbook-link {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .guestbook-link a {
-    color: var(--gold-accent);
-    border-bottom: 1px dashed var(--gold-accent);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
+  .contact a { color: var(--white-45); text-decoration: none; transition: color 0.16s; }
+  .contact a:hover { color: var(--gold-accent); }
   .best-viewed {
     font-family: var(--mono);
     font-size: 0.65rem;
-    color: var(--white-15);
-    margin-bottom: 0;
+    color: var(--white-20);
+    font-style: italic;
+  }
+
+  @media (max-width: 620px) {
+    .footer-cols { grid-template-columns: 1fr 1fr; gap: 1.3rem 1rem; }
+    .cta-lead { font-size: 1rem; }
+  }
+  @media (max-width: 380px) {
+    .footer-cols { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .footer-cta::after { display: none; }
+    .footer-cta, .cta-arrow { transition: none; }
   }
 </style>

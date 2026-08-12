@@ -1,122 +1,130 @@
 ---
 import Page from '../layouts/Page.astro';
 
-// Deliberately short, and deliberately honest about how short it is.
-//
-// A consulting page that pads five real engagements into twenty vague ones is
-// the exact thing this whole site is arguing against. Every entry below is
-// something that exists and can be checked. When there are more, there will be
-// more here — and the "what I have not done" section stays either way, because
-// it is the part that makes the rest believable.
+// This page used to restate the projects catalogue and the resume in shorter,
+// weaker form. Now it holds only what exists nowhere else — the client
+// engagement in full, and the honest limits — and routes everyone else out
+// at the top, before they have to read anything aimed at someone else.
 
-const CLIENT_WORK = [
+const EXITS = [
   {
-    client: 'Landscaping company — Woodbridge, VA',
-    part: 'quoting',
-    partName: 'Quoting & estimates',
-    problem:
-      'Estimates were written up by hand after the crew got back, in English, for a customer base that is substantially Spanish-speaking. Quotes went out days late or not at all.',
-    built: [
-      'A bilingual proposal generator — field notes in, a clean branded PDF out, in either language',
-      'A QuickBooks integration that creates an invoice from those field notes',
-      'Check payment recording against the right invoice',
-    ],
-    constraint:
-      'Both write operations confirm before they touch anything. It was built delegation-safe from the first line, because the person running it is not the person who built it.',
-    status: 'Shipped. Demo-stage on the QuickBooks side.',
+    href: '/projects',
+    label: 'the catalogue',
+    detail: 'Everything I have built, written up properly. CREATURE, ForgeFrame, Deuce, Distillery, and the rest.',
+  },
+  {
+    href: '/resume',
+    label: 'the resume',
+    detail: 'Roles, dates, and the operations record in full. Capital One, Apple Federal Credit Union, George Mason.',
   },
 ];
 
-const OWN_WORK = [
+// Two of the three are mine; the third is the only one someone paid attention to
+// that I did not also commission. Kept short because the catalogue does depth.
+const BUILT = [
   {
     name: 'Reframed',
-    what: 'Resume analysis that preserves the writer\'s voice instead of replacing it with recruiter-speak.',
-    proves:
-      'Multi-provider model routing, Stripe billing wired end to end, Neon Postgres, 76 API routes. Shipped solo in 22 days.',
     href: 'https://reframed.works',
-    linkLabel: 'reframed.works',
-    status: 'Live in production',
+    line: 'Resume analysis that keeps the writer\'s voice instead of replacing it with recruiter-speak.',
+    fact: 'Shipped solo in 22 days. Multi-provider model routing, Stripe billing wired end to end, Neon Postgres.',
   },
   {
     name: 'ForgeFrame',
-    what: 'Persistent memory for AI agents. Things you return to strengthen; things you ignore fade; principles never decay.',
-    proves:
-      'MCP-native, SQLite + FTS5, 888 tests. Provenance on every record — the habit that comes straight from regulated finance.',
     href: 'https://github.com/notaprompt/forgeframe',
-    linkLabel: 'github.com/notaprompt/forgeframe',
-    status: 'Open source',
+    line: 'Memory for agents that behaves like memory: use strengthens it, neglect fades it, principles never decay.',
+    fact: 'Open source. MCP-native, SQLite with FTS5, provenance on every record.',
   },
   {
-    name: 'This site\'s Snapshot pipeline',
-    what: 'The free diagnostic on this site — crawl, grade, off-site presence, competitor and assistant-visibility checks, then one judgment call.',
-    proves:
-      'The clearest example of how I build: deterministic checks in code, industry knowledge in data, and the model used only for the part that genuinely needs judgment. Every probe reports found / absent / not-checked, and it never converts "not checked" into "missing".',
+    name: 'The Snapshot',
     href: '/snapshot',
-    linkLabel: 'Run it on your own business',
-    status: 'Live',
-  },
-];
-
-const OPERATIONS = [
-  {
-    headline: 'Monitoring for a $600M+ regulatory file exchange',
-    detail:
-      '300+ daily transmissions across a network where a missed handoff is an audit finding. A rapid prototype became automated anomaly detection and cut manual monitoring by 78%.',
-  },
-  {
-    headline: 'Zero transmission errors through a $35B merger integration',
-    detail:
-      'Authored the full revision of the Systems Integration Guide and worked with engineering to resolve every logic gap before cutover.',
-  },
-  {
-    headline: 'A 20,000+ account logic failure, found and closed',
-    detail:
-      'Built an investigative SQL framework, isolated root cause, remediated the accounts, and documented the failure taxonomy so it could not recur silently.',
+    line: 'The free diagnostic on this site. Reads a business, grades eight systems, prices what is leaking.',
+    fact: 'Deterministic checks in code, industry economics in data, one model call for the part that needs judgment.',
   },
 ];
 ---
 
 <Page
   title="work — alexander campos"
-  description="What I have actually built and shipped. Short on purpose — every entry is something that exists and can be checked."
+  description="The client engagement in full, what I have built, and what I have not done. Everything here has a link you can click or a number you could audit."
 >
   <article class="work">
     <p class="eyebrow">what exists, and can be checked</p>
     <h1>Work</h1>
     <p class="lede">
-      This page is short. That is deliberate — I would rather show you three things
-      that are real than twenty that are adjectives. Everything here either has a
-      link you can click or a number you could audit.
+      Everything on this page either has a link you can open or a number you could
+      audit. Where something is unfinished, it says so — including the part at the
+      bottom about what I have not done.
     </p>
+
+    <!-- Exits first. A recruiter and a peer both came for something specific;
+         neither should have to read a client case study to reach it. -->
+    <nav class="exits" aria-label="Where to go">
+      {
+        EXITS.map((e) => (
+          <a class="exit" href={e.href}>
+            <span class="exit-label">{e.label} <span class="exit-arrow" aria-hidden="true">→</span></span>
+            <span class="exit-detail">{e.detail}</span>
+          </a>
+        ))
+      }
+    </nav>
 
     <hr />
 
     <section>
       <div class="sec-head">
         <span class="sec-num">01</span>
-        <h2>Client work</h2>
+        <h2>The client work</h2>
+        <p class="sec-gloss">One engagement, written up in full rather than five written up vaguely.</p>
       </div>
-      {
-        CLIENT_WORK.map((c) => (
-          <div class="case">
-            <div class="case-head">
-              <h3>{c.client}</h3>
-              <a class="case-part" href={`/services/${c.part}`}>{c.partName}</a>
-            </div>
-            <p class="case-problem">{c.problem}</p>
-            <ul class="built">
-              {c.built.map((b) => <li>{b}</li>)}
-            </ul>
-            <p class="case-constraint">{c.constraint}</p>
-            <p class="case-status">{c.status}</p>
+
+      <div class="case">
+        <div class="case-head">
+          <h3>Orellana Landscaping LLC</h3>
+          <span class="case-where">Woodbridge, VA</span>
+        </div>
+
+        <p class="case-problem">
+          Decades in business, every quote given verbally, the books kept by hand.
+          The problem was never the work. It was the paper between the work and
+          getting paid.
+        </p>
+
+        <div class="tools">
+          <div class="tool">
+            <code>create_invoice</code>
+            <p>Turns a line of field text — <em>“mulch and cleanup, $450”</em> — into a QuickBooks invoice.</p>
           </div>
-        ))
-      }
-      <p class="honest">
-        One client engagement listed, because that is how many there have been.
-        The operations record below is six years long; the independent client list
-        is starting. I would rather you knew that going in than found out later.
-      </p>
+          <div class="tool">
+            <code>record_check_payment</code>
+            <p>Marks a check against the right open invoice, so nobody retypes it into the books later.</p>
+          </div>
+          <div class="tool">
+            <code>proposal generator</code>
+            <p>Field notes in, a clean branded PDF out, in English or Spanish — the crew and the customers do not always share one.</p>
+          </div>
+        </div>
+
+        <div class="constraint">
+          <span class="constraint-lab">the part that mattered</span>
+          <p>
+            QuickBooks stays the system of record. Every write is confirm-before-write:
+            the tool previews exactly what it will post and returns a token, and nothing
+            reaches the books until that token comes back. There is an audit log, and it
+            fails closed when it is not connected to a real account.
+          </p>
+          <p>
+            Built least-privilege and tenant-aware from the first line, because the point
+            was to hand it off, not to babysit it.
+          </p>
+        </div>
+
+        <p class="case-status">
+          <strong>Demo-stage.</strong> It runs today as a one-command demo against a seeded
+          QuickBooks lookalike; the real-account seam is one config step away. It counts as
+          real when a stranger pays for it. That is the gate it still has to clear.
+        </p>
+      </div>
     </section>
 
     <hr />
@@ -126,30 +134,27 @@ const OPERATIONS = [
         <span class="sec-num">02</span>
         <h2>Things I built and run</h2>
         <p class="sec-gloss">
-          Not client work — my own. Included because it is the honest evidence of
-          how I build when nobody is watching.
+          My own, not client work. Included because it is the honest evidence of how I
+          build when nobody is paying me to.
         </p>
       </div>
+
       {
-        OWN_WORK.map((p) => (
-          <div class="proj">
-            <div class="proj-head">
-              <h3>{p.name}</h3>
-              <span class="proj-status">{p.status}</span>
-            </div>
-            <p class="proj-what">{p.what}</p>
-            <p class="proj-proves">{p.proves}</p>
-            <a
-              class="proj-link"
-              href={p.href}
-              target={p.href.startsWith('http') ? '_blank' : undefined}
-              rel={p.href.startsWith('http') ? 'noopener' : undefined}
-            >
-              {p.linkLabel} →
+        BUILT.map((b) => (
+          <div class="built">
+            <a class="built-name" href={b.href} target={b.href.startsWith('http') ? '_blank' : undefined} rel={b.href.startsWith('http') ? 'noopener' : undefined}>
+              {b.name} <span aria-hidden="true">↗</span>
             </a>
+            <p class="built-line">{b.line}</p>
+            <p class="built-fact">{b.fact}</p>
           </div>
         ))
       }
+
+      <p class="more">
+        Written up properly in <a href="/projects">the catalogue</a>, along with
+        everything else.
+      </p>
     </section>
 
     <hr />
@@ -157,23 +162,31 @@ const OPERATIONS = [
     <section>
       <div class="sec-head">
         <span class="sec-num">03</span>
-        <h2>Operations record</h2>
+        <h2>The operations record</h2>
         <p class="sec-gloss">
-          Six years running operations where mistakes get audited. This is the part
-          that makes the rest of it trustworthy — I have built systems that had to
-          survive a regulator, not just a demo.
+          Six years where a mistake becomes an audit finding. This is the part that makes
+          the rest of it trustworthy.
         </p>
       </div>
-      {
-        OPERATIONS.map((o) => (
-          <div class="op">
-            <h3>{o.headline}</h3>
-            <p>{o.detail}</p>
-          </div>
-        ))
-      }
-      <p class="honest">
-        Full detail on the <a href="/resume">resume</a>.
+
+      <ul class="ops">
+        <li>
+          Built the monitoring for a <strong>$600M+ regulatory file exchange</strong> moving
+          300+ transmissions a day. Manual review down 78%.
+        </li>
+        <li>
+          <strong>Zero transmission errors</strong> through the $35B Discover integration,
+          after authoring the full revision of the Systems Integration Guide.
+        </li>
+        <li>
+          Resolved a <strong>20,000+ account logic failure</strong> — investigative SQL
+          framework, root cause isolated, accounts remediated, failure taxonomy documented
+          so it could not recur quietly.
+        </li>
+      </ul>
+
+      <p class="more">
+        Roles, dates, and the rest on <a href="/resume">the resume</a>.
       </p>
     </section>
 
@@ -182,24 +195,24 @@ const OPERATIONS = [
     <section class="not-done">
       <h2>What I have not done</h2>
       <p>
-        I have not run a fifty-person agency, shipped at enterprise scale as an
-        engineer, or spent years in any one trade. If you need someone who has done
-        your exact build eleven times before, that is a reasonable thing to want and
-        I am not that person.
+        I have not run a fifty-person agency, shipped at enterprise scale as an engineer,
+        or spent years inside any one trade. One client engagement, not a book of them.
+        If you need someone who has done your exact build eleven times before, that is a
+        reasonable thing to want and I am not that person.
       </p>
       <p>
-        What I do have is six years of making operations work under audit, a habit
-        of building things that document themselves, and the willingness to tell you
-        when the answer is software you can buy for $40 a month.
+        What I do have is six years of making operations work under audit, a habit of
+        building things that document themselves, and the willingness to tell you when the
+        answer is software you can buy for $40 a month.
       </p>
     </section>
 
     <section class="cta-block">
       <h2>See it work on your business</h2>
       <p>
-        The Snapshot on this site is the same machine described above, pointed at
-        you. Free, about a minute, and it tells you the truth even when the truth is
-        that you are fine.
+        The Snapshot on this site is the same machine described above, pointed at you.
+        Free, about a minute, and it tells you the truth even when the truth is that you
+        are fine.
       </p>
       <div class="cta-row">
         <a class="btn btn-primary" href="/snapshot">Run my Snapshot</a>
@@ -215,64 +228,87 @@ const OPERATIONS = [
     text-transform: uppercase; color: var(--gold-accent); margin-bottom: 0.8rem;
   }
   .work h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); line-height: 1.1; margin-bottom: 0.9rem; }
-  .lede { font-size: 1rem; color: var(--white-70); line-height: 1.68; max-width: 58ch; }
+  .lede { font-size: 1rem; color: var(--white-70); line-height: 1.68; max-width: 60ch; margin-bottom: 1.6rem; }
 
-  .sec-head {
-    display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.9rem;
-    align-items: baseline; margin-bottom: 1.3rem;
+  /* ── Exits ── */
+  .exits { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem; }
+  .exit {
+    border: 1px solid var(--white-08); padding: 0.95rem 1.1rem; text-decoration: none;
+    display: block; transition: border-color 0.18s, background 0.18s;
   }
+  .exit:hover { border-color: var(--gold-accent); background: var(--depth-1); }
+  .exit:hover .exit-arrow { transform: translateX(3px); }
+  .exit-label {
+    display: block; font-family: var(--mono); font-size: 0.85rem;
+    color: var(--gold-accent); margin-bottom: 0.3rem;
+  }
+  .exit-arrow { display: inline-block; transition: transform 0.18s; }
+  .exit-detail { display: block; font-size: 0.8rem; color: var(--white-45); line-height: 1.55; }
+
+  /* ── Section heads ── */
+  .sec-head { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.9rem; align-items: baseline; margin-bottom: 1.2rem; }
   .sec-num { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em; color: var(--gold-accent); }
   .sec-head h2 { margin: 0; font-size: 1.45rem; }
-  .sec-gloss {
-    grid-column: 2; font-size: 0.88rem; color: var(--white-60);
-    max-width: 58ch; margin: 0.3rem 0 0; line-height: 1.6;
-  }
+  .sec-gloss { grid-column: 2; font-size: 0.88rem; color: var(--white-60); max-width: 58ch; margin: 0.3rem 0 0; line-height: 1.6; }
 
-  .case { border: 1px solid var(--white-08); background: var(--depth-1); padding: 1.2rem 1.3rem; margin-bottom: 1rem; }
-  .case-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
-  .case-head h3 { margin: 0; font-size: 1.08rem; }
-  .case-part { font-family: var(--mono); font-size: 0.7rem; color: var(--gold-accent); white-space: nowrap; }
-  .case-problem { font-size: 0.9rem; color: var(--white-70); line-height: 1.62; margin-bottom: 0.8rem; max-width: 60ch; }
-  .built { list-style: none; padding: 0; margin: 0 0 0.8rem; }
-  .built li {
-    font-size: 0.86rem; color: var(--white-60); padding: 0.28rem 0 0.28rem 1.3rem;
-    position: relative; line-height: 1.55; max-width: 60ch;
-  }
-  .built li::before {
-    content: '→'; position: absolute; left: 0; color: var(--gold-accent);
-    font-family: var(--mono); font-size: 0.75rem;
-  }
-  .case-constraint {
-    font-size: 0.85rem; color: var(--white-60); line-height: 1.6;
-    border-left: 2px solid var(--gold-accent); padding-left: 0.9rem; margin-bottom: 0.7rem; max-width: 58ch;
-  }
-  .case-status { font-family: var(--mono); font-size: 0.72rem; color: var(--white-30); margin: 0; }
+  /* ── Case ── */
+  .case { border: 1px solid var(--white-08); background: var(--depth-1); padding: 1.3rem 1.4rem; }
+  .case-head { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.7rem; }
+  .case-head h3 { margin: 0; font-size: 1.12rem; }
+  .case-where { font-family: var(--mono); font-size: 0.72rem; color: var(--white-30); }
+  .case-problem { font-size: 0.94rem; color: var(--white-70); line-height: 1.65; margin-bottom: 1.1rem; max-width: 58ch; }
 
-  .proj { border-top: 1px solid var(--white-08); padding: 1rem 0; }
-  .proj:last-of-type { border-bottom: 1px solid var(--white-08); }
-  .proj-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
-  .proj-head h3 { margin: 0; font-size: 1.08rem; }
-  .proj-status {
-    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--alive); border: 1px solid var(--alive); padding: 0.1rem 0.4rem;
+  .tools { display: flex; flex-direction: column; margin-bottom: 1.1rem; }
+  .tool { border-top: 1px solid var(--white-08); padding: 0.7rem 0; }
+  .tool:last-child { border-bottom: 1px solid var(--white-08); }
+  .tool code {
+    font-family: var(--mono); font-size: 0.78rem; color: var(--gold-accent);
+    display: block; margin-bottom: 0.25rem;
   }
-  .proj-what { font-size: 0.9rem; color: var(--white-70); line-height: 1.6; margin-bottom: 0.4rem; max-width: 60ch; }
-  .proj-proves { font-size: 0.84rem; color: var(--white-60); line-height: 1.6; margin-bottom: 0.5rem; max-width: 60ch; }
-  .proj-link { font-family: var(--mono); font-size: 0.75rem; color: var(--gold-accent); }
+  .tool p { margin: 0; font-size: 0.86rem; color: var(--white-60); line-height: 1.55; max-width: 60ch; }
+  .tool em { color: var(--white-70); font-style: italic; }
 
-  .op { border-top: 1px solid var(--white-08); padding: 0.9rem 0; }
-  .op:last-of-type { border-bottom: 1px solid var(--white-08); }
-  .op h3 { margin: 0 0 0.3rem; font-size: 1rem; }
-  .op p { margin: 0; font-size: 0.87rem; color: var(--white-60); line-height: 1.62; max-width: 62ch; }
-
-  .honest {
-    font-family: var(--mono); font-size: 0.74rem; color: var(--white-30);
-    line-height: 1.65; max-width: 58ch; margin-top: 1rem;
+  .constraint { border-left: 2px solid var(--gold-accent); padding: 0.2rem 0 0.2rem 1rem; margin-bottom: 1rem; }
+  .constraint-lab {
+    display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gold-accent); margin-bottom: 0.4rem;
   }
-  .honest a { color: var(--gold-accent); }
+  .constraint p { font-size: 0.87rem; color: var(--white-60); line-height: 1.62; margin-bottom: 0.5rem; max-width: 60ch; }
+  .constraint p:last-child { margin-bottom: 0; }
+
+  .case-status { font-size: 0.86rem; color: var(--white-60); line-height: 1.6; margin: 0; max-width: 60ch; }
+  .case-status strong { color: var(--glow-hot); font-weight: 600; }
+
+  /* ── Built ── */
+  .built { border-top: 1px solid var(--white-08); padding: 0.9rem 0; }
+  .built:last-of-type { border-bottom: 1px solid var(--white-08); }
+  .built-name {
+    font-family: var(--serif); font-size: 1.05rem; color: var(--glow-hot);
+    text-decoration: none; display: inline-block; margin-bottom: 0.3rem;
+  }
+  .built-name:hover { color: var(--gold-accent); }
+  .built-line { font-size: 0.89rem; color: var(--white-70); line-height: 1.6; margin: 0 0 0.25rem; max-width: 62ch; }
+  .built-fact { font-family: var(--mono); font-size: 0.75rem; color: var(--white-45); line-height: 1.55; margin: 0; max-width: 62ch; }
+
+  /* ── Ops ── */
+  .ops { list-style: none; padding: 0; margin: 0; }
+  .ops li {
+    font-size: 0.89rem; color: var(--white-60); line-height: 1.62;
+    padding: 0.55rem 0 0.55rem 1.3rem; position: relative;
+    border-top: 1px solid var(--white-08); max-width: 62ch;
+  }
+  .ops li:last-child { border-bottom: 1px solid var(--white-08); }
+  .ops li::before {
+    content: '▪'; position: absolute; left: 0.2rem; top: 0.55rem;
+    color: var(--alive); font-size: 0.7rem;
+  }
+  .ops strong { color: var(--glow-hot); font-weight: 600; }
+
+  .more { font-family: var(--mono); font-size: 0.75rem; color: var(--white-30); margin-top: 0.9rem; }
+  .more a { color: var(--gold-accent); }
 
   .not-done h2 { font-size: 1.3rem; margin-bottom: 0.7rem; }
-  .not-done p { font-size: 0.92rem; color: var(--white-60); line-height: 1.68; max-width: 60ch; margin-bottom: 0.9rem; }
+  .not-done p { font-size: 0.92rem; color: var(--white-60); line-height: 1.68; max-width: 62ch; margin-bottom: 0.9rem; }
 
   .cta-block { margin-top: 2rem; }
   .cta-block h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
@@ -288,8 +324,12 @@ const OPERATIONS = [
   .btn-ghost { background: transparent; color: var(--gold-accent); border-color: var(--white-15); }
   .btn-ghost:hover { border-color: var(--gold-accent); }
 
-  @media (max-width: 600px) {
+  @media (max-width: 620px) {
+    .exits { grid-template-columns: 1fr; }
     .sec-head { grid-template-columns: 1fr; }
     .sec-gloss { grid-column: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .exit, .exit-arrow { transition: none; }
   }
 </style>

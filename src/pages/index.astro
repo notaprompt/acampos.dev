@@ -23,8 +23,8 @@ const officeLine = [
 <Page title="alexander campos" description="Alexander Campos - engineer who builds and ships agent memory, model routing, and the tools that make them usable. Reframed (live), ForgeFrame (open source).">
   <section class="splash">
     <h1 class="site-name">Alexander Campos</h1>
-    <p class="lede">I build agent memory, model routing, and the tools that make them usable - and I ship them.</p>
-    <p class="tagline">Mostly interested in how systems model people - and what happens when people can see the model.</p>
+    <p class="lede">I make small businesses modern.</p>
+    <p class="tagline">I find where a business quietly loses money — the call nobody answered, the quote that went out four days late — and I close those gaps one system at a time. Six years running operations in regulated finance.</p>
     <p class="warm-line">you are at the front door.</p>
 
     <div class="retro-marquee-wrap" aria-hidden="true">
@@ -34,7 +34,24 @@ const officeLine = [
     </div>
   </section>
 
-  <!-- what I build -->
+  <!-- the one thing to do here -->
+  <section class="home-section">
+    <a class="home-offer" href="/snapshot">
+      <span class="offer-eyebrow">start here · free · about a minute</span>
+      <span class="offer-head">See where your business actually stands</span>
+      <span class="offer-body">
+        Give me your website. I read it the way a customer would, check what the rest
+        of the internet says about you, and show you the leaks with real numbers on them.
+        No login. If you're in good shape, it says so.
+      </span>
+      <span class="offer-go">run my snapshot <span aria-hidden="true">→</span></span>
+    </a>
+    <p class="offer-alt">
+      Or see <a href="/services">what I build and what it costs</a>.
+    </p>
+  </section>
+
+  <!-- proof -->
   <section class="home-section">
     <h2 class="section-heading">what I build</h2>
 
@@ -69,38 +86,13 @@ const officeLine = [
     <p class="more-link"><a href="/writing">all writing >></a></p>
   </section>
 
-  <!-- what I can do for you -->
-  <section class="home-section">
-    <h2 class="section-heading">0 → 1: your business, AI-native</h2>
-
-    <p class="home-prose">
-      I take a small business from no AI to AI-native - the automation, the memory, the model
-      routing, and controls that survive an audit. Not a chatbot bolted on.
-    </p>
-
-    <p class="home-prose">
-      A business is eight systems: how people find you, how they reach you, how you quote, how you
-      follow up, how you schedule, how you get paid, how you prove it, and whether you can see any
-      of it. Each one can be measured, fixed, and handed back as something you own.
-    </p>
-
-    <p class="home-prose dim">
-      Business degree, six years in regulated fintech and banking operations, and I build the
-      whole stack myself.
-    </p>
-
-    <div class="service-row">
-      <a href="/snapshot" class="service-pill">free snapshot</a>
-      <a href="/services" class="service-pill">all services</a>
-      <a href="/work" class="service-pill">work</a>
-    </div>
-  </section>
-
   <!-- the short version -->
   <section class="home-section">
     <h2 class="section-heading">the short version</h2>
     <p class="home-prose dim">
-      The <a href="/resume">resume</a> has the history. The <a href="https://github.com/notaprompt">repos</a> have the code. <a href="mailto:alex@campos.works">Get in touch</a>.
+      Business degree, six years in regulated fintech and banking operations, and I build
+      the whole stack myself. The <a href="/resume">resume</a> has the history; the
+      <a href="https://github.com/notaprompt">repos</a> have the code.
     </p>
 
     {officeLine && <p class="office-line">{officeLine} - as of {office.asof}</p>}
@@ -121,6 +113,70 @@ const officeLine = [
 </Page>
 
 <style>
+  /* ── The one action ──
+     A single bordered block instead of a row of pills. One decision, made
+     obvious, with the reason to press it sitting inside it rather than three
+     paragraphs above it. */
+  .home-offer {
+    display: block;
+    border: 1px solid var(--white-15);
+    padding: 1.5rem 1.6rem;
+    text-decoration: none;
+    transition: border-color 0.22s ease, background 0.22s ease;
+  }
+  .home-offer:hover { border-color: var(--gold-accent); background: var(--depth-1); }
+  .home-offer:hover .offer-go { color: var(--gold-accent); }
+  .home-offer:hover .offer-go span { transform: translateX(4px); }
+
+  .offer-eyebrow {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.63rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-accent);
+    margin-bottom: 0.7rem;
+  }
+  .offer-head {
+    display: block;
+    font-family: var(--serif);
+    font-size: clamp(1.25rem, 3.4vw, 1.6rem);
+    line-height: 1.22;
+    color: var(--glow-hot);
+    margin-bottom: 0.65rem;
+    text-wrap: balance;
+  }
+  .offer-body {
+    display: block;
+    font-size: 0.92rem;
+    color: var(--white-60);
+    line-height: 1.65;
+    max-width: 56ch;
+    margin-bottom: 1rem;
+  }
+  .offer-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--white-45);
+    transition: color 0.2s ease;
+  }
+  .offer-go span { transition: transform 0.2s ease; }
+
+  .offer-alt {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--white-30);
+    margin-top: 0.85rem;
+  }
+  .offer-alt a { color: var(--gold-accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-offer, .offer-go, .offer-go span { transition: none; }
+  }
+
   /* ── Opening ── */
   .splash {
     display: flex;

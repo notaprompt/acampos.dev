@@ -85,9 +85,9 @@ const BUILT = [
         </div>
 
         <p class="case-problem">
-          Decades in business, every quote given verbally, the books kept by hand.
-          The problem was never the work. It was the paper between the work and
-          getting paid.
+          Decades in business, every quote given verbally, the books kept by hand. The problem
+          was never the work. It was the paper between the work and getting paid — and the
+          customers who wanted the job but not the invoice all at once.
         </p>
 
         <div class="tools">
@@ -100,29 +100,51 @@ const BUILT = [
             <p>Marks a check against the right open invoice, so nobody retypes it into the books later.</p>
           </div>
           <div class="tool">
-            <code>proposal generator</code>
-            <p>Field notes in, a clean branded PDF out, in English or Spanish — the crew and the customers do not always share one.</p>
+            <code>proposal + past-due generator</code>
+            <p>Field notes in, a branded PDF out, in English or Spanish — the crew and the customers do not always share one.</p>
+          </div>
+          <div class="tool">
+            <code>prepare_invoice_run / send_invoice_run</code>
+            <p>The recurring book, billed as a batch. Idempotent and resumable: one commit per period, already-sent invoices skipped, the whole run gated behind a token.</p>
           </div>
         </div>
 
         <div class="constraint">
-          <span class="constraint-lab">the part that mattered</span>
+          <span class="constraint-lab">the part that changed the money</span>
           <p>
-            QuickBooks stays the system of record. Every write is confirm-before-write:
-            the tool previews exactly what it will post and returns a token, and nothing
-            reaches the books until that token comes back. There is an audit log, and it
-            fails closed when it is not connected to a real account.
+            He already accepted Visa, Mastercard, Amex, Discover, PayPal and Venmo through
+            QuickBooks — his customers just did not find out until the invoice arrived, long
+            after the decision was made. The proposal now carries a “Ways to Pay” strip up
+            front, and a Wisetack financing QR sitting inline to the left of the totals, so
+            the offer is attached to the number instead of buried under it.
           </p>
           <p>
-            Built least-privilege and tenant-aware from the first line, because the point
-            was to hand it off, not to babysit it.
+            The monthly figure is computed from the total and the term, and the apply link
+            arrives pre-filled with both. That turns <em>“I can’t afford that right now”</em>
+            into <em>“I can do $273 a month”</em> — which is the whole point, and it puts a
+            two-man crew next to contractors twice their size.
+          </p>
+        </div>
+        <div class="constraint">
+          <span class="constraint-lab">how it stays safe to hand over</span>
+          <p>
+            QuickBooks stays the system of record. Every write is confirm-before-write: the
+            tool previews exactly what it will post and returns a token, and nothing reaches
+            the books until that token comes back. There is an audit log, and it fails closed
+            when it is not pointed at a real account.
+          </p>
+          <p>
+            Least-privilege and tenant-aware from the first line, with a privacy policy and
+            terms written to clear Intuit's production review. The point was to hand it over,
+            not to babysit it.
           </p>
         </div>
 
         <p class="case-status">
-          <strong>Demo-stage.</strong> It runs today as a one-command demo against a seeded
-          QuickBooks lookalike; the real-account seam is one config step away. It counts as
-          real when a stranger pays for it. That is the gate it still has to clear.
+          <strong>In use.</strong> This is my uncle's company, and he runs his invoicing on it
+          today. That is one business, not a track record — but it is a real one, with real
+          money moving through it, and it is why I know these tools survive contact with
+          someone who did not build them.
         </p>
       </div>
     </section>

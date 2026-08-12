@@ -14,7 +14,7 @@ metrics:
   - { label: "api routes", value: "76", asof: "Aug 2026" }
   - { label: "commits", value: "713", asof: "Aug 2026" }
   - { label: "test files", value: "47", asof: "Aug 2026" }
-  - { label: "status", value: "live · taking payments", asof: "Aug 2026" }
+  - { label: "status", value: "live · billing wired", asof: "Aug 2026" }
 
 ---
 

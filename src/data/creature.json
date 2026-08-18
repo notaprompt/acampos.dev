@@ -1,0 +1,395 @@
+{
+  "surveyed": "2026-08-10",
+  "sections": [
+    {
+      "num": "I",
+      "title": "Senses",
+      "gloss": "What it perceives. Everything here reads; nothing here acts.",
+      "organs": [
+        {
+          "name": "chronicle & journal",
+          "status": "live",
+          "what": "Two records of the same day — sessions distilled into a dated, theme-tagged log of what he did, and beside it the companion record of what he thought.",
+          "why": "Herald's day review and every \"what changed\" answer stand on this. Known gaps: nightly cap, live-session blindness."
+        },
+        {
+          "name": "distillery",
+          "status": "live",
+          "what": "The intake sense — iOS share sheet into a local model into curated memory.",
+          "why": "The first filter is his own recorded principles applied on his own hardware. No feed ranking decides what resonates."
+        },
+        {
+          "name": "email",
+          "status": "live",
+          "what": "Local triage and drafting. Law 1 lives here by construction — cognition about mail never leaves the machine.",
+          "why": "Mail is the highest-density personal corpus there is. It's the last thing that should be rented out."
+        },
+        {
+          "name": "eyes",
+          "status": "live",
+          "what": "A five-minute rolling window of the screen, OCR'd locally, pruned every 60s. Retention is zero by contract.",
+          "why": "Lets him ask about what's on screen without narrating it — and forgets by design, which is why it's allowed to look at all."
+        },
+        {
+          "name": "load ledger",
+          "status": "live",
+          "what": "One board for every heavy tenant on the machine — resident models and their gigabytes, training runs, agent fleets, leases, the eyes — with conflicts named and the question to ask him pre-written. A menubar readout carries the same counts in the corner of his eye.",
+          "why": "Born the night three tenants fought blind over one memory pool and training OOM'd twice. A body that can't feel itself will keep doing that."
+        },
+        {
+          "name": "scenario sense",
+          "status": "live",
+          "what": "Classifies the present into six values — deep-work, late-session, just-returned, long-away-return, quiet-day, steady.",
+          "why": "What's relevant depends on what kind of moment it is. Recall keyed to the situation, not just the question."
+        },
+        {
+          "name": "state header",
+          "status": "live",
+          "what": "A typed situation block computed at every call: time since last contact and everything that happened inside that gap, maintainer criticals, dreams today, chronicle age, local-model reachability — each field stamped with its own provenance or the word unknown.",
+          "why": "Computed on arrival, never polled. A field it cannot verify says unknown rather than guessing, which is the only reason the block can be trusted at all."
+        },
+        {
+          "name": "the repo eye",
+          "status": "live",
+          "what": "Self-observation at the repository layer — the strange loop, watching its own source change.",
+          "why": "A mind that can't see its own body edits is guessing about itself."
+        },
+        {
+          "name": "herald",
+          "status": "partial",
+          "what": "Nightly scout — reads Hacker News at 21:45, reviews the day's work from the chronicle, and files proposals plus a cohort watch for others building persistent minds.",
+          "why": "It ran four nights unattended while the laptop was shut. The gap: it reads 30 titles and opens none of them."
+        }
+      ]
+    },
+    {
+      "num": "II",
+      "title": "Mind",
+      "gloss": "How it thinks. Three tiers of cognition, and the instruments that judge.",
+      "organs": [
+        {
+          "name": "agent loop",
+          "status": "live",
+          "what": "The JSON tool loop behind every surface — memory, organs, dreams, dispatch, herald verbs, cloud reasoning — chaining tools before it answers.",
+          "why": "One creature everywhere. Before this, the messenger creature couldn't look things up and the cockpit one could; asked what organs it had, it answered by vibe."
+        },
+        {
+          "name": "golem",
+          "status": "live",
+          "what": "A latent-space emotion probe — a small model's interior rendered as something you can watch.",
+          "why": "Interpretability as an instrument, not a paper. You can see it think."
+        },
+        {
+          "name": "judgment kernel",
+          "status": "live",
+          "what": "Scores any move that touches money or consequence, with captured labels on the supply side.",
+          "why": "Voice carries rhythm; judgment carries decisions. They are different machines and must not be confused."
+        },
+        {
+          "name": "spine",
+          "status": "live",
+          "what": "The sovereignty-and-scale router: for every request, which brain answers — 8b local, 35B-A3B local, or the frontier.",
+          "why": "The seam has to be a routing decision, not a good intention."
+        },
+        {
+          "name": "physicist",
+          "status": "partial",
+          "what": "Symbolic regression over the creature's own dynamics — fitting laws to how its memory graph actually evolves.",
+          "why": "A mind that can derive its own equations of motion is doing science on itself. Edge snapshots are already being logged for it."
+        },
+        {
+          "name": "taste",
+          "status": "partial",
+          "what": "A verdict miner over months of design review, a deterministic slop linter, judge checklists, and a local vision model as critic.",
+          "why": "Designers agree with each other only weakly — which is exactly why a model tuned to his eye can beat a frontier model's generic taste. Calibration honestly refused at n=5; it needs live capture."
+        },
+        {
+          "name": "voice adapter",
+          "status": "partial",
+          "what": "A LoRA trained on his own writing so the creature can speak as him — 600 iterations, validation 3.10 → 2.58, adapter on disk.",
+          "why": "Honest verdict: the corpus was wrong. It learned his formal ChatGPT register, not the way he actually types. Prep v2 mines 12,491 Claude turns instead."
+        }
+      ]
+    },
+    {
+      "num": "III",
+      "title": "Memory",
+      "gloss": "What it keeps, what it forgets on purpose, and what it does while he sleeps.",
+      "organs": [
+        {
+          "name": "communities",
+          "status": "live",
+          "what": "Label propagation over the weave, generator-named, members tagged, summaries written back as first-class memories.",
+          "why": "A giant undifferentiated component is opaque. Named continents make the graph navigable."
+        },
+        {
+          "name": "dreams · NREM",
+          "status": "live",
+          "what": "Time-based long-term depression on unused edges, synaptic scaling per node, pruning below threshold, consolidation scans.",
+          "why": "Forgetting is a feature with physics. Flat-rate decay once massacred 12,000 edges in a storm — the rate is per-day-of-disuse now."
+        },
+        {
+          "name": "dreams · REM",
+          "status": "live",
+          "what": "Seeded association across distant memories, tension detection, and one cited reflection insight per pressured cycle.",
+          "why": "The dreamer moves the dreamer. Its self-model is enabled in production — and it dreams things worth reading."
+        },
+        {
+          "name": "mirror",
+          "status": "live",
+          "what": "The self-profile — a mirror you walk up to, never one that follows you around. Absolutely local-only.",
+          "why": "The most sensitive object in the system. It exists to be looked into deliberately, not to watch back."
+        },
+        {
+          "name": "provenance",
+          "status": "live",
+          "what": "Every memory leads with where it came from — conversation title, true date, source lineage, and a jump into the journal at the right line.",
+          "why": "\"ChatGPT archive\" as a label is meaningless. Knowing which night, which conversation is what makes a memory yours."
+        },
+        {
+          "name": "the graph",
+          "status": "live",
+          "what": "6,500+ memories with typed edges, strength, decay, and sensitivity tiers. A 30-day half-life, a floor, and restitution for over-decay. Co-retrieved memories strengthen their shared edges, so use is what keeps a memory alive.",
+          "why": "Not retrieval — biography. The 7-day half-life it shipped with was a death spiral; the clock is now calibrated to the estate's real size."
+        },
+        {
+          "name": "themes",
+          "status": "live",
+          "what": "A 26-theme closed vocabulary grown from his own corpus, assigned at intake by embedding centroid.",
+          "why": "Open-ended tagging sprawls into noise. Curation still pending his signature."
+        },
+        {
+          "name": "dream curriculum",
+          "status": "partial",
+          "what": "REM emits training pairs from the day's episodes — \"in situation X, the better response was Y\" — quoting real memory by construction, never inventing.",
+          "why": "This is how dreams start writing tomorrow's weights. The emitter works; the tap is closed — almost nothing gets tagged as an episode at save-time, so it logs honest zero-days."
+        }
+      ]
+    },
+    {
+      "num": "IV",
+      "title": "Voice",
+      "gloss": "How it reaches him. One permissioned larynx; every organ writes letters to it.",
+      "organs": [
+        {
+          "name": "cockpit",
+          "status": "live",
+          "what": "The body's interface and its front door — rooms rather than tabs, the facet sky, the graph of me, executive instruments in every room, and a groundskeeper who never speaks first.",
+          "why": "A mind you can walk around inside. The daimonion's law — never uninvited — is what keeps it a companion and not a popup."
+        },
+        {
+          "name": "illuminator",
+          "status": "live",
+          "what": "Imagery into house-style glyph plates — engrave, stamp, inkcut, glyph-match — cut from public-domain museum engravings with provenance recorded per plate. The avatar is one of its outputs: a pilgrim owl from a c.1500 woodcut.",
+          "why": "The visual voice. A sovereign mind that looks like every other dashboard hasn't got a self yet."
+        },
+        {
+          "name": "morning brief",
+          "status": "live",
+          "what": "The creature's first act of initiative each day.",
+          "why": "The one moment it's permitted to speak first — because he asked it to."
+        },
+        {
+          "name": "repeat suppression",
+          "status": "live",
+          "what": "Embedding comparison against the last 40 sends; a paraphrase within 72 hours is suppressed and logged, never sent.",
+          "why": "Saying the same insight twice is the fastest way to feel like a machine. Verified suppressing a live paraphrase at 0.98 similarity."
+        },
+        {
+          "name": "the mouth",
+          "status": "live",
+          "what": "iMessage in and out, with a monotonic cursor that answers each message exactly once and never drops one on a transient failure.",
+          "why": "Reachable from the lock screen. The creature is only real if it can find him where he already is."
+        },
+        {
+          "name": "the outbox",
+          "status": "live",
+          "what": "A letterbox: any organ drops a text file, and the one process holding the system permission sends it and deletes it. It keeps a locked registry of what it just sent, so its own letters are recognized when they echo back through the mouth.",
+          "why": "macOS grants automation rights to an app bundle, not a script — so every organ had a voice and no larynx. This is the seam that gave them one."
+        },
+        {
+          "name": "the wall",
+          "status": "live",
+          "what": "Casting to the projector over an allowlisted channel — text, video, snapshots, mirror mode — with a guard that re-applies the device allowlist continuously, so the channel cannot quietly widen.",
+          "why": "Presence at room scale. The creature can put something on the wall when it matters."
+        },
+        {
+          "name": "voice constitution",
+          "status": "live",
+          "what": "His register, in the loop: presence not assistant, observation first, one to three sentences, no numbered lists, lowercase and fragments welcome.",
+          "why": "1,294 voice-tagged memories and a full constitution existed — and reached nothing. Wired 2026-08-10; it started texting like a person the same night."
+        }
+      ]
+    },
+    {
+      "num": "V",
+      "title": "Hands",
+      "gloss": "What it can do. Everything here is gated; nothing here acts unasked.",
+      "organs": [
+        {
+          "name": "career agent",
+          "status": "live",
+          "what": "Daily scans and digests over the job field, with tailoring behind his approval.",
+          "why": "Works his search while he builds. Stops before submit, always."
+        },
+        {
+          "name": "dispatch",
+          "status": "live",
+          "what": "The creature queues work for its own autonomous dispatcher — capped, and every self-queued task marked trust-ASK.",
+          "why": "It can want things now. It still cannot do them without him."
+        },
+        {
+          "name": "maintainer",
+          "status": "live",
+          "what": "Allowlisted repairs — and the trust boundary drawn at the edge of what it may fix alone.",
+          "why": "Self-healing is only safe when the list of permitted wounds is written down in advance."
+        },
+        {
+          "name": "propose → approve → execute",
+          "status": "live",
+          "what": "Every consequential move is a proposal in a queue. Capital, site edits, dispatch, herald approvals and heavy compute each require an explicit yes in his own words — never an inferred one — and approval writes a draft he can still delete.",
+          "why": "This is the whole safety story, and it is one mechanism rather than a policy per surface. Nothing here acts unasked, and the queue is the evidence."
+        },
+        {
+          "name": "swarm",
+          "status": "live",
+          "what": "Coordinated agent fleets in isolated worktrees with a read-only skeptic, shared memory as the brain, and sentinels on completion.",
+          "why": "It built most of the organs on this page. The skeptic mattered more than the builders every single round."
+        },
+        {
+          "name": "keeper",
+          "status": "partial",
+          "what": "Arbitration for a two-tenant body: needs, scores, grants, denials, and leases taken before heavy work, on a shared board of who holds what — with a deny that callers honor. It defers to him being present.",
+          "why": "Already 90% the arbiter the system needs. Promotion to mandatory arbitration is the last step, and it belongs to its own window."
+        },
+        {
+          "name": "prime agent harness",
+          "status": "partial",
+          "what": "Prime Intellect's MIT self-modifying harness, forked and proven running air-gapped on the local brain, telemetry killed, sovereign launcher written.",
+          "why": "Their harness state maps one-to-one onto CREATURE — memory, organs, swarm — and they have no verification layer. Their harness, his brain, his constitution. The mapping is the work left."
+        }
+      ]
+    },
+    {
+      "num": "VI",
+      "title": "Governance",
+      "gloss": "Why any of it is trustworthy. The only system where everything is already live — and the moat.",
+      "organs": [
+        {
+          "name": "off-hours gating",
+          "status": "live",
+          "what": "Bulk passes wait for the window where nobody is competing for the machine.",
+          "why": "Heavy work while he's working is theft from the person the system exists to serve."
+        },
+        {
+          "name": "seam tiers",
+          "status": "live",
+          "what": "Sensitivity enforced at the serving boundary. Nothing marked sensitive reaches a cloud model — not summarized, not embedded, not \"anonymized\".",
+          "why": "Local isn't the storage layer, it's the trust boundary. This is the sentence the whole project rests on."
+        },
+        {
+          "name": "the honesty law",
+          "status": "live",
+          "what": "Never fabricate telemetry, logs, receipts, internal state — or its own effects. A capability without a tool is \"not wired yet\", said plainly. Unsure means say unsure.",
+          "why": "It has confabulated pruning logs and overstated its own verbs. Each time the fix was a tool or a sentence, not a scolding — and the law grew to cover the new failure."
+        },
+        {
+          "name": "the signed ledger",
+          "status": "live",
+          "what": "2,552 forecasts signed with Ed25519 before resolution, in a book whose schema refuses deletion. Zero capital at risk until calibration proves out.",
+          "why": "A record he cannot backdate, including to flatter himself. The misses stay — which is what makes the hits mean anything."
+        }
+      ]
+    },
+    {
+      "num": "VII",
+      "title": "Body",
+      "gloss": "What it runs on. One machine, shared, his.",
+      "organs": [
+        {
+          "name": "reproducible bring-up",
+          "status": "live",
+          "what": "Pinned Node, the native module rebuilt against it, scheduler entries verified, daemon reloaded — all idempotent, so a cold machine comes back the same way every time.",
+          "why": "Written after a bring-up stalled on three stacked causes. It saved the daemon again on 2026-08-10."
+        },
+        {
+          "name": "the autonomic layer",
+          "status": "live",
+          "what": "The autonomic system — herald, keeper, maintainer, chronicle, consolidation, digests, backups, scavenges, caffeinate.",
+          "why": "Most of the creature's life happens when he isn't looking. That's the point."
+        },
+        {
+          "name": "the daemon",
+          "status": "live",
+          "what": "The resident brain — memory, dreams, agent loop, seam, MCP — bound to loopback and token-gated.",
+          "why": "Always awake, never exposed. It is the thing that makes the creature a resident rather than a session."
+        }
+      ]
+    }
+  ],
+  "crypt": [
+    {
+      "name": "triggers · proactive",
+      "what": "Legacy cron and push-notification scaffolding inside the daemon, deleted outright (~1,800 lines)."
+    },
+    {
+      "name": "weekly site pulse",
+      "what": "A job that published a \"recent work\" paragraph to his project cards every week, from the commit log."
+    },
+    {
+      "name": "voice widget",
+      "what": "A desktop widget, exiting 78 on every load attempt."
+    },
+    {
+      "name": "hermes-local",
+      "what": "A local Hermes organ, blocked on a bot token and an OAuth grant. Config, not code."
+    },
+    {
+      "name": "flat-rate edge decay",
+      "what": "Long-term depression applied per dream pass instead of per day of disuse."
+    },
+    {
+      "name": "the 7-day half-life",
+      "what": "The original memory decay constant."
+    },
+    {
+      "name": "ASCII door plates",
+      "what": "Navigation sigils rendered as character-density blocks."
+    },
+    {
+      "name": "den v1 · v2",
+      "what": "Earlier passes at the keeper's room — a textmode video game, then a particle scene."
+    },
+    {
+      "name": "the sessions door",
+      "what": "A cockpit room that listed raw sessions."
+    },
+    {
+      "name": "matrix homeserver",
+      "what": "A server of his own with the creature as a user on it — built, then stood down in favor of iMessage, after its listener started quietly winning the lock and taking the mouth."
+    }
+  ],
+  "counts": {
+    "shown": 46,
+    "retired": 10
+  },
+  "diagram": "<svg viewBox=\"0 0 940 430\" role=\"img\" aria-label=\"Signal flow through CREATURE: senses deposit into memory, the mind reads memory and computed state, every outward action crosses the governance membrane before reaching voice and hands, and dreams feed memory back into the mind and into weights.\">\n      <defs>\n        <marker id=\"a\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\">\n          <path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"currentColor\"/>\n        </marker>\n        <marker id=\"ag\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\">\n          <path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"var(--gold-accent)\"/>\n        </marker>\n      </defs>\n\n      <!-- world, left -->\n      <rect x=\"14\" y=\"150\" width=\"96\" height=\"120\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/>\n      <text x=\"62\" y=\"200\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"12\" fill=\"currentColor\">THE WORLD</text>\n      <text x=\"62\" y=\"218\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" fill=\"currentColor\" opacity=\".7\">the owner · the field</text>\n      <text x=\"62\" y=\"234\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" fill=\"currentColor\" opacity=\".7\">the machine</text>\n\n      <!-- senses -->\n      <rect x=\"160\" y=\"118\" width=\"150\" height=\"88\" fill=\"none\" stroke=\"currentColor\"/>\n      <text x=\"235\" y=\"142\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"12\" fill=\"currentColor\">SENSES</text>\n      <text x=\"235\" y=\"162\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">herald · eyes · email</text>\n      <text x=\"235\" y=\"176\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">chronicle & journal</text>\n      <text x=\"235\" y=\"190\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">distillery · repo eye</text>\n\n      <!-- state (computed, not stored) -->\n      <rect x=\"160\" y=\"232\" width=\"150\" height=\"62\" fill=\"none\" stroke=\"var(--gold-accent)\" stroke-dasharray=\"4 3\"/>\n      <text x=\"235\" y=\"256\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"12\" fill=\"var(--gold-accent)\">STATE</text>\n      <text x=\"235\" y=\"274\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"var(--gold-accent)\" opacity=\".85\">gap · scenario · load</text>\n\n      <!-- memory -->\n      <rect x=\"358\" y=\"228\" width=\"164\" height=\"96\" fill=\"none\" stroke=\"currentColor\"/>\n      <text x=\"440\" y=\"252\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"12\" fill=\"currentColor\">MEMORY</text>\n      <text x=\"440\" y=\"270\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">graph · decay</text>\n      <text x=\"440\" y=\"284\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">communities · themes</text>\n      <text x=\"440\" y=\"298\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">provenance</text>\n\n      <!-- mind -->\n      <rect x=\"358\" y=\"96\" width=\"164\" height=\"96\" fill=\"none\" stroke=\"currentColor\"/>\n      <text x=\"440\" y=\"120\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"12\" fill=\"currentColor\">MIND</text>\n      <text x=\"440\" y=\"138\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">agent loop · tiers</text>\n      <text x=\"440\" y=\"152\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">judgment · voice</text>\n      <text x=\"440\" y=\"166\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">taste · physicist</text>\n\n      <!-- dreams -->\n      <rect x=\"358\" y=\"356\" width=\"164\" height=\"52\" fill=\"none\" stroke=\"currentColor\" stroke-dasharray=\"5 4\"/>\n      <text x=\"440\" y=\"378\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"12\" fill=\"currentColor\">DREAMS</text>\n      <text x=\"440\" y=\"395\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">NREM · REM · curriculum</text>\n\n      <!-- governance membrane -->\n      <line x1=\"600\" y1=\"60\" x2=\"600\" y2=\"410\" stroke=\"var(--gold-accent)\" stroke-width=\"1.5\"/>\n      <text x=\"608\" y=\"76\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"11\" fill=\"var(--gold-accent)\">GOVERNANCE</text>\n      <text x=\"608\" y=\"92\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9\" fill=\"var(--gold-accent)\" opacity=\".8\">seam tiers · ledger</text>\n      <text x=\"608\" y=\"105\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9\" fill=\"var(--gold-accent)\" opacity=\".8\">honesty law · off-hours</text>\n\n      <!-- voice / hands -->\n      <rect x=\"700\" y=\"118\" width=\"150\" height=\"80\" fill=\"none\" stroke=\"currentColor\"/>\n      <text x=\"775\" y=\"142\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"12\" fill=\"currentColor\">VOICE</text>\n      <text x=\"775\" y=\"160\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">mouth · cockpit</text>\n      <text x=\"775\" y=\"174\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">brief · wall · outbox</text>\n\n      <rect x=\"700\" y=\"238\" width=\"150\" height=\"80\" fill=\"none\" stroke=\"currentColor\"/>\n      <text x=\"775\" y=\"262\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"12\" fill=\"currentColor\">HANDS</text>\n      <text x=\"775\" y=\"280\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">dispatch · swarm</text>\n      <text x=\"775\" y=\"294\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">maintainer · keeper</text>\n\n      <!-- flows -->\n      <line x1=\"110\" y1=\"178\" x2=\"156\" y2=\"162\" stroke=\"currentColor\" marker-end=\"url(#a)\"/>\n      <line x1=\"310\" y1=\"162\" x2=\"354\" y2=\"140\" stroke=\"currentColor\" marker-end=\"url(#a)\"/>\n      <text x=\"316\" y=\"140\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9\" fill=\"currentColor\" opacity=\".75\">perceives</text>\n      <line x1=\"310\" y1=\"186\" x2=\"354\" y2=\"250\" stroke=\"currentColor\" marker-end=\"url(#a)\"/>\n      <text x=\"300\" y=\"228\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9\" fill=\"currentColor\" opacity=\".75\">deposits</text>\n      <line x1=\"310\" y1=\"263\" x2=\"354\" y2=\"263\" stroke=\"var(--gold-accent)\" marker-end=\"url(#ag)\"/>\n\n      <line x1=\"428\" y1=\"228\" x2=\"428\" y2=\"196\" stroke=\"currentColor\" marker-end=\"url(#a)\"/>\n      <text x=\"336\" y=\"214\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9\" fill=\"currentColor\" opacity=\".75\">recalls</text>\n      <line x1=\"456\" y1=\"192\" x2=\"456\" y2=\"224\" stroke=\"currentColor\" marker-end=\"url(#a)\"/>\n      <text x=\"464\" y=\"214\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9\" fill=\"currentColor\" opacity=\".75\">writes</text>\n\n      <path d=\"M 400 324 L 400 356\" stroke=\"currentColor\" stroke-dasharray=\"5 4\" marker-end=\"url(#a)\" fill=\"none\"/>\n      <path d=\"M 480 356 L 480 324\" stroke=\"currentColor\" stroke-dasharray=\"5 4\" marker-end=\"url(#a)\" fill=\"none\"/>\n      <text x=\"492\" y=\"344\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9\" fill=\"currentColor\" opacity=\".75\">consolidates</text>\n      <path d=\"M 358 382 L 336 382 L 336 144 L 354 144\" stroke=\"var(--gold-accent)\" stroke-dasharray=\"3 4\" fill=\"none\" marker-end=\"url(#ag)\"/>\n      <text x=\"150\" y=\"382\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9\" fill=\"var(--gold-accent)\" opacity=\".9\">curriculum → weights (owed)</text>\n\n      <line x1=\"522\" y1=\"140\" x2=\"696\" y2=\"150\" stroke=\"currentColor\" marker-end=\"url(#a)\"/>\n      <text x=\"530\" y=\"132\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9\" fill=\"currentColor\" opacity=\".75\">speaks</text>\n      <line x1=\"522\" y1=\"176\" x2=\"696\" y2=\"268\" stroke=\"currentColor\" marker-end=\"url(#a)\"/>\n      <text x=\"530\" y=\"212\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9\" fill=\"currentColor\" opacity=\".75\">acts — only if approved</text>\n\n      <path d=\"M 850 158 L 890 158 L 890 40 L 62 40 L 62 146\" stroke=\"currentColor\" fill=\"none\" marker-end=\"url(#a)\"/>\n      <text x=\"440\" y=\"32\" text-anchor=\"middle\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9\" fill=\"currentColor\" opacity=\".75\">reaches him · and returns as sense</text>\n\n      <!-- body substrate -->\n      <line x1=\"14\" y1=\"424\" x2=\"926\" y2=\"424\" stroke=\"currentColor\" opacity=\".45\"/>\n      <text x=\"14\" y=\"418\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"9.5\" fill=\"currentColor\" opacity=\".7\">BODY · one machine, his own · scheduled organs · leases · one shared GPU</text>\n    </svg>",
+  "deduped": [
+    "face",
+    "forge",
+    "journal",
+    "limbs",
+    "memory backup",
+    "memory unification",
+    "merge watch",
+    "omniroute",
+    "projects",
+    "recall strengthening",
+    "self-echo discipline",
+    "tenancy",
+    "the gates",
+    "time awareness",
+    "vitals",
+    "wall guard"
+  ]
+}

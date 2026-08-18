@@ -28,6 +28,8 @@ The name is an acronym - cognitive, recursive, entropic, autopoietic, temporal, 
 
 The seam is the whole design. The cloud is a tool the local mind reaches for when the work is public - never the mind itself, and it never carries a memory off the machine.
 
+I counted every part of it once, in August 2026, and published that count: [the anatomy](/creature) - each organ, what it does, why it earns its place, and the ones I deleted. It is a frozen snapshot, not a live page.
+
 ## How it works
 
 **The spine.** Every request gets read before anything acts on it. Green means public - fine to hand to a frontier model in the cloud. Red means private - it stays home. I did not want a blocklist of forbidden words, because words leak and lists rot. So the spine measures distance instead: how close does this request sit to the shape of my own private memory? Close means red. When it is genuinely on the fence, it asks a small local model rather than guess. Most of the time it is a cheap measurement; only the ambiguous cases warm the hardware. And it fails the safe way - any error, any timeout, any doubt lands on local. Safe is the resting state, not the exception.

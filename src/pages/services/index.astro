@@ -40,7 +40,7 @@ const description =
     <!-- ── The eight parts ────────────────────────────────── -->
     <section id="parts">
       <div class="sec-head">
-        <span class="sec-num">01</span>
+        <span class="sec-num">I</span>
         <h2>A business is eight systems</h2>
         <p class="sec-gloss">
           Each one can be measured, fixed, and handed back as something you own.
@@ -75,7 +75,7 @@ const description =
     <!-- ── Offers ─────────────────────────────────────────── -->
     <section id="offers">
       <div class="sec-head">
-        <span class="sec-num">02</span>
+        <span class="sec-num">II</span>
         <h2>Ways to start</h2>
         <p class="sec-gloss">
           Every one of these ends with something you keep, whether or not you buy
@@ -121,7 +121,7 @@ const description =
     <!-- ── How I work ─────────────────────────────────────── -->
     <section id="how">
       <div class="sec-head">
-        <span class="sec-num">03</span>
+        <span class="sec-num">III</span>
         <h2>{HOW_I_WORK.headline}</h2>
         <p class="sec-gloss">
           The parts most people find out about after they sign. Stated before.
@@ -244,22 +244,35 @@ const description =
   .part {
     display: grid;
     grid-template-columns: auto 1fr auto;
-    gap: 0.2rem 1.1rem;
+    gap: 0.2rem 1.4rem;
     align-items: start;
-    padding: 1.1rem 0.5rem 1.1rem 0;
+    padding: 1.5rem 0.9rem;
     border-top: 1px solid var(--white-08);
     text-decoration: none;
     color: inherit;
-    transition: background 0.16s, padding-left 0.16s;
+    transition: background-color 0.16s, padding-left 0.16s;
   }
   .part:last-child { border-bottom: 1px solid var(--white-08); }
-  .part:hover { background: var(--depth-1); padding-left: 0.6rem; }
+
+  /* Zebra striping as graph paper rather than a flat fill — enough to track a
+     row across to its price without adding another visible line to the page. */
+  .part:nth-child(even) {
+    background-image:
+      repeating-linear-gradient(0deg, var(--white-04) 0 1px, transparent 1px 9px),
+      repeating-linear-gradient(90deg, var(--white-04) 0 1px, transparent 1px 9px);
+  }
+  .part:hover {
+    background-color: var(--depth-1);
+    padding-left: 1.2rem;
+  }
   .part:hover .part-go { color: var(--gold-accent); transform: translateX(3px); }
+
   .part-num {
     font-family: var(--mono);
     font-size: 0.7rem;
     color: var(--white-30);
-    padding-top: 0.28rem;
+    padding-top: 0.34rem;
+    font-variant-numeric: tabular-nums;
   }
   .part h3 {
     margin: 0 0 0.25rem;
@@ -405,9 +418,24 @@ const description =
   }
 
   @media (max-width: 600px) {
-    .part { grid-template-columns: auto 1fr; }
+    .part { grid-template-columns: auto 1fr; padding: 1.25rem 0.7rem; }
     .part-go { display: none; }
     .sec-head { grid-template-columns: 1fr; }
     .sec-gloss { grid-column: 1; }
+  }
+
+  /* If the reader has asked for more contrast, the texture is not enough —
+     give the alternating rows a fill they can actually see. */
+  @media (prefers-contrast: more) {
+    .part:nth-child(even) {
+      background-image: none;
+      background-color: var(--depth-1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .part { transition: none; }
+    .part:hover { padding-left: 0.9rem; }
+    .part:hover .part-go { transform: none; }
   }
 </style>

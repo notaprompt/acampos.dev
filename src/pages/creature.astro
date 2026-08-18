@@ -1,0 +1,378 @@
+---
+import Page from '../layouts/Page.astro';
+import data from '../data/creature.json';
+
+// A census of a private system, published as a frozen snapshot.
+//
+// Three things were stripped before this shipped: unbuilt work (the roadmap is
+// the part worth keeping), file paths and ports (a map of a machine I run), and
+// anything that named a person. What is left is what each part does and why it
+// earns its place.
+const { sections, crypt, diagram, surveyed, counts } = data;
+
+const surveyedLabel = new Date(surveyed + 'T12:00:00Z').toLocaleDateString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<Page
+  title="the creature -- anatomy"
+  description="A frozen census of a personal agent system: memory that decays, a voice with one permission, and a queue that gates every consequential move. Snapshot, not a product."
+>
+  <article class="creature">
+    <header class="masthead">
+      <p class="kicker">a census, frozen</p>
+      <h1>The creature</h1>
+      <p class="lede">
+        This is the anatomy of a system I run on one machine, counted on {surveyedLabel}.
+        It is frozen at that date and I am not keeping it current. Some of it has
+        certainly changed since.
+      </p>
+    </header>
+
+    <section class="ground">
+      <h2 class="rubric">Read this first</h2>
+      <div class="ground-grid">
+        <div>
+          <h3>What the statuses mean</h3>
+          <p>
+            <em class="s-live">Live</em> means it runs on a schedule or on demand and I
+            would notice within a day if it stopped. <em class="s-part">Partial</em> means
+            the core works and something around it does not, and I say which. These are my
+            own labels on my own machine. Nobody audited them.
+          </p>
+        </div>
+        <div>
+          <h3>What is missing on purpose</h3>
+          <p>
+            Everything unbuilt. The roadmap is the part worth keeping, so it is not here.
+            Also every file path, port, and host — this describes a machine I still run.
+            You are reading the anatomy, not the address.
+          </p>
+        </div>
+        <div>
+          <h3>What this is not</h3>
+          <p>
+            Not a product, not for sale, and not a claim that any of it would survive
+            somebody else's hands. One person built it for one person's use. The parts
+            worth generalizing are the ones I pulled out into
+            <a href="https://github.com/notaprompt/forgeframe">open source</a>.
+          </p>
+        </div>
+      </div>
+      <p class="ground-note">
+        The reason it is on a consulting site: the habits underneath it are the ones I
+        bring to client work. Decay instead of infinite storage. One permissioned path
+        for anything that speaks. A queue in front of anything that spends. None of those
+        were design decisions up front. Every one of them is scar tissue, and you can
+        read the wounds — a whole organ exists to stop the system repeating itself,
+        because it repeated itself.
+      </p>
+    </section>
+
+    <figure class="diagram" aria-label="Signal flow from the world through senses, state, mind, memory and dreams, to voice and gated hands">
+      <div class="diagram-scroll" set:html={diagram} />
+      <figcaption>How a signal travels: in through the senses, into state, through the mind and its memory, out through one voice — and into the hands only after an explicit yes.</figcaption>
+    </figure>
+
+    {
+      sections.map((section) => (
+        <section class="system">
+          <div class="sys-head">
+            <span class="sys-num">{section.num}</span>
+            <h2>{section.title}</h2>
+            <p class="sys-gloss">{section.gloss}</p>
+          </div>
+          <div class="organs">
+            {section.organs.map((organ) => (
+              <div class="organ">
+                <h3>
+                  {organ.name}
+                  {organ.status === 'partial' && <span class="chip">partial</span>}
+                </h3>
+                <p class="what">{organ.what}</p>
+                {organ.why && <p class="why">{organ.why}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+
+    <section class="system crypt">
+      <div class="sys-head">
+        <span class="sys-num">VIII</span>
+        <h2>The crypt</h2>
+        <p class="sys-gloss">
+          What was deleted, and stayed deleted. A census that only lists what survived is
+          a sales page.
+        </p>
+      </div>
+      <ul class="tombs">
+        {
+          crypt.map((item) => (
+            <li>
+              <span class="tomb-name">{item.name}</span>
+              <span class="tomb-what">{item.what}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="tail">
+      <p>
+        {counts.shown} parts standing, {counts.retired} buried, as of {surveyedLabel}.
+      </p>
+      <div class="tail-links">
+        <a href="/work">What I have built for other people</a>
+        <a href="/services">How I work with businesses</a>
+      </div>
+    </section>
+  </article>
+</Page>
+
+<style>
+  .creature {
+    font-size: 0.95rem;
+  }
+
+  /* ── Masthead ── */
+  .masthead {
+    border-bottom: 2px dashed var(--white-08);
+    padding-bottom: 1.6rem;
+    margin-bottom: 2.4rem;
+  }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold-accent);
+    margin-bottom: 0.7rem;
+  }
+  .masthead h1 {
+    margin-bottom: 0.7rem;
+  }
+  .lede {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    color: var(--white-70);
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  /* ── Ground rules ── */
+  .rubric {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white-30);
+    font-weight: 400;
+    margin: 0 0 1rem;
+  }
+  .ground {
+    margin-bottom: 3rem;
+  }
+  .ground-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .ground-grid h3 {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--glow-hot);
+    margin: 0 0 0.45rem;
+    font-weight: 400;
+  }
+  .ground-grid p {
+    font-size: 0.85rem;
+    color: var(--white-60);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .s-live,
+  .s-part {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 0.78rem;
+  }
+  .s-live {
+    color: var(--alive);
+  }
+  .s-part {
+    color: var(--gold-accent);
+  }
+  .ground-note {
+    border-left: 2px solid var(--white-08);
+    padding-left: 1rem;
+    font-family: var(--serif);
+    font-size: 0.92rem;
+    color: var(--white-60);
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  /* ── Diagram ── */
+  .diagram {
+    margin: 0 0 3.2rem;
+  }
+  .diagram-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--white-08);
+    background: var(--depth-1);
+    padding: 1rem;
+    color: var(--white-60);
+  }
+  .diagram-scroll :global(svg) {
+    display: block;
+    min-width: 620px;
+    width: 100%;
+    height: auto;
+  }
+  figcaption {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    line-height: 1.6;
+    color: var(--white-30);
+    margin-top: 0.7rem;
+    max-width: 68ch;
+  }
+
+  /* ── Systems ── */
+  .system {
+    margin-bottom: 3.2rem;
+  }
+  .sys-head {
+    border-bottom: 1px solid var(--white-08);
+    padding-bottom: 0.8rem;
+    margin-bottom: 1.4rem;
+  }
+  .sys-num {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--gold-accent);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  .sys-head h2 {
+    margin: 0 0 0.4rem;
+  }
+  .sys-gloss {
+    font-family: var(--serif);
+    font-size: 0.9rem;
+    color: var(--white-45);
+    margin: 0;
+    max-width: 58ch;
+  }
+
+  .organs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 2rem;
+  }
+  .organ h3 {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--glow-hot);
+    font-weight: 400;
+    margin: 0 0 0.4rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .chip {
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-accent);
+    border: 1px solid var(--white-15);
+    padding: 0.08rem 0.34rem;
+  }
+  .what {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--white-70);
+    margin: 0 0 0.4rem;
+  }
+  .why {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--white-45);
+    margin: 0;
+  }
+
+  /* ── Crypt ── */
+  .crypt .sys-num {
+    color: var(--white-30);
+  }
+  .tombs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .tombs li {
+    display: grid;
+    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+    gap: 0.4rem 1.4rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--white-04);
+  }
+  .tomb-name {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--white-45);
+    text-decoration: line-through;
+    text-decoration-color: var(--white-20);
+  }
+  .tomb-what {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--white-45);
+  }
+
+  /* ── Tail ── */
+  .tail {
+    border-top: 2px dashed var(--white-08);
+    padding-top: 1.4rem;
+  }
+  .tail p {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--white-30);
+    margin-bottom: 0.9rem;
+  }
+  .tail-links {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .tail-links a {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 860px) {
+    .ground-grid {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+    .organs {
+      grid-template-columns: 1fr;
+    }
+    .tombs li {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+  }
+</style>

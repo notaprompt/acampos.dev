@@ -3,10 +3,15 @@
 // the file). Drag to orbit, wheel/pinch to approach, hover to light a memory.
 // Raw WebGL - points and lines, no library. Left alone, it turns slowly.
 // If WebGL or the fetch fails, the static image simply stays.
-(function () {
+function initCreatureConstellation() {
   var host = document.getElementById('creature-constellation');
-  if (!host || window.__constInit) return;
-  window.__constInit = true;
+  // The guard has to live on the element, not on window. View transitions
+  // swap the DOM but keep window, so a global flag meant this only ever woke
+  // once per hard load — arrive here from anywhere else on the site and the
+  // static image sat under "waking the constellation" forever.
+  if (!host || host.dataset.ccInit) return;
+  host.dataset.ccInit = '1';
+  var stopped = false;
 
   var DPR = Math.min(2, window.devicePixelRatio || 1);
   var canvas = document.createElement('canvas');
@@ -20,7 +25,13 @@
   overlay.style.width = '100%';
   overlay.style.pointerEvents = 'none';
   var gl = canvas.getContext('webgl', { antialias: true, alpha: false });
-  if (!gl) return; // static image stays
+  if (!gl) {
+    // No WebGL: the static image stays, and the caption stops promising
+    // something that is not coming.
+    var noGl = host.querySelector('.cc-loading');
+    if (noGl) noGl.remove();
+    return;
+  }
 
   var W = 0, H = 0, data = null, sigils = [];
   var yaw = 0.6, pitch = 0.25, dist = 2.2, autoSpin = true;
@@ -176,6 +187,9 @@
   var last = 0;
 
   function draw(ts) {
+    // Leaving the page detaches this canvas but the loop would keep running
+    // against a dead context, one leaked loop per visit.
+    if (stopped) return;
     requestAnimationFrame(draw);
     var dt = Math.min(0.05, (ts - last) / 1000 || 0);
     last = ts;
@@ -357,5 +371,23 @@
       size();
       requestAnimationFrame(draw);
     })
-    .catch(function () { /* the static image stays */ });
-})();
+    .catch(function () {
+      // The static image stays, but the caption must stop claiming it is
+      // about to wake. A label that lies is worse than a still picture.
+      var loading = host.querySelector('.cc-loading');
+      if (loading) loading.remove();
+      host.dataset.ccInit = '';
+    });
+
+  document.addEventListener('astro:before-swap', function stop() {
+    stopped = true;
+    window.removeEventListener('resize', size);
+    document.removeEventListener('astro:before-swap', stop);
+  }, { once: false });
+}
+
+// Fires on first load and after every view transition, so arriving here from
+// anywhere else on the site wakes it the same way a refresh does.
+document.addEventListener('astro:page-load', initCreatureConstellation);
+if (document.readyState !== 'loading') initCreatureConstellation();
+else document.addEventListener('DOMContentLoaded', initCreatureConstellation);

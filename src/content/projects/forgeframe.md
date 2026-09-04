@@ -5,7 +5,7 @@ status: "active"
 stack: ["TypeScript", "Node.js", "MCP Protocol", "SQLite", "FTS5", "Ollama", "WebGL2"]
 repo: "https://www.npmjs.com/package/@forgeframe/server"
 updated: 2026-08-08
-order: 2
+order: 1
 screenshots:
   - src: "/images/projects/forgeframe-door.jpg"
     caption: "the cockpit's front door - the graph behind it holds real memories, so it asks for a token"

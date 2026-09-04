@@ -6,39 +6,44 @@ import Page from '../layouts/Page.astro';
 // engagement in full, and the honest limits — and routes everyone else out
 // at the top, before they have to read anything aimed at someone else.
 
-const EXITS = [
-  {
-    href: '/projects',
-    label: 'the catalogue',
-    detail: 'Everything I have built, written up properly. CREATURE, ForgeFrame, Deuce, Distillery, and the rest.',
-  },
-  {
-    href: '/resume',
-    label: 'the resume',
-    detail: 'Roles, dates, and the operations record in full. Capital One, Apple Federal Credit Union, George Mason.',
-  },
-];
-
 // Two of the three are mine; the third is the only one someone paid attention to
 // that I did not also commission. Kept short because the catalogue does depth.
 const BUILT = [
   {
-    name: 'Reframed',
-    href: 'https://reframed.works',
-    line: 'Resume analysis that keeps the writer\'s voice instead of replacing it with recruiter-speak.',
-    fact: 'Shipped solo in 22 days. Multi-provider model routing, Stripe billing wired end to end, Neon Postgres.',
-  },
-  {
     name: 'ForgeFrame',
     href: 'https://www.npmjs.com/package/@forgeframe/server',
     line: 'Memory for agents that behaves like memory: use strengthens it, neglect fades it, principles never decay.',
-    fact: 'Open source. MCP-native, SQLite with FTS5, provenance on every record.',
+    fact: 'MIT on npm. MCP-native, SQLite with FTS5, provenance on every record. 888 tests, four packages, the memory layer under everything else here.',
   },
   {
-    name: 'The Snapshot',
-    href: '/snapshot',
-    line: 'The free diagnostic on this site. Reads a business, grades eight systems, prices what is leaking.',
-    fact: 'Deterministic checks in code, industry economics in data, one model call for the part that needs judgment.',
+    name: 'CREATURE',
+    href: '/projects/creature',
+    line: 'A mind that runs on one machine. Every capability is an organ with a declared boundary and three fail-closed laws it cannot break.',
+    fact: '36 services under launchd, 9,000+ memories, nightly consolidation. Local by construction; the cloud is opt-in and never handed a memory.',
+  },
+  {
+    name: 'Model routing',
+    href: '/projects/reframed',
+    line: 'Tier-based dispatch with fallback chains across providers, so an outage degrades instead of failing.',
+    fact: 'Inference cost down 40–60% in production. The same layer routes Reframed, the Snapshot, and everything on this site.',
+  },
+  {
+    name: 'DEUCE',
+    href: '/projects/deuce',
+    line: 'A calibration-first pricing instrument for prediction markets. It prices fair value, then signs each forecast before the market resolves.',
+    fact: 'Ed25519 ledger, tamper-evident. The ledger is the product, not a profit claim — thousands of signed forecasts you can check.',
+  },
+  {
+    name: 'Reframed',
+    href: 'https://reframed.works',
+    line: 'Resume analysis that keeps the writer\'s voice instead of replacing it with recruiter-speak, with a signed receipt for every rewrite.',
+    fact: 'Shipped solo in 22 days. 76 API routes, Stripe, Neon Postgres, Honesty Receipts verifiable against a public key.',
+  },
+  {
+    name: 'Model evaluation',
+    href: '/resume',
+    line: 'Paid adversarial eval design for frontier-model benchmarking in finance: cases where the plausible answer is wrong for a defensible reason.',
+    fact: 'Weighted rubrics that fail cosmetic success, and a diagnosis that traces a score to the reasoning step that lost it.',
   },
 ];
 ---
@@ -56,20 +61,6 @@ const BUILT = [
       bottom about what I have not done.
     </p>
 
-    <!-- Exits first. A recruiter and a peer both came for something specific;
-         neither should have to read a client case study to reach it. -->
-    <nav class="exits" aria-label="Where to go">
-      {
-        EXITS.map((e) => (
-          <a class="exit" href={e.href}>
-            <span class="exit-label">{e.label} <span class="exit-arrow" aria-hidden="true">→</span></span>
-            <span class="exit-detail">{e.detail}</span>
-          </a>
-        ))
-      }
-    </nav>
-
-    <hr />
 
     <section>
       <div class="sec-head">
@@ -107,10 +98,10 @@ const BUILT = [
     <section>
       <div class="sec-head">
         <span class="sec-num">II</span>
-        <h2>Things I built and run</h2>
+        <h2>Systems I build and run</h2>
         <p class="sec-gloss">
-          Mine, running in production. Agent memory, model routing, a signed forecast
-          ledger — the systems underneath, and the numbers they report on themselves.
+          Running in production, on hardware I own, with audit trails I can open. The
+          numbers are what the systems report about themselves, not what I say about them.
         </p>
       </div>
 

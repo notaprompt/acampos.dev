@@ -2,7 +2,13 @@
 import Page from '../../layouts/Page.astro';
 import { getCollection } from 'astro:content';
 
-const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+// The running systems lead. Parked, absorbed, and concept work is still here —
+// hiding it would be the wrong kind of tidy — but under its own heading, so a
+// Saturday-night visualizer does not sit at the same altitude as the memory layer.
+const LIVE = new Set(['active', 'shipped']);
+const projects = all.filter((p) => LIVE.has(p.data.status));
+const rest = all.filter((p) => !LIVE.has(p.data.status));
 const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a, b) => a.data.order - b.data.order);
 ---
 
@@ -33,6 +39,32 @@ const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a
         </div>
       ))}
     </div>
+
+    {rest.length > 0 && (
+      <div class="rest-section">
+        <h2 class="rest-heading">And the rest</h2>
+        <p class="rest-desc">Parked, absorbed into something else, or still a concept. Kept here on purpose.</p>
+        <div class="project-list">
+          {rest.map(project => (
+            <div class="project-card">
+              <div class="project-header">
+                <h2><a href={`/projects/${project.slug}`} class="card-main-link">{project.data.title}</a></h2>
+                <span class={`status status-${project.data.status}`}>{project.data.status}</span>
+              </div>
+              <p class="project-tagline">{project.data.tagline}</p>
+              {project.data.repo && (
+                <a href={project.data.repo} class="card-repo-link" target="_blank" rel="noopener noreferrer">repo</a>
+              )}
+              <div class="project-stack">
+                {project.data.stack.map(tech => (
+                  <span class="tech">{tech}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
 
     {micro.length > 0 && (
       <div class="micro-section">
@@ -81,6 +113,10 @@ const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a
 </Page>
 
 <style>
+  .rest-section { margin-top: 3rem; }
+  .rest-heading { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white-45); font-weight: 400; margin: 0 0 0.3rem; }
+  .rest-desc { font-size: 0.85rem; color: var(--white-45); margin: 0 0 1.25rem; }
+
   .project-list {
     display: flex;
     flex-direction: column;

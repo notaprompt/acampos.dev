@@ -8,15 +8,11 @@ screenshots:
     caption: "from the illuminated plate - thousands of glyphs resolving into the name, rendered by one of the creature's own organs"
   - src: "/creature/judgment-matrix.png"
     caption: "the judgment matrix - what it may do alone, and what waits for me"
-  - src: "/creature/keeper.png"
-    caption: "the keeper - needs filed by organs, arbitrated in one place"
-  - src: "/creature/norn.jpg"
-    caption: "the lineage - Creatures (1996), a norn's brain panel open: 954 neurons, 9 lobes, owned as a file"
 metrics:
   - { label: "consolidation cycles", value: "24,603 nrem · 217 rem", asof: "Aug 2026", source: "daemon log" }
   - { label: "memory classes", value: "2,096 public · 1,818 sensitive · 1,410 local-only", asof: "Aug 2026", source: "memory.db" }
 updated: 2026-08-08
-order: 1
+order: 2
 ---
 
 Not your average second brain. CREATURE is a mind that runs on one machine - mine. It remembers, it consolidates while I sleep, it notices when it is short on something it needs, and it will refuse work that crosses a line I set. None of that leaves the box.

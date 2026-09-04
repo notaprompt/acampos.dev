@@ -1,33 +1,43 @@
 ---
-// Five plus one action. Projects and resume live under /work and in the
-// footer — seven top-level choices was more noise than navigation.
+// Two surfaces, two navs, chosen by path.
 //
-// Order is the positioning. `services` sat second, which made the first thing
-// any visitor read a consulting menu; someone evaluating Alex for a role met
-// the storefront before the work. Work and writing come first now, services
-// keeps its place further along, and the snapshot stays the one accent.
-const links = [
-  { href: '/', label: 'home' },
-  { href: '/work', label: 'work' },
-  { href: '/writing', label: 'writing' },
-  { href: '/about', label: 'about' },
-  { href: '/services', label: 'services' },
-  { href: '/snapshot', label: 'free snapshot', accent: true },
-];
+// This site carries a person and a business. One nav for both meant every
+// visitor saw a consulting menu next to the writing, and a hiring manager
+// met the storefront before the work. Now the main site shows four items and
+// the practice shows its own four; each surface links to the other exactly
+// once, elsewhere on the page, so the nav never has to do that job.
+const path = Astro.url.pathname;
+const practice = /^\/(services|snapshot|ai-visibility|the-index)(\/|$)/.test(path);
 
-const currentPath = Astro.url.pathname;
+const links = practice
+  ? [
+      { href: '/services', label: 'the practice' },
+      { href: '/services#parts', label: 'systems' },
+      { href: '/services/pricing', label: 'pricing' },
+      { href: '/contact', label: 'contact' },
+      { href: '/snapshot', label: 'free snapshot', accent: true },
+    ]
+  : [
+      { href: '/', label: 'home' },
+      { href: '/work', label: 'work' },
+      { href: '/writing', label: 'writing' },
+      { href: '/about', label: 'about' },
+      { href: '/contact', label: 'contact', accent: true },
+    ];
+
+const isActive = (href: string) => {
+  const base = href.split('#')[0];
+  return path === base || (base !== '/' && path.startsWith(base) && !(base === '/services' && path.startsWith('/services/pricing') && href !== '/services/pricing'));
+};
 ---
 
-<nav aria-label="Main navigation">
+<nav aria-label="Main navigation" class:list={[{ practice }]}>
   <ul>
     {links.map(link => (
       <li>
         <a
           href={link.href}
-          class:list={[
-            { active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) },
-            { 'nav-accent': link.accent },
-          ]}
+          class:list={[{ active: isActive(link.href) }, { 'nav-accent': link.accent }]}
         >
           {link.label}
         </a>
@@ -63,33 +73,11 @@ const currentPath = Astro.url.pathname;
     transition: color 0.2s;
   }
 
-  @media (hover: hover) {
-    a:hover {
-      color: var(--gold-accent);
-      border-bottom: 2px dashed var(--gold-accent);
-      transition: border-bottom 0s;
-    }
-  }
+  a:hover, a.active { color: var(--glow-hot); }
 
-  a.nav-accent {
-    color: var(--gold-accent);
-    border-bottom: 1px solid var(--gold-accent);
-  }
+  .nav-accent { color: var(--gold-accent); }
+  .nav-accent:hover, .nav-accent.active { color: var(--glow-hot); }
 
-  a.active {
-    color: var(--glow);
-    position: relative;
-  }
-
-  a.active::before {
-    content: '';
-    width: 4px;
-    height: 4px;
-    background: var(--gold-accent);
-    display: inline-block;
-    position: absolute;
-    left: -12px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
+  /* The practice runs its own accent so the surface reads as its own property. */
+  nav.practice .nav-accent { color: #7aa498; }
 </style>

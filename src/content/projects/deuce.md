@@ -3,7 +3,7 @@ title: "DEUCE"
 tagline: "A calibration-first pricing instrument for tennis prediction markets. It prices fair value, then signs each forecast to a tamper-evident ledger before the market resolves. The ledger is the product, not a profit claim."
 status: "active"
 stack: ["Python", "SQLite", "Polymarket", "Kalshi", "Ed25519", "Ollama"]
-order: 4
+order: 3
 metrics:
   - { label: "signed forecasts", value: "2,552", asof: "Aug 2026", source: "append-only ledger", plain: "a sample big enough to tell skill from luck - and it exists whether it flatters me or not" }
   - { label: "committed", value: "before resolution, ed25519", asof: "Aug 2026", plain: "signed before the outcome was known, so a good record cannot be faked - and a bad one cannot be hidden" }

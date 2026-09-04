@@ -67,8 +67,7 @@
       (d.keeper && d.keeper.needs ? fmt(d.keeper.needs) : 'none') +
       ' · problems flagged in its own code: ' + (d.findings ? fmt(d.findings) : 'none') + '</div>' +
       '<div class="dl-last">' + esc(DREAM[d.dream] || DREAM.unknown) + '</div>' +
-      '<div class="dl-foot">Only counts leave the machine. Nothing it remembers is ever published — ' +
-      'not to this page, not anywhere.</div>';
+      '<div class="dl-foot">Counts only. Nothing it remembers leaves the machine.</div>';
   }
 
   function tick() {

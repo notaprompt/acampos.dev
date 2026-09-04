@@ -1,30 +1,35 @@
 ---
 title: "CREATURE"
-tagline: "Not your average second brain. A mind that runs on one machine - mine. It remembers, dreams, feels what it needs, and carries my judgment when it acts. Local by construction; the cloud is opt-in and never handed a memory."
+tagline: "A cognitive system that runs entirely on one machine — mine. Private cognition is enforced in code, not policy; the cloud is a narrow tool that cannot carry a memory. Fifteen organs under one contract, consolidating nightly."
 status: "active"
-stack: ["TypeScript", "Python", "SQLite", "FTS5", "Ollama", "Model Context Protocol", "WebGL2", "local-first"]
-screenshots:
-  - src: "/creature/plate-band.webp"
-    caption: "from the illuminated plate - thousands of glyphs resolving into the name, rendered by one of the creature's own organs"
-  - src: "/creature/judgment-matrix.png"
-    caption: "the judgment matrix - what it may do alone, and what waits for me"
+stack: ["embedding-distance router", "fail-closed sovereignty", "compiled judgment kernel", "Hebbian memory graph", "NREM/REM consolidation", "interoception daemon", "organ contract", "Ollama", "MCP", "SQLite/FTS5", "TypeScript", "Python"]
+screenshots: []
 metrics:
   - { label: "consolidation cycles", value: "24,603 nrem · 217 rem", asof: "Aug 2026", source: "daemon log" }
   - { label: "memory classes", value: "2,096 public · 1,818 sensitive · 1,410 local-only", asof: "Aug 2026", source: "memory.db" }
 updated: 2026-08-08
 order: 2
 ---
+<ul class="enforced" aria-label="What is enforced">
+  <li><b>Loopback only.</b> The model that does private thinking raises on any non-local address.</li>
+  <li><b>Fails closed.</b> Error, timeout, or doubt in the router lands on local. Safe is the resting state.</li>
+  <li><b>Starved cloud.</b> The one cloud tool has no field for memory or history. It carries a single task string a local model wrote.</li>
+  <li><b>Ratchet.</b> The judgment kernel can pull a decision toward local. Nothing downstream can loosen it.</li>
+  <li><b>Organ contract.</b> Membrane, toolbox, three laws that default to no. Every organ, no exceptions.</li>
+  <li><b>Decay.</b> Memories fade with disuse. Principles and voice never do.</li>
+</ul>
 
-Not your average second brain. CREATURE is a mind that runs on one machine - mine. It remembers, it consolidates while I sleep, it notices when it is short on something it needs, and it will refuse work that crosses a line I set. None of that leaves the box.
-
+<figure class="diagram" aria-label="Signal flow from the world through senses, state, mind, memory and dreams, to voice and gated hands">
+  <div class="diagram-scroll" set:html={diagram} />
+  <figcaption>How a signal travels. Hands move only after an explicit yes.</figcaption>
+</figure>
+<p class="door">Every organ, counted once in August 2026 and frozen: <a href="/creature">the anatomy</a>.</p>
 
 The name is an acronym - cognitive, recursive, entropic, autopoietic, temporal, user-owned, reflective, emergent - but the honest description is simpler: an organism, not an assistant with a memory feature bolted on the side. A spine that decides what is safe, organs that do the work, a keeper that feels when something is wrong. The letter that carries the weight is the plain one in the middle - user-owned. ForgeFrame is the engine underneath it. Everything here runs local-first: my private thinking lives in a file on my own disk, and reaching the cloud is a deliberate, narrow act rather than the default.
 
 <img src="/creature/architecture.svg" alt="CREATURE architecture: a request hits a spine router that measures embedding distance against private memory centroids, classifies green (public, cloud-eligible) or red (private, local-only), escalates to a local judge when uncertain, and fails closed. A judgment kernel weighted to sovereignty gates the router and rides in every dispatched agent, over memory, the keeper, and organs." style="width:100%;border:1px solid var(--white-08);margin:1.25rem 0;" />
 
 The seam is the whole design. The cloud is a tool the local mind reaches for when the work is public - never the mind itself, and it never carries a memory off the machine.
-
-I counted every part of it once, in August 2026, and published that count: [the anatomy](/creature) - each organ, what it does, why it earns its place, and the ones I deleted. It is a frozen snapshot, not a live page.
 
 ## How it works
 

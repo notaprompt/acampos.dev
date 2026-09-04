@@ -74,18 +74,9 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     </header>
 
     {entry.slug === 'creature' && (
-      <>
-        <figure class="creature-constellation-wrap">
-          <div id="creature-constellation" class="creature-constellation">
-            <img src="/images/projects/creature-constellation.jpg" alt="the memory graph - loading the touchable version" loading="eager" decoding="async" />
-            <div class="cc-loading">waking the constellation&hellip;</div>
-          </div>
-          <figcaption>the memory graph, positions only - gold is the principle tier, the sigils mark what refuses to decay</figcaption>
-        </figure>
-        <div id="creature-pulse" class="deuce-live">
-          <div class="dl-quiet">reading the pulse&hellip;</div>
-        </div>
-      </>
+      <div id="creature-pulse" class="deuce-live">
+        <div class="dl-quiet">reading the pulse&hellip;</div>
+      </div>
     )}
 
     {shots.length > 0 ? (
@@ -133,6 +124,16 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     <div class="project-content">
       <Content />
     </div>
+
+    {entry.slug === 'creature' && (
+      <figure class="creature-constellation-wrap">
+        <div id="creature-constellation" class="creature-constellation">
+          <img src="/images/projects/creature-constellation.jpg" alt="the memory graph" loading="lazy" decoding="async" />
+          <div class="cc-loading">waking&hellip;</div>
+        </div>
+        <figcaption>The memory graph. Every point is a memory; gold is the principle tier.</figcaption>
+      </figure>
+    )}
 
     <nav class="back-nav">
       <a href="/projects">&lt;&lt; all projects</a>
@@ -258,21 +259,21 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     margin-bottom: 2rem;
   }
 
+  /* Two shots stack at full width and keep their own proportions. The old
+     2fr/1fr grid forced both into 260px cells and cropped with `cover`, which
+     ate the sides of anything that was not roughly 16:9 — a wide band lost its
+     ends, a tall panel lost its bottom. Fewer, whole images read calmer than
+     more, chopped ones. */
   .project-screenshots--2 {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 2px;
-  }
-
-  .project-screenshots--2 .project-screenshot {
-    height: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
   }
 
   .project-screenshots--2 .project-screenshot img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
+    height: auto;
+    display: block;
   }
 
   .project-screenshots--1 .project-screenshot img {
@@ -296,7 +297,7 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     width: 100%;
     height: 240px;
     object-fit: cover;
-    object-position: center top;
+    object-position: center;
   }
 
   .project-screenshots--3 .project-screenshot:first-child img {
@@ -318,6 +319,7 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     width: 100%;
     height: 200px;
     object-fit: cover;
+    object-position: center;
     object-position: center top;
   }
 
@@ -745,4 +747,12 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     }
   }
 
+  /* CREATURE: the invariants list and the lifted diagram live in the body */
+  .project-content :global(.enforced) { list-style: none; padding: 0; margin: 0 0 1.75rem; border-top: 1px solid var(--white-15); }
+  .project-content :global(.enforced li) { font-family: var(--mono); font-size: 0.8rem; line-height: 1.55; color: var(--white-60); padding: 0.55rem 0; border-bottom: 1px solid var(--white-08); }
+  .project-content :global(.enforced b) { color: var(--glow-hot); font-weight: 600; margin-right: 0.35rem; }
+  .project-content :global(.diagram) { margin: 0 0 1rem; }
+  .project-content :global(.diagram figcaption) { font-family: var(--mono); font-size: 0.72rem; color: var(--white-45); margin-top: 0.5rem; }
+  .project-content :global(.door) { font-family: var(--mono); font-size: 0.8rem; color: var(--white-45); margin: 0 0 2rem; }
+  .project-content :global(.door a) { color: var(--gold-accent); }
 </style>

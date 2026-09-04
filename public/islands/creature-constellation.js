@@ -306,7 +306,7 @@ function initCreatureConstellation() {
   window.addEventListener('resize', size);
 
   // pointers
-  var pointers = {}, lastPinch = 0, dragging = false, idleTimer = 0;
+  var pointers = {}, lastPinch = 0, dragging = false, idleTimer = 0, engaged = false;
   function wake() {
     autoSpin = false;
     clearTimeout(idleTimer);
@@ -315,6 +315,7 @@ function initCreatureConstellation() {
   canvas.addEventListener('pointerdown', function (ev) {
     pointers[ev.pointerId] = [ev.offsetX, ev.offsetY];
     dragging = true;
+    engaged = true;
     canvas.setPointerCapture(ev.pointerId);
     canvas.style.cursor = 'grabbing';
     wake();
@@ -333,7 +334,7 @@ function initCreatureConstellation() {
       pointers[ev.pointerId] = [ev.offsetX, ev.offsetY];
       var a = pointers[ids[0]], b = pointers[ids[1]];
       var d2 = Math.hypot(a[0] - b[0], a[1] - b[1]);
-      if (lastPinch) { dist = Math.max(0.7, Math.min(5, dist * lastPinch / d2)); wake(); }
+      if (lastPinch) { dist = Math.max(0.9, Math.min(3.2, dist * lastPinch / d2)); wake(); }
       lastPinch = d2;
     } else if (!dragging) {
       setHover(nearest(ev.offsetX, ev.offsetY));
@@ -348,8 +349,16 @@ function initCreatureConstellation() {
   canvas.addEventListener('pointercancel', endPointer);
   canvas.addEventListener('pointerleave', function () { if (!dragging) setHover(-1); });
   canvas.addEventListener('wheel', function (ev) {
+    // Until the reader has clicked the canvas, scrolling over it scrolls the page.
+    if (!engaged) return;
     ev.preventDefault();
-    dist = Math.max(0.7, Math.min(5, dist * Math.pow(1.0015, ev.deltaY)));
+    // A trackpad flick is twenty-odd events of ±100px; a pinch arrives with
+    // ctrlKey. Both need a far gentler curve than a mouse-wheel notch, and a
+    // per-event clamp so one flick cannot cross the whole range.
+    var d = ev.deltaMode === 1 ? ev.deltaY * 16 : ev.deltaY;
+    d = Math.max(-60, Math.min(60, d));
+    var k = ev.ctrlKey ? 1.004 : 1.0007;
+    dist = Math.max(0.9, Math.min(3.2, dist * Math.pow(k, d)));
     wake();
   }, { passive: false });
   canvas.addEventListener('dblclick', function () { yaw = 0.6; pitch = 0.25; dist = 2.2; });
@@ -362,7 +371,7 @@ function initCreatureConstellation() {
       buildBuffers();
       var hint = document.createElement('div');
       hint.className = 'cc-hint';
-      hint.textContent = 'drag to turn it · scroll to approach · it drifts on its own';
+      hint.textContent = 'drag to turn · click, then scroll to approach';
       host.innerHTML = '';
       host.style.position = 'relative';
       host.appendChild(canvas);

@@ -242,7 +242,7 @@ export async function structured<T>(call: StructuredCall): Promise<CallResult<T>
 //
 // Add a key, get a provider. No code change required.
 
-interface Provider {
+export interface Provider {
   name: string;
   base: string;
   key: string;
@@ -271,7 +271,7 @@ function qualityProviders(): Provider[] {
   return [{ name: 'gateway', base, key, models }];
 }
 
-function freeProviders(): Provider[] {
+export function freeProviders(): Provider[] {
   const list: Provider[] = [];
   const env = (k: string) => process.env[k] || '';
 

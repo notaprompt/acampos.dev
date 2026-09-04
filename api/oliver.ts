@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Anthropic from '@anthropic-ai/sdk';
+import { freeProviders, type Provider } from './_lib/models.js';
 
 // Oliver — the site's resident dog, given a small brain.
 // Sovereign line: he only ever knows the PUBLIC facts below. No private data,
@@ -10,9 +11,16 @@ import Anthropic from '@anthropic-ai/sdk';
 const MODELS = (process.env.OLIVER_MODEL
   ? process.env.OLIVER_MODEL.split(',').map((m) => m.trim()).filter(Boolean)
   : [
+      // Eight small, fast free models across different vendors. Each has its
+      // own rate-limit pool, so one being throttled does not take the rest.
       'google/gemma-4-26b-a4b-it:free', // best voice, verified 2026-07
-      'openai/gpt-oss-20b:free',
+      'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
       'google/gemma-4-31b-it:free',
+      'minimax/minimax-m2.7:free',
+      'z-ai/glm-5.2:free',
+      'inclusionai/ling-3.0-flash-sante:free',
+      'poolside/laguna-xs-2.1:free',
+      'nvidia/nemotron-3.5-lightning:free',
     ]);
 // Point Oliver at any OpenAI-compatible endpoint: OpenRouter by default, or a
 // tunneled OmniRoute (set OLIVER_BASE_URL to its public URL + OLIVER_API_KEY).
@@ -106,36 +114,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Try each free model until one answers, under ONE total time budget so a
   // single request can't fan out into minutes of upstream calls (Vercel would
   // kill it anyway). Each attempt gets whatever time is left, capped.
-  const deadline = Date.now() + 20000;
-  for (const model of MODELS) {
-    const remaining = deadline - Date.now();
-    if (remaining < 2000) break; // not enough budget for another attempt
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), Math.min(12000, remaining));
-      const r = await fetch(`${BASE_URL}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${KEY}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://campos.works',
-          'X-Title': 'campos.works - Oliver',
-        },
-        body: JSON.stringify({ model, messages, temperature: 0.8, max_tokens: 320, stream: false }),
-        signal: controller.signal,
-      });
-      clearTimeout(timer);
-      if (!r.ok) continue; // rate-limited or unavailable — try the next free model
-      const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
-      const reply = data?.choices?.[0]?.message?.content?.trim();
-      if (reply) {
-        res.status(200).json({ reply });
-        return;
+  const deadline = Date.now() + 25000;
+
+  // One chain, every free provider that has a key. OpenRouter's free models
+  // are rate-limited most of the day; Groq, Cerebras, and Gemini each have a
+  // free tier that usually is not, and all of them speak the same wire shape.
+  // Under ONE total time budget so a single request can't fan out into minutes
+  // of upstream calls (Vercel would kill it anyway).
+  const chain: Provider[] = [
+    ...(KEY ? [{ name: 'openrouter', base: BASE_URL, key: KEY, models: MODELS }] : []),
+    ...freeProviders().filter((p) => p.base !== BASE_URL),
+  ];
+  chain: for (const p of chain) {
+    for (const model of p.models) {
+      const remaining = deadline - Date.now();
+      if (remaining < 2000) break chain; // not enough budget for another attempt
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), Math.min(8000, remaining));
+        const r = await fetch(`${p.base}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${p.key}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://campos.works',
+            'X-Title': 'campos.works - Oliver',
+          },
+          body: JSON.stringify({ model, messages, temperature: 0.8, max_tokens: 320, stream: false }),
+          signal: controller.signal,
+        });
+        clearTimeout(timer);
+        if (!r.ok) continue; // rate-limited or unavailable — next model
+        const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+        const reply = data?.choices?.[0]?.message?.content?.trim();
+        if (reply) {
+          res.status(200).json({ reply });
+          return;
+        }
+      } catch {
+        // timeout or network — next model
       }
-    } catch {
-      // timeout or network — try the next model
     }
   }
+
   // Last rung: pay for it.
   //
   // Every model above is a free endpoint, and free endpoints are rate-limited

@@ -4,7 +4,7 @@
 //
 // Full size is the homepage hero. Everywhere else it is an emblem, so the
 // page's first proposition is on screen before anyone scrolls.
-const compact = Astro.url.pathname !== '/';
+const compact = false;
 ---
 
 <div class:list={["desk-scene-wrap", { compact }]} role="banner" aria-label="Alexander Campos">

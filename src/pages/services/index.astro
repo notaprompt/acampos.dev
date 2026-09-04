@@ -57,11 +57,7 @@ const description =
                 <h3>{part.name}</h3>
                 <p class="part-q">“{part.question}”</p>
                 <p class="part-sum">{part.summary}</p>
-                <span class="part-price">
-                  ${part.priceFrom.toLocaleString()}–${part.priceTo.toLocaleString()}
-                  <span class="sep">·</span>
-                  {part.timeline}
-                </span>
+                <span class="part-price">{part.timeline}</span>
               </div>
               <span class="part-go" aria-hidden="true">→</span>
             </a>
@@ -79,8 +75,9 @@ const description =
         <h2>Ways to start</h2>
         <p class="sec-gloss">
           Every one of these ends with something you keep, whether or not you buy
-          the next one. Prices are real and stated up front, because vagueness
-          costs more deals than a high number does.
+          the next one. Prices are real, fixed before anything starts, and written
+          out in full on <a href="/services/pricing">one page</a> — vagueness costs
+          more deals than a high number does.
         </p>
       </div>
 
@@ -90,7 +87,6 @@ const description =
             <div class:list={['offer', offer.featured && 'offer--featured']}>
               <div class="offer-head">
                 <h3>{offer.name}</h3>
-                <span class="offer-price">{offer.price}</span>
               </div>
               <p class="offer-what">{offer.what}</p>
               <p class="offer-who"><strong>Who it's for:</strong> {offer.who}</p>

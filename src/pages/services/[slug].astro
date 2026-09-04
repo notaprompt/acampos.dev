@@ -33,8 +33,8 @@ const next = PARTS[(idx + 1) % PARTS.length];
       <p class="question">“{part.question}”</p>
       <p class="summary">{part.summary}</p>
       <div class="facts">
-        <span><b>${part.priceFrom.toLocaleString()}–${part.priceTo.toLocaleString()}</b> typical</span>
         <span><b>{part.timeline}</b> to build</span>
+        <span><a href="/services/pricing">what this costs</a></span>
       </div>
       <p class="price-note">{part.priceNote}</p>
     </header>

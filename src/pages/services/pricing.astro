@@ -1,0 +1,98 @@
+---
+import Page from '../../layouts/Page.astro';
+import { PARTS, OFFERS } from '../../data/services';
+
+// Prices live on one page, one level down, reachable from every service but
+// never sitting in front of someone who is still deciding whether the work is
+// worth reading about. A buyer looks for the number; everyone else was only
+// ever being taxed by it.
+---
+
+<Page
+  title="what it costs -- alexander campos"
+  description="Prices for every system and every way to start. Fixed scope, fixed price, stated in full."
+>
+  <article class="pricing">
+    <h1>What it costs</h1>
+    <p class="lede">
+      Fixed scope, fixed price, agreed before anything starts. If a build turns out
+      to be smaller than it looked, the number comes down. Everything below is a
+      range because the spread is real, and the <a href="/services/pricing#start">Teardown</a>
+      is what turns a range into a number.
+    </p>
+
+    <hr />
+
+    <section>
+      <h2>The eight systems</h2>
+      <p class="note">Typical build range and timeline. Credited against a larger build if you take one.</p>
+      <table>
+        <thead>
+          <tr><th>System</th><th>Range</th><th>Timeline</th></tr>
+        </thead>
+        <tbody>
+          {PARTS.map((part) => (
+            <tr>
+              <td><a href={`/services/${part.slug}`}>{part.name}</a></td>
+              <td class="num">${part.priceFrom.toLocaleString()}–${part.priceTo.toLocaleString()}</td>
+              <td class="dim">{part.timeline}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <hr />
+
+    <section id="start">
+      <h2>Ways to start</h2>
+      <table>
+        <thead>
+          <tr><th>Offer</th><th>Price</th><th>Who it's for</th></tr>
+        </thead>
+        <tbody>
+          {OFFERS.map((offer) => (
+            <tr>
+              <td>{offer.name}</td>
+              <td class="num">{offer.price}</td>
+              <td class="dim">{offer.who}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <hr />
+
+    <p class="close">
+      Nothing here is a subscription you have to cancel except Operator, which is
+      month to month. <a href="/contact">Get in touch</a> and I will tell you which
+      one you actually need, including when it is none of them.
+    </p>
+  </article>
+</Page>
+
+<style>
+  .pricing { font-size: 0.95rem; }
+  .lede { color: var(--white-60); max-width: 62ch; }
+  .note { font-family: var(--mono); font-size: 0.75rem; color: var(--white-45); }
+  table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+  th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--white-45);
+    font-weight: 400;
+    padding: 0 0.8rem 0.5rem 0;
+    border-bottom: 1px solid var(--white-15);
+  }
+  td { padding: 0.7rem 0.8rem 0.7rem 0; border-bottom: 1px solid var(--white-08); vertical-align: top; }
+  td.num { font-family: var(--mono); white-space: nowrap; color: var(--glow-hot); }
+  td.dim { color: var(--white-45); font-size: 0.85rem; }
+  .close { color: var(--white-60); max-width: 62ch; }
+  @media (max-width: 620px) {
+    td.dim, th:last-child { display: none; }
+  }
+</style>

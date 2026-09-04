@@ -609,7 +609,7 @@
   var panel = document.createElement('div');
   panel.id = 'music-panel';
   // Desktop: panel starts open. Mobile: starts closed.
-  var startOpen = window.innerWidth > 768;
+  var startOpen = false;
   panel.className = startOpen ? 'open' : '';
   panel.innerHTML = [
     '<div id="mp-titlebar">',

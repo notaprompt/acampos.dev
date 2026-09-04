@@ -131,7 +131,7 @@
   var audioCtx = null;
   var analyser = null;
   var sourceNode = null;
-  var panelOpen = false;
+  var panelOpen = window.innerWidth > 768;
   var peaks = [];
   var peakDecay = [];
   var animId = null;
@@ -609,7 +609,7 @@
   var panel = document.createElement('div');
   panel.id = 'music-panel';
   // Desktop: panel starts open. Mobile: starts closed.
-  var startOpen = false;
+  var startOpen = window.innerWidth > 768;
   panel.className = startOpen ? 'open' : '';
   panel.innerHTML = [
     '<div id="mp-titlebar">',

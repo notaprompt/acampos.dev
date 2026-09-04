@@ -575,7 +575,7 @@
   // ── Spawn Oliver in his room ────────────────────────────────
   function spawnInRoom(name) {
     var isOliver = name.toLowerCase() === 'oliver';
-    var startOpen = false;
+    var startOpen = window.innerWidth > 768;
     var roomOpen = startOpen;
 
     // ── Interaction state flag ──

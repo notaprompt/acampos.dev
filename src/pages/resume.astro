@@ -4,7 +4,16 @@ import Page from '../layouts/Page.astro';
 
 <Page title="resume -- alexander campos" description="Alexander Campos - builds and ships agent memory and model routing, grounded in six years of regulated finance operations. Reframed (live), ForgeFrame (open source).">
   <article class="resume">
-    <h1>Resume</h1>
+    <header class="masthead">
+      <h1>Alexander Campos</h1>
+      <p class="subtitle">Banking operations · process, controls &amp; automation</p>
+      <p class="contact-line">
+        Washington D.C. Metro Area <span aria-hidden="true">|</span>
+        <a href="mailto:alex@campos.works">alex@campos.works</a> <span aria-hidden="true">|</span>
+        <a href="https://linkedin.com/in/alexander-d-campos">linkedin.com/in/alexander-d-campos</a> <span aria-hidden="true">|</span>
+        <a href="https://campos.works">campos.works</a>
+      </p>
+    </header>
 
     <ul class="stats" aria-label="At a glance">
       <li><b>6 yrs</b><span>regulated finance ops</span></li>
@@ -31,45 +40,15 @@ import Page from '../layouts/Page.astro';
     <hr />
 
     <section>
-      <h2>Skills</h2>
-
-      <h3>Operations</h3>
-      <p class="skills">
-        SOP governance &amp; audits · Process modernization · Controls design ·
-        Failure-surface monitoring · Dependency sequencing &amp; approval gates ·
-        Metrics, KPIs &amp; executive reporting · Workflow automation · Change control ·
-        Vendor operations
-      </p>
-
-      <h3>Regulated Environments</h3>
-      <p class="skills">
-        BSA/AML/KYC · SCRA · TILA/Reg Z · FDCPA/Reg F · NCUA · CFPB ·
-        Systems integration &amp; onboarding
-      </p>
-
-      <h3>AI &amp; Data</h3>
-      <p class="skills">
-        Agents and automations running in production · Governed AI adoption
-        (accelerant, not autopilot) · SQL (Postgres, Snowflake) · Python ·
-        Splunk · Observe · Looker · Power BI · Tableau
-      </p>
-
-      <h3>Development</h3>
-      <p class="skills">
-        TypeScript · React · Node.js · Next.js · Astro · Electron · SQLite ·
-        Python (Pandas, scikit-learn)
-      </p>
-    </section>
-
-    <hr />
-
-    <section>
       <h2>Experience</h2>
 
       <div class="role">
         <div class="role-header">
-          <h3>Capital One -- Senior Process Manager, Card Legal Recoveries Operations</h3>
-          <span class="dates">June 2025 -- Present | Richmond, VA</span>
+          <div class="role-top">
+            <h3 class="org">Capital One</h3>
+            <span class="dates">Richmond, VA · June 2025 – Present</span>
+          </div>
+          <p class="title">Senior Process Manager, Card Legal Recoveries Operations</p>
         </div>
         <ul>
           <li>
@@ -116,8 +95,11 @@ import Page from '../layouts/Page.astro';
 
       <div class="role">
         <div class="role-header">
-          <h3>Apple Federal Credit Union -- Branch Operations Administrator</h3>
-          <span class="dates">January 2020 -- May 2025 | Fairfax &amp; Lake Ridge, VA</span>
+          <div class="role-top">
+            <h3 class="org">Apple Federal Credit Union</h3>
+            <span class="dates">Fairfax &amp; Lake Ridge, VA · January 2020 – May 2025</span>
+          </div>
+          <p class="title">Branch Operations Administrator</p>
         </div>
         <ul>
           <li>
@@ -139,8 +121,11 @@ import Page from '../layouts/Page.astro';
 
       <div class="role">
         <div class="role-header">
-          <h3>Independent engineering -- campos.works</h3>
-          <span class="dates">2025 -- Present</span>
+          <div class="role-top">
+            <h3 class="org">Independent engineering</h3>
+            <span class="dates">2025 – Present</span>
+          </div>
+          <p class="title">Shipped and running · campos.works</p>
         </div>
         <ul>
           <li>
@@ -179,6 +164,45 @@ import Page from '../layouts/Page.astro';
     <hr />
 
     <section>
+      <h2>Skills</h2>
+
+      <h3>Operations</h3>
+      <p class="skills">
+        SOP governance &amp; audits · Process modernization · Controls design ·
+        Failure-surface monitoring · Dependency sequencing &amp; approval gates ·
+        Metrics, KPIs &amp; executive reporting · Workflow automation · Change control ·
+        Vendor operations
+      </p>
+
+      <h3>Regulated Environments</h3>
+      <p class="skills">
+        BSA/AML/KYC · SCRA · TILA/Reg Z · FDCPA/Reg F · NCUA · CFPB ·
+        Systems integration &amp; onboarding
+      </p>
+
+      <h3>AI</h3>
+      <p class="skills">
+        Adversarial eval design &amp; red-teaming · Eval automation (weighted rubrics,
+        failure-mode diagnosis) · Local open-source model benchmarking (Ollama, llama.cpp) ·
+        Multi-provider model routing with fallback chains · Agent memory (MCP) ·
+        Prompt &amp; instruction-set validation · Governed AI adoption in a regulated line of business
+      </p>
+
+      <h3>Data</h3>
+      <p class="skills">
+        SQL (Postgres, Snowflake) · Python · Splunk · Observe · Looker · Power BI · Tableau
+      </p>
+
+      <h3>Development</h3>
+      <p class="skills">
+        TypeScript · React · Node.js · Next.js · Astro · Electron · SQLite ·
+        Python (Pandas, scikit-learn)
+      </p>
+    </section>
+
+    <hr />
+
+    <section>
       <h2>Education &amp; certifications</h2>
       <p>
         <strong>B.S. Business Administration, Management and Operations</strong> -- George Mason
@@ -190,11 +214,6 @@ import Page from '../layouts/Page.astro';
       </p>
     </section>
 
-    <hr />
-
-    <div class="resume-contact">
-      <p><a href="mailto:alex@campos.works">alex@campos.works</a> · <a href="https://campos.works">campos.works</a></p>
-    </div>
   </article>
 
   <script is:inline>
@@ -256,13 +275,66 @@ import Page from '../layouts/Page.astro';
     color: var(--white-45);
   }
   .stats {
-    list-style: none; padding: 0; margin: 0 0 1.6rem;
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    list-style: none; padding: 0; margin: 0 0 1.75rem;
+    display: grid; grid-template-columns: repeat(7, 1fr);
     border-top: 1px solid var(--white-15); border-bottom: 1px solid var(--white-15);
   }
-  .stats li { padding: 0.75rem 0.9rem 0.75rem 0; border-right: 1px solid var(--white-08); display: flex; flex-direction: column; gap: 0.15rem; }
+  .stats li {
+    padding: 0.85rem 0.5rem; text-align: center;
+    display: flex; flex-direction: column; gap: 0.3rem;
+    border-right: 1px solid var(--white-08);
+  }
   .stats li:last-child { border-right: none; }
-  .stats b { font-family: var(--mono); font-size: 1.05rem; color: var(--gold-accent); font-weight: 600; letter-spacing: -0.01em; }
-  .stats span { font-size: 0.74rem; color: var(--white-45); line-height: 1.3; }
+  .stats b {
+    font-family: var(--serif); font-size: 1.55rem; font-weight: 500; line-height: 1;
+    color: var(--glow-hot); letter-spacing: -0.01em;
+  }
+  .stats span {
+    font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--white-45); line-height: 1.35;
+  }
+  @media (max-width: 900px) { .stats { grid-template-columns: repeat(4, 1fr); } .stats li:nth-child(4) { border-right: none; } }
   @media (max-width: 480px) { .stats { grid-template-columns: 1fr 1fr; } .stats li { border-right: none; } }
+
+  /* ── The PDF's grammar, carried over ──
+     Centered masthead, gold small-caps section rules, company in gold with
+     place and dates on the right, italic title, tight bullets with bold leads.
+     The stat strip is the one thing the paper version does not have. */
+  .resume { font-size: 0.93rem; line-height: 1.55; }
+  .masthead { text-align: center; margin: 0 0 1.5rem; }
+  .masthead h1 { font-family: var(--serif); font-size: 2.2rem; font-weight: 500; letter-spacing: 0.04em; margin: 0 0 0.3rem; }
+  .subtitle { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-accent); margin: 0 0 0.55rem; }
+  .contact-line { font-size: 0.8rem; color: var(--white-45); margin: 0; }
+  .contact-line a { color: var(--white-60); text-decoration: none; border-bottom: 1px solid var(--white-15); }
+  .contact-line a:hover { color: var(--gold-accent); border-bottom-color: var(--gold-accent); }
+  .contact-line span { color: var(--white-15); margin: 0 0.4rem; }
+
+  .resume .summary p { color: var(--white-70); max-width: 72ch; margin: 0; }
+  .resume hr { border: 0; border-top: 1px solid var(--white-08); margin: 1.6rem 0; }
+
+  .resume h2 {
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold-accent); font-weight: 500; margin: 0 0 0.9rem;
+    padding-bottom: 0.4rem; border-bottom: 1px solid var(--gold-accent); opacity: 0.95;
+  }
+  .resume .role { margin-bottom: 1.5rem; }
+  .resume .role-header { margin-bottom: 0.45rem; }
+  .role-top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+  .resume .org { font-family: var(--serif); font-size: 1.12rem; font-weight: 600; color: var(--gold-accent); margin: 0; }
+  .resume .dates { font-size: 0.78rem; color: var(--white-45); white-space: nowrap; }
+  .resume .title { font-style: italic; font-size: 0.9rem; color: var(--white-60); margin: 0.1rem 0 0; }
+  .resume .role ul { margin: 0; padding-left: 1.1rem; }
+  .resume .role li { margin: 0 0 0.45rem; color: var(--white-70); }
+  .resume .role li strong { color: var(--glow-hot); font-weight: 600; }
+  .resume .role li a { color: var(--glow-hot); border-bottom: 1px solid var(--white-15); text-decoration: none; }
+
+  .resume h3:not(.org) { font-family: var(--body); font-size: 0.86rem; font-weight: 600; color: var(--glow-hot); margin: 0.7rem 0 0.2rem; }
+  .resume .skills { font-size: 0.8rem; line-height: 1.6; margin: 0; }
+
+  @media (max-width: 600px) {
+    .masthead h1 { font-size: 1.8rem; }
+    .resume .dates { white-space: normal; }
+    .contact-line span { display: none; }
+    .contact-line a { display: block; margin-top: 0.15rem; }
+  }
 </style>

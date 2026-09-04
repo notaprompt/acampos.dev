@@ -65,24 +65,29 @@ const BUILT = [
         <span class="sec-num">I</span>
         <h2>The operations record</h2>
         <p class="sec-gloss">
-          Six years where a mistake becomes an audit finding. This is the part that makes
-          the rest of it trustworthy.
+          Six years where a mistake becomes an audit finding. One method the whole way:
+          find the failure in the data, map the surface it lives on, design the fix on
+          the map, and only then build.
         </p>
       </div>
 
       <ul class="ops">
         <li>
-          Built the monitoring for a <strong>$600M+ regulatory file exchange</strong> moving
-          300+ transmissions a day. Manual review down 78%.
+          <strong>Find it.</strong> A <strong>20,000+ account logic failure</strong> with the
+          Data team six weeks backlogged. Wrote the SQL that pulled it out, isolated root
+          cause, remediated, and named the surface it lived on in a failure taxonomy — then
+          put monitoring on that surface so it could not recur quietly.
         </li>
         <li>
-          <strong>Zero transmission errors</strong> through the $35B Discover integration,
-          after authoring the full revision of the Systems Integration Guide.
+          <strong>Map it.</strong> A <strong>$600M+ regulatory file exchange</strong> moving
+          300+ transmissions a day. Every anomaly population mapped to a control gap and
+          reconciled to a fix; the prototype became an automated pipeline. Manual review
+          down 78%.
         </li>
         <li>
-          Resolved a <strong>20,000+ account logic failure</strong> — investigative SQL
-          framework, root cause isolated, accounts remediated, failure taxonomy documented
-          so it could not recur quietly.
+          <strong>Design before build.</strong> The <strong>$35B Discover integration</strong>.
+          Dependencies sequenced, approval gates and rollback protocols in front of every
+          cutover, the Systems Integration Guide rewritten end to end. Zero transmission errors.
         </li>
       </ul>
 

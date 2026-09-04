@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import Anthropic from '@anthropic-ai/sdk';
 
 // Oliver — the site's resident dog, given a small brain.
 // Sovereign line: he only ever knows the PUBLIC facts below. No private data,
@@ -135,7 +136,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // timeout or network — try the next model
     }
   }
+  // Last rung: pay for it.
+  //
+  // Every model above is a free endpoint, and free endpoints are rate-limited
+  // exactly when traffic arrives — which is the only time Oliver matters. He
+  // sits on the page a hiring manager reads, so "all my brains are busy" is a
+  // broken button wearing a joke. Haiku answers this for a fraction of a cent.
+  if (process.env.ANTHROPIC_API_KEY) {
+    try {
+      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+      const r = await client.messages.create(
+        {
+          model: 'claude-haiku-4-5',
+          max_tokens: 320,
+          temperature: 0.8,
+          system: SYSTEM,
+          messages: messages
+            .filter((m) => m.role !== 'system')
+            .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content })),
+        },
+        { timeout: 12_000 }
+      );
+      const reply = r.content
+        .filter((b): b is Anthropic.TextBlock => b.type === 'text')
+        .map((b) => b.text)
+        .join('')
+        .trim();
+      if (reply) {
+        res.status(200).json({ reply });
+        return;
+      }
+    } catch (err) {
+      console.error('[oliver] anthropic fallback failed:', err instanceof Error ? err.message : String(err));
+    }
+  }
+
   res.status(200).json({
-    reply: 'all my brains are busy chasing the same squirrel right now (free models, all rate-limited). give it a minute and throw me another bone.',
+    reply: 'all my brains are busy chasing the same squirrel right now. give it a minute and throw me another bone.',
   });
 }

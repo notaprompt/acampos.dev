@@ -74,8 +74,75 @@ const BUILT = [
     <section>
       <div class="sec-head">
         <span class="sec-num">I</span>
+        <h2>The operations record</h2>
+        <p class="sec-gloss">
+          Six years where a mistake becomes an audit finding. This is the part that makes
+          the rest of it trustworthy.
+        </p>
+      </div>
+
+      <ul class="ops">
+        <li>
+          Built the monitoring for a <strong>$600M+ regulatory file exchange</strong> moving
+          300+ transmissions a day. Manual review down 78%.
+        </li>
+        <li>
+          <strong>Zero transmission errors</strong> through the $35B Discover integration,
+          after authoring the full revision of the Systems Integration Guide.
+        </li>
+        <li>
+          Resolved a <strong>20,000+ account logic failure</strong> — investigative SQL
+          framework, root cause isolated, accounts remediated, failure taxonomy documented
+          so it could not recur quietly.
+        </li>
+      </ul>
+
+      <p class="more">
+        Roles, dates, and the rest on <a href="/resume">the resume</a>.
+      </p>
+    </section>
+
+    <hr />
+
+    <section>
+      <div class="sec-head">
+        <span class="sec-num">II</span>
+        <h2>Things I built and run</h2>
+        <p class="sec-gloss">
+          Mine, running in production. Agent memory, model routing, a signed forecast
+          ledger — the systems underneath, and the numbers they report on themselves.
+        </p>
+      </div>
+
+      {
+        BUILT.map((b) => (
+          <div class="built">
+            <a class="built-name" href={b.href} target={b.href.startsWith('http') ? '_blank' : undefined} rel={b.href.startsWith('http') ? 'noopener' : undefined}>
+              {b.name} <span aria-hidden="true">↗</span>
+            </a>
+            <p class="built-line">{b.line}</p>
+            <p class="built-fact">{b.fact}</p>
+          </div>
+        ))
+      }
+
+      <p class="more">
+        Written up properly in <a href="/projects">the catalogue</a>, along with
+        everything else.
+      </p>
+    </section>
+
+    <hr />
+
+    <section>
+      <div class="sec-head">
+        <span class="sec-num">III</span>
         <h2>The client work</h2>
-        <p class="sec-gloss">One engagement, written up in full rather than five written up vaguely.</p>
+        <p class="sec-gloss">
+          One engagement, written up in full rather than five written up vaguely. It is here
+          because it is the only place someone who did not build these tools has been running
+          them, unattended, on real money.
+        </p>
       </div>
 
       <div class="case">
@@ -151,69 +218,6 @@ const BUILT = [
 
     <hr />
 
-    <section>
-      <div class="sec-head">
-        <span class="sec-num">II</span>
-        <h2>Things I built and run</h2>
-        <p class="sec-gloss">
-          My own, not client work. Included because it is the honest evidence of how I
-          build when nobody is paying me to.
-        </p>
-      </div>
-
-      {
-        BUILT.map((b) => (
-          <div class="built">
-            <a class="built-name" href={b.href} target={b.href.startsWith('http') ? '_blank' : undefined} rel={b.href.startsWith('http') ? 'noopener' : undefined}>
-              {b.name} <span aria-hidden="true">↗</span>
-            </a>
-            <p class="built-line">{b.line}</p>
-            <p class="built-fact">{b.fact}</p>
-          </div>
-        ))
-      }
-
-      <p class="more">
-        Written up properly in <a href="/projects">the catalogue</a>, along with
-        everything else.
-      </p>
-    </section>
-
-    <hr />
-
-    <section>
-      <div class="sec-head">
-        <span class="sec-num">III</span>
-        <h2>The operations record</h2>
-        <p class="sec-gloss">
-          Six years where a mistake becomes an audit finding. This is the part that makes
-          the rest of it trustworthy.
-        </p>
-      </div>
-
-      <ul class="ops">
-        <li>
-          Built the monitoring for a <strong>$600M+ regulatory file exchange</strong> moving
-          300+ transmissions a day. Manual review down 78%.
-        </li>
-        <li>
-          <strong>Zero transmission errors</strong> through the $35B Discover integration,
-          after authoring the full revision of the Systems Integration Guide.
-        </li>
-        <li>
-          Resolved a <strong>20,000+ account logic failure</strong> — investigative SQL
-          framework, root cause isolated, accounts remediated, failure taxonomy documented
-          so it could not recur quietly.
-        </li>
-      </ul>
-
-      <p class="more">
-        Roles, dates, and the rest on <a href="/resume">the resume</a>.
-      </p>
-    </section>
-
-    <hr />
-
     <section class="not-done">
       <h2>What I have not done</h2>
       <p>
@@ -230,15 +234,16 @@ const BUILT = [
     </section>
 
     <section class="cta-block">
-      <h2>See it work on your business</h2>
+      <h2>What happens next</h2>
       <p>
-        The Snapshot on this site is the same machine described above, pointed at you.
-        Free, about a minute, and it tells you the truth even when the truth is that you
-        are fine.
+        If you are reading this to decide about a role, the fastest thing is to ask me
+        something specific — I would rather answer that than have you infer it from a page.
+        If you run a business, the Snapshot is this same machine pointed at you: free,
+        about a minute, and it says so when you are already fine.
       </p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="/snapshot">Run my Snapshot</a>
-        <a class="btn btn-ghost" href="/contact">Book a free 30 minutes</a>
+        <a class="btn btn-primary" href="/contact">Ask me something specific</a>
+        <a class="btn btn-ghost" href="/snapshot">Run my Snapshot</a>
       </div>
     </section>
   </article>

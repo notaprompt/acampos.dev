@@ -1,5 +1,6 @@
 ---
 import Page from '../../layouts/Page.astro';
+import PracticeBar from '../../components/PracticeBar.astro';
 import { PARTS, OFFERS, HOW_I_WORK } from '../../data/services';
 
 const title = 'services — alexander campos';
@@ -9,6 +10,7 @@ const description =
 
 <Page title={title} description={description}>
   <article class="svc">
+    <PracticeBar />
     <header class="lede">
       <p class="eyebrow">operations, built and handed over</p>
       <h1>I make small businesses modern.</h1>
@@ -154,6 +156,10 @@ const description =
 </Page>
 
 <style>
+  /* The practice runs a cooler accent than the rest of the site, so the
+     surface reads as a different property before a word is read. */
+  .svc { --gold-accent: #7aa498; }
+
   .svc { max-width: 100%; }
 
   /* ── Lede ── */

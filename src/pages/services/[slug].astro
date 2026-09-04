@@ -1,5 +1,6 @@
 ---
 import Page from '../../layouts/Page.astro';
+import PracticeBar from '../../components/PracticeBar.astro';
 import { PARTS, partBySlug } from '../../data/services';
 
 export function getStaticPaths() {
@@ -21,6 +22,7 @@ const next = PARTS[(idx + 1) % PARTS.length];
   description={part.summary}
 >
   <article class="part-page">
+    <PracticeBar />
     <nav class="crumb" aria-label="Breadcrumb">
       <a href="/services">services</a>
       <span aria-hidden="true">/</span>

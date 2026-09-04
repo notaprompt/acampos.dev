@@ -1,0 +1,54 @@
+---
+// The services arm is a standalone business, and it should announce itself as
+// one. Without this, someone who arrived to evaluate Alex reads a consulting
+// storefront and concludes that is the whole identity. A named band at the top,
+// a cooler accent underneath it, and the separation does its own explaining.
+---
+
+<aside class="practice-bar">
+  <div class="pb-mark">
+    <span class="pb-dot" aria-hidden="true"></span>
+    <span class="pb-name">The practice</span>
+  </div>
+  <p class="pb-what">
+    Operations work for small businesses — scoped, priced, and sold on its own.
+    The engineering, writing, and research live on
+    <a href="/">the rest of the site</a>.
+  </p>
+</aside>
+
+<style>
+  .practice-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1.1rem;
+    padding: 0.75rem 0.95rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--practice-line, rgba(122,164,152,0.28));
+    border-left: 2px solid var(--practice-accent, #7aa498);
+    background: var(--practice-wash, rgba(122,164,152,0.05));
+  }
+  .pb-mark { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .pb-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--practice-accent, #7aa498);
+    flex: none;
+  }
+  .pb-name {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--practice-accent, #7aa498);
+    white-space: nowrap;
+  }
+  .pb-what {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--white-60);
+    max-width: 68ch;
+  }
+  .pb-what a { color: var(--practice-accent, #7aa498); }
+</style>

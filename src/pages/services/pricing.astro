@@ -1,5 +1,6 @@
 ---
 import Page from '../../layouts/Page.astro';
+import PracticeBar from '../../components/PracticeBar.astro';
 import { PARTS, OFFERS } from '../../data/services';
 
 // Prices live on one page, one level down, reachable from every service but
@@ -13,6 +14,7 @@ import { PARTS, OFFERS } from '../../data/services';
   description="Prices for every system and every way to start. Fixed scope, fixed price, stated in full."
 >
   <article class="pricing">
+    <PracticeBar />
     <h1>What it costs</h1>
     <p class="lede">
       Fixed scope, fixed price, agreed before anything starts. If a build turns out

@@ -342,6 +342,63 @@ const BUILT = [
   .btn-ghost { background: transparent; color: var(--gold-accent); border-color: var(--white-15); }
   .btn-ghost:hover { border-color: var(--gold-accent); }
 
+
+  /* ── Three textures, one column ──
+     The page holds three kinds of evidence: a record, a set of running things,
+     and a written-up case. Same place, same width, but each gets its own
+     grammar so they read as different things rather than three lists.
+     The numeral takes the section's hue; everything else follows from it. */
+
+  /* I. The record: a ledger. Counter-indexed, ruled, gold. */
+  .ops { counter-reset: entry; }
+  .ops li {
+    position: relative;
+    padding-left: 2.6rem;
+    border-left: 2px solid var(--gold-accent);
+    background: linear-gradient(90deg, rgba(184,150,90,0.05), transparent 40%);
+  }
+  .ops li::before {
+    counter-increment: entry;
+    content: counter(entry, decimal-leading-zero);
+    position: absolute; left: 0.75rem; top: 0.95rem;
+    font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em;
+    color: var(--gold-accent); opacity: 0.85;
+  }
+
+  /* II. The systems: a process list. Live dot, mono name, dark panel. */
+  .built {
+    border: 1px solid var(--white-08); border-top-color: var(--white-08);
+    background: var(--depth-1);
+    padding: 0.95rem 1.1rem 0.95rem 1.9rem;
+    margin-top: 0.45rem;
+    position: relative;
+  }
+  .built:first-of-type { margin-top: 0; }
+  .built:last-of-type { border-bottom: 1px solid var(--white-08); }
+  .built::before {
+    content: ""; position: absolute; left: 0.85rem; top: 1.35rem;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--alive); box-shadow: 0 0 6px var(--alive-dim);
+  }
+  .built-name { font-family: var(--mono); font-size: 0.86rem; letter-spacing: 0.02em; }
+  .built-name:hover { color: var(--alive); }
+
+  /* III. The case: a written account. Serif, breathing room, the practice's rule. */
+  .case {
+    border: none; border-left: 2px solid #7aa498;
+    background: linear-gradient(90deg, rgba(122,164,152,0.06), transparent 55%);
+    padding: 1.4rem 1.5rem 1.4rem 1.7rem;
+  }
+  .case-head h3 { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; letter-spacing: -0.01em; }
+  .case-where { color: #7aa498; }
+  .case-problem { font-family: var(--serif); font-size: 1.04rem; line-height: 1.7; }
+  .case-status { font-family: var(--serif); font-size: 0.98rem; line-height: 1.7; }
+
+  /* The numeral carries the hue so the eye learns the three before reading. */
+  section:has(.ops) .sec-num { color: var(--gold-accent); }
+  section:has(.built) .sec-num { color: var(--alive); }
+  section:has(.case) .sec-num { color: #7aa498; }
+
   @media (max-width: 620px) {
     .exits { grid-template-columns: 1fr; }
     .sec-head { grid-template-columns: 1fr; }

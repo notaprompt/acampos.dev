@@ -358,6 +358,9 @@
     objects.push({ id: id, x: x, y: y, w: w, h: h, url: url, label: label, external: !!external });
   }
 
+  // The painted wordmark, bottom-left, is the way home from anywhere.
+  registerObject('home', 3, 96, 72, 12, '/', 'campos.works — home');
+
   // ── Scene compositing ──
   function fillRect(x, y, w, h, colorIdx) {
     for (var r = y; r < y + h && r < ROWS; r++) {

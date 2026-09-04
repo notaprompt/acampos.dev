@@ -9,7 +9,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
   return res.json({
     person: {
       name: 'Alexander Campos',
-      title: 'Independent Engineer',
+      title: 'AI Operations Engineer',
       location: 'Virginia',
       url: 'https://campos.works',
       email: 'alex@campos.works',

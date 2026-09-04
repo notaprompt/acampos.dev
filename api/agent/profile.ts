@@ -13,7 +13,7 @@ export default function handler(_req: VercelRequest, res: VercelResponse) {
     schema_version: '2.0',
     person: {
       name: 'Alexander Campos',
-      title: 'Independent Operator & Builder',
+      title: 'AI Operations Engineer',
       description:
         HEADLINE,
       email: 'alex@campos.works',

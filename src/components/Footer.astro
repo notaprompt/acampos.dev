@@ -6,6 +6,17 @@
 // is one obvious next step plus a quiet index, not an inventory.
 const year = new Date().getFullYear();
 
+// The footer's one next step used to be the Snapshot on every page, which meant
+// the last thing a hiring manager read at the bottom of the resume was an offer
+// to audit their business. The right next step depends on which page you are
+// standing on, so pick it from the path: hiring-facing pages close on contact,
+// business-facing pages close on the Snapshot.
+const path = Astro.url.pathname;
+const hiringSurface = /^\/(resume|work|projects|writing|about)(\/|$)/.test(path);
+const cta = hiringSurface
+  ? { href: '/contact', lead: 'Talk to me about a role', sub: 'or just say hello — alex@campos.works' }
+  : { href: '/snapshot', lead: 'See where your business stands', sub: 'free · about a minute · no login' };
+
 const columns = [
   {
     title: 'work with me',
@@ -37,9 +48,9 @@ const columns = [
 
 <footer>
   <!-- One obvious next step. Everything else is an index. -->
-  <a class="footer-cta" href="/snapshot">
-    <span class="cta-lead">See where your business stands</span>
-    <span class="cta-sub">free · about a minute · no login</span>
+  <a class="footer-cta" href={cta.href}>
+    <span class="cta-lead">{cta.lead}</span>
+    <span class="cta-sub">{cta.sub}</span>
     <span class="cta-arrow" aria-hidden="true">→</span>
   </a>
 

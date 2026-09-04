@@ -23,7 +23,7 @@ const officeLine = [
 <Page title="alexander campos" description="Alexander Campos - engineer who builds and ships agent memory, model routing, and the tools that make them usable. Reframed (live), ForgeFrame (open source).">
   <section class="splash">
     <h1 class="site-name">Alexander Campos</h1>
-    <p class="lede">I build tools for you, your agents, and your business — memory, automations, and the operations underneath.</p>
+    <p class="lede">I build and run AI systems in places where the output gets audited — agent memory, model routing, and the operations underneath.</p>
     <p class="tagline">Operator by trade, builder by habit. <a href="/resume">Six years running operations in regulated finance</a>, the kind where someone eventually asks you to prove it. <a href="/work">My own work runs in production.</a> I build the whole stack myself, mostly at night. It's most of what I think about, and sometimes I <a href="/writing">write it down</a>.</p>
     <p class="warm-line">you are at the front door.</p>
 
@@ -34,23 +34,36 @@ const officeLine = [
     </div>
   </section>
 
-  <!-- the one thing to do here -->
+  <!-- two doors: two different people land here and want opposite things -->
   <section class="home-section">
-    <a class="home-offer" href="/snapshot">
-      <span class="offer-eyebrow">start here · free · about a minute</span>
-      <span class="offer-head">See where your business actually stands</span>
-      <span class="offer-body">
-        Give me your website. I read it the way a customer would, check what the rest
-        of the internet says about you, and show you the leaks with real numbers on them.
-        No login. If you're in good shape, it says so.
-      </span>
-      <span class="offer-go">run my snapshot <span aria-hidden="true">→</span></span>
-    </a>
+    <div class="door-pair">
+      <a class="home-offer" href="/work">
+        <span class="offer-eyebrow">if you are hiring or evaluating</span>
+        <span class="offer-head">What I have built, and how to check it</span>
+        <span class="offer-body">
+          Systems I run in production: agent memory, model routing, a signed forecast
+          ledger. Every claim has a link you can open or a number you could audit —
+          including the part at the bottom about what I have not done.
+        </span>
+        <span class="offer-go">see the work <span aria-hidden="true">→</span></span>
+      </a>
+
+      <a class="home-offer home-offer--quiet" href="/snapshot">
+        <span class="offer-eyebrow">if you run a business</span>
+        <span class="offer-head">See where your business actually stands</span>
+        <span class="offer-body">
+          Give me your website. I read it the way a customer would and show you the
+          leaks with real numbers on them. Free, about a minute, no login.
+        </span>
+        <span class="offer-go">run my snapshot <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
     <p class="offer-alt">
-      Or see <a href="/services">what I build and what it costs</a>.
+      Also here: <a href="/writing">the writing</a>
       <span class="alt-sep" aria-hidden="true">·</span>
-      Here to read rather than hire? <a href="/work">the work</a> and
-      <a href="/writing">the writing</a>.
+      <a href="/resume">the resume</a>
+      <span class="alt-sep" aria-hidden="true">·</span>
+      <a href="/services">what I build for businesses, and what it costs</a>
     </p>
   </section>
 
@@ -177,6 +190,26 @@ const officeLine = [
     transition: color 0.2s ease;
   }
   .offer-go span { transition: transform 0.2s ease; }
+
+  /* ── Two doors ──
+     A hiring manager and a business owner both land on this page wanting
+     opposite things. One CTA meant one of them was always in the wrong room,
+     and the one that is easy to lose is the hiring side — a services funnel
+     reads as "this person sells consulting" long before it reads as "this
+     person builds." Hiring reads first; the offer keeps its place, quieter. */
+  .door-pair {
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 720px) {
+    .door-pair { grid-template-columns: 1fr 1fr; }
+  }
+  .home-offer--quiet { border-color: var(--white-08); }
+  .home-offer--quiet .offer-eyebrow { color: var(--white-30); }
+  .home-offer--quiet .offer-head {
+    color: var(--white-60);
+    font-size: clamp(1.1rem, 2.8vw, 1.3rem);
+  }
 
   .offer-alt {
     font-family: var(--mono);

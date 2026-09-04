@@ -3,7 +3,7 @@ title: "ForgeFrame"
 tagline: "Open-source memory for agents. Memories decay over time. Principles don't. You decide which is which."
 status: "active"
 stack: ["TypeScript", "Node.js", "MCP Protocol", "SQLite", "FTS5", "Ollama", "WebGL2"]
-repo: "https://github.com/notaprompt/forgeframe"
+repo: "https://www.npmjs.com/package/@forgeframe/server"
 updated: 2026-08-08
 order: 2
 screenshots:

@@ -314,7 +314,7 @@ export const PARTS: BusinessPart[] = [
         claim:
           'I build provenance into systems by default: every record carries where it came from, when, and from what source. This is the part of my work that comes straight from regulated finance.',
         evidence: 'ForgeFrame, open source',
-        href: 'https://github.com/notaprompt/forgeframe',
+        href: 'https://www.npmjs.com/package/@forgeframe/server',
       },
       {
         claim:
@@ -428,7 +428,7 @@ export const OFFERS: Offer[] = [
     what:
       'A week with your business in front of me. I go through all eight parts properly — not from your website, but from your calendar, your inbox, your invoices, and one long conversation with you. You get a prioritized plan with real numbers attached.',
     who:
-      'Owners who know something is leaking but cannot name it, and would rather find out before spending on a build. If you hire me afterward, the $500 comes off the build.',
+      'Owners who know something is leaking but cannot name it, and would rather find out before spending on a build. If you hire me afterward, the fee comes off the build.',
     includes: [
       'A 90-minute working session — the actual business, not a discovery call',
       'All eight parts audited against how your trade actually makes money',

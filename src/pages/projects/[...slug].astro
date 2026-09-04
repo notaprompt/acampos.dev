@@ -1,4 +1,5 @@
 ---
+import creatureData from '../../data/creature.json';
 import Page from '../../layouts/Page.astro';
 import { getCollection, render } from 'astro:content';
 
@@ -77,6 +78,13 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
       <div id="creature-pulse" class="deuce-live">
         <div class="dl-quiet">reading the pulse&hellip;</div>
       </div>
+    )}
+
+    {entry.slug === 'creature' && (
+      <figure class="diagram" aria-label="Signal flow from the world through senses, state, mind, memory and dreams, to voice and gated hands">
+        <div class="diagram-scroll" set:html={creatureData.diagram} />
+        <figcaption>How a signal travels. Hands move only after an explicit yes.</figcaption>
+      </figure>
     )}
 
     {shots.length > 0 ? (
@@ -751,8 +759,10 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
   .project-content :global(.enforced) { list-style: none; padding: 0; margin: 0 0 1.75rem; border-top: 1px solid var(--white-15); }
   .project-content :global(.enforced li) { font-family: var(--mono); font-size: 0.8rem; line-height: 1.55; color: var(--white-60); padding: 0.55rem 0; border-bottom: 1px solid var(--white-08); }
   .project-content :global(.enforced b) { color: var(--glow-hot); font-weight: 600; margin-right: 0.35rem; }
-  .project-content :global(.diagram) { margin: 0 0 1rem; }
-  .project-content :global(.diagram figcaption) { font-family: var(--mono); font-size: 0.72rem; color: var(--white-45); margin-top: 0.5rem; }
+  .diagram { margin: 0 0 1.5rem; }
+  .diagram-scroll { overflow-x: auto; border: 1px solid var(--white-08); background: var(--depth-1); padding: 1rem; color: var(--white-60); }
+  .diagram-scroll :global(svg) { display: block; min-width: 620px; width: 100%; height: auto; }
+  .diagram figcaption { font-family: var(--mono); font-size: 0.72rem; color: var(--white-45); margin-top: 0.5rem; }
   .project-content :global(.door) { font-family: var(--mono); font-size: 0.8rem; color: var(--white-45); margin: 0 0 2rem; }
   .project-content :global(.door a) { color: var(--gold-accent); }
 </style>

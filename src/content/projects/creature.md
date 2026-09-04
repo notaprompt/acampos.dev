@@ -19,10 +19,6 @@ order: 2
   <li><b>Decay.</b> Memories fade with disuse. Principles and voice never do.</li>
 </ul>
 
-<figure class="diagram" aria-label="Signal flow from the world through senses, state, mind, memory and dreams, to voice and gated hands">
-  <div class="diagram-scroll" set:html={diagram} />
-  <figcaption>How a signal travels. Hands move only after an explicit yes.</figcaption>
-</figure>
 <p class="door">Every organ, counted once in August 2026 and frozen: <a href="/creature">the anatomy</a>.</p>
 
 The name is an acronym - cognitive, recursive, entropic, autopoietic, temporal, user-owned, reflective, emergent - but the honest description is simpler: an organism, not an assistant with a memory feature bolted on the side. A spine that decides what is safe, organs that do the work, a keeper that feels when something is wrong. The letter that carries the weight is the plain one in the middle - user-owned. ForgeFrame is the engine underneath it. Everything here runs local-first: my private thinking lives in a file on my own disk, and reaching the cloud is a deliberate, narrow act rather than the default.

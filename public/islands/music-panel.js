@@ -131,7 +131,7 @@
   var audioCtx = null;
   var analyser = null;
   var sourceNode = null;
-  var panelOpen = window.innerWidth > 768;
+  var panelOpen = false;
   var peaks = [];
   var peakDecay = [];
   var animId = null;

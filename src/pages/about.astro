@@ -11,12 +11,6 @@ const hasOfficePhoto = existsSync(new URL('../../public/images/office.jpg', impo
   <article>
     <h1>About</h1>
 
-    {hasOfficePhoto && (
-      <figure class="office-photo">
-        <img src="/images/office.jpg" alt="a grey french bulldog at the laptop keyboard, considering the screen" loading="lazy" decoding="async" />
-        <figcaption>where all of this runs</figcaption>
-      </figure>
-    )}
 
     <p>
       I'm Alex. 26, Virginia.
@@ -26,6 +20,12 @@ const hasOfficePhoto = existsSync(new URL('../../public/images/office.jpg', impo
       analysis, compliance, vendor work. Nothing there is finished until it can be shown to someone who
   was not in the room, and after enough years that becomes how you build everything.
     </p>
+    {hasOfficePhoto && (
+      <figure class="office-photo">
+        <img src="/images/office.jpg" alt="a grey french bulldog at the laptop keyboard, considering the screen" loading="lazy" decoding="async" />
+        <figcaption>where all of this runs</figcaption>
+      </figure>
+    )}
     <p>
       Nights I write code. A <a href="https://reframed.works">resume platform</a>, an
       <a href="/projects/forgeframe">open-source memory system</a> for agents, and tools
@@ -112,6 +112,7 @@ const hasOfficePhoto = existsSync(new URL('../../public/images/office.jpg', impo
     color: var(--white-30);
     padding: 0.35rem 0.1rem;
   }
+  .office-photo img { max-height: 260px; width: 100%; object-fit: cover; object-position: center 35%; }
 </style>
 
   <script is:inline src="/islands/world-map.js"></script>

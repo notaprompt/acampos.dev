@@ -6,6 +6,16 @@ import Page from '../layouts/Page.astro';
   <article class="resume">
     <h1>Resume</h1>
 
+    <ul class="stats" aria-label="At a glance">
+      <li><b>6 yrs</b><span>regulated finance ops</span></li>
+      <li><b>~80</b><span>people, SOP governance</span></li>
+      <li><b>$600M+</b><span>regulatory network monitored</span></li>
+      <li><b>78%</b><span>less manual review</span></li>
+      <li><b>20,000+</b><span>account failure resolved solo</span></li>
+      <li><b>$35B</b><span>merger, zero transmission errors</span></li>
+      <li><b>50+ hrs</b><span>cut in one quarter</span></li>
+    </ul>
+
     <section class="summary">
       <p>
         Six years in regulated bank operations, promoted four times in five years from a
@@ -245,4 +255,14 @@ import Page from '../layouts/Page.astro';
     font-size: 0.75rem;
     color: var(--white-45);
   }
+  .stats {
+    list-style: none; padding: 0; margin: 0 0 1.6rem;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    border-top: 1px solid var(--white-15); border-bottom: 1px solid var(--white-15);
+  }
+  .stats li { padding: 0.75rem 0.9rem 0.75rem 0; border-right: 1px solid var(--white-08); display: flex; flex-direction: column; gap: 0.15rem; }
+  .stats li:last-child { border-right: none; }
+  .stats b { font-family: var(--mono); font-size: 1.05rem; color: var(--gold-accent); font-weight: 600; letter-spacing: -0.01em; }
+  .stats span { font-size: 0.74rem; color: var(--white-45); line-height: 1.3; }
+  @media (max-width: 480px) { .stats { grid-template-columns: 1fr 1fr; } .stats li { border-right: none; } }
 </style>

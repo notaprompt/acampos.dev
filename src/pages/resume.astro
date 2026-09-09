@@ -130,10 +130,20 @@ import Page from '../layouts/Page.astro';
         <ul>
           <li>
             <strong>Model evaluation</strong> -- paid adversarial eval design for
-            frontier-model benchmarking in finance. I write cases where the plausible
-            answer is wrong for a defensible reason, weight the rubric so cosmetic
-            success does not pass, and trace a failed score back to the specific
-            reasoning step that caused it rather than counting failed rows.
+            frontier-model benchmarking: OpenAI's GDPVal benchmark (finance,
+            customer-service batch) through LinkedIn's AI Trainer program, and a legal
+            hold, preservation, discovery and production batch (Sept–Oct 2026). I write
+            cases where the plausible answer is wrong for a defensible reason, weight the
+            rubric so cosmetic success does not pass, and trace a failed score back to
+            the specific reasoning step that caused it rather than counting failed rows.
+          </li>
+          <li>
+            <strong>Assay</strong> -- a local workbench for authoring benchmark tasks.
+            Rubric linter calibrated against 4,794 accepted criteria from the public
+            GDPVal corpus, coverage mapping, weighted pass-rate gates, client workbook
+            export. TypeScript, 91 tests. It generates no text that ships. Measuring the
+            corpus first showed the obvious specificity rule would reject 66% of accepted
+            criteria; the shipped rule is the one that survived the data.
           </li>
           <li>
             <strong><a href="https://reframed.works">Reframed</a></strong> -- the antithesis
@@ -182,8 +192,9 @@ import Page from '../layouts/Page.astro';
 
       <h3>AI</h3>
       <p class="skills">
-        Adversarial eval design &amp; red-teaming · Eval automation (weighted rubrics,
-        failure-mode diagnosis) · Local open-source model benchmarking (Ollama, llama.cpp) ·
+        Adversarial eval design &amp; red-teaming · Rubric authoring &amp; calibration against
+        gold-standard corpora · Eval automation (weighted rubrics, failure-mode diagnosis) ·
+        Local open-source model benchmarking (Ollama, MLX, llama.cpp) ·
         Multi-provider model routing with fallback chains · Agent memory (MCP) ·
         Prompt &amp; instruction-set validation · Governed AI adoption in a regulated line of business
       </p>

@@ -6,7 +6,7 @@ stack: ["embedding-distance router", "fail-closed sovereignty", "compiled judgme
 screenshots: []
 metrics:
   - { label: "consolidation cycles", value: "24,603 nrem · 217 rem", asof: "Aug 2026", source: "daemon log" }
-  - { label: "memory classes", value: "2,096 public · 1,818 sensitive · 1,410 local-only", asof: "Aug 2026", source: "memory.db" }
+  - { label: "memory classes", value: "3,227 public · 4,489 sensitive · 1,666 local-only", asof: "Sep 2026", source: "memory.db" }
 updated: 2026-08-08
 order: 2
 ---

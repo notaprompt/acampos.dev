@@ -13,7 +13,7 @@ metrics:
   - { label: "tests", value: "888 (884 passing)", asof: "Aug 2026", source: "test runner" }
   - { label: "packages", value: "4", asof: "Aug 2026" }
   - { label: "commits", value: "188 on main", asof: "Aug 2026" }
-  - { label: "memories under management", value: "5,262", asof: "Aug 2026", source: "memory.db" }
+  - { label: "memories under management", value: "9,382", asof: "Sep 2026", source: "memory.db" }
 
 ---
 

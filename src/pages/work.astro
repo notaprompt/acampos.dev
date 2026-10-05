@@ -1,13 +1,7 @@
 ---
 import Page from '../layouts/Page.astro';
 
-// This page used to restate the projects catalogue and the resume in shorter,
-// weaker form. Now it holds only what exists nowhere else — the client
-// engagement in full, and the honest limits — and routes everyone else out
-// at the top, before they have to read anything aimed at someone else.
-
-// Two of the three are mine; the third is the only one someone paid attention to
-// that I did not also commission. Kept short because the catalogue does depth.
+// The corporate record leads; the catalogue holds the full list of builds.
 const BUILT = [
   {
     name: 'ForgeFrame',
@@ -16,22 +10,10 @@ const BUILT = [
     fact: 'MIT on npm. MCP-native, SQLite with FTS5, provenance on every record. 888 tests, four packages, the memory layer under everything else here.',
   },
   {
-    name: 'CREATURE',
-    href: '/projects/creature',
-    line: 'A mind that runs on one machine. Every capability is an organ with a declared boundary and three fail-closed laws it cannot break.',
-    fact: '36 services under launchd, 9,000+ memories, nightly consolidation. Local by construction; the cloud is opt-in and never handed a memory.',
-  },
-  {
     name: 'Model routing',
     href: '/projects/reframed',
     line: 'Tier-based dispatch with fallback chains across providers, so an outage degrades instead of failing.',
     fact: 'Inference cost down 40–60% in production. The same layer routes Reframed, the Snapshot, and everything on this site.',
-  },
-  {
-    name: 'DEUCE',
-    href: '/projects/deuce',
-    line: 'A calibration-first pricing instrument for prediction markets. It prices fair value, then signs each forecast before the market resolves.',
-    fact: 'Ed25519 ledger, tamper-evident. The ledger is the product, not a profit claim — thousands of signed forecasts you can check.',
   },
   {
     name: 'Reframed',
@@ -50,7 +32,7 @@ const BUILT = [
 
 <Page
   title="work — alexander campos"
-  description="The client engagement in full, what I have built, and what I have not done. Everything here has a link you can click or a number you could audit."
+  description="Enterprise systems owned in regulated financial services, the systems I build and run, and one client engagement in full."
 >
   <article class="work">
     <p class="eyebrow">what exists, and can be checked</p>
@@ -63,31 +45,52 @@ const BUILT = [
     <section>
       <div class="sec-head">
         <span class="sec-num">I</span>
-        <h2>The operations record</h2>
+        <h2>Enterprise systems I have owned</h2>
         <p class="sec-gloss">
-          Six years where a mistake becomes an audit finding. One method the whole way:
-          find the failure in the data, map the surface it lives on, design the fix on
-          the map, and only then build.
+          Six years in regulated financial services, mostly in the places where technical
+          systems, outside counterparties, controls and operations meet. One method the
+          whole way: find the failure in the data, map the surface it lives on, design the
+          fix on the map, and only then build.
         </p>
       </div>
 
       <ul class="ops">
         <li>
-          <strong>Find it.</strong> A <strong>20,000+ account logic failure</strong> with the
-          Data team six weeks backlogged. Wrote the SQL that pulled it out, isolated root
-          cause, remediated, and named the surface it lived on in a failure taxonomy — then
-          put monitoring on that surface so it could not recur quietly.
+          <strong>External integrations.</strong> Own the Systems Integration Guide that
+          outside law firms are onboarded against, and the technical backbone behind it with
+          Engineering: transmission specs, routing, and encryption keys. Specification
+          failures get caught with Engineering and the vendor before production cutover,
+          not after.
         </li>
         <li>
-          <strong>Map it.</strong> A <strong>$600M+ regulatory file exchange</strong> moving
-          300+ transmissions a day. Every anomaly population mapped to a control gap and
-          reconciled to a fix; the prototype became an automated pipeline. Manual review
-          down 78%.
+          <strong>A $600M+ regulated exchange.</strong> Own controls and observability
+          across 300+ daily transmissions on a multi-file, multi-supplier pipeline with
+          ingestion, interaction, reject and acknowledgement stages. Built the anomaly
+          detection from a prototype into an automated pipeline, <strong>manual monitoring
+          down 78%</strong>, and own reject and failure resolution end to end.
         </li>
         <li>
-          <strong>Design before build.</strong> The <strong>$35B Discover integration</strong>.
-          Dependencies sequenced, approval gates and rollback protocols in front of every
-          cutover, the Systems Integration Guide rewritten end to end. Zero transmission errors.
+          <strong>A 20,000+ account failure.</strong> With the Data team six weeks
+          backlogged, wrote the SQL investigation, isolated root cause, remediated, and put
+          monitoring on the failure surfaces so it could not recur quietly. Root-cause
+          analysis moved to the Process team permanently.
+        </li>
+        <li>
+          <strong>Merger integration.</strong> Owned the department's Systems Integration
+          Guide through the Capital One–Discover transition, coordinating requirements
+          across Engineering, Operations and external vendors. Zero transmission errors
+          within my scope.
+        </li>
+        <li>
+          <strong>Executive translation.</strong> Built the business-review pipeline that
+          consolidates six teams and 20+ operational data points into one-pagers. Leaders
+          three levels up run their quarterly reviews on them, and it runs without me.
+        </li>
+        <li>
+          <strong>Scaling the mechanism.</strong> Own SOP governance for a department of
+          about 80 people across 8-9 teams. Cut 50+ hours of manual work in one quarter with
+          scripted automation, and brought governed AI use into remediation work before
+          there was a playbook; the pattern is now used across multiple teams.
         </li>
       </ul>
 
@@ -121,8 +124,7 @@ const BUILT = [
       }
 
       <p class="more">
-        Written up properly in <a href="/projects">the catalogue</a>, along with
-        everything else.
+        CREATURE, DEUCE and the rest are written up in <a href="/projects">the catalogue</a>.
       </p>
     </section>
 
@@ -211,21 +213,6 @@ const BUILT = [
     </section>
 
     <hr />
-
-    <section class="not-done">
-      <h2>What I have not done</h2>
-      <p>
-        I have not run a fifty-person agency, shipped at enterprise scale as an engineer,
-        or spent years inside any one trade. One client engagement, not a book of them.
-        If you need someone who has done your exact build eleven times before, that is a
-        reasonable thing to want and I am not that person.
-      </p>
-      <p>
-        What I do have is six years of making operations work under audit, a habit of
-        building things that document themselves, and the willingness to tell you when the
-        answer is software you can buy for $40 a month.
-      </p>
-    </section>
 
     <section class="cta-block">
       <h2>What happens next</h2>

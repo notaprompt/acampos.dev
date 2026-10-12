@@ -439,7 +439,7 @@
     var a1 = el('a', 'btn btn-primary', 'Book a free 30 minutes');
     a1.href = '/contact?from=snapshot';
     var a2 = el('a', 'btn btn-ghost', 'See what things cost');
-    a2.href = '/services#offers';
+    a2.href = '/contact';
     row.appendChild(a1); row.appendChild(a2);
     cta.appendChild(row);
     host.appendChild(cta);

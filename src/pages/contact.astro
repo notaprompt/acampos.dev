@@ -94,24 +94,6 @@ const CAL = 'https://calendly.com/alex-campos-8chs/30min';
       </p>
     </section>
 
-    <section class="ladder">
-      <h2>What things cost</h2>
-      <div class="ladder-rows">
-        {
-          OFFERS.map((o) => (
-            <a class="lrow" href={`/services#offers`}>
-              <span class="l-name">{o.name}</span>
-              <span class="l-price">{o.price}</span>
-              <span class="l-time">{o.timeline}</span>
-            </a>
-          ))
-        }
-      </div>
-      <p class="fine">
-        Full detail on <a href="/services">the services page</a>, including which of
-        the eight parts of a business each one covers.
-      </p>
-    </section>
   </article>
 </Page>
 

@@ -14,14 +14,13 @@ const year = new Date().getFullYear();
 const path = Astro.url.pathname;
 const hiringSurface = /^\/(resume|work|projects|writing|about)(\/|$)/.test(path);
 const cta = hiringSurface
-  ? { href: '/contact', lead: 'Talk to me about a role', sub: 'or just say hello — alex@campos.works' }
+  ? { href: '/contact', lead: 'Get in touch', sub: 'or just say hello — alex@campos.works' }
   : { href: '/snapshot', lead: 'See where your business stands', sub: 'free · about a minute · no login' };
 
 const columns = [
   {
     title: 'work with me',
     links: [
-      { href: '/services', label: 'services' },
       { href: '/work', label: 'what I have built' },
       { href: '/contact', label: 'get in touch' },
     ],

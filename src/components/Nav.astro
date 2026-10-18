@@ -1,35 +1,22 @@
 ---
-// Two surfaces, two navs, chosen by path.
-//
-// This site carries a person and a business. One nav for both meant every
-// visitor saw a consulting menu next to the writing, and a hiring manager
-// met the storefront before the work. Now the main site shows four items and
-// the practice shows its own four; each surface links to the other exactly
-// once, elsewhere on the page, so the nav never has to do that job.
+// One surface. The practice nav went when the business pages came down.
 const path = Astro.url.pathname;
-const practice = /^\/(services|snapshot|ai-visibility|the-index)(\/|$)/.test(path);
 
-const links = practice
-  ? [
-      { href: '/', label: '← campos.works' },
-      { href: '/contact', label: 'contact' },
-      { href: '/snapshot', label: 'free snapshot', accent: true },
-    ]
-  : [
-      { href: '/', label: 'home' },
-      { href: '/work', label: 'work' },
-      { href: '/writing', label: 'writing' },
-      { href: '/about', label: 'about' },
-      { href: '/contact', label: 'contact', accent: true },
-    ];
+const links = [
+  { href: '/', label: 'home' },
+  { href: '/work', label: 'work' },
+  { href: '/writing', label: 'writing' },
+  { href: '/about', label: 'about' },
+  { href: '/contact', label: 'contact', accent: true },
+];
 
 const isActive = (href: string) => {
   const base = href.split('#')[0];
-  return path === base || (base !== '/' && path.startsWith(base) && !(base === '/services' && path.startsWith('/services/pricing') && href !== '/services/pricing'));
+  return path === base || (base !== '/' && path.startsWith(base));
 };
 ---
 
-<nav aria-label="Main navigation" class:list={[{ practice }]}>
+<nav aria-label="Main navigation">
   <ul>
     {links.map(link => (
       <li>
@@ -76,6 +63,4 @@ const isActive = (href: string) => {
   .nav-accent { color: var(--gold-accent); }
   .nav-accent:hover, .nav-accent.active { color: var(--glow-hot); }
 
-  /* The practice runs its own accent so the surface reads as its own property. */
-  nav.practice .nav-accent { color: #7aa498; }
 </style>

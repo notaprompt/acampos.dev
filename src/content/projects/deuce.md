@@ -3,7 +3,7 @@ title: "DEUCE"
 tagline: "A calibration-first pricing instrument for tennis prediction markets. It prices fair value, then signs each forecast to a tamper-evident ledger before the market resolves. The ledger is the product, not a profit claim."
 status: "active"
 stack: ["Python", "SQLite", "Polymarket", "Kalshi", "Ed25519", "Ollama"]
-order: 3
+order: 4
 metrics:
   - { label: "signed forecasts", value: "2,552", asof: "Aug 2026", source: "append-only ledger", plain: "a sample big enough to tell skill from luck - and it exists whether it flatters me or not" }
   - { label: "committed", value: "before resolution, ed25519", asof: "Aug 2026", plain: "signed before the outcome was known, so a good record cannot be faked - and a bad one cannot be hidden" }
@@ -12,7 +12,7 @@ metrics:
 
 ---
 
-**Cold read.** People bet real money on live tennis through prediction markets - exchanges for yes/no questions, where the price is the crowd's odds. DEUCE is a program that watches those markets, forms its own opinion of the odds, and seals that opinion in a signed, dated record *before the match ends*. Then reality grades it. No money rides on any of it yet - on purpose.
+**Cold read.** Prediction markets put a live price on tennis matches - exchanges for yes/no questions, where the price is the crowd's odds. DEUCE is a program that watches those markets, forms its own opinion of the odds, and seals that opinion in a signed, dated record *before the match ends*. Then reality grades it. No money rides on any of it yet - on purpose.
 
 Most trading writeups show you the wins and quietly bury the log. This is the opposite: the record comes first, the outcome comes second, and there is no way for me to rewrite history to look sharper than I was. The machine above is the real shape - touch a station. Each one names the engineering feat, the architectural choice, and the thing it refuses to do. The refusals are the design: every hard decision in DEUCE is a "no" enforced by code rather than discipline.
 

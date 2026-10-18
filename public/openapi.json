@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "campos.works Agent API",
-    "description": "Callable tools for Alexander Campos — independent AI infrastructure engineer. Book consultations, retrieve capability profile. All endpoints are public (no auth required).",
+    "description": "Public read-only endpoints for Alexander Campos's site profile. No auth required.",
     "version": "1.0.0",
     "contact": {
       "name": "Alexander Campos",
@@ -21,7 +21,7 @@
       "get": {
         "operationId": "getAgentProfile",
         "summary": "Get full capability manifest",
-        "description": "Returns structured data about services offered, projects built, technical capabilities, availability, and all machine-readable discovery endpoints.",
+        "description": "Returns structured data about background, projects built, technical capabilities, and machine-readable discovery endpoints.",
         "responses": {
           "200": {
             "description": "Capability manifest",
@@ -35,38 +35,6 @@
           }
         }
       }
-    },
-    "/api/agent/book": {
-      "post": {
-        "operationId": "bookConsultation",
-        "summary": "Submit a consultation booking request",
-        "description": "Submit a request for a free 30-minute consultation. Name and email are required. Returns a confirmation message and direct booking URL.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BookingRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Booking confirmation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BookingResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Missing required fields"
-          }
-        }
-      }
     }
   },
   "components": {
@@ -74,26 +42,26 @@
       "AgentProfile": {
         "type": "object",
         "properties": {
-          "schema_version": { "type": "string" },
+          "schema_version": {
+            "type": "string"
+          },
           "person": {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
-              "title": { "type": "string" },
-              "description": { "type": "string" },
-              "email": { "type": "string" },
-              "website": { "type": "string" }
-            }
-          },
-          "services": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": { "type": "string" },
-                "description": { "type": "string" },
-                "category": { "type": "string" },
-                "booking_url": { "type": "string" }
+              "name": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "website": {
+                "type": "string"
               }
             }
           },
@@ -102,65 +70,33 @@
             "items": {
               "type": "object",
               "properties": {
-                "name": { "type": "string" },
-                "description": { "type": "string" },
-                "url": { "type": "string" }
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
               }
             }
           },
           "capabilities": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "actions": { "type": "object" },
-          "discovery": { "type": "object" },
-          "availability": { "type": "string" },
-          "last_updated": { "type": "string", "format": "date-time" }
-        }
-      },
-      "BookingRequest": {
-        "type": "object",
-        "required": ["name", "email"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "maxLength": 200,
-            "description": "Full name of the person or organization requesting the consultation"
+          "actions": {
+            "type": "object"
           },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "maxLength": 200,
-            "description": "Contact email address"
+          "discovery": {
+            "type": "object"
           },
-          "service": {
+          "last_updated": {
             "type": "string",
-            "maxLength": 200,
-            "description": "Service of interest (e.g. 'The Snapshot', 'The Teardown', 'Fix One Thing', 'The Modern Build', 'Operator')"
-          },
-          "message": {
-            "type": "string",
-            "maxLength": 2000,
-            "description": "Optional message describing the project or need"
-          }
-        }
-      },
-      "BookingResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "enum": ["received"],
-            "description": "Confirmation that the request was received"
-          },
-          "message": {
-            "type": "string",
-            "description": "Human-readable confirmation message"
-          },
-          "booking_url": {
-            "type": "string",
-            "format": "uri",
-            "description": "Direct URL to schedule the 30-minute call"
+            "format": "date-time"
           }
         }
       }

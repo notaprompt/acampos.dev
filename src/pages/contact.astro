@@ -1,99 +1,37 @@
 ---
 import Page from '../layouts/Page.astro';
-import { OFFERS, PARTS, offerBySlug, partBySlug } from '../data/services';
-
-// Context comes in from every CTA on the site, so the page can open already
-// knowing what the visitor was reading.
-const offerSlug = Astro.url.searchParams.get('offer');
-const partSlug = Astro.url.searchParams.get('part');
-const from = Astro.url.searchParams.get('from');
-
-const offer = offerSlug ? offerBySlug(offerSlug) : undefined;
-const part = partSlug ? partBySlug(partSlug) : undefined;
-
-let context = '';
-if (offer) context = `about ${offer.name}`;
-else if (part) context = `about ${part.name.toLowerCase()}`;
-else if (from === 'snapshot') context = 'about your Snapshot';
-
-const subject = offer
-  ? `${offer.name} — enquiry`
-  : part
-    ? `${part.name} — enquiry`
-    : from === 'snapshot'
-      ? 'My Snapshot'
-      : 'Enquiry from campos.works';
-
-const CAL = 'https://calendly.com/alex-campos-8chs/30min';
 ---
 
 <Page
   title="contact — alexander campos"
-  description="Book a free 30 minutes, or just email. I answer these myself."
+  description="Email is best. I answer these myself."
 >
   <article class="contact">
-    <p class="eyebrow">no sales process</p>
-    <h1>Let's talk {context}</h1>
+    <p class="eyebrow">say hello</p>
+    <h1>Get in touch</h1>
     <p class="lede">
-      Thirty minutes, free, no deck. Bring the thing that is annoying you most and
-      I will tell you what I would do about it — including when the answer is
-      software you can buy for $40 a month instead of hiring me.
+      Questions about something I wrote or built, an idea you want to compare notes on,
+      or just hello. Email is best, and I read everything myself.
     </p>
 
-    {
-      offer && (
-        <div class="ctx">
-          <span class="ctx-lab">You were looking at</span>
-          <strong>{offer.name}</strong>
-          <span class="ctx-price">{offer.price}</span>
-          <p>{offer.what}</p>
-        </div>
-      )
-    }
-    {
-      part && (
-        <div class="ctx">
-          <span class="ctx-lab">You were looking at</span>
-          <strong>{part.name}</strong>
-          <span class="ctx-price">
-            ${part.priceFrom.toLocaleString()}–${part.priceTo.toLocaleString()}
-          </span>
-          <p>{part.summary}</p>
-        </div>
-      )
-    }
-
     <div class="routes">
-      <a class="route route--primary" href={CAL} target="_blank" rel="noopener">
-        <span class="r-lab">Book a time</span>
-        <span class="r-detail">30 minutes, free, on my calendar</span>
-      </a>
-      <a class="route" href={`mailto:alex@campos.works?subject=${encodeURIComponent(subject)}`}>
+      <a class="route route--primary" href="mailto:alex@campos.works?subject=Hello%20from%20campos.works">
         <span class="r-lab">alex@campos.works</span>
-        <span class="r-detail">I answer these myself, usually within a day</span>
+        <span class="r-detail">usually within a day</span>
       </a>
-      <a class="route" href="/snapshot">
-        <span class="r-lab">Run a Snapshot first</span>
-        <span class="r-detail">About a minute. Gives us both something concrete to talk about.</span>
+      <a class="route" href="https://linkedin.com/in/alexander-d-campos" target="_blank" rel="noopener">
+        <span class="r-lab">LinkedIn</span>
+        <span class="r-detail">alexander-d-campos</span>
+      </a>
+      <a class="route" href="https://github.com/notaprompt" target="_blank" rel="noopener">
+        <span class="r-lab">GitHub</span>
+        <span class="r-detail">notaprompt</span>
+      </a>
+      <a class="route" href="https://x.com/flapfinned" target="_blank" rel="noopener">
+        <span class="r-lab">X</span>
+        <span class="r-detail">@flapfinned</span>
       </a>
     </div>
-
-    <hr />
-
-    <section class="expect">
-      <h2>What happens on the call</h2>
-      <ol>
-        <li>You tell me what is actually annoying you. Not a briefing — the real thing.</li>
-        <li>I ask about how work currently reaches you, and how it gets priced and billed.</li>
-        <li>I tell you what I would fix first, roughly what it costs, and what I would leave alone.</li>
-        <li>If there is a fit, I send a fixed scope and a fixed price. If there isn't, I say so.</li>
-      </ol>
-      <p class="fine">
-        No follow-up sequence, no "checking in" emails. If you go quiet I assume the
-        answer is no, and that is fine.
-      </p>
-    </section>
-
   </article>
 </Page>
 

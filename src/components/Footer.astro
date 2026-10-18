@@ -6,40 +6,25 @@
 // is one obvious next step plus a quiet index, not an inventory.
 const year = new Date().getFullYear();
 
-// The footer's one next step used to be the Snapshot on every page, which meant
-// the last thing a hiring manager read at the bottom of the resume was an offer
-// to audit their business. The right next step depends on which page you are
-// standing on, so pick it from the path: hiring-facing pages close on contact,
-// business-facing pages close on the Snapshot.
-const path = Astro.url.pathname;
-const hiringSurface = /^\/(resume|work|projects|writing|about)(\/|$)/.test(path);
-const cta = hiringSurface
-  ? { href: '/contact', lead: 'Get in touch', sub: 'or just say hello — alex@campos.works' }
-  : { href: '/snapshot', lead: 'See where your business stands', sub: 'free · about a minute · no login' };
+// One next step on every page: say hello.
+const cta = { href: '/contact', lead: 'Get in touch', sub: 'or just say hello: alex@campos.works' };
 
 const columns = [
   {
-    title: 'work with me',
+    title: 'the work',
     links: [
       { href: '/work', label: 'what I have built' },
-      { href: '/contact', label: 'get in touch' },
-    ],
-  },
-  {
-    title: 'free',
-    links: [
-      { href: '/snapshot', label: 'business snapshot' },
-      { href: '/ai-visibility', label: 'ai visibility check' },
-      { href: '/the-index', label: 'the index' },
+      { href: '/projects', label: 'projects' },
+      { href: '/resume', label: 'resume' },
     ],
   },
   {
     title: 'elsewhere',
     links: [
       { href: '/writing', label: 'writing' },
-      { href: '/projects', label: 'projects' },
-      { href: '/resume', label: 'resume' },
+      { href: '/influences', label: 'influences' },
       { href: '/misc', label: 'glossary' },
+      { href: '/contact', label: 'get in touch' },
     ],
   },
 ];

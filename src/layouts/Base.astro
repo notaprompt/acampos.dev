@@ -68,7 +68,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     "@type": "Person",
     "name": "Alexander Campos",
     "url": Astro.site?.toString(),
-    "jobTitle": "AI Operations Engineer",
+    "jobTitle": "Operations & AI systems",
     "description": "Builds and runs AI systems where the output gets audited - agent memory, model routing, and the operations underneath. Six years running operations in regulated finance. ForgeFrame (MCP memory server, open source), Reframed (live).",
     "sameAs": [
       "https://github.com/notaprompt",
@@ -93,7 +93,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     ],
     "contactPoint": {
       "@type": "ContactPoint",
-      "contactType": "customer service",
+      "contactType": "general",
       "email": "alex@campos.works",
       "url": "mailto:alex@campos.works",
       "availableLanguage": "English"
@@ -121,102 +121,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       "availability": "https://schema.org/InStock"
     },
     "installUrl": "https://www.npmjs.com/package/@forgeframe/server"
-  })} />
-
-  <!-- Services Structured Data -->
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "ProfessionalService",
-    "name": "Alexander Campos",
-    "url": "https://campos.works/services",
-    "provider": {
-      "@type": "Person",
-      "name": "Alexander Campos",
-      "url": "https://campos.works"
-    },
-    "areaServed": "Worldwide",
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Services",
-      "itemListElement": [
-        {
-          "@type": "Offer",
-          "name": "The Snapshot",
-          "price": "0",
-          "priceCurrency": "USD",
-          "url": "https://campos.works/snapshot",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "The Snapshot",
-            "description": "Free automated diagnostic of a small business across eight parts: being found, intake, quoting, follow-up, scheduling, getting paid, records, and the owner's operating picture. No account required."
-          }
-        },
-        {
-          "@type": "Offer",
-          "name": "The Teardown",
-          "price": "500",
-          "priceCurrency": "USD",
-          "url": "https://campos.works/contact?offer=teardown",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "The Teardown",
-            "description": "A week of analysis plus a 90-minute working session. Prioritized plan with costs attached, credited against a later build."
-          }
-        },
-        {
-          "@type": "Offer",
-          "name": "Fix One Thing",
-          "priceCurrency": "USD",
-          "url": "https://campos.works/contact?offer=fix-one-thing",
-          "priceSpecification": {
-            "@type": "PriceSpecification",
-            "minPrice": "1500",
-            "maxPrice": "8000",
-            "priceCurrency": "USD"
-          },
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Fix One Thing",
-            "description": "One business system built end to end, integrated, team trained, handed over running. Fixed scope and price."
-          }
-        },
-        {
-          "@type": "Offer",
-          "name": "The Modern Build",
-          "priceCurrency": "USD",
-          "url": "https://campos.works/contact?offer=modern-build",
-          "priceSpecification": {
-            "@type": "PriceSpecification",
-            "minPrice": "9000",
-            "maxPrice": "25000",
-            "priceCurrency": "USD"
-          },
-          "itemOffered": {
-            "@type": "Service",
-            "name": "The Modern Build",
-            "description": "Front door, intake, quoting and follow-up built as one connected system with a single customer record."
-          }
-        },
-        {
-          "@type": "Offer",
-          "name": "Operator",
-          "priceCurrency": "USD",
-          "url": "https://campos.works/contact?offer=operator",
-          "priceSpecification": {
-            "@type": "PriceSpecification",
-            "minPrice": "800",
-            "maxPrice": "2500",
-            "priceCurrency": "USD",
-            "unitText": "MONTH"
-          },
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Operator",
-            "description": "Maintenance, monitoring, a monthly operating picture, and standing build hours. Month to month."
-          }
-        }
-      ]
-    }
   })} />
 
   <!-- Fonts -->

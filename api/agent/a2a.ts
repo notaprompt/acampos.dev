@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { OFFERS, ENTRY_POINT, HEADLINE } from '../_lib/offering.js';
+import { PERSON, PROJECTS, CAPABILITIES, LINKS } from '../_lib/person.js';
 
 // ── A2A Protocol v0.2 types ──────────────────────────────────────────────────
 
@@ -39,63 +39,15 @@ function sseEvent(id: string, status: TaskStatus, result?: TaskMessage): string 
   return `data: ${JSON.stringify(payload)}\n\n`;
 }
 
-function extractInput(task: A2ATask): Record<string, unknown> {
-  const dataParts = task.message.parts.filter((p) => p.type === 'data');
-  if (dataParts.length > 0) {
-    return Object.assign({}, ...dataParts.map((p) => p.data ?? {}));
-  }
-  const textParts = task.message.parts.filter((p) => p.type === 'text');
-  if (textParts.length > 0) {
-    try {
-      return JSON.parse(textParts[0].text ?? '{}');
-    } catch {
-      return { message: textParts.map((p) => p.text).join(' ') };
-    }
-  }
-  return {};
-}
-
 // ── Skill handlers ───────────────────────────────────────────────────────────
 
 function handleGetProfile(): Record<string, unknown> {
   return {
-    person: {
-      name: 'Alexander Campos',
-      title: 'Independent Researcher & Engineer',
-      description:
-        HEADLINE,
-      email: 'alex@campos.works',
-      website: 'https://campos.works',
-    },
-    services: OFFERS.map((o) => ({ name: o.name, category: o.category, price: o.price, url: o.url })),
-    entryPoint: ENTRY_POINT,
-    capabilities: [
-      'typescript', 'python', 'model-context-protocol', 'ollama',
-      'local-first-architecture', 'memory-systems', 'model-routing',
-    ],
-    availability: 'Free 30-minute consultation. No pitch — just a conversation about what you need.',
-    booking_url: 'https://calendly.com/alex-campos-8chs/30min',
+    person: PERSON,
+    projects: PROJECTS,
+    capabilities: CAPABILITIES,
+    links: LINKS,
     full_profile: 'https://campos.works/api/agent/profile',
-  };
-}
-
-function handleBookConsultation(
-  input: Record<string, unknown>
-): { status: string; message: string; booking_url: string } | { error: string } {
-  const { name, email } = input;
-  if (!name || !email) {
-    return { error: 'name and email are required' };
-  }
-  const nameStr = String(name).slice(0, 200);
-  const emailStr = String(email).slice(0, 200);
-  if (!emailStr.includes('@')) {
-    return { error: 'email appears invalid' };
-  }
-  // v1: return confirmation + booking URL (no DB write — scheduling happens on cal.com)
-  return {
-    status: 'received',
-    message: `Got it, ${nameStr}. Use the link below to pick a time that works for you.`,
-    booking_url: 'https://calendly.com/alex-campos-8chs/30min',
   };
 }
 
@@ -135,15 +87,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
     if (task.skill === 'get-profile') {
       resultData = handleGetProfile();
-    } else if (task.skill === 'book-consultation') {
-      const out = handleBookConsultation(extractInput(task));
-      if ('error' in out) {
-        error = out.error;
-      } else {
-        resultData = out as Record<string, unknown>;
-      }
     } else {
-      error = `Unknown skill: "${task.skill}". Available: get-profile, book-consultation`;
+      error = `Unknown skill: "${task.skill}". Available: get-profile`;
     }
 
     if (error) {
@@ -174,28 +119,9 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  if (task.skill === 'book-consultation') {
-    const out = handleBookConsultation(extractInput(task));
-    if ('error' in out) {
-      return res.status(400).json({
-        id: task.id,
-        status: { state: 'failed', timestamp: now(), message: out.error },
-      });
-    }
-    const result: TaskMessage = {
-      role: 'agent',
-      parts: [{ type: 'data', data: out as Record<string, unknown> }],
-    };
-    return res.json({
-      id: task.id,
-      status: { state: 'completed', timestamp: now() },
-      result,
-    });
-  }
-
   return res.status(400).json({
     id: task.id,
     status: { state: 'failed', timestamp: now() },
-    error: `Unknown skill: "${task.skill}". Available: get-profile, book-consultation`,
+    error: `Unknown skill: "${task.skill}". Available: get-profile`,
   });
 }

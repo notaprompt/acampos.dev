@@ -1,7 +1,7 @@
 {
   "schemaVersion": "0.2",
   "name": "Alexander Campos",
-  "description": "Independent builder. I ship AI that runs where mistakes get audited - local-first, audit-trailed, provenance by default. Six years in regulated finance.",
+  "description": "Profile agent for Alexander Campos: bank operations by day, local-first AI tools by night.",
   "url": "https://campos.works",
   "provider": {
     "organization": "campos.works",
@@ -16,38 +16,40 @@
     "stateTransitionHistory": false
   },
   "authentication": {
-    "schemes": ["None"]
+    "schemes": [
+      "None"
+    ]
   },
-  "defaultInputModes": ["text/plain", "application/json"],
-  "defaultOutputModes": ["application/json", "text/event-stream"],
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "application/json",
+    "text/event-stream"
+  ],
   "skills": [
     {
       "id": "get-profile",
       "name": "Get Agent Profile",
-      "description": "Returns full structured capability manifest: services offered, projects built, technical skills, availability, and all discovery endpoints.",
-      "tags": ["discovery", "profile", "capabilities"],
+      "description": "Returns a structured profile: background, projects, technical skills, and discovery endpoints.",
+      "tags": [
+        "discovery",
+        "profile",
+        "capabilities"
+      ],
       "examples": [
-        "What services does this agent offer?",
         "What are Alexander Campos's technical capabilities?",
         "Can this agent help with MCP server setup?",
         "What projects has this person built?"
       ],
-      "inputModes": ["application/json", "text/plain"],
-      "outputModes": ["application/json"]
-    },
-    {
-      "id": "book-consultation",
-      "name": "Book a Consultation",
-      "description": "Submit a booking request for a free 30-minute consultation. Accepts name, email, service interest, and optional message. Returns a confirmation and direct booking URL.",
-      "tags": ["booking", "consultation", "services"],
-      "examples": [
-        "Book a consultation about AI cost optimization",
-        "Schedule a call to discuss MCP server setup",
-        "I'd like to talk about agentic SEO for my business",
-        "Set up a 30-minute call with Alexander"
+      "inputModes": [
+        "application/json",
+        "text/plain"
       ],
-      "inputModes": ["application/json"],
-      "outputModes": ["application/json"]
+      "outputModes": [
+        "application/json"
+      ]
     }
   ]
 }

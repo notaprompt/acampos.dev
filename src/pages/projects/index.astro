@@ -1,6 +1,7 @@
 ---
 import Page from '../../layouts/Page.astro';
 import { getCollection } from 'astro:content';
+import DitherThumb from '../../components/DitherThumb.astro';
 
 const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 // The running systems lead. Parked, absorbed, and concept work is still here —
@@ -23,6 +24,8 @@ const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a
     <div class="project-list">
       {projects.map(project => (
         <div class="project-card">
+          <DitherThumb slug={project.slug} size={96} caption />
+          <div class="project-body">
           <div class="project-header">
             <h2><a href={`/projects/${project.slug}`} class="card-main-link">{project.data.title}</a></h2>
             <span class={`status status-${project.data.status}`}>{project.data.status}</span>
@@ -36,6 +39,7 @@ const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a
               <span class="tech">{tech}</span>
             ))}
           </div>
+          </div>
         </div>
       ))}
     </div>
@@ -47,6 +51,8 @@ const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a
         <div class="project-list">
           {rest.map(project => (
             <div class="project-card">
+              <DitherThumb slug={project.slug} size={96} caption />
+              <div class="project-body">
               <div class="project-header">
                 <h2><a href={`/projects/${project.slug}`} class="card-main-link">{project.data.title}</a></h2>
                 <span class={`status status-${project.data.status}`}>{project.data.status}</span>
@@ -59,6 +65,7 @@ const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a
                 {project.data.stack.map(tech => (
                   <span class="tech">{tech}</span>
                 ))}
+              </div>
               </div>
             </div>
           ))}
@@ -125,7 +132,10 @@ const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a
   }
 
   .project-card {
-    display: block;
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 1.1rem;
+    align-items: start;
     position: relative;
     padding: 1.25rem;
     background: var(--depth-1);
@@ -157,6 +167,8 @@ const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a
     border-bottom: 2px solid var(--gold-accent);
     border-right: 2px solid var(--gold-accent);
   }
+
+  .project-body { min-width: 0; }
 
   .project-card:hover {
     border-color: var(--gold-accent);

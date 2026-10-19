@@ -1,6 +1,8 @@
 ---
 import Page from '../layouts/Page.astro';
 import HitCounter from '../components/HitCounter.astro';
+import DitherThumb from '../components/DitherThumb.astro';
+import TerminalLine from '../components/TerminalLine.astro';
 import { getCollection } from 'astro:content';
 import office from '../data/office.json';
 
@@ -18,6 +20,17 @@ const officeLine = [
   office.forecasts && `${office.forecasts.toLocaleString('en-US')} signed forecasts`,
   office.services && `${office.services} services under launchd`,
 ].filter(Boolean).join(' · ');
+
+const statusLines = [
+  'understand the intricate. build the intuitive. present the essential.',
+  'you are at the front door.',
+  'ops by day. local-first ai by night.',
+  "memories decay. principles don't.",
+  'every forecast signed before the market resolves.',
+  'the cloud is a tool, not the mind.',
+  office.memories ? `${office.memories.toLocaleString('en-US')} memories on this desk.` : 'one machine. mine.',
+  'currently: building quietly.',
+];
 ---
 
 <Page title="alexander campos" description="Alexander Campos - operations by day, local-first AI tools by night: agent memory, model routing, and the tools that make them usable. Reframed (live), ForgeFrame (open source).">
@@ -25,7 +38,7 @@ const officeLine = [
     <h1 class="site-name">Alexander Campos</h1>
     <p class="lede">I build and run AI systems in places where the output gets audited — agent memory, model routing, and the operations underneath.</p>
     <p class="tagline">Operator by trade, builder by habit. <a href="/resume">Six years running operations in regulated finance</a>, the kind where someone eventually asks you to prove it. I build my own tools end to end, mostly at night, and <a href="/work">some of them are in use</a>. It's most of what I think about, and sometimes I <a href="/writing">write it down</a>.</p>
-    <p class="warm-line">you are at the front door.</p>
+    <TerminalLine lines={statusLines} label="status" />
 
   </section>
 
@@ -52,10 +65,13 @@ const officeLine = [
     <div class="project-cards">
       {projects.map((p) => (
         <a href={`/projects/${p.slug}`} class="project-card">
-          <span class="project-name">{p.data.title}</span>
-          <span class="project-line">
-            {p.data.tagline}
-            {p.data.demo && <> Live at <span class="gold">{new URL(p.data.demo).hostname}</span>.</>}
+          <DitherThumb slug={p.slug} />
+          <span class="project-text">
+            <span class="project-name">{p.data.title}</span>
+            <span class="project-line">
+              {p.data.tagline}
+              {p.data.demo && <> Live at <span class="gold">{new URL(p.data.demo).hostname}</span>.</>}
+            </span>
           </span>
         </a>
       ))}
@@ -294,7 +310,9 @@ const officeLine = [
   }
 
   .project-card {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     border: 1px solid var(--white-08);
     padding: 0.85rem 1rem;
     text-decoration: none;
@@ -302,6 +320,7 @@ const officeLine = [
   }
 
   .project-card:hover { border-color: var(--gold-accent); }
+  .project-text { display: block; min-width: 0; }
 
   .project-name {
     font-family: var(--mono);

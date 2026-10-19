@@ -1,6 +1,7 @@
 ---
 import Page from '../layouts/Page.astro';
 import { existsSync } from 'node:fs';
+import TerminalLine from '../components/TerminalLine.astro';
 
 // The office photograph ships whenever the file lands - drop it at
 // public/images/office.jpg and rebuild. Until then the slot renders nothing.
@@ -10,6 +11,18 @@ const hasOfficePhoto = existsSync(new URL('../../public/images/office.jpg', impo
 <Page title="about -- alexander campos" description="Alex Campos. 26. Virginia. Operations, software, and writing about what sits underneath both.">
   <article>
     <h1>About</h1>
+    <TerminalLine
+      label="whoami"
+      prompt="~ %"
+      lines={[
+        'operator by trade. builder by habit.',
+        'six years in regulated finance. controls first.',
+        'build the check, then the thing.',
+        'local-first, audit-trailed, answerable to its owner.',
+        'inbox open: alex@campos.works',
+        'understand the intricate. build the intuitive. present the essential.',
+      ]}
+    />
 
 
     <p>

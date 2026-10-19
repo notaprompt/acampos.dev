@@ -1,0 +1,133 @@
+---
+// A terminal readout that types a line out, holds it, deletes it back, and
+// moves to the next. The full set is in the page as plain text for screen
+// readers; the animated copy is decorative. Reduced motion shows line one, still.
+interface Props { lines: string[]; prompt?: string; label?: string }
+const { lines, prompt = 'alex@campos ~ %', label = 'status' } = Astro.props;
+---
+
+<div class="term" data-term={JSON.stringify(lines)}>
+  <div class="term-bar" aria-hidden="true">
+    <span class="term-led"></span>
+    <span class="term-label">{label}</span>
+  </div>
+  <p class="term-line" aria-hidden="true">
+    <span class="term-prompt">{prompt}</span>
+    <span class="term-text">{lines[0]}</span><span class="term-cursor"></span>
+  </p>
+  <ul class="sr-only">{lines.map((l) => <li>{l}</li>)}</ul>
+</div>
+
+<script>
+  const TYPE = 34, ERASE = 16, HOLD = 2600, GAP = 420;
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  async function run(el: HTMLElement) {
+    const lines: string[] = JSON.parse(el.dataset.term || '[]');
+    const out = el.querySelector<HTMLElement>('.term-text');
+    if (!out || lines.length < 2 || still) return;
+    el.classList.add('is-live');
+    let i = 0;
+    out.textContent = '';
+    for (;;) {
+      if (document.hidden) { await sleep(500); continue; }
+      const line = lines[i % lines.length];
+      el.classList.add('is-typing');
+      for (let n = 1; n <= line.length; n++) {
+        out.textContent = line.slice(0, n);
+        await sleep(TYPE + (line[n - 1] === ' ' ? 30 : Math.random() * 28));
+      }
+      el.classList.remove('is-typing');
+      await sleep(HOLD);
+      el.classList.add('is-typing');
+      for (let n = line.length; n >= 0; n--) {
+        out.textContent = line.slice(0, n);
+        await sleep(ERASE);
+      }
+      el.classList.remove('is-typing');
+      await sleep(GAP);
+      i++;
+    }
+  }
+
+  function boot() {
+    document.querySelectorAll<HTMLElement>('.term[data-term]:not([data-booted])').forEach((el) => {
+      el.dataset.booted = '1';
+      run(el);
+    });
+  }
+  boot();
+  document.addEventListener('astro:page-load', boot);
+</script>
+
+<style>
+  .term {
+    position: relative;
+    border: 1px solid var(--white-08);
+    background: var(--depth-1);
+    padding: 0.55rem 0.85rem 0.7rem;
+    margin: 0 0 1.6rem;
+    max-width: 38rem;
+    overflow: hidden;
+  }
+  /* scanlines: a station screen, not a website */
+  .term::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0, 0, 0, 0.18) 2px 3px);
+    mix-blend-mode: multiply;
+  }
+  .term-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--white-30);
+    margin-bottom: 0.35rem;
+  }
+  .term-led {
+    width: 6px;
+    height: 6px;
+    background: var(--gold-accent);
+    box-shadow: 0 0 6px var(--gold-accent);
+    animation: term-led 2.4s steps(1) infinite;
+  }
+  .term-line {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--glow);
+    margin: 0;
+    min-height: 1.5em;
+    white-space: pre-wrap;
+  }
+  .term.is-live .term-line { animation: term-flicker 5.5s infinite; }
+  .term-prompt { color: var(--gold-accent); margin-right: 0.55ch; }
+  .term-text { text-shadow: 0 0 6px color-mix(in srgb, var(--glow) 35%, transparent); }
+  .term-cursor {
+    display: inline-block;
+    width: 0.6ch;
+    height: 1.05em;
+    margin-left: 1px;
+    vertical-align: -0.17em;
+    background: var(--gold-accent);
+    animation: term-blink 1.05s steps(1) infinite;
+  }
+  .term.is-typing .term-cursor { animation: none; }
+  @keyframes term-blink { 50% { opacity: 0; } }
+  @keyframes term-led { 0%, 70% { opacity: 1; } 72% { opacity: 0.25; } 76% { opacity: 1; } 86% { opacity: 0.4; } 88% { opacity: 1; } }
+  @keyframes term-flicker {
+    0%, 100% { opacity: 1; }
+    41% { opacity: 1; } 42% { opacity: 0.86; } 43% { opacity: 1; }
+    77% { opacity: 1; } 77.5% { opacity: 0.9; } 78.5% { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .term-led, .term-cursor, .term-line { animation: none !important; }
+  }
+</style>

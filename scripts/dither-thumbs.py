@@ -11,15 +11,16 @@ Where a system has real data on this machine, the mark is drawn from it. Only
 numeric columns are read, nothing leaves the machine but dot positions, and no
 mark encodes text, names, or amounts.
 
-  forgeframe     the live memory-graph export already published on this site
-                 (public/creature/constellation3d.json), turning in 3D
+  forgeframe     the decay law: traces fall toward a 0.1 floor on a 7-day
+                 half-life and jump back on retrieval; the principle line is flat
   creature       the anatomy: a spine with seven ribs, each carrying the real
                  organ count of its section (src/data/creature.json), inside the
                  governance membrane, engraved; one eye at the head
-  deuce          the signed tape: real fair-value vs market-price rows from the
-                 DEUCE book, each sealed into a hash chain, scrolling
-  distillery     real resonance x novelty scores against the signal threshold
-                 curve; what passes is bright
+  deuce          DEUCE's own price against the market's mid over time, for its
+                 busiest market (~/.deuce/crossvenue.db), the gap engraved and
+                 sealed forecasts stamped along its line
+  distillery     real resonance x novelty scores (~/distillery/distillery.db)
+                 against the signal threshold curve; what passes is bright
   reframed       the five-axis confidence score, original shape to reframed
   guardian       the compression pipeline: raw -> summary -> pattern -> principle
   cipher         the escalation bands (brief < 5, text 5-8, call > 8); the one
@@ -144,26 +145,6 @@ def ease(x: float) -> float:
 
 # ── real data, read-only, numbers only ──────────────────────────────────────
 
-def _unused_load_graph() -> np.ndarray:
-    d = json.loads((ROOT / "public/creature/constellation3d.json").read_text())
-    pts = np.array([p[:3] for p in d["core"]], float)
-    pts -= pts.mean(0)
-    return pts / np.percentile(np.linalg.norm(pts, axis=1), 97)
-
-
-def load_tape() -> np.ndarray | None:
-    db = HOME / "repos/deuce/deuce.db"
-    if not db.exists():
-        return None
-    con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
-    rows = con.execute(
-        "select fair_value, market_price from sf_forecasts "
-        "where fair_value between 0 and 1 and market_price between 0 and 1 order by id"
-    ).fetchall()
-    con.close()
-    return np.array(rows, float) if len(rows) >= 12 else None
-
-
 def load_series() -> np.ndarray | None:
     db = HOME / ".deuce/crossvenue.db"
     if not db.exists():
@@ -198,7 +179,6 @@ def load_scores() -> np.ndarray | None:
     return np.array(rows, float) if len(rows) >= 10 else None
 
 
-TAPE = load_tape()
 SERIES = load_series()
 SCORES = load_scores()
 

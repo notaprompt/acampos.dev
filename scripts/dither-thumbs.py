@@ -414,7 +414,14 @@ def main() -> None:
             render(slug, grid).save(OUT / f"{slug}-{grid}.png", optimize=True)
         captions[slug] = MARKS.get(slug, MARKS["cipher"])[2]
         print(f"{slug:<14} {captions[slug]}")
-    (OUT / "marks.json").write_text(json.dumps({"frames": FRAMES, "captions": captions}, ensure_ascii=False, indent=1))
+    # What these figures were drawn from, so scripts/site-drift.mjs can tell when to redraw.
+    sections = json.loads((ROOT / "src/data/creature.json").read_text())["sections"]
+    inputs = {
+        "projects": sorted(captions),
+        "creature_counts": [len(s["organs"]) for s in sections],
+        "distillery_rows": 0 if SCORES is None else int(len(SCORES)),
+    }
+    (OUT / "marks.json").write_text(json.dumps({"frames": FRAMES, "captions": captions, "inputs": inputs}, ensure_ascii=False, indent=1))
     print(f"data: series={'real' if SERIES is not None else 'seeded'}, scores={'real' if SCORES is not None else 'seeded'}")
 
 

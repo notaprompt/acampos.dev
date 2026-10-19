@@ -31,6 +31,7 @@ content.
 | Desk numbers | `node scripts/bake-office.mjs` | `src/data/office.json` | home "on this desk" line and the terminal's memory count |
 | Project figures | `python3 scripts/dither-thumbs.py` | `public/images/thumbs/` | the animated marks on home and /projects |
 | CREATURE constellation | `scripts/constellation/` pipeline (below) | `public/creature/constellation3d.json` | the 3D graph on the CREATURE pages |
+| Weekly drift check | automatic, see below | a report, never the site | what to fix next |
 | Weekly pulse | automatic, see below | site copy, after approval | the maintenance paragraph |
 | OG image | `npm install canvas && node scripts/generate-og-image.js` | `public/og-image.png` | link previews |
 
@@ -69,6 +70,38 @@ Run in order from `scripts/constellation/`:
 
 Intermediate files go to `$TMPDIR`. Positions are quantized and the output
 carries no memory content.
+
+### Weekly drift check
+
+`node scripts/site-drift.mjs` checks what the site says against what is true.
+It runs from launchd `com.creature.site-drift` on Sundays at 09:30, before the
+pulse. It never edits the site.
+
+- **Report:** `~/.creature/site-drift/YYYY-MM-DD.md`, grouped into "fix",
+  "look at" and "for the record."
+- **Notice:** one line in `~/.creature/notify/`.
+
+What it checks:
+
+- **Projects:** each project's last commit and data activity against the status
+  the site gives it. Local paths are in `SOURCES`.
+- **Claims:** numbers written in prose against their source (`CLAIMS`). Add an
+  entry whenever copy quotes a number that can go stale.
+- **Numbers:** dated project metrics, and the desk numbers against the live
+  databases.
+- **Figures:** whether the data behind the dithered figures has changed since
+  they were drawn (the `inputs` in `marks.json`).
+- **Pages and links:** every page in the live sitemap, plus project repo and
+  demo links. npm links are checked through the registry.
+- **Sanitize:** prices, consulting or booking language, the employer named
+  outside the resume, or a family relationship on any live page.
+- **GitHub:** linked repos that are not public, and public repos pushed in the
+  last 30 days that the site does not mention.
+- **Resume:** whether the PDF resume changed after the site's resume page.
+- **Writing:** days since the last published essay.
+
+Flags: `--no-network` skips the live site and GitHub; `--quiet` skips the
+notice. Network checks need to run outside a sandbox.
 
 ### Weekly pulse
 

@@ -9,5 +9,27 @@
   "guardian": "raw → principle",
   "reframed": "five-axis confidence",
   "strudelvision": "the infinite hall"
+ },
+ "inputs": {
+  "projects": [
+   "cipher",
+   "creature",
+   "deuce",
+   "distillery",
+   "forgeframe",
+   "guardian",
+   "reframed",
+   "strudelvision"
+  ],
+  "creature_counts": [
+   9,
+   7,
+   8,
+   8,
+   7,
+   4,
+   3
+  ],
+  "distillery_rows": 47
  }
 }

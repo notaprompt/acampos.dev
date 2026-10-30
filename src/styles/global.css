@@ -1,71 +1,71 @@
-/* ── Void Architecture — campos-site ────────────────────────── */
+/* ── Quiet terminal editorial system — campos-site ─────────── */
 
 :root {
-  --void: #050505;
-  --depth-1: #080808;
-  --depth-2: #0C0C0C;
-  --depth-3: #111111;
-  --depth-4: #171717;
+  --void: #0c0b0a;
+  --depth-1: #12100e;
+  --depth-2: #181511;
+  --depth-3: #211d18;
+  --depth-4: #29231d;
 
-  --glow: #E8DCC8;
-  --glow-hot: #F2E6D0;
-  --glow-dim: rgba(232,220,200, 0.06);
-  --glow-trace: rgba(232,220,200, 0.03);
-  --glow-line: rgba(232,220,200, 0.09);
-  --glow-pulse: rgba(232,220,200, 0.18);
+  --glow: #d8d0c3;
+  --glow-hot: #f0e8dc;
+  --glow-dim: rgba(216,208,195, 0.06);
+  --glow-trace: rgba(216,208,195, 0.03);
+  --glow-line: rgba(216,208,195, 0.10);
+  --glow-pulse: rgba(216,208,195, 0.2);
 
-  --white-90: rgba(255,255,255,0.90);
-  --white-70: rgba(255,255,255,0.70);
-  --white-60: rgba(255,255,255,0.60);
-  --white-45: rgba(255,255,255,0.60);
-  --white-30: rgba(255,255,255,0.50);
-  --white-20: rgba(255,255,255,0.20);
-  --white-15: rgba(255,255,255,0.15);
-  --white-08: rgba(255,255,255,0.08);
-  --white-04: rgba(255,255,255,0.04);
+  --white-90: #e6ded3;
+  --white-70: #c6beb2;
+  --white-60: #aaa297;
+  --white-45: #918a80;
+  --white-30: #716b63;
+  --white-20: #4f4a44;
+  --white-15: #423e39;
+  --white-08: #302d29;
+  --white-04: #24211e;
 
-  --gold-accent: #b8965a;
-  --alive: #5BF29B;
-  --alive-dim: rgba(91,242,155, 0.08);
-  --danger: #c75050;
-  --focus-ring: rgba(232, 220, 200, 0.6);
+  --gold-accent: #b59a72;
+  --alive: #85c49c;
+  --alive-dim: rgba(133,196,156, 0.12);
+  --danger: #c77970;
+  --focus-ring: #d8d0c3;
 
-  --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
   --mono: 'JetBrains Mono', 'Courier New', monospace;
-  --body: Georgia, 'Times New Roman', serif;
+  --body: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
 }
 
 /* ── Light (Day) Mode ────────────────────────────────────────── */
 
 [data-theme="light"] {
-  --void: #f4efe6;
-  --depth-1: #ede7dc;
-  --depth-2: #e5ded2;
-  --depth-3: #dbd4c7;
-  --depth-4: #d1c9bb;
+  --void: #f3f0e9;
+  --depth-1: #ece8df;
+  --depth-2: #e2ddd3;
+  --depth-3: #d7d0c5;
+  --depth-4: #cac1b4;
 
-  --glow: #2a2218;
-  --glow-hot: #1a1410;
+  --glow: #292621;
+  --glow-hot: #171511;
   --glow-dim: rgba(42,34,24, 0.06);
   --glow-trace: rgba(42,34,24, 0.03);
   --glow-line: rgba(42,34,24, 0.09);
   --glow-pulse: rgba(42,34,24, 0.18);
 
-  --white-90: rgba(0,0,0,0.85);
-  --white-70: rgba(0,0,0,0.65);
-  --white-60: rgba(0,0,0,0.55);
-  --white-45: rgba(0,0,0,0.58);
-  --white-30: rgba(0,0,0,0.46);
-  --white-20: rgba(0,0,0,0.18);
-  --white-15: rgba(0,0,0,0.13);
-  --white-08: rgba(0,0,0,0.07);
-  --white-04: rgba(0,0,0,0.04);
+  --white-90: #24211d;
+  --white-70: #47423b;
+  --white-60: #615b52;
+  --white-45: #756e64;
+  --white-30: #8b8377;
+  --white-20: #b6aea2;
+  --white-15: #c7bfb4;
+  --white-08: #ddd6cc;
+  --white-04: #e8e3db;
 
   --gold-accent: #8a6a2e;
   --alive: #2a9a5a;
   --alive-dim: rgba(42,154,90, 0.08);
   --danger: #a83030;
-  --focus-ring: rgba(42, 34, 24, 0.6);
+  --focus-ring: #292621;
 }
 
 /* ── Reset ──────────────────────────────────────────────────── */
@@ -96,7 +96,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--serif);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.3;
   color: var(--glow-hot);
 }
@@ -113,17 +113,16 @@ code, pre {
 }
 
 pre {
-  background: var(--depth-1);
-  border: 1px solid var(--white-08);
+  background: transparent;
+  border-left: 1px solid var(--white-20);
   padding: 1rem;
   overflow-x: auto;
   margin-bottom: 1rem;
 }
 
 code {
-  background: var(--depth-1);
-  padding: 0.15em 0.35em;
-  border-radius: 2px;
+  background: transparent;
+  padding: 0;
 }
 
 pre code {
@@ -176,11 +175,7 @@ li { margin-bottom: 0.25rem; }
 
 /* ── Horizontal Rules ───────────────────────────────────────── */
 
-hr {
-  border: none;
-  border-top: 1px solid var(--white-08);
-  margin: 2rem 0;
-}
+hr { border: 0; margin: 2rem 0; }
 
 /* ── Scrollbar ──────────────────────────────────────────────── */
 

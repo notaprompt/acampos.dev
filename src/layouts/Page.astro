@@ -30,9 +30,9 @@ const { title, description, ogType } = Astro.props;
   .page-wrapper {
     position: relative;
     z-index: 1;
-    width: 62%;
+    width: min(100% - 3rem, 45rem);
     margin: 0 auto;
-    padding: 2.5rem 2rem 2rem;
+    padding: 2.5rem 0 2rem;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -40,16 +40,17 @@ const { title, description, ogType } = Astro.props;
 
   @media (max-width: 1200px) {
     .page-wrapper {
-      width: auto;
-      margin: 0 1.5rem;
-      padding: 2rem 1.5rem;
+      width: min(100% - 2rem, 45rem);
+      margin: 0 auto;
+      padding: 2rem 0;
     }
   }
 
   @media (max-width: 480px) {
     .page-wrapper {
-      margin: 0 0.75rem;
-      padding: 1.25rem 0.75rem;
+      width: min(100% - 1.5rem, 45rem);
+      margin: 0 auto;
+      padding: 1.25rem 0;
     }
   }
 

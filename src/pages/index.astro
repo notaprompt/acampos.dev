@@ -44,11 +44,11 @@ const statusLines = [
 
   <section class="home-section">
     <p class="offer-alt">
-      <a href="/work">the work</a>
-      <span class="alt-sep" aria-hidden="true">·</span>
-      <a href="/writing">the writing</a>
-      <span class="alt-sep" aria-hidden="true">·</span>
-      <a href="/resume">the resume</a>
+      <a href="/work">Work</a>
+      <span class="alt-sep" aria-hidden="true">/</span>
+      <a href="/writing">Writing</a>
+      <span class="alt-sep" aria-hidden="true">/</span>
+      <a href="/resume">Resume</a>
     </p>
   </section>
 
@@ -60,7 +60,7 @@ const statusLines = [
 
   <!-- proof -->
   <section class="home-section">
-    <h2 class="section-heading">what I build</h2>
+    <h2 class="section-heading">Selected work</h2>
 
     <div class="project-cards">
       {projects.map((p) => (
@@ -82,7 +82,7 @@ const statusLines = [
 
   <!-- what I think -->
   <section class="home-section">
-    <h2 class="section-heading">what I think</h2>
+    <h2 class="section-heading">Writing</h2>
 
     <div class="essay-cards">
       {essays.map((e) => (
@@ -121,10 +121,10 @@ const statusLines = [
   .tagline a {
     color: inherit;
     text-decoration: none;
-    border-bottom: 1px solid var(--white-15);
-    transition: border-color 0.18s ease, color 0.18s ease;
+    border-bottom: 1px solid currentColor;
+    transition: color 0.18s ease;
   }
-  .tagline a:hover { color: var(--gold-accent); border-bottom-color: var(--gold-accent); }
+  .tagline a:hover { color: var(--gold-accent); }
 
   /* ── The one action ──
      A single bordered block instead of a row of pills. One decision, made
@@ -198,14 +198,9 @@ const statusLines = [
     font-size: clamp(1.1rem, 2.8vw, 1.3rem);
   }
 
-  .offer-alt {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--white-30);
-    margin-top: 0.85rem;
-  }
-  .offer-alt a { color: var(--gold-accent); }
-  .offer-alt .alt-sep { color: var(--white-15); margin: 0 0.45rem; }
+  .offer-alt { font-family: var(--mono); font-size: 0.72rem; color: var(--white-45); margin-top: 0.85rem; }
+  .offer-alt a { color: var(--white-60); }
+  .offer-alt .alt-sep { color: var(--white-30); margin: 0 0.45rem; }
 
   @media (prefers-reduced-motion: reduce) {
     .home-offer, .offer-go, .offer-go span { transition: none; }
@@ -221,8 +216,8 @@ const statusLines = [
 
   .site-name {
     font-family: var(--serif);
-    font-size: 1.6rem;
-    font-weight: 600;
+    font-size: clamp(1.7rem, 4vw, 2.25rem);
+    font-weight: 400;
     color: var(--glow);
     margin: 0 0 0.75rem;
     letter-spacing: 0.02em;
@@ -230,20 +225,21 @@ const statusLines = [
 
   .lede {
     font-family: var(--body);
-    font-size: 1.15rem;
-    font-weight: 500;
-    color: var(--glow);
-    line-height: 1.6;
-    margin: 0 0 0.9rem;
+    font-size: clamp(1.08rem, 2vw, 1.3rem);
+    font-weight: 400;
+    color: var(--glow-hot);
+    line-height: 1.5;
+    margin: 0 0 1rem;
+    max-width: 38rem;
   }
 
   .tagline {
     font-family: var(--body);
     font-size: 0.95rem;
-    color: var(--white-60, var(--glow));
-    line-height: 1.7;
-    margin-bottom: 0.75rem;
-    opacity: 0.82;
+    color: var(--white-60);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+    max-width: 44rem;
   }
 
   .warm-line {
@@ -256,17 +252,15 @@ const statusLines = [
 
   /* ── Sections ── */
   .home-section {
-    padding: 1.75rem 0 0.5rem;
-    border-top: 1px solid var(--white-04);
+    padding: 2.8rem 0 0;
   }
 
   .section-heading {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    color: var(--white-20);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin: 0 0 1rem;
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: var(--glow);
+    margin: 0 0 1.1rem;
   }
 
   .home-prose {
@@ -290,87 +284,85 @@ const statusLines = [
   }
 
   .more-link {
-    margin-top: 0.75rem;
+    margin-top: 1rem;
   }
 
   .more-link a {
     font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--gold-accent);
+    font-size: 0.72rem;
+    color: var(--white-45);
     border-bottom: none;
   }
 
   .more-link a:hover { color: var(--glow-hot); }
 
-  /* ── Project cards ── */
   .project-cards {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1.3rem;
   }
 
   .project-card {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    border: 1px solid var(--white-08);
-    padding: 0.85rem 1rem;
+    gap: 1.1rem;
+    padding: 0;
     text-decoration: none;
-    transition: border-color 0.2s;
+    transition: color 0.18s ease;
   }
 
-  .project-card:hover { border-color: var(--gold-accent); }
+  .project-card:hover .project-name { color: var(--gold-accent); }
   .project-text { display: block; min-width: 0; }
 
   .project-name {
-    font-family: var(--mono);
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--glow);
+    font-family: var(--serif);
+    font-size: 1.08rem;
+    font-weight: 400;
+    color: var(--glow-hot);
     display: block;
     margin-bottom: 0.25rem;
   }
 
   .project-line {
     font-family: var(--body);
-    font-size: 0.8rem;
-    color: var(--white-45);
-    line-height: 1.5;
+    font-size: 0.9rem;
+    color: var(--white-60);
+    line-height: 1.6;
+    max-width: 42rem;
   }
 
   .gold { color: var(--gold-accent); }
 
-  /* ── Essay cards ── */
   .essay-cards {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1.15rem;
   }
 
   .essay-card {
     display: block;
-    border: 1px solid var(--white-08);
-    padding: 0.65rem 1rem;
+    padding: 0;
     text-decoration: none;
-    transition: border-color 0.2s;
+    transition: color 0.18s ease;
   }
 
-  .essay-card:hover { border-color: var(--gold-accent); }
+  .essay-card:hover .essay-title { color: var(--gold-accent); }
 
   .essay-title {
     font-family: var(--serif);
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--glow);
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--glow-hot);
     display: block;
     margin-bottom: 0.2rem;
   }
 
   .essay-line {
     font-family: var(--body);
-    font-size: 0.75rem;
-    color: var(--white-45);
-    line-height: 1.5;
+    font-size: 0.88rem;
+    color: var(--white-60);
+    line-height: 1.6;
+    max-width: 42rem;
   }
 
   /* ── Services row ── */
@@ -399,14 +391,13 @@ const statusLines = [
   .office-line {
     font-family: var(--mono);
     font-size: 0.72rem;
-    color: var(--white-30);
-    margin: 0.6rem 0 0;
+    color: var(--white-45);
+    margin: 0;
   }
 
   .counter-row {
-    padding-top: 1.5rem;
-    margin-top: 1.5rem;
-    border-top: 1px solid var(--white-04);
+    padding-top: 0.65rem;
+    margin-top: 0.4rem;
   }
 
   /* ── Mobile ── */
@@ -415,11 +406,4 @@ const statusLines = [
     .service-pill { text-align: center; }
   }
 
-  /* ── Pixel Grid Hover Texture ── */
-  @media (hover: hover) {
-    .project-card:hover, .essay-card:hover {
-      background-image: url("data:image/svg+xml,%3Csvg width='2' height='2' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1' height='1' fill='white' fill-opacity='0.04'/%3E%3C/svg%3E");
-      background-size: 2px 2px;
-    }
-  }
 </style>

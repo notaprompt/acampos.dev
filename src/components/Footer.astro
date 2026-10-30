@@ -69,11 +69,7 @@ const columns = [
 </footer>
 
 <style>
-  footer {
-    border-top: 1px solid var(--white-08);
-    padding-top: 2rem;
-    margin-top: 4rem;
-  }
+  footer { padding-top: 1rem; margin-top: 4rem; }
 
   /* ── The one thing worth pressing ── */
   .footer-cta {
@@ -81,39 +77,26 @@ const columns = [
     grid-template-columns: 1fr auto;
     align-items: center;
     gap: 0.2rem 1rem;
-    padding: 1.1rem 1.3rem;
-    border: 1px solid var(--white-15);
+    padding: 0;
     text-decoration: none;
-    margin-bottom: 2.4rem;
-    transition: border-color 0.22s ease, background 0.22s ease;
+    margin-bottom: 2.8rem;
+    transition: color 0.22s ease;
     position: relative;
-    overflow: hidden;
   }
-  .footer-cta::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(100deg, transparent 30%, var(--glow-dim) 50%, transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
-    pointer-events: none;
-  }
-  .footer-cta:hover { border-color: var(--gold-accent); background: var(--depth-1); }
-  .footer-cta:hover::after { transform: translateX(100%); }
-  .footer-cta:hover .cta-arrow { transform: translateX(4px); color: var(--gold-accent); }
+  .footer-cta:hover .cta-lead, .footer-cta:hover .cta-arrow { color: var(--gold-accent); }
 
   .cta-lead {
     font-family: var(--serif);
-    font-size: 1.15rem;
+    font-size: 1.3rem;
     color: var(--glow-hot);
     line-height: 1.25;
   }
   .cta-sub {
     grid-column: 1;
     font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    color: var(--white-30);
+    font-size: 0.7rem;
+    letter-spacing: 0;
+    color: var(--white-45);
   }
   .cta-arrow {
     grid-row: 1 / span 2;
@@ -121,23 +104,24 @@ const columns = [
     font-family: var(--mono);
     font-size: 1.1rem;
     color: var(--white-20);
-    transition: transform 0.22s ease, color 0.22s ease;
+    transition: color 0.22s ease;
   }
 
   /* ── Grouped index ── */
   .footer-cols {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.6rem 2rem;
     margin-bottom: 2.2rem;
     text-align: left;
   }
   .col h2 {
     font-family: var(--mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold-accent);
+    font-family: var(--serif);
+    font-size: 1rem;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--glow);
     margin: 0 0 0.6rem;
     font-weight: 400;
   }
@@ -153,11 +137,7 @@ const columns = [
   .col a:hover { color: var(--glow-hot); border-bottom-color: var(--gold-accent); }
 
   /* ── Base line ── */
-  .footer-base {
-    border-top: 1px solid var(--white-04);
-    padding-top: 1.1rem;
-    text-align: center;
-  }
+  .footer-base { padding-top: 1.1rem; text-align: center; }
   .copyright {
     font-family: var(--mono);
     font-size: 0.7rem;
@@ -180,7 +160,7 @@ const columns = [
     font-family: var(--mono);
     font-size: 0.65rem;
     color: var(--white-20);
-    font-style: italic;
+    font-style: normal;
   }
 
   @media (max-width: 620px) {

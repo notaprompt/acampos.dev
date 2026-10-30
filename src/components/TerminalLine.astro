@@ -64,38 +64,26 @@ const { lines, prompt = 'alex@campos ~ %', label = 'status' } = Astro.props;
 <style>
   .term {
     position: relative;
-    border: 1px solid var(--white-08);
-    background: var(--depth-1);
-    padding: 0.55rem 0.85rem 0.7rem;
-    margin: 0 0 1.6rem;
+    padding: 0.2rem 0 0;
+    margin: 0 0 1.4rem;
     max-width: 38rem;
     overflow: hidden;
-  }
-  /* scanlines: a station screen, not a website */
-  .term::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0, 0, 0, 0.18) 2px 3px);
-    mix-blend-mode: multiply;
   }
   .term-bar {
     display: flex;
     align-items: center;
     gap: 0.45rem;
     font-family: var(--mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
     color: var(--white-30);
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.2rem;
   }
   .term-led {
     width: 6px;
     height: 6px;
     background: var(--gold-accent);
-    box-shadow: 0 0 6px var(--gold-accent);
+    box-shadow: none;
     animation: term-led 2.4s steps(1) infinite;
   }
   .term-line {

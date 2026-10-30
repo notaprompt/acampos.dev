@@ -16,7 +16,7 @@ npm run verify      # typecheck + build + tests
 Then confirm on the live site, for example:
 
 ```sh
-curl -s "https://campos.works/?v=$(date +%s)" | grep -c "understand the intricate"
+curl -s "https://campos.works/?v=$(date +%s)" | grep -c "what software can do"
 ```
 
 **Commits:** public repo. Message is the change only. No Claude co-author line.
@@ -28,9 +28,9 @@ content.
 
 | What | Command | Writes | Feeds |
 |---|---|---|---|
-| Desk numbers | `node scripts/bake-office.mjs` | `src/data/office.json` | home "on this desk" line and the terminal's memory count |
-| Project figures | `python3 scripts/dither-thumbs.py` | `public/images/thumbs/` | the animated marks on home and /projects |
-| CREATURE constellation | `scripts/constellation/` pipeline (below) | `public/creature/constellation3d.json` | the 3D graph on the CREATURE pages |
+| Desk numbers | `node scripts/bake-office.mjs` | `src/data/office.json` | retained data; no longer promoted as homepage proof |
+| Project figures | `python3 scripts/dither-thumbs.py` | `public/images/thumbs/` | the small animated marks on /projects |
+| CREATURE constellation | `scripts/constellation/` pipeline (below) | `public/creature/constellation3d.json` | retained archive asset; not displayed on the reading pages |
 | Weekly drift check | automatic, see below | a report, never the site | what to fix next |
 | Weekly pulse | automatic, see below | site copy, after approval | the maintenance paragraph |
 | OG image | `npm install canvas && node scripts/generate-og-image.js` | `public/og-image.png` | link previews |
@@ -117,19 +117,26 @@ notice. Network checks need to run outside a sandbox.
 
 | Copy | File |
 |---|---|
-| Home intro and the terminal lines (`statusLines`) | `src/pages/index.astro` |
-| About page and its terminal lines | `src/pages/about.astro` |
+| Home intro and selected work | `src/pages/index.astro` |
+| About and the personal worldview | `src/pages/about.astro` |
+| Research summary | `src/pages/research/claims-capacity-collateral.astro` |
 | Projects (title, tagline, status, order, stack) | `src/content/projects/*.md` |
 | Essays (only `status: published` shows) | `src/content/essays/` |
 | Resume | `src/pages/resume.astro`, kept in step with the PDF resume |
 | Work page | `src/pages/work.astro` |
 | CREATURE anatomy census (frozen August 2026) | `src/data/creature.json` |
 
-The home page shows the three projects with the lowest `order`.
+The home page selects Reframed, ForgeFrame, and CREATURE from the project collection,
+with their dither marks, and links to the Orellana prototype case on /work.
+The project index uses `order`.
+Writing titles and summaries come from the published essay collection; an
+optional `updated` field supplies the visible revision date.
 
-The terminal component is `src/components/TerminalLine.astro`. Its first line
-is what shows before JavaScript loads and for reduced motion, so keep the motto
-there.
+The editorial direction and evidence rules are in `docs/portfolio-editorial.md`.
+The terminal component is retained for existing uses, but the home and About
+pages no longer rotate identity slogans. The desk, music, and Oliver supply
+the personal texture. Oliver's API grounding lives in `api/oliver.ts`; keep it
+in step with public pages and the shared profile.
 
 ## Machine-readable surfaces
 
@@ -181,8 +188,11 @@ deliberately rather than all at once.
 
 ## Known open items
 
-- CREATURE's project tagline says "fifteen organs"; the anatomy page counts 46.
-- The side panels (the dog and the music player) overlap the content at
-  around 1100px wide.
+- Orellana is an implemented prototype; production accounting use and measured
+  sales results remain unverified. Keep home, work, project, and machine copy aligned.
+- The full research paper remains private while source checks and original
+  project-level measurements are developed. The public research page is a summary.
+- Side panels open by default above 1180px; below that width they are available
+  on demand. Recheck the center column whenever changing panel widths.
 - `docs/SETUP.md` describes the Snapshot pipeline, which is currently
   unpublished.

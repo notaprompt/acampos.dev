@@ -9,18 +9,19 @@ const sortedEntries = Object.entries(glossary).sort((a, b) =>
 const currentPath = Astro.url.pathname;
 ---
 
-<Page title="misc -- alexander campos" description="Glossary, graveyard, and other odds and ends.">
+<Page title="glossary -- alexander campos" description="Plain-language definitions for terms used in the projects and writing.">
   <article>
     <nav class="subnav" aria-label="Misc sections">
       <a href="/misc" class:list={[{ active: currentPath === '/misc' || currentPath === '/misc/' }]}>glossary</a>
-      <span class="subnav-sep">/</span>
-      <a href="/misc/hall-of-shame" class:list={[{ active: currentPath.startsWith('/misc/hall-of-shame') }]}>hall of shame</a>
+      <a href="/misc/hall-of-shame" class:list={[{ active: currentPath.startsWith('/misc/hall-of-shame') }]}>project archive</a>
     </nav>
 
     <h1>Glossary</h1>
 
     <p class="intro">
-      WTF does this mean. I say a lot. I try to be technical where I can. I'm learning - it's okay if you are too.
+      Short definitions for terms used in the <a href="/projects">projects</a> and
+      <a href="/writing">writing</a>. They are a starting point for reading the work,
+      rather than a substitute for the sources linked in each essay.
     </p>
 
     <dl class="glossary-list">
@@ -38,9 +39,8 @@ const currentPath = Astro.url.pathname;
   .subnav {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-family: var(--mono);
-    font-size: 0.75rem;
+    gap: 1.5rem;
+    font-size: 0.95rem;
     margin-bottom: 2rem;
     color: var(--white-30);
   }
@@ -60,10 +60,6 @@ const currentPath = Astro.url.pathname;
     color: var(--glow);
   }
 
-  .subnav-sep {
-    color: var(--white-20);
-  }
-
   h1 {
     margin-bottom: 0.5rem;
   }
@@ -80,20 +76,14 @@ const currentPath = Astro.url.pathname;
 
   .glossary-entry {
     margin-bottom: 1.75rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--white-08);
     scroll-margin-top: 5rem;
-  }
-
-  .glossary-entry:last-child {
-    border-bottom: none;
   }
 
   dt {
     font-family: var(--serif);
     font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--gold-accent);
+    font-weight: 400;
+    color: var(--glow-hot);
     margin-bottom: 0.4rem;
   }
 

@@ -1,73 +1,77 @@
 # Alexander Campos — campos.works
 
-Operations by day, local-first AI tools by night. Six years in regulated bank operations: monitoring, controls, vendor integrations, and the automation underneath them. Outside work I build agent memory, model routing, and evaluation tooling, and write about what systems do to the people who use them.
+I work in operations, build software, and write about the systems people depend on. My research interests include compute economics, ownership, and individual agency. My background includes six years in regulated finance. Sovereignty here means the ability to understand and change the systems you depend on, and to retain meaningful choices as circumstances change.
 
-This is a personal site: projects, writing, and a resume. Nothing here is for sale.
+This personal portfolio contains projects, writing, working research, and a resume.
 
-## What I Build
+## Selected projects
 
-CREATURE: A mind that runs on one machine. It remembers, consolidates while its owner sleeps, dreams from its own memories, and refuses work that crosses a line the owner set. Organs for senses, a voice, and a maintainer that watches the body - all local; the cloud is opt-in and never handed a memory.
+ForgeFrame: Open-source agent memory over MCP, using SQLite and FTS5. Supports retrieval, use-based strengthening, decay, and protected principles. Project notes: https://campos.works/projects/forgeframe
 
-ForgeFrame: Memory for agents that works more like human memory than a database. Things you come back to strengthen. Things you ignore fade. Some things - principles, voice - never decay. Runs locally. MCP-native.
+CREATURE: A personal agent system running on one machine: memory, model routing, scheduled jobs, and approval queues. An experiment in making context, permissions, and failures inspectable. Names such as “dreams” describe scheduled maintenance or model-generated associations; they are not evidence of consciousness or independent intent. Project: https://campos.works/projects/creature. The component inventory at https://campos.works/creature is a frozen snapshot from August 10, 2026, with self-reported operating labels and known limitations.
 
-Reframed: Resume analysis platform that preserves your voice instead of replacing it with recruiter-speak. Voice fingerprinting, multi-reader semantic analysis, signed honesty receipts. Live at reframed.works.
+Reframed: A live resume tool with several analytical perspectives and signed records of text changes. Its receipts document editing; they do not prove a claim is true. Live at https://reframed.works
 
-Distillery: Share a link from your phone. Your laptop reads it through your own recorded principles and tells you what's actually new - not just what resonates, but what you haven't seen before. What passes the filter writes back to memory.
+Distillery: A phone-to-laptop reading workflow. Shared links are analyzed by a local model against recorded interests and principles; selected material is added to memory. Project notes: https://campos.works/projects/distillery
 
-Orellana Tools: A QuickBooks MCP server and bilingual proposal generator built for a family-run landscaping business in Virginia. Two tools - create an invoice from field notes, record a check payment - both confirm before they write. Demo-stage, built delegation-safe from the first line. Alerts route through Poke.
+Orellana Tools: A quoting and accounting prototype for a landscaping business in Virginia, with demo workflows, a QuickBooks adapter, and confirmation before accounting writes. Spanish aliases support service entry; generated proposals are English. Production usage is unverified. Case study: https://campos.works/work#orellana
 
-Deuce: A calibration-first pricing instrument for tennis prediction markets. It prices fair value, then signs each forecast to a tamper-evident ledger before the market resolves. Paper-mode. The signed ledger is the product, not a profit claim. Alerts route through Poke.
+DEUCE: A tennis forecasting experiment that signs forecasts before outcomes are known so calibration can be evaluated. Paper only; no capital at risk. The ledger keeps misses available for review alongside correct forecasts. Project notes: https://campos.works/projects/deuce
 
-## Writing
+## Writing and background
 
-On Observation and Identity Modeling (Part I): How systems build models of the people who use them, and what happens when the model starts shaping the person.
+Research: https://campos.works/research/claims-capacity-collateral — “Claims, capacity, and collateral” follows the conversion from financial commitments to working compute, useful output, and cash. It is an exploratory working argument, not a validated investment finding. The longer private draft uses AI research and editing assistance; original project-level measurements are still being developed.
 
-On Observation and Identity Modeling (Part II), Where the Difference Is Stored: How the loop became measurable. The mechanism of self-modeling is now documented in three substrates by three different methods. What each of us has to put on the other side of it.
+Writing: https://campos.works/writing
 
-## Glossary
+“On Observation and Identity Modeling” examines how systems model their users and how those models can affect the people using them. The second part, “Where the Difference Is Stored,” continues that inquiry through research and personal experiments. These essays explore questions about agency and observation; the project descriptions document what the implementations do.
 
-Plain-language definitions for the technical terms used across the writing and projects. Available at /glossary. Covers neuroscience (default mode network, BOLD signal, fMRI), machine learning interpretability (sparse autoencoder features, persona vectors, activation verbalizers), and philosophy of mind (phenomenal consciousness). Each definition is one short paragraph in plain English. Click any "wut?" marker in the writing to surface the gloss inline; the full list lives at the URL above.
+Glossary: https://campos.works/misc (https://campos.works/glossary redirects here). Short definitions support the projects and essays, including terms from neuroscience, machine-learning interpretability, and philosophy of mind.
 
-## Technical Capabilities
+Work: https://campos.works/work
+Resume: https://campos.works/resume
+Project archive: https://campos.works/misc/hall-of-shame
+
+## Technical experience
 
 Languages: TypeScript, Python, SQL
 Frameworks: Astro, React, Next.js, Electron, Node.js, Flask
-AI: Anthropic API, OpenAI API, Ollama, Model Context Protocol, structured tool-use, semantic memory, streaming SSE
+AI tooling: Anthropic API, OpenAI API, Ollama, Model Context Protocol, structured tool use, model routing, evaluation and rubric design
 Data: SQLite/FTS5, PostgreSQL, Snowflake, Splunk
-Infrastructure: Local-first architecture, air-gapped inference, MCP servers, privacy-preserving pipelines
+Architecture: Local-first tools, MCP servers, permission boundaries, source provenance, and audit records
+Operations: Monitoring, controls, vendor integrations, escalation, and process automation
 
-## Principles
+## Working principles
 
-Sovereignty: Sensitive cognitive data never leaves the machine.
-Architecture: Single source of truth. Local-first with cloud as optional acceleration.
-Product: Ship the wedge, expand to the platform.
-Voice: Direct, honest, no corporate-speak.
-Building: The work is real even when the world hasn't caught up yet.
+Make context handling and permissions inspectable; describe each enforced boundary precisely rather than claiming system-wide guarantees.
+Preserve the source of retrieved information and distinguish it from model interpretation.
+Make consequential actions reviewable before execution.
+Evaluate an experiment against recorded outcomes; keep unsuccessful results in the record.
+State what a tool can verify and where the implementation is incomplete.
 
-## Machine Actions
+## Machine-readable access
 
-Agents can read this site programmatically. All endpoints are public (no auth required).
+These public endpoints return information about this portfolio. They do not perform operational work on a visitor's behalf.
 
 Profile (JSON):
 GET https://campos.works/api/agent/profile
 
-A2A (Google A2A Protocol v0.2):
+A2A profile access (protocol v0.2):
 POST https://campos.works/api/agent/a2a
-Agent Card: https://campos.works/.well-known/a2a-agent-card.json
-Skills: get-profile
+Agent card: https://campos.works/.well-known/a2a-agent-card.json
+Supported skill: get-profile
 
-MCP server (ForgeFrame Memory):
-Discovery: https://campos.works/.well-known/mcp.json
+ForgeFrame MCP discovery:
+https://campos.works/.well-known/mcp.json
 Install: npx @forgeframe/server
 
-OpenAPI spec:
+OpenAPI specification:
 https://campos.works/openapi.json
 
 ## Contact
 
 alex@campos.works
 https://campos.works
-https://campos.works/writing
-https://campos.works/resume
 https://github.com/notaprompt
+https://www.linkedin.com/in/alexander-d-campos/
 https://x.com/flapfinned

@@ -1,20 +1,25 @@
 ---
 title: "Orellana Tools"
-tagline: "QuickBooks tools for a landscaping business that ran on verbal quotes. Make an invoice from field notes; record a check without retyping it into the books."
+tagline: "A prototype for proposals, invoice preparation, and payment recording for a landscaping business."
 status: "active"
 stack: ["Python", "MCP", "QuickBooks API", "uv", "FastAPI"]
 order: 3
 ---
 
-Orellana Landscaping LLC, Woodbridge VA. Decades in business, all verbal quotes, the books kept by hand. The problem was never the work - it was the paper between the work and getting paid.
+I built this prototype for Orellana Landscaping in Woodbridge, Virginia, around the work between a field job and getting paid: preparing a proposal, drafting an invoice, and matching a payment to the right balance.
 
-Two tools, both narrow on purpose:
+## What is implemented
 
-- **create_invoice** - turn a line of field text ("mulch and cleanup, $450") into a QuickBooks invoice.
-- **record_check_payment** - mark a check against the right open invoice, so nobody retypes it into QuickBooks by hand later.
+The invoice tool resolves customer and service names, prepares line items, and returns a preview before creating an invoice. The service catalog recognizes English and Spanish names. The payment tool looks for the right open invoice, asks for clarification when the match is ambiguous, and checks payment references for duplicates.
 
-QuickBooks stays the system of record. Every write is confirm-before-write: the tool previews exactly what it will post and returns a token, and nothing hits the books until that token comes back. There's an audit log, and it fails closed when it isn't connected to a real account.
+The MCP and web interfaces require a confirmation token before accounting writes. Recurring invoice runs separate ambiguous items for review and track created and sent invoices so a later send can resume.
 
-Built delegation-safe from the first line - least-privilege, tenant-aware, every write reviewable - because the point is to hand it off, not to babysit it. Today it runs as a one-command demo against a seeded QuickBooks-lookalike; the real-account seam (Intuit OAuth) is one config step away. Alerts route through Poke.
+The proposal generator produces a shareable page and a print layout. I placed payment options and a financing application link beside the total, so a customer can consider them while deciding on the proposal. That is an implemented layout decision; its effect on sales has not been measured.
 
-Demo-stage. It counts as real when a stranger pays for it - that's the gate it has to clear next.
+## Current scope
+
+The local build defaults to seeded demonstration books. A QuickBooks OAuth flow and API adapter are implemented, along with a sandbox smoke-test script. Production accounting integration and ongoing business use have not been independently verified.
+
+The proposal store is currently seeded and held in memory. Durable storage and verified use with a connected account remain necessary before treating this as a delivered accounting service.
+
+The [work page](/work#orellana) explains the decisions behind the prototype.

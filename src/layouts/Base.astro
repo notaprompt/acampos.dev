@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import '../styles/retro.css';
 import { ViewTransitions } from 'astro:transitions';
+import { PERSON } from '../../api/_lib/person';
 
 interface Props {
   title: string;
@@ -68,8 +69,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     "@type": "Person",
     "name": "Alexander Campos",
     "url": Astro.site?.toString(),
-    "jobTitle": "Operations & AI systems",
-    "description": "Builds and runs AI systems where the output gets audited - agent memory, model routing, and the operations underneath. Six years running operations in regulated finance. ForgeFrame (MCP memory server, open source), Reframed (live).",
+    "jobTitle": PERSON.title,
+    "description": PERSON.description,
     "sameAs": [
       "https://github.com/notaprompt",
       "https://linkedin.com/in/alexander-d-campos",
@@ -83,8 +84,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       "local open-source model benchmarking",
       "AI governance",
       "provenance and audit trails",
-      "NIST AI RMF",
-      "data sovereignty",
+      "compute economics",
+      "individual agency",
       "local-first AI infrastructure",
       "Model Context Protocol",
       "persistent memory for AI agents",
@@ -124,25 +125,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   })} />
 
   <!-- Fonts -->
-  <link rel="preload" href="/fonts/cormorant-garamond-400.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/fonts/cormorant-garamond-600.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin />
 
   <style is:inline>
-    @font-face {
-      font-family: 'Cormorant Garamond';
-      src: url('/fonts/cormorant-garamond-400.woff2') format('woff2');
-      font-weight: 400;
-      font-style: normal;
-      font-display: swap;
-    }
-    @font-face {
-      font-family: 'Cormorant Garamond';
-      src: url('/fonts/cormorant-garamond-600.woff2') format('woff2');
-      font-weight: 600;
-      font-style: normal;
-      font-display: swap;
-    }
     @font-face {
       font-family: 'JetBrains Mono';
       src: url('/fonts/jetbrains-mono-400.woff2') format('woff2');
@@ -161,13 +146,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <canvas id="ascii-bg" aria-hidden="true"></canvas>
 
   <slot />
-
-  <!-- Atmospheric overlays -->
-  <div class="grain" aria-hidden="true"></div>
-  <div class="vignette" aria-hidden="true"></div>
-
-  <!-- Cursor trail canvas -->
-  <canvas id="cursor-trail" aria-hidden="true"></canvas>
 
   <!-- Console greeting -->
   <script is:inline>
@@ -191,7 +169,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <!-- Islands — loaded after page is interactive -->
   <script is:inline src="/islands/desk-scene.js"></script>
   <script is:inline src="/islands/ascii-bg.js"></script>
-  <script is:inline src="/islands/cursor-trail.js"></script>
   <script is:inline src="/islands/konami.js"></script>
   <script is:inline src="/islands/music-panel.js"></script>
   <script is:inline src="/islands/auto-profile.js"></script>
@@ -245,7 +222,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       // Re-execute island scripts
       var islands = [
         '/islands/desk-scene.js', '/islands/ascii-bg.js',
-        '/islands/cursor-trail.js', '/islands/konami.js',
+        '/islands/konami.js',
         '/islands/music-panel.js', '/islands/playlist-admin.js', '/islands/audio-bridge.js',
         '/islands/influences.js', '/islands/assistant.js'
       ];

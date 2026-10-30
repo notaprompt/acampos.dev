@@ -1,406 +1,137 @@
 ---
 import Page from '../layouts/Page.astro';
-
-// The corporate record leads; the catalogue holds the full list of builds.
-const BUILT = [
-  {
-    name: 'ForgeFrame',
-    href: 'https://www.npmjs.com/package/@forgeframe/server',
-    line: 'Memory for agents that behaves like memory: use strengthens it, neglect fades it, principles never decay.',
-    fact: 'MIT on npm. MCP-native, SQLite with FTS5, provenance on every record. 888 tests, four packages, the memory layer under everything else here.',
-  },
-  {
-    name: 'Model routing',
-    href: '/projects/reframed',
-    line: 'Tier-based dispatch with fallback chains across providers, so an outage degrades instead of failing.',
-    fact: 'Inference cost down 40–60% in production. The same layer routes Reframed and everything on this site.',
-  },
-  {
-    name: 'Reframed',
-    href: 'https://reframed.works',
-    line: 'Resume analysis that keeps the writer\'s voice instead of replacing it with recruiter-speak, with a signed receipt for every rewrite.',
-    fact: 'Shipped solo in 22 days. 76 API routes, Stripe, Neon Postgres, Honesty Receipts verifiable against a public key.',
-  },
-  {
-    name: 'Model evaluation',
-    href: '/resume',
-    line: 'Paid adversarial eval design for frontier-model benchmarking in finance: cases where the plausible answer is wrong for a defensible reason.',
-    fact: 'Weighted rubrics that fail cosmetic success, and a diagnosis that traces a score to the reasoning step that lost it.',
-  },
-];
 ---
 
-<Page
-  title="work — alexander campos"
-  description="Enterprise systems owned in regulated financial services, the systems I build and run, and one client engagement in full."
->
+<Page title="Work — Alexander Campos" description="Independent software, agent infrastructure, and a landscaping workflow prototype, informed by a background delivering systems in regulated finance.">
   <article class="work">
-    <p class="eyebrow">what exists, and can be checked</p>
     <h1>Work</h1>
-    <p class="lede">
-      Every claim here links to something you can open or a number you could audit.
+    <p class="lede">From a model response to something someone can use.</p>
+    <p>
+      I build AI products and the infrastructure around them: applications,
+      memory, model routing, and workflows that turn output into a completed
+      job. I’m interested in what becomes practical as intelligence gets cheaper,
+      and what still stands between an answer and a result.
     </p>
 
-
     <section>
-      <div class="sec-head">
-        <span class="sec-num">I</span>
-        <h2>Enterprise systems I have owned</h2>
-        <p class="sec-gloss">
-          Six years in regulated financial services, mostly in the places where technical
-          systems, outside counterparties, controls and operations meet. One method the
-          whole way: find the failure in the data, map the surface it lives on, design the
-          fix on the map, and only then build.
+      <h2>Independent software</h2>
+      <div class="build">
+        <h3><a href="/projects/reframed">Reframed</a></h3>
+        <p>
+          A resume tool built around a simple concern: useful editing can quietly
+          change what someone meant. It shows the changes so the applicant can
+          decide what stays, and issues a signed record of the text comparison.
+          I built the application, billing, storage, and model routing.
+          The product is live. The next question is repeat use.
         </p>
       </div>
-
-      <ul class="ops">
-        <li>
-          <strong>38+ external integrations.</strong> Own the technical integration
-          framework and Systems Integration Guide for 38+ national vendors, with a
-          repeatable onboarding method: technical specifications, file ingestion, testing
-          cycles, production readiness, go-live. Transmission specs, routing and encryption
-          keys are maintained with Engineering, and specification failures get caught
-          before production cutover, not after.
-        </li>
-        <li>
-          <strong>A $600M+ regulated exchange.</strong> Own controls and observability
-          across 300+ daily transmissions on a multi-file, multi-supplier pipeline with
-          ingestion, interaction, reject and acknowledgement stages. Built the anomaly
-          detection from a prototype into an automated pipeline, <strong>manual monitoring
-          down 78%</strong>, shipped two formally owned production controls, and own reject
-          and failure resolution end to end.
-        </li>
-        <li>
-          <strong>A 20,000+ account failure.</strong> With the Data team six weeks
-          backlogged, wrote the SQL investigation, isolated root cause, remediated, and put
-          monitoring on the failure surfaces so it could not recur quietly. Root-cause
-          analysis moved to the Process team permanently.
-        </li>
-        <li>
-          <strong>Merger integration.</strong> Owned the department's Systems Integration
-          Guide for onboarding the legacy third-party law firm vendors through the
-          Capital One–Discover transition, coordinating requirements
-          across Engineering, Operations and external vendors. Zero transmission errors
-          within my scope.
-        </li>
-        <li>
-          <strong>Executive translation.</strong> Built the business-review pipeline that
-          consolidates six teams and 20+ operational data points into one-pagers. Leaders
-          three levels up run their quarterly reviews on them, and it runs without me.
-          During the merger transition, briefed newly inherited senior leadership on the
-          end-to-end third-party monitoring architecture: technical dependencies, controls,
-          QA and supplier risk. The work was then elevated to the next executive level.
-        </li>
-        <li>
-          <strong>Scaling the mechanism.</strong> Own SOP governance for a department of
-          about 80 people across 8-9 teams. Cut 50+ hours of manual work in one quarter with
-          scripted automation, and brought governed AI use into remediation work before
-          there was a playbook; the pattern is now used across multiple teams. Served as
-          floating technical lead at a 140-associate enterprise AI summit, coaching teams
-          through problem decomposition; the guidance fed the People's Choice-winning
-          solution.
-        </li>
-      </ul>
-
-      <p class="more">
-        Roles, dates, and the rest on <a href="/resume">the resume</a>.
-      </p>
+      <div class="build">
+        <h3><a href="/projects/forgeframe">ForgeFrame</a></h3>
+        <p>
+          Open-source memory software for agents. It stores records locally,
+          tracks their origin, and changes retrieval priority with use and time.
+          I use it in my own tools and publish the code so other people can
+          inspect it and run it themselves.
+        </p>
+      </div>
+      <div class="build">
+        <h3>Model routing and evaluation</h3>
+        <p>
+          I route requests across models and providers, with fallbacks when one
+          fails. Picking a cheaper model only helps if it still completes the
+          task: retries, review, and bad output belong in the cost calculation.
+          I also do paid adversarial evaluation work in finance, designing cases
+          and rubrics that distinguish plausible answers from defensible ones.
+        </p>
+      </div>
+      <p><a href="/projects">The rest of the projects</a> include personal experiments and work I’ve parked.</p>
     </section>
 
-    <hr />
-
-    <section>
-      <div class="sec-head">
-        <span class="sec-num">II</span>
-        <h2>Systems I build and run</h2>
-        <p class="sec-gloss">
-          Running in production, on hardware I own, with audit trails I can open. The
-          numbers are what the systems report about themselves, not what I say about them.
-        </p>
-      </div>
-
-      {
-        BUILT.map((b) => (
-          <div class="built">
-            <a class="built-name" href={b.href} target={b.href.startsWith('http') ? '_blank' : undefined} rel={b.href.startsWith('http') ? 'noopener' : undefined}>
-              {b.name} <span aria-hidden="true">↗</span>
-            </a>
-            <p class="built-line">{b.line}</p>
-            <p class="built-fact">{b.fact}</p>
-          </div>
-        ))
-      }
-
-      <p class="more">
-        CREATURE, DEUCE and the rest are written up in <a href="/projects">the catalogue</a>.
-      </p>
-    </section>
-
-    <hr />
-
-    <section>
-      <div class="sec-head">
-        <span class="sec-num">III</span>
-        <h2>The client work</h2>
-        <p class="sec-gloss">
-          One engagement, written up in full rather than five written up vaguely. It is here
-          because it is the only place someone who did not build these tools has been running
-          them, unattended, on real money.
-        </p>
-      </div>
-
-      <div class="case">
-        <div class="case-head">
-          <h3>Orellana Landscaping LLC</h3>
-          <span class="case-where">Woodbridge, VA</span>
-        </div>
-
-        <p class="case-problem">
-          Decades in business, every quote given verbally, the books kept by hand. The problem
-          was never the work. It was the paper between the work and getting paid — and the
-          customers who wanted the job but not the invoice all at once.
-        </p>
-
-        <div class="tools">
-          <div class="tool">
-            <code>create_invoice</code>
-            <p>Turns a line of field text — <em>“mulch and cleanup, $450”</em> — into a QuickBooks invoice.</p>
-          </div>
-          <div class="tool">
-            <code>record_check_payment</code>
-            <p>Marks a check against the right open invoice, so nobody retypes it into the books later.</p>
-          </div>
-          <div class="tool">
-            <code>proposal + past-due generator</code>
-            <p>Field notes in, a branded PDF out, in English or Spanish — the crew and the customers do not always share one.</p>
-          </div>
-          <div class="tool">
-            <code>prepare_invoice_run / send_invoice_run</code>
-            <p>The recurring book, billed as a batch. Idempotent and resumable: one commit per period, already-sent invoices skipped, the whole run gated behind a token.</p>
-          </div>
-        </div>
-
-        <div class="constraint">
-          <span class="constraint-lab">the part that changed the money</span>
-          <p>
-            He already accepted Visa, Mastercard, Amex, Discover, PayPal and Venmo through
-            QuickBooks — his customers just did not find out until the invoice arrived, long
-            after the decision was made. The proposal now carries a “Ways to Pay” strip up
-            front, and a Wisetack financing QR sitting inline to the left of the totals, so
-            the offer is attached to the number instead of buried under it.
-          </p>
-          <p>
-            The monthly figure is computed from the total and the term, and the apply link
-            arrives pre-filled with both. That turns <em>“I can’t afford that right now”</em>
-            into <em>“I can do $273 a month”</em> — which is the whole point, and it puts a
-            two-man crew next to contractors twice their size.
-          </p>
-        </div>
-        <div class="constraint">
-          <span class="constraint-lab">how it stays safe to hand over</span>
-          <p>
-            QuickBooks stays the system of record. Every write is confirm-before-write: the
-            tool previews exactly what it will post and returns a token, and nothing reaches
-            the books until that token comes back. There is an audit log, and it fails closed
-            when it is not pointed at a real account.
-          </p>
-          <p>
-            Least-privilege and tenant-aware from the first line, with a privacy policy and
-            terms written to clear Intuit's production review. The point was to hand it over,
-            not to babysit it.
-          </p>
-        </div>
-
-        <p class="case-status">
-          <strong>In use.</strong> The owner runs his invoicing on it
-          today. That is one business, not a track record — but it is a real one, with real
-          money moving through it, and it is why I know these tools survive contact with
-          someone who did not build them.
-        </p>
-      </div>
-    </section>
-
-    <hr />
-
-    <section class="cta-block">
-      <h2>What happens next</h2>
+    <section id="orellana">
+      <h2>Orellana Landscaping</h2>
       <p>
-        If something here is relevant to what you are working on, the fastest thing is to
-        ask me something specific. I would rather answer that than have you infer it from a page.
+        I built a quoting and invoicing prototype for a landscaping business
+        in Woodbridge, Virginia. The problem was the work between a job in the
+        field, a proposal, and a clean invoice in the books.
       </p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="/contact">Ask me something specific</a>
-      </div>
+      <p>
+        The prototype turns field notes into a proposal and supports invoice
+        creation, check-payment recording, and recurring invoice runs. There is
+        a demo accounting backend and an adapter for QuickBooks. Spanish aliases
+        help enter service names; the generated proposals are currently in English.
+      </p>
+      <h3>A small change to the proposal</h3>
+      <p>
+        I put payment options and a financing application link beside the price
+        in the proposal. That information is useful while someone is deciding
+        whether to take the job. Hiding it on an invoice means it arrives after
+        the decision it could have helped.
+      </p>
+      <h3>What makes it usable</h3>
+      <p>
+        Accounting writes require a preview and confirmation. Invoice runs can
+        resume after an interruption and skip items already sent. Those are
+        implemented safeguards. Production use and an effect on sales remain
+        unverified; this is a prototype case study.
+      </p>
+    </section>
+
+    <section>
+      <h2>Operations background</h2>
+      <p>
+        In bank operations, I own integration specifications and onboarding for
+        more than 38 external vendors, from file formats and encryption through
+        testing and production readiness. The work is making sure different
+        organizations mean the same thing when they say a transmission succeeded.
+      </p>
+      <p>
+        On an exchange handling more than 300 daily transmissions, I took anomaly
+        detection from a prototype to an automated pipeline and two formally owned
+        production controls. Manual monitoring fell 78%, leaving people to
+        investigate exceptions instead of watching every transmission.
+      </p>
+      <p>
+        When a failure affected more than 20,000 accounts, I wrote the SQL
+        investigation, isolated the cause, and helped remediate it. We added
+        monitoring at the failure points. That work taught me to look past a
+        successful run: someone has to own the exceptions and be able to recover
+        when the system fails.
+      </p>
+      <p class="note">Roles and dates are on <a href="/resume">my resume</a>.</p>
+    </section>
+
+    <section>
+      <h2>What I’m paying attention to</h2>
+      <p>
+        My working thesis is that abundant intelligence moves the scarce part of
+        a business. Prediction, software, and information become easier to produce.
+        Turning them into consequential outcomes still depends on capital, physical
+        infrastructure, data, permissions, distribution, and institutions.
+      </p>
+      <p>
+        I want to build at those conversion points: find a useful capability,
+        understand what keeps it from earning its keep, and build the missing
+        piece. Who controls the capacity, captures the value, and carries the
+        risk matters as much as what the model can do.
+      </p>
+      <p>
+        I’m exploring those questions in
+        <a href="/research/claims-capacity-collateral">Claims, capacity, and collateral</a>.
+        The aim is to build things I can understand, own, and make dependable,
+        while leaving the people who use them more capable.
+      </p>
+      <p>If that overlaps with something you’re working on, <a href="mailto:alex@campos.works">write to me</a>.</p>
     </section>
   </article>
 </Page>
 
 <style>
-  .eyebrow {
-    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em;
-    text-transform: uppercase; color: var(--gold-accent); margin-bottom: 0.8rem;
-  }
-  .work h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); line-height: 1.1; margin-bottom: 0.9rem; }
-  .lede { font-size: 1rem; color: var(--white-70); line-height: 1.68; max-width: 60ch; margin-bottom: 1.6rem; }
-
-  /* ── Exits ── */
-  .exits { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem; }
-  .exit {
-    border: 1px solid var(--white-08); padding: 0.95rem 1.1rem; text-decoration: none;
-    display: block; transition: border-color 0.18s, background 0.18s;
-  }
-  .exit:hover { border-color: var(--gold-accent); background: var(--depth-1); }
-  .exit:hover .exit-arrow { transform: translateX(3px); }
-  .exit-label {
-    display: block; font-family: var(--mono); font-size: 0.85rem;
-    color: var(--gold-accent); margin-bottom: 0.3rem;
-  }
-  .exit-arrow { display: inline-block; transition: transform 0.18s; }
-  .exit-detail { display: block; font-size: 0.8rem; color: var(--white-45); line-height: 1.55; }
-
-  /* ── Section heads ── */
-  .sec-head { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.9rem; align-items: baseline; margin-bottom: 1.2rem; }
-  .sec-num { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em; color: var(--gold-accent); }
-  .sec-head h2 { margin: 0; font-size: 1.45rem; }
-  .sec-gloss { grid-column: 2; font-size: 0.88rem; color: var(--white-60); max-width: 58ch; margin: 0.3rem 0 0; line-height: 1.6; }
-
-  /* ── Case ── */
-  .case { border: 1px solid var(--white-08); background: var(--depth-1); padding: 1.3rem 1.4rem; }
-  .case-head { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.7rem; }
-  .case-head h3 { margin: 0; font-size: 1.12rem; }
-  .case-where { font-family: var(--mono); font-size: 0.72rem; color: var(--white-30); }
-  .case-problem { font-size: 0.94rem; color: var(--white-70); line-height: 1.65; margin-bottom: 1.1rem; max-width: 58ch; }
-
-  .tools { display: flex; flex-direction: column; margin-bottom: 1.1rem; }
-  .tool { border-top: 1px solid var(--white-08); padding: 0.7rem 0; }
-  .tool:last-child { border-bottom: 1px solid var(--white-08); }
-  .tool code {
-    font-family: var(--mono); font-size: 0.78rem; color: var(--gold-accent);
-    display: block; margin-bottom: 0.25rem;
-  }
-  .tool p { margin: 0; font-size: 0.86rem; color: var(--white-60); line-height: 1.55; max-width: 60ch; }
-  .tool em { color: var(--white-70); font-style: italic; }
-
-  .constraint { border-left: 2px solid var(--gold-accent); padding: 0.2rem 0 0.2rem 1rem; margin-bottom: 1rem; }
-  .constraint-lab {
-    display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.16em;
-    text-transform: uppercase; color: var(--gold-accent); margin-bottom: 0.4rem;
-  }
-  .constraint p { font-size: 0.87rem; color: var(--white-60); line-height: 1.62; margin-bottom: 0.5rem; max-width: 60ch; }
-  .constraint p:last-child { margin-bottom: 0; }
-
-  .case-status { font-size: 0.86rem; color: var(--white-60); line-height: 1.6; margin: 0; max-width: 60ch; }
-  .case-status strong { color: var(--glow-hot); font-weight: 600; }
-
-  /* ── Built ── */
-  .built { border-top: 1px solid var(--white-08); padding: 0.9rem 0; }
-  .built:last-of-type { border-bottom: 1px solid var(--white-08); }
-  .built-name {
-    font-family: var(--serif); font-size: 1.05rem; color: var(--glow-hot);
-    text-decoration: none; display: inline-block; margin-bottom: 0.3rem;
-  }
-  .built-name:hover { color: var(--gold-accent); }
-  .built-line { font-size: 0.89rem; color: var(--white-70); line-height: 1.6; margin: 0 0 0.25rem; max-width: 62ch; }
-  .built-fact { font-family: var(--mono); font-size: 0.75rem; color: var(--white-45); line-height: 1.55; margin: 0; max-width: 62ch; }
-
-  /* ── Ops ── */
-  .ops { list-style: none; padding: 0; margin: 0; }
-  .ops li {
-    font-size: 0.89rem; color: var(--white-60); line-height: 1.62;
-    padding: 0.55rem 0 0.55rem 1.3rem; position: relative;
-    border-top: 1px solid var(--white-08); max-width: 62ch;
-  }
-  .ops li:last-child { border-bottom: 1px solid var(--white-08); }
-  .ops li::before {
-    content: '▪'; position: absolute; left: 0.2rem; top: 0.55rem;
-    color: var(--alive); font-size: 0.7rem;
-  }
-  .ops strong { color: var(--glow-hot); font-weight: 600; }
-
-  .more { font-family: var(--mono); font-size: 0.75rem; color: var(--white-30); margin-top: 0.9rem; }
-  .more a { color: var(--gold-accent); }
-
-  .not-done h2 { font-size: 1.3rem; margin-bottom: 0.7rem; }
-  .not-done p { font-size: 0.92rem; color: var(--white-60); line-height: 1.68; max-width: 62ch; margin-bottom: 0.9rem; }
-
-  .cta-block { margin-top: 2rem; }
-  .cta-block h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
-  .cta-block p { font-size: 0.92rem; color: var(--white-60); line-height: 1.65; max-width: 58ch; margin-bottom: 1.1rem; }
-  .cta-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
-  .btn {
-    display: inline-block; font-family: var(--mono); font-size: 0.8rem;
-    padding: 0.7rem 1.3rem; text-decoration: none; border: 1px solid var(--gold-accent);
-    transition: background 0.16s, color 0.16s;
-  }
-  .btn-primary { background: var(--gold-accent); color: var(--void); font-weight: 600; }
-  .btn-primary:hover { background: transparent; color: var(--gold-accent); }
-  .btn-ghost { background: transparent; color: var(--gold-accent); border-color: var(--white-15); }
-  .btn-ghost:hover { border-color: var(--gold-accent); }
-
-
-  /* ── Three textures, one column ──
-     The page holds three kinds of evidence: a record, a set of running things,
-     and a written-up case. Same place, same width, but each gets its own
-     grammar so they read as different things rather than three lists.
-     The numeral takes the section's hue; everything else follows from it. */
-
-  /* I. The record: a ledger. Counter-indexed, ruled, gold. */
-  .ops { counter-reset: entry; }
-  .ops li {
-    position: relative;
-    padding-left: 2.6rem;
-    border-left: 2px solid var(--gold-accent);
-    background: linear-gradient(90deg, rgba(184,150,90,0.05), transparent 40%);
-  }
-  .ops li::before {
-    counter-increment: entry;
-    content: counter(entry, decimal-leading-zero);
-    position: absolute; left: 0.75rem; top: 0.95rem;
-    font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em;
-    color: var(--gold-accent); opacity: 0.85;
-  }
-
-  /* II. The systems: a process list. Live dot, mono name, dark panel. */
-  .built {
-    border: 1px solid var(--white-08); border-top-color: var(--white-08);
-    background: var(--depth-1);
-    padding: 0.95rem 1.1rem 0.95rem 1.9rem;
-    margin-top: 0.45rem;
-    position: relative;
-  }
-  .built:first-of-type { margin-top: 0; }
-  .built:last-of-type { border-bottom: 1px solid var(--white-08); }
-  .built::before {
-    content: ""; position: absolute; left: 0.85rem; top: 1.35rem;
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--alive); box-shadow: 0 0 6px var(--alive-dim);
-  }
-  .built-name { font-family: var(--mono); font-size: 0.86rem; letter-spacing: 0.02em; }
-  .built-name:hover { color: var(--alive); }
-
-  /* III. The case: a written account. Serif, breathing room, the practice's rule. */
-  .case {
-    border: none; border-left: 2px solid #7aa498;
-    background: linear-gradient(90deg, rgba(122,164,152,0.06), transparent 55%);
-    padding: 1.4rem 1.5rem 1.4rem 1.7rem;
-  }
-  .case-head h3 { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; letter-spacing: -0.01em; }
-  .case-where { color: #7aa498; }
-  .case-problem { font-family: var(--serif); font-size: 1.04rem; line-height: 1.7; }
-  .case-status { font-family: var(--serif); font-size: 0.98rem; line-height: 1.7; }
-
-  /* The numeral carries the hue so the eye learns the three before reading. */
-  section:has(.ops) .sec-num { color: var(--gold-accent); }
-  section:has(.built) .sec-num { color: var(--alive); }
-  section:has(.case) .sec-num { color: #7aa498; }
-
-  @media (max-width: 620px) {
-    .exits { grid-template-columns: 1fr; }
-    .sec-head { grid-template-columns: 1fr; }
-    .sec-gloss { grid-column: 1; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .exit, .exit-arrow { transition: none; }
-  }
+  .lede { font-size: 1.3rem; line-height: 1.5; color: var(--glow-hot); max-width: 50ch; }
+  section { margin-top: 3rem; scroll-margin-top: 3rem; }
+  section > h2 { margin-top: 0; }
+  .note { font-size: 0.85rem; color: var(--white-60); }
+  .build { margin: 1.7rem 0; }
+  .build h3 { margin: 0 0 0.5rem; }
+  .build h3 a { color: var(--glow-hot); }
+  .build h3 a:hover { color: var(--gold-accent); }
 </style>

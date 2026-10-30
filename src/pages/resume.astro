@@ -2,37 +2,26 @@
 import Page from '../layouts/Page.astro';
 ---
 
-<Page title="resume -- alexander campos" description="Alexander Campos - six years in regulated bank operations: vendor integrations, controls, SOP governance, and the tooling behind them.">
+<Page title="resume -- alexander campos" description="Alexander Campos: experience in operations, systems integration, automation, AI evaluation, and software projects.">
   <article class="resume">
     <header class="masthead">
       <h1>Alexander Campos</h1>
-      <p class="subtitle">Banking operations · programs, controls &amp; automation</p>
+      <p class="subtitle">Operations, systems integration, and applied AI</p>
+      <p class="location">Washington D.C. Metro Area</p>
       <p class="contact-line">
-        Washington D.C. Metro Area <span aria-hidden="true">|</span>
-        <a href="mailto:alex@campos.works">alex@campos.works</a> <span aria-hidden="true">|</span>
-        <a href="https://linkedin.com/in/alexander-d-campos">linkedin.com/in/alexander-d-campos</a> <span aria-hidden="true">|</span>
+        <a href="mailto:alex@campos.works">alex@campos.works</a>
+        <a href="https://linkedin.com/in/alexander-d-campos">LinkedIn</a>
         <a href="https://campos.works">campos.works</a>
       </p>
     </header>
 
-    <ul class="stats" aria-label="At a glance">
-      <li><b>6 yrs</b><span>regulated finance ops</span></li>
-      <li><b>~80</b><span>people, SOP governance managed</span></li>
-      <li><b>$600M+</b><span>legal process operation monitored</span></li>
-      <li><b>78%</b><span>less manual review</span></li>
-      <li><b>20,000+</b><span>account failure resolved solo</span></li>
-      <li><b>38+</b><span>vendor integrations owned</span></li>
-      <li><b>50+ hrs</b><span>cut in one quarter</span></li>
-    </ul>
-
     <section class="summary">
       <p>
-        Six years in regulated bank operations, starting on a teller line and promoted
-        four times in five years. Built the process monitoring behind a $600M+ legal process operation, giving a view into what fails, why, and when. Resolved a 20,000-account logic failure independently and onboarded a merger's law firm vendors with zero transmission errors.
+        I work across process design, data investigation, and implementation. My career
+        began in branch operations and moved into vendor integration, monitoring, and
+        automation. Alongside that work, I build AI tools and write model evaluation tasks.
       </p>
     </section>
-
-    <hr />
 
     <section>
       <h2>Experience</h2>
@@ -76,22 +65,19 @@ import Page from '../layouts/Page.astro';
         </ul>
       </div>
 
+    </section>
+
+    <section>
+      <h2>AI evaluation &amp; projects</h2>
       <div class="role">
-        <div class="role-header">
-          <div class="role-top">
-            <h3 class="org">AI evaluation &amp; projects</h3>
-            <span class="dates">2025 – Present</span>
-          </div>
-          <p class="title">Contract and personal work</p>
-        </div>
+        <p class="dates">2025 – Present</p>
+        <p class="title">Contract and personal work</p>
         <ul>
           <li><strong>Model evaluation (contract, 2026):</strong> authored adversarial evaluation tasks for OpenAI's GDPVal benchmark in finance through LinkedIn's AI Trainer program: scenario design, weighted pass/fail rubrics, and golden answers. Consultant on a legal hold and discovery evaluation batch.</li>
           <li><strong>Tooling and personal projects:</strong> built a small workbench for authoring benchmark tasks; also a <a href="https://www.npmjs.com/package/@forgeframe/server">memory server for AI agents</a> (MIT licensed, on npm) and <a href="https://reframed.works">Reframed</a>, a live web application built and run solo (Next.js, TypeScript, Postgres).</li>
         </ul>
       </div>
     </section>
-
-    <hr />
 
     <section>
       <h2>Skills</h2>
@@ -126,141 +112,40 @@ import Page from '../layouts/Page.astro';
       </p>
     </section>
 
-    <hr />
-
     <section>
       <h2>Education &amp; certifications</h2>
       <p>
-        <strong>B.S. Business Administration, Management and Operations</strong> -- George Mason
+        <strong>B.S. Business Administration, Management and Operations</strong>, George Mason
         University, December 2024.
       </p>
       <p class="skills">
-        AI Governance Professional (AIGP, IAPP) -- expected December 2026 ·
+        AI Governance Professional (AIGP, IAPP), expected December 2026 ·
         Business Process Management (2025) · Google Data Analytics (2024)
       </p>
     </section>
 
   </article>
 
-  <script is:inline>
-    console.log(
-      '%c same question, different shapes. ',
-      'color: #5BF29B; font-family: monospace; font-size: 11px;'
-    );
-  </script>
 </Page>
 
 <style>
-  .resume {
-    font-size: 0.95rem;
-  }
-
-  .skills {
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--white-60);
-  }
-
-  .role {
-    margin-bottom: 2rem;
-  }
-
-  .role-header {
-    margin-bottom: 0.75rem;
-  }
-
-  .role-header h3 {
-    margin-bottom: 0.15rem;
-  }
-
-  .dates {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--white-45);
-  }
-
-  .role ul {
-    padding-left: 1.25rem;
-  }
-
-  .role li {
-    margin-bottom: 0.75rem;
-  }
-
-  .role li strong {
-    color: var(--glow-hot);
-  }
-
-  .resume-contact {
-    text-align: center;
-  }
-
-  .resume-contact p {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--white-45);
-  }
-  .stats {
-    list-style: none; padding: 0; margin: 0 0 1.75rem;
-    display: grid; grid-template-columns: repeat(7, 1fr);
-    border-top: 1px solid var(--white-15); border-bottom: 1px solid var(--white-15);
-  }
-  .stats li {
-    padding: 0.85rem 0.5rem; text-align: center;
-    display: flex; flex-direction: column; gap: 0.3rem;
-    border-right: 1px solid var(--white-08);
-  }
-  .stats li:last-child { border-right: none; }
-  .stats b {
-    font-family: var(--serif); font-size: 1.55rem; font-weight: 500; line-height: 1;
-    color: var(--glow-hot); letter-spacing: -0.01em;
-  }
-  .stats span {
-    font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--white-45); line-height: 1.35;
-  }
-  @media (max-width: 900px) { .stats { grid-template-columns: repeat(4, 1fr); } .stats li:nth-child(4) { border-right: none; } }
-  @media (max-width: 480px) { .stats { grid-template-columns: 1fr 1fr; } .stats li { border-right: none; } }
-
-  /* ── The PDF's grammar, carried over ──
-     Centered masthead, gold small-caps section rules, company in gold with
-     place and dates on the right, italic title, tight bullets with bold leads.
-     The stat strip is the one thing the paper version does not have. */
-  .resume { font-size: 0.93rem; line-height: 1.55; }
-  .masthead { text-align: center; margin: 0 0 1.5rem; }
-  .masthead h1 { font-family: var(--serif); font-size: 2.2rem; font-weight: 500; letter-spacing: 0.04em; margin: 0 0 0.3rem; }
-  .subtitle { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-accent); margin: 0 0 0.55rem; }
-  .contact-line { font-size: 0.8rem; color: var(--white-45); margin: 0; }
-  .contact-line a { color: var(--white-60); text-decoration: none; border-bottom: 1px solid var(--white-15); }
-  .contact-line a:hover { color: var(--gold-accent); border-bottom-color: var(--gold-accent); }
-  .contact-line span { color: var(--white-15); margin: 0 0.4rem; }
-
-  .resume .summary p { color: var(--white-70); max-width: 72ch; margin: 0; }
-  .resume hr { border: 0; border-top: 1px solid var(--white-08); margin: 1.6rem 0; }
-
-  .resume h2 {
-    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--gold-accent); font-weight: 500; margin: 0 0 0.9rem;
-    padding-bottom: 0.4rem; border-bottom: 1px solid var(--gold-accent); opacity: 0.95;
-  }
-  .resume .role { margin-bottom: 1.5rem; }
-  .resume .role-header { margin-bottom: 0.45rem; }
-  .role-top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
-  .resume .org { font-family: var(--serif); font-size: 1.12rem; font-weight: 600; color: var(--gold-accent); margin: 0; }
-  .resume .dates { font-size: 0.78rem; color: var(--white-45); white-space: nowrap; }
-  .resume .title { font-style: italic; font-size: 0.9rem; color: var(--white-60); margin: 0.1rem 0 0; }
-  .resume .role ul { margin: 0; padding-left: 1.1rem; }
-  .resume .role li { margin: 0 0 0.45rem; color: var(--white-70); }
-  .resume .role li strong { color: var(--glow-hot); font-weight: 600; }
-  .resume .role li a { color: var(--glow-hot); border-bottom: 1px solid var(--white-15); text-decoration: none; }
-
-  .resume h3:not(.org) { font-family: var(--body); font-size: 0.86rem; font-weight: 600; color: var(--glow-hot); margin: 0.7rem 0 0.2rem; }
-  .resume .skills { font-size: 0.8rem; line-height: 1.6; margin: 0; }
-
-  @media (max-width: 600px) {
-    .masthead h1 { font-size: 1.8rem; }
-    .resume .dates { white-space: normal; }
-    .contact-line span { display: none; }
-    .contact-line a { display: block; margin-top: 0.15rem; }
-  }
+  .resume { font-size: 1rem; line-height: 1.7; }
+  .masthead { margin-bottom: 2rem; }
+  .masthead h1 { margin-bottom: 0.5rem; }
+  .subtitle { font-size: 1.1rem; color: var(--white-70); margin-bottom: 0.75rem; }
+  .location { color: var(--white-60); font-size: 0.95rem; margin-bottom: 0.25rem; }
+  .contact-line { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; font-size: 0.95rem; }
+  .summary { color: var(--white-70); }
+  .resume section + section { margin-top: 3rem; }
+  .resume h2 { margin: 0 0 1.5rem; }
+  .role { margin-bottom: 2.5rem; }
+  .role-header { margin-bottom: 1rem; }
+  .resume .org { font-size: 1.25rem; margin: 0 0 0.25rem; }
+  .dates { display: block; font-size: 0.9rem; color: var(--white-60); margin-bottom: 0.25rem; }
+  .title { color: var(--white-70); margin: 0.25rem 0 1rem; }
+  .role ul { padding-left: 1.25rem; margin-bottom: 0; }
+  .role li { color: var(--white-70); margin-bottom: 0.8rem; }
+  .role strong { color: var(--glow-hot); font-weight: 600; }
+  .resume h3:not(.org) { font-size: 1.1rem; margin: 1.5rem 0 0.4rem; }
+  .skills { color: var(--white-70); margin-bottom: 1rem; }
 </style>

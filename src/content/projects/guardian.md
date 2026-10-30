@@ -1,46 +1,27 @@
 ---
 title: "Guardian"
-tagline: "A desktop app for local inference that became ForgeFrame. Reframe detection, pattern tracking, encrypted notes - the engine got extracted, the shell didn't survive it."
+tagline: "An earlier desktop workspace whose memory engine became ForgeFrame."
 status: "absorbed"
 stack: ["Electron", "React", "Node.js", "SQLite/FTS5", "Zustand", "xterm.js"]
-image: "/images/projects/guardian.png"
 repo: "https://github.com/notaprompt/guardian-ui-scaffold"
 order: 7
+screenshots:
+  - src: "/images/projects/guardian.png"
+    caption: "The Electron workspace with terminal, chat, notes, and artifacts. This capture shows the layout, not evidence that its pattern detection was accurate."
 ---
 
-Guardian was ForgeFrame before ForgeFrame was a separate thing - the same engine (memory, decay, principle-tier tagging) wrapped in a desktop UI for end users instead of developers. It tracked how model responses shift over time and kept sensitive data local. When the memory layer got extracted into standalone infrastructure, the shell had nothing left to justify, and the engine lives in ForgeFrame now. This page is the research record; the [hall of shame](/misc/hall-of-shame#guardian) has the post-mortem.
+Guardian started as a desktop interface for working with local models. It combined chat, a terminal, notes, and persistent context in one Electron application. As I used it, the memory and session-management work became more useful than the shell around it. I extracted that engine into [ForgeFrame](/projects/forgeframe) and stopped developing Guardian as a separate product.
 
-## How it worked
+## What I built
 
-Started as an Electron shell with a chat window and a local Ollama connection. Built outward from there.
+The application routed requests across Ollama and cloud providers, stored notes in SQLite, and processed completed sessions into decisions, tasks, and code artifacts. Notes supported sensitivity levels and encryption at rest, with an explicit lock and unlock cycle.
 
-**Routing.** Provider-agnostic engine across Anthropic, OpenAI, and Ollama. Auto-selects by intent complexity and cost. Runs air-gapped on local models or through cloud APIs.
+I also tried detecting two kinds of conversational drift: a model changing the meaning of a user's statement, and a topic recurring across sessions without reaching a decision. Those features used heuristic classifications and required context across conversations.
 
-**Reframe detection.** Classifies when model responses subtly reshape user statements across 7 types. Triggers prompt correction when user-rated inaccuracy exceeds 40%.
-
-**Unresolved-pattern detection.** Separate from reframe detection -- identifies topics that recur across sessions without resolution. Schema, accessors, and pipeline integration wired into the post-session flow. Detects multi-session conversation patterns where the same topic returns without progress toward a decision or action.
-
-**Memory.** 4-level compression pipeline (raw -> summary -> pattern -> principle). Strength decays over time, reinforces on retrieval.
-
-**Sovereign encryption.** Notes support sensitivity levels and context gating. Encrypted at rest with IPC-based unlock/lock cycle. Private notes stay private -- they don't flow into cloud context even when cloud providers are active.
-
-**ForgeFrame fusion.** JSON-RPC stdio client bridges Guardian to ForgeFrame's MCP memory server. Sessions sync bidirectionally. Data migration pipeline handles the transition from Guardian's internal SQLite to ForgeFrame's shared memory layer.
-
-**Post-session pipeline.** Fires on conversation end. Extracts decisions, tasks, and code artifacts. Generates typed notes. Indexes into FTS5 for search. Links entities into a knowledge graph. Runs unresolved-pattern detection.
-
-## What was never solved
-
-- Reframe detection uses heuristic classification, not a trained model. False positive rate unmeasured.
-- Memory compression thresholds are hand-tuned, not empirically optimized.
-- No formal user study on reframe detection or unresolved-pattern accuracy.
-- Sovereign encryption is functional but not audited by a third party.
+A JSON-RPC bridge connected Guardian to ForgeFrame's MCP memory server, and a migration path moved the shell's internal memory into the shared store. That transition exposed the difficult engineering: keeping state synchronized and managing processes when a session ends, a provider fails, or the desktop application restarts.
 
 ## What survived
 
-The hardest problems were state synchronization and process lifecycle management, not the models themselves.
+Persistent memory, provenance, and the post-session pipeline continued in ForgeFrame. The desktop shell did not justify a second product once those capabilities were available separately. The [post-mortem](/misc/hall-of-shame#guardian) records that decision.
 
-Reframe detection surfaced a deeper problem: models subtly reshape your language over time. Detecting that requires understanding the user's baseline, which requires memory, which requires local persistence. That dependency chain is why ForgeFrame exists.
-
-Unresolved-pattern detection surfaced something else: cross-session recurrence isn't visible within any single conversation - it's visible only across them. You need memory that spans sessions to see which topics return without progress.
-
-Guardian is where the essay on observation and identity modeling came from. Everything I describe there - the loop, the reframe types, the four quadrants of who-sees-what - I found by building this and watching what happened.
+Reframe detection had no measured false-positive rate or formal user study. Compression thresholds were hand-tuned, and the encryption implementation was not independently audited. Those limitations remain part of the record; extracting the engine did not resolve them.

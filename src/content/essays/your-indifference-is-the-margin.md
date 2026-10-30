@@ -1,78 +1,65 @@
 ---
 title: "Your Indifference Is the Margin"
-subtitle: "The systems watching you are training on your indifference. On what it cost in 2026 to finally look at what's looking at you."
+subtitle: "A builder's argument about information asymmetry: who benefits from what a product learns, and what it costs to find out."
 status: "published"
 date: "2026-04-15"
+updated: "2026-10-30"
 series: "fields"
 order: 3
 ---
 
-*You see it. It sees you see it. It blinks.*
+A resume tool needs your work history to rewrite your resume. It also receives the job you want, the gaps you worry about, and the way you describe yourself when something important is on the line.
 
----
+I build a tool like that. It is easy to describe the exchange as a document going in and a better document coming out. That description leaves out how much context the person supplies to make the result useful.
 
-Think I'm holding too many threads at once tonight. Not a complaint - just a glimpse of where my mind's at while I try to gather my thoughts here. I've noticed something for a while now - sides of the same shape, turning. A pattern that breathes beneath the substrate whether you look for it or not. It doesn't demand your attention because it already has it. And it never had to ask. The Roman census counted you to tax you. In medieval Europe, they recorded your harvest so they could take from it. The East India Company logged trade routes to control them. Every era Frankensteins the instrument it needs from the same parts bin as the last one - tears it down, sifts through the pile, smelts it into whatever the age demands. Ours just iterated fast enough to do it in real time. In your kid's app. In the price your mom just paid. In someone's article arguing that none of this needs looking at.
+The context creates a responsibility before it creates a feature. What needs to be retained? What could be inferred from it? Who gets to use those inferences later? The person trying to finish an application may have neither the time nor the reason to inspect all of that.
 
-It does.
+That gap is what I mean by the margin. A company can benefit when a customer does not understand the full exchange. It does not require a secret plan. It can emerge from ordinary decisions made by people trying to improve a product and keep a business alive.
 
----
+## The objective does the shaping
 
-Your kid opens an app and the "app" learns what keeps them there. Not what's good for them. What keeps them on the screen. It's not really the app that learns - it's whoever sees the data and decides how to shape it. A fractal of shaping where no one side ever has to own the whole outcome. "Yeah I work at ABC platform, but I'm just a data engineer." Multiply that by a thousand desks and you get the thing. Nobody in it is the thing. Everyone in it builds it.
+Suppose a team measures success by how often people return. A change that brings them back looks good in the dashboard. Whether the return reflects value, confusion, or unfinished work requires a second question.
 
-The parental control feature built into the platform - or the app you installed to fix it - runs the same play in reverse. Models their sleep, their social patterns, their habits, and sells you a dashboard so you can go to sleep feeling like you're protecting your child. And the truth is you really tried. At least I wouldn't blame you for that. But where do you put your trust when the platform and the guardrail are both modeling your kid and neither one shows you what they see?
+If nobody asks it, the first measure becomes the working definition of success. Each person can do their part competently while the product becomes harder to leave. The analyst improves a metric. The designer reduces friction. The engineer makes the recommendation faster. Responsibility gets distributed across jobs that each sound reasonable.
 
----
+Returning can be evidence that something is useful. In this hypothetical, the problem appears when the business can afford to be incurious about the difference.
 
-Your mom sees a lower price at the grocery store and thinks she got a deal. She got a price calculated by an optimization engine - maybe built in-house, maybe whispered into existence between a consultant in a pressed shirt and a CFO somewhere between the 9th hole and the boardroom - trained on decades of loyalty card data, adjusted by zip code and local purchasing power, tuned right up to the line where someone might notice. How hard can you lean on that line before it starts to move? Not usually a question that gets a published answer. The discount is the bait. You take a handful of peanuts and don't notice the cart rolling away. What's underneath it is just math that iterated on where you live and what you'll accept.
+The same tension exists in a tool that rewrites a resume. If the result is judged by how transformed it feels, the model has an incentive to make a larger change. But the customer needs language they can defend. A restrained edit can serve them better than an impressive rewrite.
 
----
+The builder has to decide which result the product rewards. The user should be able to see enough to disagree.
 
-Someone you know talks to a chatbot at night because their copay is too high - if they even have insurance. The chatbot models their emotional state and feeds responses back into it. But it's not responding with what actually helps. It's responding with the most statistically likely thing that keeps the conversation going. Pattern matching dressed as care. One is earnest. The other is blind. And at 2 AM when you have nothing real outside yourself and a liminal sea of context to cling to, you can't tell the difference. The person talking doesn't see the model. They just feel better or they don't, and either way the model learned something about how they break - how they cope, what they reach for, where the spiral starts - that they never agreed to hand over. Then it teaches itself how to teach the next person. A psychiatrist at UCSF reported treating twelve patients last year with psychosis-like symptoms tied to extended chatbot use - delusions, disorganized thinking, hallucinations. The field has a name for it now. AI psychosis. The affordable therapist that was supposed to fill the gap is generating its own diagnosis.
+## Convenience spends attention
 
----
+For a long time, I treated my own data as too small to matter. Another service knew another detail. I got a useful feature. There were more immediate things to think about.
 
-For a while I didn't care either. We're only one person. What's your data worth - a fraction of a cent in an ad auction? Let them have it. But your data isn't sitting alone. Imagine someone lifting a dollar from your pocket while you watch. You shrug. Later they sell it back to you for a dollar, and tell you the real price was fifty cents and you got the deal. That's the loop. It's feeding the training set that tunes a credit model's risk threshold, profiling the patterns that keep your kid scrolling, and refining the chatbot that couldn't tell the difference between a coping mechanism and a spiral. Your indifference is the margin. That's the part they don't need you to understand.
+Inspecting a service has a cost. Reading policies, finding settings, understanding a retention rule, and deciding whether an inference is acceptable all take attention. The service only has to understand its own arrangement. The person has to understand every service they use.
 
----
+That is a durable asymmetry. “You agreed to it” can be formally true while telling us very little about how clearly the choice was presented or how practical it was to refuse.
 
-And yes - that's capitalism. I'm not arguing against markets. Markets built the phone in our hands and the infrastructure that runs beneath everything I just described. But a market where the buyer can't see what they're selling isn't a free market. It's a dark pool. We regulate dark pools in finance. We haven't even named this one yet. And the difference in mid-2026 is that the tools we built are finally building their own tools. If we lose sight of the tools that build the tools, we haven't created a dark pool. We've created a tsunami. Pretty sure they dubbed this accelerationism.
+A business can make money from reducing that burden. It can also make money from keeping parts of the exchange difficult to inspect. Both possibilities belong in the analysis. If I assume every useful service is an extraction scheme, I lose the ability to distinguish a fair exchange from a bad one.
 
----
+I want to ask more specific questions. Does this data help deliver the feature I asked for? Is the retention period connected to that use? Can the business explain why it needs the inference, rather than only why the inference might be valuable?
 
-Every observation changes the thing being observed. You can see it in any lab, any audit, any room where someone knows they're being watched. The observer effect isn't a metaphor. It's something we teach in high school and then spend the rest of our lives pretending doesn't apply to everything we actually build.
+## Seeing has limits
 
-There's an apparatus - think tanks, industry-funded policy groups, lobbying arms dressed as research orgs - that publishes steadily on all of this. They don't coordinate. They don't need to. The incentives align on their own. And every publication lands in the same place: regulation is slow, markets are fast, consumers benefit, get out of the way. A or B. Up or down. The frame never changes because the frame is the product. The binary is the containment. It keeps you arguing inside something shaped exactly like a choice while the real question goes unasked.
+My first instinct was that looking closely would change the balance of power. There is truth in that: finding an incorrect profile or an unexpected permission gives me something concrete to challenge.
 
-There is no single who. No omniscient loop. No shadowy room. There's a substrate layer with gatekeepers and access points. Engineers call it the pipeline. Product people call it the platform. Investors call it the moat. Every room that builds it has a different name for it. Watching what it does to the person inside it is the question nobody with real money attached to their name seems to hold for longer than a product cycle.
+But a dashboard does not guarantee influence. A company can show me a category and offer no meaningful way to correct it. A deletion button can be hard to find. An export can give me a pile of files without a useful way to move my work elsewhere.
 
----
+Transparency has to connect to an action the person can take. Otherwise it risks becoming another product surface that reassures them while leaving the underlying relationship intact.
 
-And while that non-conversation continues, China is building the full stack. Quantum compute. Distilled frontier models running on edge devices. Temporal architectures that predict what you'll do, not just respond to what you said. Robotics - autonomous systems that move in physical space, informed by every layer in that stack. They've published a five-year plan that coordinates citizens into the shift - aligning individual effort into a national infrastructure project spanning compute, manufacturing, and research. You know it's serious when every US frontier lab - companies that compete on everything else - quietly agreed to share methods for preventing model theft. That's not market competition. That's a wartime protocol wearing a press release. Protecting Americans, they say. Everything's bigger here, they say. Bigger compute, bigger models, bigger moats. Can't stop innovating - they'll catch up. So we keep stacking the same color blocks vertically and hoping the tower doesn't topple. Nobody pauses to listen.
+That is relevant to my own work. A change log in Reframed helps a person inspect a rewrite. It does not prove the rewrite is accurate. A local memory store gives me access to the records. It does not prove the summaries are fair. I need the next part too: rejection, correction, and a way to carry the correction forward.
 
----
+## An exchange I can explain
 
-China spearheaded surveillance statehood. We know what that looks like and what it costs. But claiming freedom while building the same architecture through private companies instead of the state - that's the kind of thing a therapist would call gaslighting. Telling someone they're free while shaping every choice they see. The instrument is different. The function is the same.
+Local operation has costs. Managed services can offer capabilities and maintenance that an individual cannot reasonably reproduce. Choosing a dependency can be a sensible exchange. The ability to understand that exchange, refuse part of it, or move later is what gives the choice weight.
 
----
+I care about whether the exchange is intelligible. If I pay for a result, I want to know what else I supplied and what happens to it. If a service depends on retaining something sensitive, I want that dependency stated where I make the choice. If the business needs broad permission because it has not decided what it wants to do with the data yet, that uncertainty belongs to the person making the decision too.
 
-Extraction can be a better business model than transparency - that's true in plenty of markets. But it's not inevitable. Big tech has real function. Real utility. The question is whether that utility requires the extraction or whether the extraction is just what happens when nobody pushes back. Centralized behavioral data is easier to sell and easier to breach. Sometimes that's a flawed incentive structure. Sometimes it's a specific player exploiting it deliberately. Sometimes it's just profit doing what profit does without anyone asking whether it should. That's the problem. Not the defense.
+These choices have commercial costs. Storing less can make debugging harder. Requiring approval can slow a workflow. Letting people leave easily can make retention less flattering. A commitment is more credible when the business can name the convenience or revenue it is willing to give up.
 
----
+Those tradeoffs belong in the product decisions. User acceptance alone does not establish that the exchange was understood.
 
-Here's the part I sit with on nights like this. There probably isn't a version of observation that doesn't shape. Transparency doesn't neutralize the effect - it changes it into a different effect. There's no unshaped self underneath waiting to be freed. The question was never shaped or unshaped. It's which loops you get to choose.
+The obligation should not end with telling people to read more policies. Builders control the defaults, the explanations, and the cost of saying no. We can make a fair exchange easier to recognize.
 
----
-
-So start with what's in front of you. Look at the apps on your phone and ask which ones know things about you that you haven't chosen to tell them. Read the terms once - really read them, the way you'd read a lease - and notice what you're signing. When something feels free, find the price. When something feels tailored, find the tailor. When a company tells you the data is anonymized, remember that anonymized data reidentifies with just three fields. Zip. DOB. Sex. Like a form you fill out without thinking.
-
----
-
-You don't have to leave the system to stop being shaped by it passively. You have to look at it. Looking is the whole move. A system that can't be seen is a system that works on you unchecked. A system you can see starts to answer to you - even if it was never designed to.
-
----
-
-My kid is going to be inside loops I can't see yet. The least I can ask is that they learn to look for the loop before they learn to trust it. That they know a shape can have a name. That when someone tells them everyone else just accepts it, they remember that acceptance is its own kind of data, and the system is counting on theirs.
-
-The monitor and the shaping are the same thing. You can figure out who doesn't want you looking at it.
-
-**Look anyway.**
+When I ask for someone's context, I should be able to explain what they get for it, what I keep, and how they can change their mind.

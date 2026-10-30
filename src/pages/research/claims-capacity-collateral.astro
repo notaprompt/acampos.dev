@@ -1,0 +1,140 @@
+---
+import Page from '../../layouts/Page.astro';
+---
+
+<Page title="Claims, capacity, and collateral — Alexander Campos" description="Working research on the distance between financial commitments to compute, usable infrastructure, and cash earned from useful work.">
+  <article class="research">
+    <h1>Claims, capacity, and collateral</h1>
+    <p class="lede">A contract for compute is a claim on work that still has to happen.</p>
+    <p>
+      I’m studying how that claim becomes working capacity, useful output, and
+      eventually cash. Those transitions take different amounts of time and
+      depend on different people. Treating them as the same thing can hide
+      both a bad investment and an opportunity to build something valuable.
+    </p>
+    <p>
+      The question that started the paper was financial: are promises of future
+      compute being valued as though the capacity is already running and earning?
+      It has become a broader question about what happens when intelligence gets
+      cheaper faster than the physical and institutional systems around it can change.
+    </p>
+    <p>
+      My broader thesis is that, as intelligence becomes more abundant,
+      economic power depends increasingly on the means of converting it into
+      consequential outcomes: capital, infrastructure, data, permissions,
+      distribution, and institutions. I’m interested in who controls that
+      conversion, who captures the value, who bears the risks, and what choices
+      remain for the people inside it. I want to build useful systems at those
+      points as well as study them.
+    </p>
+
+    <h2>Follow the conversion</h2>
+    <p>
+      I separate a project into six states: announced, contracted, financed,
+      energized, billable, and producing cash after its obligations. Each state
+      needs its own date and evidence. A customer prepayment can arrive before
+      the service exists. A building can have power without having a paying workload.
+      A busy cluster can still earn too little to cover its financing and replacement costs.
+    </p>
+    <p>
+      That makes the research specific. How long does each transition take?
+      What still has to be spent? Can the customer cancel? Who bears a delay?
+      What capacity is actually being counted? The next step is a dated,
+      project-level record that can answer those questions consistently.
+    </p>
+
+    <h2>Find what stays scarce</h2>
+    <p>
+      If a model becomes cheaper, the value may move to something needed around
+      it: firm power, a usable site, a customer relationship, reliable operating
+      context, or permission to act inside an organization. The opportunity is
+      to find which constraint is binding in a particular place and whether
+      solving it produces something someone will pay for.
+    </p>
+    <p>
+      Two sites advertised with the same capacity can have very different
+      economics. One may have firm utility service and a customer; the other
+      may still need a substation. A national average price for power tells
+      you very little about that difference.
+    </p>
+    <p>
+      I’m interested in what existing infrastructure can be made useful again.
+      The questions are practical: service rights, equipment, cooling,
+      reliability, remaining cost, and who needs the output. Local effects on
+      water, power bills, and land use belong in that calculation too.
+    </p>
+
+    <h2>Count completed work</h2>
+    <p>
+      In software, the useful unit is a completed task at an acceptable quality,
+      latency, and total cost. Tokens alone leave out retries, human review,
+      integration work, and the consequences of being wrong. I run into a
+      smaller version of that problem in my own model routing: a cheap request
+      can be an expensive way to finish a job.
+    </p>
+    <p>
+      Better models can make a service more useful while competition lowers
+      the price it can charge. Whether the owner of the underlying hardware
+      benefits depends on the costs, contracts, utilization, and replacement
+      schedule. The technology’s success and the return on a particular asset
+      need separate explanations.
+    </p>
+
+    <h2>Keep the counterargument in view</h2>
+    <p>
+      Demand could grow quickly enough to absorb the capacity. Efficiency could
+      improve faster than prices fall. Contracts could protect owners better
+      than a headline suggests. A project with heavy construction spending
+      could be a sound investment, and a well-run facility could still be
+      overpriced. The method has to be able to find all of those cases.
+    </p>
+    <p>
+      Before calling a mispricing, I want to compare what a price assumes about
+      delivery and earnings with what the underlying evidence supports. Then
+      test whether the difference survives financing costs, missing data,
+      and a serious alternative explanation.
+    </p>
+
+    <h2>Who gets to decide</h2>
+    <p>
+      The other thread is agency. Cheap intelligence can expand what people
+      are able to do. That benefit is limited if they cannot inspect the
+      records used to judge them, change the tools they rely on, or leave a
+      provider without losing their working context. I’m interested in both
+      the business that captures value and the choices left to the person using it.
+    </p>
+    <p>
+      That’s the connection to <a href="/projects/forgeframe">my software work</a>.
+      At a different scale, I’m asking what someone can control, what they’re
+      depending on, and how much it costs to change course.
+    </p>
+
+    <h2>Reading and method</h2>
+    <p>
+      The <a href="https://www.iea.org/reports/energy-and-ai">IEA’s Energy and AI</a>
+      is a starting point for the physical system. Berkeley Lab’s
+      <a href="https://emp.lbl.gov/queues">Queued Up</a> provides interconnection
+      data for generation and storage. Its queue statistics describe supply
+      projects; they cannot simply be applied to data-center load requests.
+    </p>
+    <p>
+      For financial claims, I work from filings, contracts, and their definitions,
+      keeping reported figures separate from estimates and scenarios. I’m
+      developing the project-level measurements; I don’t yet have an original
+      dataset or a validated trading result to publish here.
+    </p>
+    <p class="research-note">
+      October 2026. This is an edited summary of a longer working paper developed
+      with AI research and editing assistance. The full draft remains private
+      while I check sources and refine the tests.
+      <a href="mailto:alex@campos.works?subject=Claims%2C%20capacity%2C%20and%20collateral">Corrections and specific disagreements are welcome.</a>
+    </p>
+  </article>
+</Page>
+
+<style>
+  .research h1 { max-width: 20ch; font-size: clamp(2rem, 4vw, 2.8rem); text-wrap: balance; }
+  .lede { font-size: 1.3rem; line-height: 1.5; color: var(--glow-hot); margin: 1.3rem 0; }
+  .research h2 { margin-top: 2.5rem; }
+  .research-note { color: var(--white-60); font-size: 0.85rem; margin-top: 2.5rem; }
+</style>

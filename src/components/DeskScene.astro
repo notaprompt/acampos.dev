@@ -2,8 +2,7 @@
 // Interactive pixel art MCM room diorama — replaces AsciiHeader
 // Objects are secretly clickable links to social profiles
 //
-// Full size is the homepage hero. Everywhere else it is an emblem, so the
-// page's first proposition is on screen before anyone scrolls.
+// Keep the same scale and alignment throughout the site.
 const compact = false;
 ---
 
@@ -43,7 +42,7 @@ const compact = false;
     <a href="/about">about</a>
     <a href="https://github.com/notaprompt" target="_blank" rel="noopener">github</a>
     <a href="/resume">resume</a>
-    <a href="https://linkedin.com/in/alexandercampos" target="_blank" rel="noopener">linkedin</a>
+    <a href="https://linkedin.com/in/alexander-d-campos" target="_blank" rel="noopener">linkedin</a>
     <a href="https://instagram.com/acampos.dev" target="_blank" rel="noopener">instagram</a>
     <a href="https://x.com/flapfinned" target="_blank" rel="noopener">x (@flapfinned)</a>
     <a href="/influences">influences</a>
@@ -181,8 +180,8 @@ const compact = false;
     z-index: 10;
   }
   .desk-scene-wrap.compact {
-    max-width: 300px;
-    margin-bottom: 1.1rem;
+    max-width: 260px;
+    margin: 0 0 0.65rem;
   }
   @media (max-width: 480px) {
     .desk-scene-wrap.compact { max-width: 220px; }

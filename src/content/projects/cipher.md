@@ -1,24 +1,21 @@
 ---
 title: "Cipher"
-tagline: "Financial monitoring agent. Scores news against your investment thesis. Calls you if something matters."
+tagline: "An unbuilt design for monitoring news against a user's own investment theses."
 status: "concept"
 stack: ["Python", "ForgeFrame", "Twilio", "RSS", "LLM Scoring"]
 order: 8
 ---
 
-Not built - a design, parked on purpose while the engine under it matures. I want to stop manually reading financial news: an agent that watches the world, scores events against my thesis sectors, and escalates by severity - call my phone if it's serious, text if it's moderate, morning brief if it can wait.
+Cipher is a design, not a working application. I wanted a way to follow financial news without repeatedly checking the same feeds: watch selected sources, compare new events with a written thesis, and bring relevant changes to my attention.
 
-## How it would work
+## The proposed workflow
 
-Cipher is a ForgeFrame vertical, not a new codebase. RSS ingest polls financial news, filings, and sector sources. Each item is scored 0-10 against pre-built thesis documents through the routing engine. Score > 8 rings the phone; 5-8 sends a text; below that accumulates into a morning brief. `@forgeframe/memory` keeps the context - what it already scored, which theses are active, what my positions look like.
+An RSS and filings pipeline would collect source material. A model would compare each item with thesis documents, while ForgeFrame would retain what had already been read and which questions were still open. Routine items would go into a brief; urgent items could trigger a text or call.
 
-## What I haven't solved
+I would build this as a configuration of the existing routing and memory components before creating another standalone codebase. The useful work would be choosing sources, defining what changes a thesis, and testing whether the alerts deserve attention.
 
-- It isn't built. That is the honest headline, and it stays until it changes.
-- Model scoring of financial events is noisy - a 7 from one evaluation is a 5 from another. Calibration across providers is open.
-- An agent that can ring a phone at 2am has real power over attention. The thresholds are boundaries around cognitive space, not tuning parameters - the system that protects a portfolio also has to protect sleep.
-- Automated financial advice has real regulatory edges. Cipher scores and informs; it never recommends. The user decides.
+## Why it is still a concept
 
-## Where it's going
+Model scores are inconsistent, and a numeric threshold would give that inconsistency more authority than it deserves. I have not established how to calibrate relevance, measure missed events, or decide when an interruption is justified.
 
-Nowhere until the engine earns it. Designing it clarified the pattern that keeps showing up: the engineering lives in ForgeFrame, the value is domain knowledge - which feeds matter, how to read a filing, what makes an event thesis-relevant. When it gets built, it gets built as configuration.
+The design also needs clear boundaries around financial interpretation and personal data. I have left implementation parked while the underlying infrastructure matures.

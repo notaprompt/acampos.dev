@@ -60,6 +60,7 @@ const essays = defineCollection({
     subtitle: z.string(),
     status: z.enum(['draft', 'published']),
     date: z.string(),
+    updated: z.string().optional(),
     series: z.string().optional(),
     order: z.number().optional(),
   }),

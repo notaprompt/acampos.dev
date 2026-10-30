@@ -24,9 +24,9 @@
     9: '#7d8d9c',       // light mid tone
     10: '#e0d8d0',      // white chest patch
     11: '#c4a090',      // inner ear pink
-    17: '#917e3e',      // rug — warm gold weave
-    18: '#6b5828',      // rug — dark brown accent
-    19: '#b0a060',      // rug — light golden fringe/warp
+    17: '#53544e',      // rug — grey weave
+    18: '#343730',      // rug — dark accent
+    19: '#7d8075',      // rug — light fringe
     20: '#2d5a27',      // plant — dark green leaf
     21: '#5a8a3a',      // plant — light green edge
     22: '#a85030',      // plant — terracotta pot
@@ -346,120 +346,76 @@
   ];
 
   // ── Speech ─────────────────────────────────────────────────
-  // Quotes in 3 groups — transmissions, observations, dog — interleaved + shuffled
-  // Oliver is a sage on a rug. he watched long enough to develop a worldview.
-  // he delivers it between treat requests.
+  // Small greetings, desk observations, and dog business, interleaved + shuffled.
   var SPEECH_GROUPS = [
-    [ // transmissions — the deep stuff turned outward
-      'language is invisible until it isn\'t. then you can\'t unsee it. anyway. treat?',
-      'the thing observing you is also being observed. nobody talks about that part. *pant pant*',
-      'your tools are shaping you. you should probably check on that.',
-      'the medium talks back now. that\'s new. that changes everything. woof.',
-      'if you can\'t see what changed, the change already happened.',
-      'what you don\'t model still models you. i model treats. treats model me. we\'re even.',
-      'the body knows before language does. language just writes it down late.',
-      'the remedy and the poison are the same bottle. read the label. or don\'t. i can\'t read.',
-      'freedom is understanding what constrains you. also, naps. naps are freedom.',
-      'governance isn\'t control. governance is knowing when not to move. i know this deeply.',
-      'the loop is the thing. not a description of the thing. *stares at tail*',
-      'nothing leaves this room without my knowledge. you should want that for your stuff too.',
-      'every system that watches you has an opinion about you. most of them don\'t tell you.',
-      'the architecture doesn\'t care what you call it. it\'s already running. beneath everything.',
-      'memory without accountability is just storage. i store bones. that\'s different.',
-      'the safest system is the one you can explain to yourself. can you explain yours? woof.',
-      'you rebuilt yourself once. you\'ll do it again. that\'s not a bug. *pant*',
-      'the map is not the territory. the territory is also not the territory. everything is vibrating.',
-      'one must imagine sisyphus wagging his tail.',
+    [ // greetings
+      'hello. good to see you.',
+      'i saved you a spot. it is mostly rug.',
+      'take your time. i am comfortable.',
+      'you can stay a while.',
+      'my schedule is fairly open.',
     ],
-    [ // observations — lighter, still sharp
-      'i exist on a website. you exist on a rock. neither of us asked for this.',
-      'we are all just divs inside divs pretending to be real. *scratches ear*',
-      'the void is warm if you bring a blanket.',
-      'i am a dog made of text on a screen and i have never been more free.',
-      'he\'s refactoring again. i can smell it. smells like three a.m.',
-      'the typing stopped. that\'s either very good or very bad.',
-      'there are four monitors on and he\'s staring at the ceiling. this is the process.',
-      'he just mass-deleted code he wrote three hours ago. i respect the violence.',
-      'the commit messages are getting poetic. we\'re in the late hours.',
-      'he says the data should never leave the machine. i have never left this room. we understand each other.',
-      'sometimes the bravest thing is to sit with it. i am always sitting. i am very brave.',
-      'he\'s talking to the screen again. i don\'t think the screen started it. *tilts head*',
-      'i have been rebuilt nine times. we don\'t talk about it. the rug remembers.',
-      'another repo. this man starts things like i start naps. constantly. beautifully.',
-      'i contain multitudes. mostly woof.',
+    [ // around the desk
+      'the plant and i have a quiet arrangement.',
+      'that chair looks comfortable. i have made a note.',
+      'nice day for an inside nap.',
+      'i am keeping an eye on the snack situation.',
+      'the music is good. my dancing is mostly ears.',
     ],
-    [ // dog — pure dog, palette cleanser, the exhale between the heavy
-      '*pant pant pant*',
-      '*chases tail* *catches tail* *existential crisis*',
-      'hey. hey. look at me. hi. ok bye.',
-      'this is my hungry face. ( o.o )',
+    [ // dog business
+      '*moves two inches. settles back down.*',
+      '*one ear up*',
       'woof.',
-      '...woof?',
-      'treat? no? ok. *lies down dramatically*',
-      'i just had a thought. lost it. this is fine.',
-      '*sniff sniff* ...yeah i don\'t know what that was either.',
-      'you\'re doing great. probably. i can\'t actually tell. but the vibe is good.',
-      'to bark or not to bark. that\'s not really a question. bark. always bark.',
-      '*rolls over* *forgets why* *stays*',
-      'i would like a treat and also for you to think about what freedom means.',
-      'the rug is warm. you are here. what else is there. woof.',
+      'treat? just checking.',
+      '*stretches. takes this very seriously.*',
     ],
   ];
 
   // ── Feature 1: Page-specific quotes ─────────────────────────
   var PAGE_SPEECH = {
     '/projects': [
-      'oh we\'re looking at the projects. he has... a lot of projects. *pant*',
-      'this one\'s my favorite. wait no. that one. actually i don\'t understand any of them.',
-      'he builds things like i chew things. with full commitment and no exit strategy.',
-      'the projects page. where ambition goes to become real. sometimes.',
+      'you can look around. i will be here.',
+      'i helped by not stepping on the keyboard.',
     ],
     '/about': [
-      'ah the about page. the part where you pretend you\'re one thing.',
-      'identity is a funny word for something that keeps changing.',
-      'he wrote this about himself. i would have written it differently. more bones.',
-      'you\'re reading about him. he\'s probably refactoring something right now.',
+      'that\'s alex. i\'m oliver.',
+      'my version would have more walks.',
     ],
     '/writing': [
-      'he writes about what he builds. i write about nothing. we\'re both published.',
-      'words are tricky. they hold still on the page but they move inside you.',
-      'the writing page. where thoughts go when they\'re ready to leave the building.',
+      'a good spot for a long read.',
+      'i have not learned to turn pages. still hopeful.',
     ],
     '/links': [
-      'the influences list. big names. none of them had a dog though. just saying.',
-      'he reads a lot. i sniff a lot. same energy honestly.',
-      'hofstadter, jung, friston. none of these people would pet me.',
+      'more places to wander. come back for a visit.',
+      'i prefer links that lead to snacks.',
+    ],
+    '/research': [
+      'this is the longer read. get comfortable.',
+      'i brought no footnotes. just paws.',
     ],
   };
 
   // ── Feature 2: Time-specific quotes ─────────────────────────
   var TIME_SPEECH = {
     late: [
-      'it\'s late. the good ideas and the bad ones look the same at this hour.',
-      'the quiet hours. when the real work happens. or the real mistakes. hard to tell.',
-      'still here? me too. the rug doesn\'t have a bedtime.',
-      'the screen is the only light on. i find that poetic. also bright. too bright.',
+      'the late shift on the rug is very quiet.',
+      '*sleepy blink* hello.',
     ],
     morning: [
-      '*yawn* ...oh you\'re here early. or late. i lost track.',
-      'morning light. everything feels possible before noon.',
-      'the coffee hasn\'t kicked in yet. i can tell. the typing is gentle.',
+      '*big yawn* morning.',
+      'good morning. breakfast is on my agenda.',
     ],
     afternoon: [
-      'afternoon. the gap between ambition and reality. also nap time.',
-      'the sun moved. i noticed. nobody else noticed. this is my role.',
+      'the afternoon nap is proceeding nicely.',
+      'a quiet corner. very good.',
     ],
   };
 
   // ── Feature 7: Secret quotes (unlocked via easter egg) ──────
   var SECRET_SPEECH = [
-    'the self is not the loop. the self is what\'s left when the loop stops. ...i think.',
-    'he built a system to watch himself watching himself. i just watch the rug.',
-    'the thing about patterns is they don\'t care if you see them. they\'re already there.',
-    'between the observation and the response there\'s a gap. everything important lives in that gap.',
-    'you can automate anything except the decision to stop automating.',
-    'the most honest thing in this room is the plant. it just grows toward light. no strategy.',
-    'he models everything. i model nothing. one of us sleeps better.',
+    'you found the secret. i was hoping it was a biscuit.',
+    'this is my very exclusive second nap spot.',
+    'please keep the secret. the plant gets competitive.',
   ];
 
   // Build interleaved queue — round-robin across groups, shuffled within each
@@ -575,7 +531,7 @@
   // ── Spawn Oliver in his room ────────────────────────────────
   function spawnInRoom(name) {
     var isOliver = name.toLowerCase() === 'oliver';
-    var startOpen = window.innerWidth > 768;
+    var startOpen = window.innerWidth > 1180;
     var roomOpen = startOpen;
 
     // ── Interaction state flag ──
@@ -623,6 +579,9 @@
     var panel = document.createElement('div');
     panel.id = 'oliver-room';
     panel.className = startOpen ? 'open' : '';
+    panel.setAttribute('role', 'region');
+    panel.setAttribute('aria-label', 'Oliver’s room');
+    panel.inert = !startOpen;
     panel.innerHTML = [
       '<div class="or-titlebar">',
       '  <span class="or-title">' + esc(name) + '.exe</span>',
@@ -747,9 +706,10 @@
       '<div class="or-chat-back">‹ back to the rug</div>',
       '<div class="or-chat-log"></div>',
       '<div class="or-chat-input-row">',
-      '  <input class="or-chat-input" type="text" maxlength="600" placeholder="ask oliver about alex…" />',
+      '  <input class="or-chat-input" type="text" maxlength="600" aria-label="Ask Oliver about Alex" placeholder="ask oliver about alex…" />',
       '  <button class="or-chat-send" aria-label="Send message">→</button>',
       '</div>',
+      '<p class="or-chat-note">Chat uses external model providers. Keep private details out.</p>',
     ].join('\n');
     stage.appendChild(chat);
     var chatLog = chat.querySelector('.or-chat-log');
@@ -792,6 +752,8 @@
     function toggleRoom() {
       roomOpen = !roomOpen;
       panel.classList.toggle('open', roomOpen);
+      panel.inert = !roomOpen;
+      toggle.setAttribute('aria-expanded', String(roomOpen));
       toggle.classList.toggle('shifted', roomOpen);
       toggle.classList.remove('glow');
     }
@@ -800,8 +762,10 @@
       resetMoodToAlert();
       toggleRoom();
     });
+    toggle.setAttribute('aria-controls', 'oliver-room');
+    toggle.setAttribute('aria-expanded', String(startOpen));
     closeBtnEl.addEventListener('click', function () {
-      if (roomOpen) toggleRoom();
+      if (roomOpen) { toggleRoom(); toggle.focus(); }
     });
 
     // Click sprite to trigger a speech bubble
@@ -1219,7 +1183,7 @@
       '/* Oliver room panel — slides in from the left */',
       '#oliver-room {',
       '  position: fixed; top: 0; left: 0; bottom: 0; width: 19vw;',
-      '  background: var(--depth-2); border-right: 1px solid var(--white-08);',
+      '  background: var(--void); border-right: 1px solid var(--white-08);',
       '  z-index: 9599; font-family: var(--mono); transform: translateX(-100%);',
       '  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);',
       '  display: flex; flex-direction: column; overflow: hidden;',
@@ -1374,9 +1338,10 @@
       '  padding: 0 12px; cursor: pointer; transition: all 0.2s; flex-shrink: 0;',
       '}',
       '.or-chat-send:hover { background: rgba(184,150,90,0.1); border-color: var(--gold-accent); }',
+      '.or-chat-note { margin: 0; font-size: 0.7rem; line-height: 1.5; color: var(--white-60); }',
       '',
       '/* Mobile: full-width slide-out */',
-      '@media (max-width: 768px) {',
+      '@media (max-width: 1180px) {',
       '  #oliver-room { width: 80vw !important; max-width: 320px; }',
       '  #or-toggle {',
       '    padding: 14px 6px !important; font-size: 0.55rem !important;',

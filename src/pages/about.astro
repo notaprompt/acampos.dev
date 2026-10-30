@@ -1,162 +1,62 @@
 ---
 import Page from '../layouts/Page.astro';
-import { existsSync } from 'node:fs';
-import TerminalLine from '../components/TerminalLine.astro';
-
-// The office photograph ships whenever the file lands - drop it at
-// public/images/office.jpg and rebuild. Until then the slot renders nothing.
-const hasOfficePhoto = existsSync(new URL('../../public/images/office.jpg', import.meta.url));
 ---
 
-<Page title="about -- alexander campos" description="Alex Campos. 26. Virginia. Operations, software, and writing about what sits underneath both.">
+<Page title="About — Alexander Campos" description="Alex Campos, Virginia. Bank operations, independent software, music, and a French bulldog named Oliver.">
   <article>
     <h1>About</h1>
-    <TerminalLine
-      label="whoami"
-      prompt="~ %"
-      lines={[
-        'operator by trade. builder by habit.',
-        'six years in regulated finance. controls first.',
-        'build the check, then the thing.',
-        'local-first, audit-trailed, answerable to its owner.',
-        'inbox open: alex@campos.works',
-        'understand the intricate. build the intuitive. present the essential.',
-      ]}
-    />
+    <p class="lede">I’m Alex. I’m 26 and live in Virginia.</p>
+    <p>
+      I work in bank operations and build software outside it. Some is practical,
+      like <a href="/projects/reframed">a resume tool</a>. Some starts with a
+      question I can’t leave alone, like how an assistant should remember things
+      without quietly deciding who I am.
+    </p>
 
+    <figure class="office-photo">
+      <img src="/images/office.jpg" alt="Oliver, a grey French bulldog, sitting at my laptop" width="1600" height="1200" loading="lazy" decoding="async" />
+      <figcaption>Oliver, helping.</figcaption>
+    </figure>
 
     <p>
-      I'm Alex. 26, Virginia.
+      The word I keep coming back to is sovereignty. Having a say in the systems
+      I depend on, and enough room to make a different choice when things change.
+      It connects my interests in AI, finance, geopolitics, security, and business.
     </p>
     <p>
-      Days I work in bank operations. Monitoring, risk
-      analysis, compliance, vendor work. Nothing there is finished until it can be shown to someone who
-  was not in the room, and after enough years that becomes how you build everything.
-    </p>
-    {hasOfficePhoto && (
-      <figure class="office-photo">
-        <img src="/images/office.jpg" alt="a grey french bulldog at the laptop keyboard, considering the screen" loading="lazy" decoding="async" />
-        <figcaption>where all of this runs</figcaption>
-      </figure>
-    )}
-    <p>
-      Nights I write code. A <a href="https://reframed.works">resume platform</a>, an
-      <a href="/projects/forgeframe">open-source memory system</a> for agents, and tools
-      for local businesses that needed them. Most of it runs on hardware I own, in the room
-      in that photograph. Sometimes I <a href="/writing">write about</a> how the two halves
-      connect.
+      Reduction is how I tend to think. What is the actual constraint? Who can
+      change it? Who pays? I like getting a complicated situation down to the
+      few things that determine what can happen, then doing something with it.
     </p>
     <p>
-      Six years in regulated finance taught me that someone has to be accountable for what
-      a system does. I build that in from the first line: local-first, audit-trailed,
-      answerable to the person it serves.
+      I use cloud models and care about running my own tools. I work inside a
+      large institution and like building things myself. I’m comfortable with
+      those tensions; I don’t have a neat theory that makes all of it fit.
     </p>
+    <p>
+      The personal ambition is enough ownership, competence, and financial
+      independence to have meaningful control over my life, without giving up
+      the principles that make that freedom worth having.
+    </p>
+    <p>
+      Some things just don’t need a business case. The music, the desk on this
+      site, Oliver. I want room for those too.
+    </p>
+
     <h2>Elsewhere</h2>
-    <ul>
-      <li><a href="https://github.com/notaprompt">GitHub</a> — open-source work</li>
-      <li><a href="/writing">the writing</a> — memory, provenance, and identity modeling, grounded in the neuroscience of memory and philosophy of mind</li>
-      <li><a href="https://www.linkedin.com/in/alexander-d-campos/">LinkedIn</a></li>
-      <li><a href="https://substack.com/@alexinthefield">Substack</a> — writing</li>
-      <li><a href="#" id="influences-hint">Influences</a> — bookshelf</li>
-    </ul>
-
-    <h2>Contact</h2>
     <p>
-      <a href="mailto:alex@campos.works">alex@campos.works</a>
+      The code is on <a href="https://github.com/notaprompt">GitHub</a>.
+      My background is on <a href="/resume">the resume</a> and
+      <a href="https://www.linkedin.com/in/alexander-d-campos/">LinkedIn</a>.
+      There’s a <a href="/influences">bookshelf</a>, too.
     </p>
-
-    <h2>Who's seen me</h2>
-    <p class="seen-intro">
-      Every system that watches you builds a model of you. Most never show it to you. Here is mine - everyone who has crossed this site, where they were, and what the machine thinks about you, right now.
-    </p>
-    <div id="seen-map"></div>
-    <div id="seen-reveal" class="seen-reveal">reading the field&hellip;</div>
-    <p class="seen-foot">coarse by design - the map holds cities, never anyone else's address. yours it shows only to you.</p>
-
+    <p><a href="mailto:alex@campos.works">alex@campos.works</a></p>
   </article>
-
-  <style>
-    .seen-intro { max-width: 60ch; }
-    #seen-map {
-      margin: 1.25rem 0 0.75rem;
-      border: 1px solid var(--white-08, rgba(255,255,255,0.1));
-      border-radius: 4px;
-      overflow: hidden;
-      background: #0b0b08;
-    }
-    .seen-reveal {
-      font-family: var(--mono, ui-monospace, monospace);
-      font-size: 0.82rem;
-      line-height: 1.7;
-      color: var(--white-70, #d8d4c8);
-      background: #0d0d0a;
-      border: 1px solid var(--white-08, rgba(255,255,255,0.1));
-      border-radius: 4px;
-      padding: 14px 16px;
-    }
-    .seen-reveal p { margin: 0 0 0.35rem; }
-    .seen-reveal p:last-child { margin-bottom: 0; }
-    .seen-reveal b { color: var(--gold-accent, #e0b957); font-weight: 500; }
-    .seen-reveal .sr-note { color: var(--white-30, rgba(255,255,255,0.35)); font-style: italic; }
-    .seen-foot {
-      font-family: var(--mono, monospace);
-      font-size: 0.66rem;
-      color: var(--white-30, rgba(255,255,255,0.35));
-      margin-top: 0.6rem;
-    }
-    .office-photo {
-    border: 1px solid var(--white-08);
-    margin: 0 0 2rem;
-    transition: border-color 0.2s;
-  }
-
-  .office-photo:hover {
-    border-color: var(--gold-accent);
-  }
-
-  .office-photo img {
-    width: 100%;
-    display: block;
-  }
-
-  .office-photo figcaption {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    color: var(--white-30);
-    padding: 0.35rem 0.1rem;
-  }
-  .office-photo img { max-height: 260px; width: 100%; object-fit: cover; object-position: center 35%; }
-</style>
-
-  <script is:inline src="/islands/world-map.js"></script>
-
-  <script is:inline>
-    console.log(
-      '%c same question, different shapes. ',
-      'color: #E8DCC8; font-family: monospace; font-size: 11px;'
-    );
-
-    // Influences discovery — hint toward the bookshelf on the desk scene
-    var hintLink = document.getElementById('influences-hint');
-    if (hintLink) {
-      hintLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        var canvas = document.getElementById('desk-scene');
-        if (canvas) {
-          canvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // Pulse the tooltip to hint at the bookshelf
-          var tip = document.getElementById('ds-tooltip');
-          if (tip) {
-            tip.textContent = 'bookshelf';
-            tip.classList.add('visible');
-            setTimeout(function() { tip.classList.remove('visible'); }, 2500);
-          }
-          // Trigger highlight if desk scene exposes it
-          if (window.__highlightDeskObject) {
-            window.__highlightDeskObject('books');
-          }
-        }
-      });
-    }
-  </script>
 </Page>
+
+<style>
+  .lede { font-size: 1.2rem; color: var(--glow-hot); }
+  .office-photo { margin: 2.2rem 0; }
+  .office-photo img { display: block; width: 100%; height: auto; max-height: 330px; object-fit: cover; object-position: center 40%; }
+  .office-photo figcaption { font-size: 0.8rem; color: var(--white-60); margin-top: 0.55rem; font-style: normal; }
+</style>

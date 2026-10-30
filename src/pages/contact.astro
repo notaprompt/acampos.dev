@@ -2,108 +2,24 @@
 import Page from '../layouts/Page.astro';
 ---
 
-<Page
-  title="contact — alexander campos"
-  description="Email is best. I answer these myself."
->
+<Page title="contact -- alexander campos" description="Get in touch about the work, the writing, or a question worth comparing notes on.">
   <article class="contact">
-    <p class="eyebrow">say hello</p>
     <h1>Get in touch</h1>
-    <p class="lede">
-      Questions about something I wrote or built, an idea you want to compare notes on,
-      or just hello. Email is best, and I read everything myself.
+    <p>
+      If something I wrote or built connects with your work, I’d like to hear about it.
+      Questions, corrections, and a simple hello are welcome.
     </p>
-
-    <div class="routes">
-      <a class="route route--primary" href="mailto:alex@campos.works?subject=Hello%20from%20campos.works">
-        <span class="r-lab">alex@campos.works</span>
-        <span class="r-detail">usually within a day</span>
-      </a>
-      <a class="route" href="https://linkedin.com/in/alexander-d-campos" target="_blank" rel="noopener">
-        <span class="r-lab">LinkedIn</span>
-        <span class="r-detail">alexander-d-campos</span>
-      </a>
-      <a class="route" href="https://github.com/notaprompt" target="_blank" rel="noopener">
-        <span class="r-lab">GitHub</span>
-        <span class="r-detail">notaprompt</span>
-      </a>
-      <a class="route" href="https://x.com/flapfinned" target="_blank" rel="noopener">
-        <span class="r-lab">X</span>
-        <span class="r-detail">@flapfinned</span>
-      </a>
-    </div>
+    <p><a href="mailto:alex@campos.works">alex@campos.works</a></p>
+    <ul class="links">
+      <li><a href="https://linkedin.com/in/alexander-d-campos" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      <li><a href="https://github.com/notaprompt" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+      <li><a href="https://x.com/flapfinned" target="_blank" rel="noopener noreferrer">X (@flapfinned)</a></li>
+    </ul>
   </article>
 </Page>
 
 <style>
-  .eyebrow {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold-accent);
-    margin-bottom: 0.8rem;
-  }
-  .contact h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); line-height: 1.12; margin-bottom: 0.8rem; }
-  .lede { font-size: 1rem; color: var(--white-70); line-height: 1.68; max-width: 58ch; margin-bottom: 1.6rem; }
-
-  .ctx {
-    border-left: 2px solid var(--gold-accent);
-    padding: 0.5rem 0 0.5rem 1.1rem;
-    margin-bottom: 1.6rem;
-  }
-  .ctx-lab {
-    display: block;
-    font-family: var(--mono);
-    font-size: 0.63rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--white-30);
-    margin-bottom: 0.3rem;
-  }
-  .ctx strong { font-family: var(--serif); font-size: 1.1rem; color: var(--glow-hot); font-weight: 600; }
-  .ctx-price { font-family: var(--mono); font-size: 0.8rem; color: var(--gold-accent); margin-left: 0.6rem; }
-  .ctx p { font-size: 0.87rem; color: var(--white-60); line-height: 1.6; margin: 0.4rem 0 0; max-width: 58ch; }
-
-  .routes { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
-  .route {
-    border: 1px solid var(--white-08);
-    padding: 1rem 1.15rem;
-    text-decoration: none;
-    display: block;
-    transition: border-color 0.18s, background 0.18s;
-  }
-  .route:hover { border-color: var(--gold-accent); background: var(--depth-1); }
-  .route--primary { border-color: var(--gold-accent); background: var(--depth-2); }
-  .r-lab { display: block; font-family: var(--mono); font-size: 0.92rem; color: var(--gold-accent); margin-bottom: 0.25rem; }
-  .r-detail { display: block; font-size: 0.82rem; color: var(--white-45); line-height: 1.55; }
-
-  .expect h2, .ladder h2 { font-size: 1.3rem; margin-bottom: 0.8rem; }
-  .expect ol { padding-left: 1.2rem; margin-bottom: 0.9rem; }
-  .expect li { font-size: 0.9rem; color: var(--white-60); line-height: 1.65; padding: 0.25rem 0; max-width: 60ch; }
-  .fine { font-family: var(--mono); font-size: 0.72rem; color: var(--white-30); line-height: 1.6; max-width: 56ch; }
-  .fine a { color: var(--gold-accent); }
-
-  .ladder { margin-top: 2rem; }
-  .ladder-rows { display: flex; flex-direction: column; margin-bottom: 0.9rem; }
-  .lrow {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 1rem;
-    align-items: baseline;
-    padding: 0.65rem 0;
-    border-top: 1px solid var(--white-08);
-    text-decoration: none;
-    transition: padding-left 0.16s;
-  }
-  .lrow:last-child { border-bottom: 1px solid var(--white-08); }
-  .lrow:hover { padding-left: 0.4rem; }
-  .l-name { font-family: var(--serif); font-size: 0.98rem; color: var(--glow-hot); }
-  .l-price { font-family: var(--mono); font-size: 0.8rem; color: var(--gold-accent); font-variant-numeric: tabular-nums; }
-  .l-time { font-family: var(--mono); font-size: 0.72rem; color: var(--white-30); }
-
-  @media (max-width: 560px) {
-    .lrow { grid-template-columns: 1fr auto; }
-    .l-time { display: none; }
-  }
+  .contact { max-width: 58ch; }
+  .contact p { color: var(--white-70); }
+  .links { list-style: none; padding: 0; margin: 2rem 0; display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; }
 </style>

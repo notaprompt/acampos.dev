@@ -86,7 +86,7 @@ body {
   background: var(--void);
   color: var(--glow);
   font-family: var(--body);
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -114,8 +114,8 @@ code, pre {
 
 pre {
   background: transparent;
-  border-left: 1px solid var(--white-20);
-  padding: 1rem;
+  border: 0;
+  padding: 0.5rem 0;
   overflow-x: auto;
   margin-bottom: 1rem;
 }
@@ -130,26 +130,24 @@ pre code {
   padding: 0;
 }
 
-blockquote {
-  border-left: 2px solid var(--gold-accent);
-  padding-left: 1rem;
-  margin: 1rem 0;
-  color: var(--white-60);
-  font-style: italic;
-}
+blockquote { margin: 1.5rem 0; color: var(--glow); font-style: normal; }
+em, figcaption { font-style: normal; }
+img { max-width: 100%; }
+main { overflow-wrap: anywhere; }
 
 /* ── Links ──────────────────────────────────────────────────── */
 
 a {
   color: var(--gold-accent);
   text-decoration: none;
-  border-bottom: 1px solid transparent;
+  border-bottom: 0;
+  text-underline-offset: 0.18em;
 }
 
 @media (hover: hover) {
   a:hover {
-    border-bottom: 2px dashed var(--gold-accent);
-    transition: none;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
   }
 }
 
@@ -160,9 +158,7 @@ a:focus-visible {
 
 /* ── Pixel cursor on interactive elements ──────────────────── */
 
-a, button, [role="button"], input[type="submit"] {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M7 0h2v5h-2zM7 11h2v5h-2zM0 7h5v2H0zM11 7h5v2h-2z' fill='%23d4a843' fill-opacity='0.9'/%3E%3Crect x='7' y='7' width='2' height='2' fill='%23d4a843'/%3E%3C/svg%3E") 8 8, pointer;
-}
+a, button, [role="button"], input[type="submit"] { cursor: pointer; }
 
 /* ── Lists ──────────────────────────────────────────────────── */
 
@@ -210,17 +206,17 @@ hr { border: 0; margin: 2rem 0; }
 
 /* ── Now-playing banner offset ─────────────────────────────── */
 
-body.has-now-playing .page-wrapper {
-  padding-top: 28px;
-}
+body.has-now-playing .page-wrapper { padding-top: 3.2rem; }
 
 /* ── Mobile scaling ────────────────────────────────────────── */
 
 @media (max-width: 480px) {
-  body { font-size: 15px; }
-  h1 { font-size: 1.5rem; }
-  h2 { font-size: 1.15rem; }
+  body { font-size: 17px; }
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.4rem; }
 }
+
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 .sr-only {
   position: absolute;

@@ -1,53 +1,34 @@
 ---
 title: "Distillery"
-tagline: "Share a link from your phone. Your laptop reads it through your own recorded principles and tells you what resonates."
+tagline: "A phone-to-laptop reading queue that connects shared links with work already in progress."
 status: "shipped"
 stack: ["Python", "Flask", "Ollama", "yt-dlp", "SQLite", "iOS Shortcuts", "Tailscale"]
 order: 5
 screenshots:
   - src: "/images/projects/distillery-feed.jpg"
-    caption: "the feed - a tiktok distilled against my own stack; quarantines and errors stay visible"
-metrics:
-  - { label: "items", value: "120", asof: "Aug 2026", source: "distillery.db" }
-  - { label: "distilled", value: "91", asof: "Aug 2026" }
-  - { label: "errored", value: "22", asof: "Aug 2026" }
-  - { label: "quarantined", value: "7", asof: "Aug 2026" }
-
+    caption: "The reading queue with a completed summary, a quarantined item, and an extraction error. The visible scores are model judgments, not validated measures of usefulness."
 ---
 
-Process the external content firehose through a personal intellectual lens. The first filter is not an algorithm's - it is your own recorded principles, applied by a model running on your own hardware. No feed ranking, no engagement objective, no third party deciding what resonates. Share a TikTok, an arXiv paper, an article from your phone - the Mac extracts the content, runs it through a local model loaded with your principles and active projects, scores it for novelty, and pushes what's genuinely new into ForgeFrame memory where it participates in offline consolidation cycles and Hebbian edge reinforcement.
+I save articles, videos, and papers on my phone, then lose the connection between what I read and what I am building. Distillery turns the share sheet into a reading queue on my Mac. It extracts the content, summarizes it against relevant project context, and keeps the result searchable.
 
-The old version was a confirmation machine. 17 out of 20 distillations said "no change to build." The fix wasn't the pipeline - it was the lens orientation and adding a signal gate.
+The aim is to make saved material easier to use. A summary should help me decide whether an idea changes a project, deserves a closer read, or is something I already know.
 
-## How it works
+## The workflow
 
-1. **iOS Shortcut**: Share sheet sends URL to Mac via Tailscale
-2. **Extractor**: yt-dlp for video transcripts, trafilatura for articles, arXiv API for papers. No video files saved.
-3. **Lens builder**: Searches ForgeFrame memory for context relevant to this specific content, loads principle-tier memories, scans active repos. The principle layer sits in the user prompt section - content gets a fair hearing before identity filtering.
-4. **Distillation**: Ollama (qwen3:32b). Returns: resonance score (0-1), novelty score (0-1), reframed insight in your voice, connections to active projects, action surface assessment.
-5. **Signal gate**: `signal = resonance × novelty`. Threshold 0.20. Known content filters out (TurboQuant seen before: resonance 0.95, novelty 0.15, signal 0.14 → filtered). Genuinely new ideas pass through (adversarial vision: resonance 0.72, novelty 0.88, signal 0.63 → pushed).
-6. **ForgeFrame writeback**: High-signal items push to ForgeFrame as memories with tiered strength (0.4/0.55/0.7). Co-retrieval edges created immediately - the new memory participates in Hebbian LTP/LTD from the start.
-7. **Temporal context**: Recent distillations injected into the prompt. Detects patterns across the feed ("you've shared 3 compression papers this week").
-8. **Opus meta pass**: High-signal items get a deep reasoning pass from Claude. Sovereignty safe - cloud sees public content only, never ForgeFrame memory contents.
-9. **Storage**: SQLite. Searchable, filterable by resonance, novelty, signal, status, source type.
-10. **Web UI**: Dark theme, resonance/novelty bars, connection tags. Search, delete, re-distill with updated lens.
+An iOS Shortcut sends the URL over Tailscale. The Mac extracts transcripts with yt-dlp, articles with trafilatura, and papers through the arXiv API. A local model reads the content with relevant context retrieved from [ForgeFrame](/projects/forgeframe).
 
-Always-on via launchd. Server and worker auto-start on login, restart on crash.
+The result includes a summary, connections to active projects, and separate estimates of relevance and novelty. A gate combines those scores before writing selected items into memory. The web interface exposes completed items, quarantines, and errors, with search and the option to run an item again after changing the prompt.
 
-Running on real input. The signal gate does most of its work by rejecting - most shared content scores familiar and never reaches memory. The point of the system is the rejection, not the throughput.
+The server and worker run through launchd, restart after a crash, and keep their state in SQLite. A cloud reasoning pass is intended to receive only public source material, while private memory stays on the local path.
 
-## What I haven't solved
+## The useful mistake
 
-The failure rate above is published on purpose - a pipeline that only reports its successes isn't reporting. The archive side ran a long backlog through a summarize bug earlier this year - batches silently produced nothing instead of failing loudly. The fix is in (keep-alive on the model, fail-fast on timeout, the right model id on that route), and the resume job now runs only when the machine is idle and plugged in. The live share-sheet path never stopped working.
+An early run returned “no change to build” in 17 of 20 distillations. The prompt was too eager to match incoming material to my existing beliefs. I moved the principles later in the prompt and added a novelty score so unfamiliar ideas had a better chance of being considered.
 
-- yt-dlp platform coverage gaps. TikTok and YouTube work. Some platforms don't expose transcripts.
-- The lens sharpens with ForgeFrame memory accumulation. Early on with few memories, distillation is less specific.
-- 30-60 second inference time on 32B model. Not instant.
-- Single-user by design. The principle-based lens is personal.
-- 45 backlog items distilled with the old lens - redistillation pending.
+That was a change in the question I asked the model. It still needs evaluation: a higher novelty score does not show that an idea is correct or worth pursuing.
 
-## Where it's going
+## Where it stands
 
-The problem wasn't extraction or inference speed. It was that the lens was narcissistic - it checked incoming content against the user's identity first, and most things don't match perfectly. Moving the principle layer to the user prompt and adding a novelty score changed what the system was actually doing: from "does this confirm who I am" to "is this something I haven't seen before."
+The share-sheet workflow is in personal use. Extraction coverage varies by platform, and local inference can take 30–60 seconds. A backlog run also exposed a timeout failure that produced empty summaries; the repair added explicit failures and an idle, plugged-in condition for resumed processing.
 
-The lens is the product, not the pipeline. Same data, same model, different frame - different outputs entirely.
+It remains a single-user tool. The next useful evidence is whether it helps me revisit and apply saved material, rather than simply producing a larger archive of summaries.

@@ -1,49 +1,30 @@
 ---
 title: "StrudelVision"
-tagline: "A Saturday night that kept going. Music visualizer with four WebGL shader modes, a Strudel REPL, a synth pad, a DJ mixer, and a TouchDesigner bridge - all in one index.html. Kinda works."
+tagline: "A browser instrument for live-coded music, audio-reactive visuals, and late-night experiments."
 status: "parked"
 stack: ["WebGL2", "Canvas2D", "Web Audio API", "Strudel", "Ollama", "Web Speech API", "WebSocket", "Vanilla JS"]
 screenshots:
   - src: "/images/projects/strudelvision.jpg"
-    caption: "the visualizer mid-set"
+    caption: "A frame from the visualizer. Still images show the shader output; the audio response and transitions need a running session to judge."
   - src: "/images/projects/strudelvision-repl.jpg"
-    caption: "the strudel repl"
-  - src: "/images/projects/strudelvision-library.jpg"
-    caption: "the library"
+    caption: "The Strudel editor, synth pad, and local-model chat over the visual output. The chat can adjust shader parameters."
 order: 6
 ---
 
-## Status
+This started on a Saturday night because I wanted more control over a music-reactive tunnel on this site. It grew into a browser instrument: a Strudel editor for live coding music, visual modes driven by audio analysis, a synth pad, and a DJ mixer.
 
-Parked, not dead. It runs, it kinda works, and I pick it back up on the odd Saturday night. No active roadmap - it's a toy I made for myself. Local demo only (needs Ollama running).
+It is a personal experiment, parked without an active roadmap. I still pick it up occasionally. The chat feature requires a local Ollama instance; there is no hosted demo.
 
-## What happened
+## What it does
 
-Saw the tunnel on this site reacting to music. Wanted more of that. Added a second shader. Then a third. Then a synth pad because it seemed reasonable at the time. Then a DJ mixer. Then TouchDesigner because the WebSocket was right there.
+Three WebGL modes use fractals, warped noise, and color feedback. A fourth uses Canvas2D to create a feedback hall. Audio features steer color and intensity, while accumulated hits control cuts between scenes.
 
-It runs at `localhost:8888`. It only runs on my laptop. Nobody asked for it.
+The local-model chat adjusts shader parameters from plain-language instructions. Speech recognition can supply text, and a one-way WebSocket bridge sends state to TouchDesigner. Everything lives in one HTML file, served locally without a build step.
 
-The design direction was "Teenage Engineering meets MCM brutalist meets retro DJ bar." The reality is more like a late night with too many browser tabs open and the fans going.
+Keeping the feedback loop short made it easy to try ideas during a set. It also made the architecture increasingly awkward as unrelated tools accumulated in the same file.
 
-## What it does (mostly)
+## Where it stops
 
-Four visual modes:
-1. **Thermal fractal** - Julia set, heat map, cycles through presets when the math goes bad
-2. **Cyber flow** - domain-warped noise, neon grid, looks cooler than it sounds
-3. **Prismatic feedback** - rainbow trails, hue matrix, the most chaotic one
-4. **Infinite hall** - Canvas2D feedback zoom, borrowed from this site's tunnel, not actually GLSL
+GPU use is high. The Canvas2D hall cannot composite with the WebGL pipeline, recorded synth layers cannot be deleted, and the TouchDesigner bridge only sends data in one direction.
 
-Audio analysis drives all of it: spectral centroid steers color, flux drives intensity, hit accumulation gates cuts. There's also a kinetic text engine, speech-to-text lyrics, a chat panel that tells Ollama to edit shader parameters in natural language, and a WebSocket that exports state to TouchDesigner.
-
-Zero build system. Single `index.html`. `python3 -m http.server 8888`.
-
-## What doesn't work
-
-- Runs the laptop fans at full speed. That's the vibe now.
-- Hall mode can't composite with the shader pipeline. It's a separate renderer and there's no fixing that without rewriting everything. Not rewriting everything.
-- The synth pad records layers but there's no way to delete a layer. Bug. Also kind of a feature.
-- TouchDesigner is a completely different discipline and it shows. The bridge is one-way. That's fine.
-- Ollama has to be running locally for the chat panel. Most people don't have Ollama running locally.
-- CSS animation is genuinely harder than writing WebGL shaders, which says something about CSS.
-
-Nobody else uses this. That's fine. It's for the Saturday nights.
+For now, it is a Saturday-night instrument and a place to try visual ideas. Finishing every feature would be a different project.

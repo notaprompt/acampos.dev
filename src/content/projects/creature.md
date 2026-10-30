@@ -1,55 +1,35 @@
 ---
 title: "CREATURE"
-tagline: "A cognitive system that runs entirely on one machine — mine. Private cognition is enforced in code, not policy; the cloud is a narrow tool that cannot carry a memory. Fifteen organs under one contract, consolidating nightly."
+tagline: "A personal automation system that keeps private context local and puts limits around what agents can do."
 status: "active"
-stack: ["embedding-distance router", "fail-closed sovereignty", "compiled judgment kernel", "Hebbian memory graph", "NREM/REM consolidation", "interoception daemon", "organ contract", "Ollama", "MCP", "SQLite/FTS5", "TypeScript", "Python"]
+stack: ["TypeScript", "Python", "Ollama", "MCP", "SQLite/FTS5", "Local model routing"]
 screenshots: []
-metrics:
-  - { label: "consolidation cycles", value: "24,603 nrem · 217 rem", asof: "Aug 2026", source: "daemon log" }
-  - { label: "memory classes", value: "3,227 public · 4,489 sensitive · 1,666 local-only", asof: "Sep 2026", source: "memory.db" }
 updated: 2026-08-08
-order: 2
+order: 3
 ---
-<ul class="enforced" aria-label="What is enforced">
-  <li><b>Loopback only.</b> The model that does private thinking raises on any non-local address.</li>
-  <li><b>Fails closed.</b> Error, timeout, or doubt in the router lands on local. Safe is the resting state.</li>
-  <li><b>Starved cloud.</b> The one cloud tool has no field for memory or history. It carries a single task string a local model wrote.</li>
-  <li><b>Ratchet.</b> The judgment kernel can pull a decision toward local. Nothing downstream can loosen it.</li>
-  <li><b>Organ contract.</b> Membrane, toolbox, three laws that default to no. Every organ, no exceptions.</li>
-  <li><b>Decay.</b> Memories fade with disuse. Principles and voice never do.</li>
-</ul>
 
-<p class="door">Every organ, counted once in August 2026 and frozen: <a href="/creature">the anatomy</a>.</p>
+I wanted agents that could carry context between tasks and do useful work on my machine. That meant dealing with permissions, private information, background jobs, and limited compute. CREATURE is the personal system I built around those constraints, using [ForgeFrame](/projects/forgeframe) for memory.
 
-The name is an acronym - cognitive, recursive, entropic, autopoietic, temporal, user-owned, reflective, emergent - but the honest description is simpler: an organism, not an assistant with a memory feature bolted on the side. A spine that decides what is safe, organs that do the work, a keeper that feels when something is wrong. The letter that carries the weight is the plain one in the middle - user-owned. ForgeFrame is the engine underneath it. Everything here runs local-first: my private thinking lives in a file on my own disk, and reaching the cloud is a deliberate, narrow act rather than the default.
+It connects coding sessions, reading, email, journaling, and automation. Some agents can operate a browser or phone. The work is deciding what each task may read, which model should handle it, and when an action needs my approval.
 
-<img src="/creature/architecture.svg" alt="CREATURE architecture: a request hits a spine router that measures embedding distance against private memory centroids, classifies green (public, cloud-eligible) or red (private, local-only), escalates to a local judge when uncertain, and fails closed. A judgment kernel weighted to sovereignty gates the router and rides in every dispatched agent, over memory, the keeper, and organs." style="width:100%;border:1px solid var(--white-08);margin:1.25rem 0;" />
+## Local context, selective cloud use
 
-The seam is the whole design. The cloud is a tool the local mind reaches for when the work is public - never the mind itself, and it never carries a memory off the machine.
+A router compares incoming requests with representations of private context. Ambiguous cases go to a small local model. Errors and timeouts send the work to the local path. The private model client rejects non-loopback addresses.
 
-## How it works
+Cloud work goes through a narrower interface that accepts a task string without dedicated memory or conversation-history fields. A local model prepares that task. This reduces the context sent out, but it does not make the boundary airtight: the classifier can make a mistake, and a task string can still contain sensitive information.
 
-**The spine.** Every request gets read before anything acts on it. Green means public - fine to hand to a frontier model in the cloud. Red means private - it stays home. I did not want a blocklist of forbidden words, because words leak and lists rot. So the spine measures distance instead: how close does this request sit to the shape of my own private memory? Close means red. When it is genuinely on the fence, it asks a small local model rather than guess. Most of the time it is a cheap measurement; only the ambiguous cases warm the hardware. And it fails the safe way - any error, any timeout, any doubt lands on local. Safe is the resting state, not the exception.
+I also built a policy layer that can make a routing decision more restrictive. Each component declares what it may access and which tools it may use. These are implementation choices I can inspect and test, rather than relying entirely on an agent remembering an instruction.
 
-**What "local" actually means.** This is the part I want to be exact about, because it is easy to say and hard to earn. The model that does my private thinking refuses to run against anything but a loopback address - the code raises an error rather than send. The spine fails closed: tag something sensitive and it can only be pulled toward local, never pushed out. When the system does reach a frontier model in the cloud, it goes through one narrow tool that can carry nothing but a short task the local model wrote by hand - no memory, no scratchpad, no history; the function cannot hold them. So the strong, true version is: local cognition is enforced in the code, and the cloud is opt-in and starved of context by design. The version I will not claim is that sensitive content physically cannot leak. Memory objects cannot - the tool has no field to put them in - but the task string is composed by a local model and checked by a rule, and making that judgment airtight is exactly the open problem below.
+## Keeping it running
 
-**The judgment.** My principles are not a document the system quotes back at you. They are compiled - weighted into a kernel, sovereignty carrying the most weight - and when the system sends a sub-agent off to do something, that kernel rides along, so the agent moves the way I would move. It also sits on the spine as a ratchet: it can pull a decision toward local and safe, never the other way. Nothing downstream gets to loosen what it tightened.
+Background maintenance compresses memory, proposes connections, and surfaces contradictions for review. A resource monitor grew out of a practical failure: a job needed the GPU, another task held it, and the queued work made no progress. Tracking machine state and resource demand made that failure visible.
 
-**The memory.** A graph that behaves like memory instead of a database. Two things recalled together grow a stronger link between them; things I stop reaching for fade; the principles and the voice never fade at all - that is the part that keeps it pointed at me over time. When the machine goes quiet, it dreams: one pass that compresses and tidies, another that pulls memories from far corners of the graph together and hands me the tensions to settle. I designed the sleep from how my own head feels after a good night, and only later noticed it lines up with the neuroscience.
+That experience changed where I spent time. An agent's output matters, but so do the queue, restart behavior, logs, and the ability to tell whether a task is waiting or stuck. A system I use every day needs those answers.
 
-**The Keeper.** The part that feels. It came out of a real failure - a job needed the GPU, nothing in the system could feel that need, and the work just quietly starved. So I gave it interoception: a sense of its own state, and a way to ask for a scarce resource and wait its turn. Not a scheduler bolted on top. A body that knows when it is hungry.
+The [architecture reference](/creature) records the component inventory as of August 2026. It is a snapshot, rather than a live census or a measure of capability.
 
-**The organs.** Everything that runs here signs the same contract: a membrane for what it may touch, a toolbox for what it may do, three laws that default to no. The ones alive today - email, a scribe that turns my coding sessions into memory, a mirror that keeps a slowly-fading portrait of my own habits and blind spots, a journal. And hands: I have watched it drive a phone, drive a browser, run a headless coder - the same judgment riding in each one.
+## Where it stands
 
-## What I haven't solved
+CREATURE is my daily integration environment. The open work is evaluating routing mistakes, making the interface easier to use, and checking whether repeated consolidation improves retrieval over time.
 
-I would rather name these than pretend they are behind me.
-
-- **Making the boundary airtight.** Local cognition is enforced in code; the weak seam is the classifier that decides what counts as private in the first place. Moving it from matching keywords to measuring distance against my own memory helped a lot. Proving it never mislabels - and that the cloud tool never gets handed a sensitive task dressed up as a public one - is not done. Get that wrong in the permissive direction once and you cannot un-leak.
-- **Teaching it to think more like me, without leaking me.** The way to make the local model sound like my own mind is to train it on my own memory - which is exactly the data that cannot leave the machine. Fully-local fine-tuning is the only honest road, and it is slow on a laptop. Open.
-- **The narrow mouth.** The system can remember and feel and decide faster than I can tell it what to do or read back what it found. The thinking outran the interface. About a third of the real work left is a clean grammar for talking to it.
-- **Whether it keeps growing.** Left to consolidate and forget on its own, does the memory get richer, or collapse into a small handful of ruts? I do not know yet. That is the honest research question, and I am not going to wave it away.
-
-## Where it's going
-
-I am opening it up - the engine first, then the sovereignty layer and the organ contract, so the architecture is something you can read and run even while my memories stay mine. The interesting part was never that I built an assistant. It is that the hard thing - keeping a mind's private thinking local by construction while still letting it reach into the world and act - is running on my desk right now.
+I want more of the architecture to be readable and runnable without exposing my private data. Local fine-tuning is another experiment I want to try; the current system uses existing models.

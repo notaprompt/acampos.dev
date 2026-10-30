@@ -4,370 +4,194 @@ import { getCollection } from 'astro:content';
 import DitherThumb from '../../components/DitherThumb.astro';
 
 const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-// The running systems lead. Parked, absorbed, and concept work is still here —
-// hiding it would be the wrong kind of tidy — but under its own heading, so a
-// Saturday-night visualizer does not sit at the same altitude as the memory layer.
-const LIVE = new Set(['active', 'shipped']);
-const projects = all.filter((p) => LIVE.has(p.data.status));
-const rest = all.filter((p) => !LIVE.has(p.data.status));
-const micro = (await getCollection('micro')).filter(m => !m.data.hidden).sort((a, b) => a.data.order - b.data.order);
+const inUse = new Set(['active', 'shipped']);
+const projects = all.filter((project) => inUse.has(project.data.status));
+const earlier = all.filter((project) => !inUse.has(project.data.status));
+const micro = (await getCollection('micro'))
+  .filter((entry) => !entry.data.hidden)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const statusText = {
+  active: 'In development',
+  shipped: 'Shipped',
+  parked: 'Parked',
+  absorbed: 'Continued in ForgeFrame',
+  concept: 'Concept',
+};
 ---
 
-<Page title="projects -- alexander campos" description="Reframed, ForgeFrame, Distillery, Cipher.">
-  <article>
+<Page
+  title="projects -- alexander campos"
+  description="Products, personal infrastructure, and experiments by Alexander Campos. What each does, the decisions behind it, and where it stands."
+>
+  <article class="projects">
     <h1>Projects</h1>
-
-    <p>
-      What I build, why, and what doesn't work yet.
+    <p class="intro">
+      Products and tools built around work I wanted to do better: applying for a
+      job, keeping context across sessions, finding useful reading, and testing a
+      forecast.
     </p>
 
-    <div class="project-list">
+    <ul class="project-list">
       {projects.map(project => (
-        <div class="project-card">
-          <DitherThumb slug={project.slug} size={96} caption />
+        <li class="project-entry">
+          <DitherThumb slug={project.slug} size={64} />
           <div class="project-body">
-          <div class="project-header">
-            <h2><a href={`/projects/${project.slug}`} class="card-main-link">{project.data.title}</a></h2>
-            <span class={`status status-${project.data.status}`}>{project.data.status}</span>
-          </div>
-          <p class="project-tagline">{project.data.tagline}</p>
-          {project.data.repo && (
-            <a href={project.data.repo} class="card-repo-link" target="_blank" rel="noopener noreferrer">repo</a>
-          )}
-          <div class="project-stack">
-            {project.data.stack.map(tech => (
-              <span class="tech">{tech}</span>
-            ))}
-          </div>
-          </div>
-        </div>
-      ))}
-    </div>
-
-    {rest.length > 0 && (
-      <div class="rest-section">
-        <h2 class="rest-heading">And the rest</h2>
-        <p class="rest-desc">Parked, absorbed into something else, or still a concept. Kept here on purpose.</p>
-        <div class="project-list">
-          {rest.map(project => (
-            <div class="project-card">
-              <DitherThumb slug={project.slug} size={96} caption />
-              <div class="project-body">
-              <div class="project-header">
-                <h2><a href={`/projects/${project.slug}`} class="card-main-link">{project.data.title}</a></h2>
-                <span class={`status status-${project.data.status}`}>{project.data.status}</span>
-              </div>
-              <p class="project-tagline">{project.data.tagline}</p>
-              {project.data.repo && (
-                <a href={project.data.repo} class="card-repo-link" target="_blank" rel="noopener noreferrer">repo</a>
-              )}
-              <div class="project-stack">
-                {project.data.stack.map(tech => (
-                  <span class="tech">{tech}</span>
-                ))}
-              </div>
-              </div>
+            <h2><a href={`/projects/${project.slug}`}>{project.data.title}</a></h2>
+            <p class="project-tagline">{project.data.tagline}</p>
+            <div class="project-meta">
+              <span>{statusText[project.data.status]}</span>
+              {project.data.repo && <a href={project.data.repo}>Source</a>}
+              {project.data.demo && <a href={project.data.demo}>Visit site</a>}
             </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    {earlier.length > 0 && (
+      <section class="project-section" aria-labelledby="earlier-heading">
+        <h2 id="earlier-heading">Earlier work and ideas</h2>
+        <p>Experiments that stopped, changed shape, or have yet to be built.</p>
+        <ul class="project-list">
+          {earlier.map(project => (
+            <li class="project-entry">
+              <DitherThumb slug={project.slug} size={64} />
+              <div class="project-body">
+                <h3><a href={`/projects/${project.slug}`}>{project.data.title}</a></h3>
+                <p class="project-tagline">{project.data.tagline}</p>
+                <div class="project-meta">
+                  <span>{statusText[project.data.status]}</span>
+                  {project.data.repo && <a href={project.data.repo}>Source</a>}
+                  {project.data.demo && <a href={project.data.demo}>Visit site</a>}
+                </div>
+              </div>
+            </li>
           ))}
-        </div>
-      </div>
+        </ul>
+      </section>
     )}
 
     {micro.length > 0 && (
-      <div class="micro-section">
-        <h2 class="micro-heading">Micro</h2>
-        <p class="micro-desc">Small tools. Single-purpose. No ceremony.</p>
-        <div class="micro-list">
-          {micro.map(m => (
-            <div class="micro-card">
-              <div class="micro-header">
-                <h3>{m.data.title}</h3>
-                <span class={`status status-${m.data.status}`}>{m.data.status}</span>
+      <section class="project-section" aria-labelledby="tools-heading">
+        <h2 id="tools-heading">Small tools</h2>
+        <p>Smaller fixes for things I kept running into.</p>
+        <ul class="tool-list">
+          {micro.map(entry => (
+            <li>
+              <h3><a href={`/projects/${entry.slug}`}>{entry.data.title}</a></h3>
+              <p>{entry.data.tagline}</p>
+              <div class="project-meta">
+                {entry.data.repo && <a href={entry.data.repo}>Source</a>}
+                {entry.data.download && <a href={entry.data.download}>Download</a>}
               </div>
-              <p class="micro-tagline">{m.data.tagline}</p>
-              <div class="micro-links">
-                {m.data.repo && <a href={m.data.repo} class="micro-link">repo</a>}
-                {m.data.download && <a href={m.data.download} class="micro-link">download</a>}
-              </div>
-              <div class="project-stack">
-                {m.data.stack.map(tech => (
-                  <span class="tech">{tech}</span>
-                ))}
-              </div>
-            </div>
+            </li>
           ))}
-        </div>
-      </div>
+        </ul>
+      </section>
     )}
 
-    <nav class="shame-nav">
-      <a href="/misc/hall-of-shame">what didn't survive &gt;&gt;</a>
+    <nav class="project-footer" aria-label="More project history">
+      <a href="/misc/hall-of-shame">Projects I stopped</a>
     </nav>
   </article>
-
-  <script is:inline>
-    console.log(
-      '%c the layer stack: ',
-      'color: #b8965a; font-family: monospace; font-size: 11px;'
-    );
-    console.log(
-      '%c L3  ForgeFrame Core (routing, sessions)    AGPL\n' +
-      ' L2  MCP Memory Server (the primitive)      MIT\n' +
-      ' L1  MCP Protocol                           OPEN',
-      'color: #E8DCC8; font-family: monospace; font-size: 10px;'
-    );
-  </script>
 </Page>
 
 <style>
-  .rest-section { margin-top: 3rem; }
-  .rest-heading { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white-45); font-weight: 400; margin: 0 0 0.3rem; }
-  .rest-desc { font-size: 0.85rem; color: var(--white-45); margin: 0 0 1.25rem; }
-
-  .project-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1.5rem;
+  .intro {
+    max-width: 39rem;
   }
 
-  .project-card {
+  .project-list,
+  .tool-list {
+    list-style: none;
+    padding: 0;
+    margin: 2.5rem 0 0;
     display: grid;
-    grid-template-columns: 96px 1fr;
-    gap: 1.1rem;
+    gap: 2.5rem;
+  }
+
+  .project-entry {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 1.25rem;
     align-items: start;
-    position: relative;
-    padding: 1.25rem;
-    background: var(--depth-1);
-    border: 1px solid var(--white-08);
-    transition: border-color 0.2s, background 0.2s;
-  }
-
-  .project-card::before,
-  .project-card::after {
-    content: '';
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-    pointer-events: none;
-  }
-
-  .project-card::before {
-    top: -2px;
-    left: -2px;
-    border-top: 2px solid var(--gold-accent);
-    border-left: 2px solid var(--gold-accent);
-  }
-
-  .project-card::after {
-    bottom: -2px;
-    right: -2px;
-    border-bottom: 2px solid var(--gold-accent);
-    border-right: 2px solid var(--gold-accent);
-  }
-
-  .project-body { min-width: 0; }
-
-  .project-card:hover {
-    border-color: var(--gold-accent);
-    background: var(--depth-2);
-  }
-
-  @media (hover: hover) {
-    .project-card:hover::before,
-    .project-card:hover::after {
-      opacity: 1;
-    }
-  }
-
-  /* stretch link — covers entire card, sits below repo link */
-  .card-main-link {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .card-main-link::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-  }
-
-  .project-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .project-header h2 {
-    font-size: 1.15rem;
     margin: 0;
+  }
+
+  .project-body {
+    min-width: 0;
+  }
+
+  .project-body h2,
+  .project-body h3,
+  .tool-list h3 {
+    font-size: 1.35rem;
+    margin: 0 0 0.35rem;
+  }
+
+  .project-body h2 a,
+  .project-body h3 a,
+  .tool-list h3 a {
     color: var(--glow-hot);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
   }
 
-  .status {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    padding: 0.15em 0.5em;
-    border: 2px solid;
-    border-radius: 2px;
-    image-rendering: pixelated;
-    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.1);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .status-active {
-    color: var(--alive);
-    border-color: var(--alive);
-  }
-
-  .status-shipped {
-    color: var(--gold-accent);
-    border-color: var(--gold-accent);
-  }
-
-  .status-concept {
-    color: var(--white-45);
-    border-color: var(--white-30);
-  }
-
-  .status-absorbed {
-    color: var(--gold-accent);
-    border-color: var(--gold-accent);
-    opacity: 0.55;
-  }
-
-  .status-parked {
-    color: var(--white-45);
-    border-color: var(--white-30);
-    opacity: 0.7;
-  }
-
-  .shame-nav {
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--white-08);
-  }
-
-  .shame-nav a {
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--white-45);
-  }
-
-  .shame-nav a:hover {
-    color: var(--gold-accent);
-  }
-
-  .project-tagline {
+  .project-tagline,
+  .tool-list p {
+    margin: 0;
     color: var(--glow);
-    font-size: 0.9rem;
-    margin-bottom: 0.75rem;
   }
 
-  .card-repo-link {
-    display: inline-block;
-    position: relative;
-    z-index: 1;
-    margin-bottom: 0.6rem;
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    color: var(--gold-accent);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.15s;
-  }
-
-  .card-repo-link:hover {
-    border-bottom-color: var(--gold-accent);
-  }
-
-  .project-stack {
+  .project-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
-  }
-
-  .tech {
+    align-items: baseline;
+    gap: 0.5rem 1.25rem;
+    margin-top: 0.65rem;
     font-family: var(--mono);
-    font-size: 0.65rem;
+    font-size: 0.72rem;
+    line-height: 1.6;
     color: var(--white-45);
-    background: var(--depth-2);
-    padding: 0.15em 0.4em;
-    border: 1px solid var(--white-08);
   }
 
-  .micro-section {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--white-08);
+  .project-section {
+    margin-top: 4rem;
   }
 
-  .micro-heading {
-    font-size: 1rem;
-    color: var(--white-45);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 0.25rem;
+  .project-section > h2 {
+    margin-bottom: 0.5rem;
   }
 
-  .micro-desc {
-    font-size: 0.8rem;
-    color: var(--white-30);
-    margin-bottom: 1.25rem;
+  .project-section > p {
+    color: var(--white-60);
+    margin-bottom: 0;
   }
 
-  .micro-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  .tool-list {
+    gap: 2rem;
   }
 
-  .micro-card {
-    padding: 1rem;
-    background: var(--depth-1);
-    border: 1px solid var(--white-08);
-  }
-
-  .micro-header {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 0.35rem;
-  }
-
-  .micro-header h3 {
-    font-size: 0.95rem;
+  .tool-list li {
     margin: 0;
-    color: var(--glow);
   }
 
-  .micro-tagline {
-    color: var(--white-45);
-    font-size: 0.8rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .micro-links {
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .micro-link {
+  .project-footer {
+    margin-top: 3.5rem;
     font-family: var(--mono);
-    font-size: 0.7rem;
-    color: var(--gold-accent);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.15s;
+    font-size: 0.75rem;
   }
 
-  .micro-link:hover {
-    border-bottom-color: var(--gold-accent);
-  }
+  @media (max-width: 480px) {
+    .project-entry {
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 1rem;
+    }
 
+    .project-entry :global(.dither-thumb) {
+      width: 48px;
+      height: 48px;
+    }
+  }
 </style>

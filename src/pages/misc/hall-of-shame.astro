@@ -1,295 +1,97 @@
 ---
 import Page from '../../layouts/Page.astro';
 
-const currentPath = Astro.url.pathname;
-
 const entries = [
   {
-    name: "Guardian",
-    slug: "guardian",
-    epitaph: "desktop app for local inference",
-    years: "2024 - 2025",
-    stack: ["Electron", "React", "Node.js", "SQLite", "Zustand"],
+    name: 'Guardian',
+    slug: 'guardian',
+    description: 'Desktop app for local inference',
+    years: '2024–2025',
+    stack: 'Electron, React, Node.js, SQLite, Zustand',
+    outcome: 'Components reused in ForgeFrame',
+    what: 'A local desktop application for examining recurring patterns in conversations, using Ollama inference and a persistent memory layer. It explored reframe detection, a user baseline, and compression of stored context.',
+    decision: 'The memory engine was the useful part. Extracting it into ForgeFrame left little reason to maintain a separate desktop product, so I stopped developing the shell.',
+    survived: 'The memory and tagging work moved into ForgeFrame. The questions about observation and user baselines became the essay “On Observation and Identity Modeling.”',
+    lesson: 'Distinguish a separate product from an interface around infrastructure you already have.',
     demoUrl: null,
-    writeupUrl: null,
-    what: "Desktop Electron application. Reframe detection across 7 types. Awareness-trap detection - finding what you keep circling back to without resolving. Local Ollama inference. Constitutional memory with 4-level compression. The whole stack.",
-    whatHappened: "The engine was the product. Guardian was ForgeFrame with a desktop shell on top. When the memory layer got extracted into standalone infrastructure, the shell had nothing left to justify. The reframe detection logic, the awareness-trap patterns, the constitutional tagging - all of it lives in ForgeFrame now. Guardian was the research environment. ForgeFrame is what it found.",
-    whatSurvived: "The essay. Guardian is where 'On Observation and Identity Modeling' came from. The dependency chain is real: reframe detection needs a user baseline, the baseline needs memory, memory needs local persistence. That chain is why ForgeFrame exists. The name 'Guardian temperature' still lives inside ForgeFrame as a seven-signal composite metric.",
-    lesson: "Knowing when a product is really a configuration is a useful distinction.",
-    status: "absorbed",
+    writeupUrl: '/projects/guardian',
   },
   {
-    name: "Recursive Hall",
-    slug: "recursive-hall",
-    epitaph: "generative WebGL architecture / music visualizer",
-    years: "2024",
-    stack: ["Three.js", "WebGL", "GLSL", "Web Audio API", "Vanilla JS"],
-    what: "Seeded procedural architecture rendered as wireframe ink drawings. One HTML file, zero build tools. The same seed always produces the same hall. Then it grew: audio reactivity, shader modes, a Strudel REPL, a synth pad, a DJ mixer, a TouchDesigner bridge. A Saturday night that kept going for several months.",
-    whatHappened: "I didn't know why I was building it. That's the honest answer. It was beautiful and it made the computer loud and I kept going because the next thing seemed possible. No user, no purpose, no point - just the pull of the next shader pass. It got too choppy, too slow, too big to think about. The fans became the vibe. Eventually I stopped.",
-    whatSurvived: "StrudelVision absorbed the visual modes and the audio analysis pipeline. The infinite hall mode lives there now. The thermal shader - the one that responds to heat, that sense of a system running warm - became the aesthetic for the ForgeFrame Cockpit's Guardian temperature visualization. The WebGL fundamentals are permanent: bloom is math, grain is a hash function, vignette is a distance field. That substrate knowledge ended up shaping how this entire site thinks about rendering.",
-    lesson: "Loving what you're building is necessary but not sufficient. I was genuinely optimistic this was going somewhere. It wasn't. Loved it. Don't miss it.",
-    status: "absorbed",
-    demoUrl: "/hall",
-    writeupUrl: "/projects/resonance",
+    name: 'Recursive Hall',
+    slug: 'recursive-hall',
+    description: 'Procedural architecture and music visualization',
+    years: '2024',
+    stack: 'Three.js, WebGL, GLSL, Web Audio API, JavaScript',
+    outcome: 'Visual and audio components reused',
+    what: 'Seeded procedural architecture rendered as wireframe drawings in one HTML file. The experiment grew to include audio-reactive shaders, a Strudel editor, a synth pad, a mixer, and a TouchDesigner bridge.',
+    decision: 'I kept adding possibilities without a clear use case. Performance deteriorated, and the application became harder to reason about. I stopped expanding it and kept the parts that had a useful home elsewhere.',
+    survived: 'StrudelVision took in the visual modes and audio analysis pipeline. The shader and WebGL work also informed later interface experiments.',
+    lesson: 'Exploration can be worthwhile without becoming a product. It still needs a stopping point.',
+    demoUrl: '/hall',
+    writeupUrl: '/projects/resonance',
   },
   {
-    name: "VaultQL",
-    slug: "vaultql",
-    epitaph: "natural language to SQL for credit unions",
-    years: "2024",
-    stack: ["Python", "Flask", "SQLCoder-34B", "Ollama", "Symitar Episys"],
-    what: "LLM-powered query engine built for credit union core banking systems. The hard version of NL-to-SQL: Symitar Episys has cryptic abbreviated field names, denormalized record families, integer codes instead of enums, and 22+ record types that can't fit in a single prompt. Built a schema adapter that dynamically selected, annotated, and pruned schema context per query. RBAC enforcement, audit logging, air-gapped deployment. 32 pages of specs.",
-    whatHappened: "The infrastructure needed to support it properly didn't exist yet. The schema adapter, the context pruning, the de-identification pipeline - all of it was being built from scratch at a moment when the underlying models and tooling weren't stable enough to ship to a risk-averse regulated industry. The generic pieces got absorbed into ForgeFrame. The domain-specific layer had nowhere to land.",
-    whatSurvived: "The de-identification pipeline made it into the ForgeFrame proxy. Token mapping, adversarial test suite, three-tier scrubbing - that work was real and got absorbed. The schema introspection approach for Episys is documented and still valid. Snowflake is now deploying NL-to-SQL at enterprise scale for large orgs - different distribution, same gap. The problem was real. The view from inside credit union operations was the edge nobody else had.",
-    lesson: "Victim of what I knew how to build, not what I knew was missing. The gap was real. The timing wasn't.",
-    status: "early",
+    name: 'VaultQL',
+    slug: 'vaultql',
+    description: 'Natural-language SQL prototype for credit unions',
+    years: '2024',
+    stack: 'Python, Flask, SQLCoder-34B, Ollama, Symitar Episys',
+    outcome: 'Unfinished prototype',
+    what: 'A prototype for querying core banking data with a local model. A schema adapter selected and annotated context for abbreviated field names, denormalized records, and integer codes. The design included role-based access, audit logs, and air-gapped inference.',
+    decision: 'Too much supporting infrastructure had to be built before the query experience could be evaluated properly. I did not establish a path to a dependable deployment in a regulated environment.',
+    survived: 'De-identification and context-management work carried into the ForgeFrame proxy. The domain-specific schema work remained documented, without a shipped banking product.',
+    lesson: 'Domain knowledge can identify a real problem. It does not by itself establish that the product is ready to ship.',
     demoUrl: null,
     writeupUrl: null,
   },
 ];
 ---
 
-<Page title="hall of shame -- alexander campos" description="Projects that didn't survive contact with reality. Kept here because the lesson is real even if the thing isn't.">
+<Page title="project archive -- alexander campos" description="Projects I stopped or folded into other work, and the decisions behind stopping.">
   <article>
     <nav class="subnav" aria-label="Misc sections">
-      <a href="/misc" class:list={[{ active: currentPath === '/misc' || currentPath === '/misc/' }]}>glossary</a>
-      <span class="subnav-sep">/</span>
-      <a href="/misc/hall-of-shame" class:list={[{ active: currentPath.startsWith('/misc/hall-of-shame') }]}>hall of shame</a>
+      <a href="/misc">glossary</a>
+      <a href="/misc/hall-of-shame" aria-current="page">project archive</a>
     </nav>
-
-    <h1>Hall of Shame</h1>
-
+    <h1>Project archive</h1>
     <p class="intro">
-      Projects that didn't make it. Some got absorbed into something better. Some were early. Some I just didn't know why I was building. The parts are real - Frankenstein could still do something with them. For now, here they lie.
+      Projects I stopped or folded into other work. The useful record is what I tried,
+      why I stopped, and which parts earned another use.
     </p>
-
     <div class="entries">
       {entries.map(entry => (
-        <div class="entry" id={entry.slug}>
-          <div class="entry-header">
-            <span class="entry-name">{entry.name}</span>
-            <span class="entry-meta">{entry.epitaph} · {entry.years}</span>
-            <span class:list={["entry-status", `status-${entry.status}`]}>{entry.status}</span>
-          </div>
-
-          <div class="entry-stack">
-            {entry.stack.map(s => <span class="tag">{s}</span>)}
-          </div>
-
-          <div class="entry-body">
-            <div class="entry-section">
-              <span class="section-label">what it was</span>
-              <p>{entry.what}</p>
-            </div>
-
-            <div class="entry-section">
-              <span class="section-label">what happened</span>
-              <p>{entry.whatHappened}</p>
-            </div>
-
-            <div class="entry-section">
-              <span class="section-label">what survived</span>
-              <p>{entry.whatSurvived}</p>
-            </div>
-
-            <div class="entry-lesson">
-              <span class="lesson-label">lesson</span>
-              <span class="lesson-text">{entry.lesson}</span>
-            </div>
-
-            {(entry.demoUrl || entry.writeupUrl) && (
-              <div class="entry-links">
-                {entry.demoUrl && <a href={entry.demoUrl} class="entry-link">demo →</a>}
-                {entry.writeupUrl && <a href={entry.writeupUrl} class="entry-link">write-up →</a>}
-              </div>
-            )}
-          </div>
-        </div>
+        <section class="entry" id={entry.slug}>
+          <h2>{entry.name}</h2>
+          <p class="entry-meta">{entry.description}, {entry.years}. {entry.outcome}.</p>
+          <p class="entry-stack">{entry.stack}</p>
+          <p>{entry.what}</p>
+          <h3>Why I stopped</h3>
+          <p>{entry.decision}</p>
+          <h3>What carried forward</h3>
+          <p>{entry.survived}</p>
+          <p>{entry.lesson}</p>
+          {(entry.demoUrl || entry.writeupUrl) && (
+            <p class="entry-links">
+              {entry.demoUrl && <a href={entry.demoUrl}>Open the experiment</a>}
+              {entry.writeupUrl && <a href={entry.writeupUrl}>Read the project notes</a>}
+            </p>
+          )}
+        </section>
       ))}
     </div>
   </article>
 </Page>
 
 <style>
-  .subnav {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    margin-bottom: 2rem;
-    color: var(--white-30);
-  }
-
-  .subnav a {
-    color: var(--white-45);
-    text-decoration: none;
-    border-bottom: none;
-    transition: color 0.2s;
-  }
-
-  .subnav a:hover {
-    color: var(--gold-accent);
-  }
-
-  .subnav a.active {
-    color: var(--glow);
-  }
-
-  .subnav-sep {
-    color: var(--white-20);
-  }
-
-  h1 {
-    margin-bottom: 0.5rem;
-  }
-
-  .intro {
-    margin-bottom: 2.5rem;
-    color: var(--white-60);
-    line-height: 1.65;
-  }
-
-  .entries {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-  }
-
-  .entry {
-    border-top: 1px solid var(--white-08);
-    padding-top: 2rem;
-  }
-
-  .entry-header {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .entry-name {
-    font-family: var(--serif);
-    font-size: 1.2rem;
-    color: var(--glow);
-  }
-
-  .entry-meta {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--white-30);
-    text-transform: lowercase;
-  }
-
-  .entry-status {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    padding: 0.15rem 0.5rem;
-    border: 1px solid;
-    text-transform: lowercase;
-    letter-spacing: 0.05em;
-  }
-
-  .status-absorbed {
-    color: var(--gold-accent);
-    border-color: var(--gold-accent);
-    opacity: 0.6;
-  }
-
-  .status-dissolved {
-    color: var(--white-30);
-    border-color: var(--white-20);
-  }
-
-  .status-early {
-    color: var(--glow);
-    border-color: var(--glow);
-    opacity: 0.5;
-  }
-
-  .entry-stack {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .tag {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    color: var(--white-30);
-    border: 1px solid var(--white-08);
-    padding: 0.1rem 0.4rem;
-  }
-
-  .entry-body {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .entry-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .section-label {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    text-transform: lowercase;
-    letter-spacing: 0.08em;
-    color: var(--white-30);
-  }
-
-  .entry-section p {
-    color: var(--white-60);
-    line-height: 1.65;
-    margin: 0;
-  }
-
-  .entry-lesson {
-    display: flex;
-    gap: 0.75rem;
-    align-items: baseline;
-    padding: 0.75rem;
-    border: 1px dashed var(--white-08);
-    margin-top: 0.5rem;
-  }
-
-  .lesson-label {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    color: var(--white-30);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .lesson-text {
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--gold-accent);
-    line-height: 1.55;
-  }
-
-  .entry-links {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.25rem;
-  }
-
-  .entry-link {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--white-30);
-    text-decoration: none;
-    border-bottom: 1px dashed var(--white-20);
-    transition: color 0.2s;
-  }
-
-  .entry-link:hover {
-    color: var(--gold-accent);
-    border-bottom-color: var(--gold-accent);
-  }
+  .subnav { display: flex; gap: 1.5rem; margin-bottom: 2rem; font-size: 0.95rem; }
+  .subnav a { color: var(--white-60); }
+  .subnav [aria-current] { color: var(--glow-hot); }
+  .intro { margin-bottom: 3rem; color: var(--white-70); }
+  .entries { display: flex; flex-direction: column; gap: 3rem; }
+  .entry h2 { margin: 0 0 0.5rem; }
+  .entry h3 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+  .entry p { color: var(--white-70); }
+  .entry .entry-meta, .entry .entry-stack { color: var(--white-60); }
+  .entry-stack { font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .entry-links { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.5rem; }
 </style>

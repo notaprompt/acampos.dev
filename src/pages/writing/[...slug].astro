@@ -1,10 +1,9 @@
 ---
 import Page from '../../layouts/Page.astro';
 import { getCollection } from 'astro:content';
-import Wtf from '../../components/Wtf.astro';
 
 export async function getStaticPaths() {
-  const essays = await getCollection('essays');
+  const essays = await getCollection('essays', ({ data }) => data.status === 'published');
   return essays.map(essay => ({
     params: { slug: essay.slug },
     props: { essay },
@@ -13,84 +12,115 @@ export async function getStaticPaths() {
 
 const { essay } = Astro.props;
 const { Content } = await essay.render();
+const publishedDate = new Date(`${essay.data.date}T00:00:00Z`).toLocaleDateString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+const updatedDate = essay.data.updated && new Date(`${essay.data.updated}T00:00:00Z`).toLocaleDateString('en-US', {
+  month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC',
+});
 ---
 
-<Page title={`${essay.data.title} -- alexander campos`} description={essay.data.subtitle}>
+<Page title={`${essay.data.title} -- alexander campos`} description={essay.data.subtitle} ogType="article">
   <article class="essay">
     <header class="essay-header">
       <h1>{essay.data.title}</h1>
       <p class="subtitle">{essay.data.subtitle}</p>
-      <span class="date">{essay.data.date}</span>
+      <p class="date"><time datetime={essay.data.date}>{publishedDate}</time>{updatedDate && <>. Revised <time datetime={essay.data.updated}>{updatedDate}</time>.</>}</p>
     </header>
     <div class="essay-body">
-      <Content components={{ Wtf }} />
+      <Content />
     </div>
     <footer class="essay-footer">
-      <a href="/writing">&larr; back to writing</a>
+      <a href="/writing">Back to writing</a>
     </footer>
   </article>
 </Page>
 
 <style>
+  .essay {
+    max-width: 100%;
+  }
+
   .essay-header {
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--white-08);
+    margin-bottom: 3rem;
   }
 
   .essay-header h1 {
-    margin-bottom: 0.5rem;
+    font-size: clamp(2rem, 5vw, 2.65rem);
+    line-height: 1.18;
+    margin-bottom: 1rem;
+    text-wrap: balance;
   }
 
   .subtitle {
-    font-family: var(--body);
-    font-size: 1rem;
-    color: var(--white-60);
-    line-height: 1.5;
-    margin-bottom: 0.5rem;
+    font-size: 1.16rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
   }
 
   .date {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--white-45);
+    font-family: var(--body);
+    font-size: 0.8rem;
+    color: var(--white-60);
+    margin-bottom: 0;
   }
 
   .essay-body {
-    line-height: 1.7;
+    font-size: 1.1rem;
+    line-height: 1.78;
+    overflow-wrap: break-word;
   }
 
   .essay-body :global(h2) {
-    margin-top: 2.5rem;
+    font-size: 1.5rem;
+    line-height: 1.35;
+    margin-top: 2.75rem;
     margin-bottom: 1rem;
   }
 
   .essay-body :global(h3) {
+    font-size: 1.25rem;
     margin-top: 2rem;
     margin-bottom: 0.75rem;
   }
 
   .essay-body :global(p) {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.35rem;
   }
 
   .essay-body :global(blockquote) {
-    border-left: 2px solid var(--gold-accent);
-    padding-left: 1rem;
-    margin: 1.5rem 0;
-    color: var(--white-60);
-    font-style: italic;
+    border: 0;
+    padding: 0;
+    margin: 1.75rem 0;
+    color: inherit;
+    font-style: normal;
+  }
+
+  .essay-body :global(em) {
+    font-style: normal;
+  }
+
+  .essay-body :global(pre) {
+    border: 0;
+    padding: 0;
+  }
+
+  .essay-body :global(a),
+  .essay-footer a {
+    border: 0;
+    text-decoration: underline;
+    text-underline-offset: 0.16em;
   }
 
   .essay-footer {
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--white-08);
+    margin-top: 3.5rem;
   }
 
   .essay-footer a {
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--gold-accent);
+    font-family: var(--body);
+    font-size: 1rem;
   }
 </style>

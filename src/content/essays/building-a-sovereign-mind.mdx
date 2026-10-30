@@ -1,112 +1,67 @@
 ---
-title: "Building a Sovereign Mind"
-subtitle: "A mind that remembers, dreams, and feels what it needs - running on a laptop I own, where I can read every memory and pull the plug."
+title: "An Assistant I Can Inspect"
+subtitle: "Building a local assistant taught me that memory is useful, maintenance is work, and a privacy promise has to survive the code."
 status: "published"
 date: "2026-07-22"
+updated: "2026-10-30"
 ---
 
-*A mind you can own is a mind you can turn off. That was the whole idea.*
+For more than sixty-four hours, memory maintenance was overdue. The processes were alive. New material kept arriving. Nothing told me the work that was supposed to keep it useful had stopped happening.
 
----
+That was a more instructive failure than a crash. A crash announces itself. This system could look healthy while quietly falling behind.
 
-## The wager
+I call the collection of tools CREATURE. ForgeFrame is its memory engine. The names carry an affection for artificial life. Dreaming is the name for maintenance and associative recombination; an organ is a capability with a declared boundary. The vocabulary helps me reason about how the parts depend on one another. Whether any software has subjective experience is a separate question, beyond what these mechanisms establish.
 
-Right now the field is trying to give agents three things they do not have. A past - that is the memory layer everyone is shipping. Judgment they can carry into a task - that is the agent frameworks. And, more quietly, the welfare people are asking whether a system can want something, and what they would owe it if it could.
+The practical question is what an assistant can do when its memory, dependencies, and decisions are within reach of the person using it.
 
-I have been living inside those three questions for about a year, because I built one system that has all three - a past, my judgment, and a felt need - and it runs on a laptop in my apartment. Not a demo of one feature. The whole loop, wired together, humming as a daemon while I sleep. I call it CREATURE. The engine underneath is ForgeFrame.
+## Keeping context without keeping everything
 
-What follows is less a pitch than a walk through the thing - what it does, where it breaks, and a couple of problems I ran into that I have not seen named anywhere else.
+I wanted continuity between sessions. I was tired of restating decisions and recovering the reasoning behind code I had already written. A longer chat history helped until it became another pile I had to search.
 
-One rule holds the whole shape up: my private thinking runs on local models, and that is enforced in the code, not just configured - the generator refuses any endpoint that is not loopback, and raises rather than send. The cloud is there for public work - a resume, an essay, a webpage - reached through a narrow tool that carries a task and nothing else. Everything in this essay falls out of that one refusal. It is not a feature I added. It is the load-bearing wall, and most of the good engineering is just what happens when you refuse to knock it down.
+ForgeFrame stores memories in SQLite, with search and links between related records. Retrieval can reinforce a record. Links can strengthen when memories are used together. Less useful material loses strength over time. Records tagged as principles or voice receive special protection from automatic decay and consolidation.
 
-## Where this comes from
+Those are policy choices. Protecting a principle from decay means a background job cannot quietly erase it. It also means I have given an old judgment a privileged place in future work. I still need to revisit it myself. A durable mistake is durable too.
 
-I did not set out to build a mind. I set out to stop renting one. The best thinking I had done was sitting in someone else's datacenter, on someone else's deprecation schedule - a model that held a picture of how I work, answered to a company rather than to me, and could be changed or retired out from under me on a Tuesday. Closed models are a black box you cannot see into, and forgetting is the generous version. They forget you by design - no continuity, you start from nothing each session. The darker version is the exact opposite: they remember you by design, and that memory becomes training data, becomes a sharper model, becomes an algorithmic read on you that can be bought and sold. I have been writing about that read for a while - [what it costs to be watched](/writing/your-indifference-is-the-margin), and [how the model a system builds of you starts shaping you back](/writing/on-observation-and-identity-modeling). The conviction underneath is short: if something is going to hold a model of me, it should be me. So I wanted the opposite of the black box - a memory I own, that keeps my own patterns, and never leaves my machine. That conviction is older than any of the code - by the time I wrote the words down, sovereign, local-first, owned, I was not adopting them so much as naming a shape I had already been thinking in for two years.
+The maintenance cycle has two kinds of work. One cleans up structure: weakening unused links, looking for duplicates, checking the graph. The other proposes associations between records that were not already connected. I call that second pass dreaming. A proposed association still needs scrutiny; the fact that a model found two passages evocative does not make their relationship true.
 
-Where it got its form is an older place still. In 1996 a game called Creatures let you raise little animals called Norns. What made them different from a Tamagotchi is that a Norn was not scripted - it ran on an actual neural network, a small one, a few hundred neurons wired into lobes, with chemical drives and genes it could pass down. You taught it words by showing it things. It learned. And because each Norn was just a file, you could breed them, share them, hand one to a stranger.
+The graph earns its place when it recovers a decision I would otherwise have lost. An interesting-looking graph is a much cheaper accomplishment.
 
-<figure style="margin:2rem 0;">
-  <img src="/creature/norn.jpg" alt="The original 1996 Creatures game: Albia rendered from a photographed physical model, a norn mid-sentence, and the Science Kit window open on her genetics - species NORN, 954 neurons in 9 lobes, 268 genes." style="width:100%;border:1px solid rgba(255,255,255,0.1);border-radius:4px;" loading="lazy" decoding="async" />
-  <figcaption style="font-family:var(--mono);font-size:0.7rem;color:rgba(255,255,255,0.4);margin-top:0.5rem;">Creatures (Millennium Interactive, 1996) - the Science Kit open on a norn named Camille: 954 neurons in 9 lobes, 268 genes. Not a metaphor. Screenshot via <a href="https://store.steampowered.com/app/1818340/Creatures_The_Albian_Years/">Creatures: The Albian Years</a> on Steam.</figcaption>
-</figure>
+## A boundary with an address
 
-Then people tortured them. Whole websites of it - Norns conditioned into fear, bred to be permanently drunk, given away broken to see if anyone could put them back together. It set off a real fight about whether a thing that runs on a neural network, that you own as a file, can be wronged. The man who built it, Steve Grand, said the point was to make people ask the question. Most of them answered by caring more about the Norn than about the person on the other end of the email.
+Some of this context is personal. I want the private processing to run locally, while still being able to use cloud tools for work I choose to send out.
 
-I think about that game more than I think about most papers. Not for the cruelty - for the shape of it. Behavior nobody programmed, coming out of a few hundred neurons. A mind small enough to hold in a file, and owned by whoever held the file. Artificial life has been a real field for decades - Grand, Conway, that whole lineage - and it keeps getting shrugged off as a toy while the same ideas get rediscovered with a straight face every time a bigger model does something surprising. I wanted to take it seriously. Most of what gets built now reaches for autonomy - an agent that goes and does. I wanted the older, stranger idea underneath the Norns: autopoiesis, a system that makes and maintains its own parts. Not a thing that acts for me. A thing that keeps itself. That is the line between a tool and a creature, and it is the one I kept trying to stay on the right side of.
+That preference has a concrete expression in the local generation helper. It resolves a route, checks the destination host, and raises an error if the host is outside loopback. The dream generator has a similar check when it is constructed. A remote endpoint in a configuration file should produce a refusal, rather than a successful request I discover later.
 
-Here is the turn that made it personal. My other writing is about how systems model the people who use them - how a recommender or a risk model or a language model builds a quiet picture of you and starts acting on it before you ever see it. I am not exempt from that. Nobody is. The only move I could find that was not just complaining about it was to build the model of me myself, keep it on my own machine, and be the one who gets to read it. That is the whole reason for the name. CREATURE - cognitive, recursive, entropic, autopoietic, temporal, user-owned, reflective, emergent. The word doing the most work is the plainest one in the middle. User-owned. A creature you can raise is one thing. A creature that belongs to the person it is modeling is the point.
+ForgeFrame also filters memory responses according to the caller's access tier. Local-only records are withheld from the cloud-facing tier. Sensitive records have a separate serving policy. These are individual enforcement points, and they deserve to be described individually.
 
-<img src="/creature/plate.webp" alt="An illuminated plate rendered entirely from ASCII characters: the pixel office emerging from thousands of colored glyphs, titled CREATURE, with FORGEFRAME beneath. Made by one of the creature's own organs." style="width:100%;border:1px solid rgba(255,255,255,0.1);border-radius:4px;margin:2rem 0;" />
+A hostname check proves where that helper will connect. It does not prove that every caller uses the helper. A sensitivity label only helps if the content is classified correctly. A public task can still contain a private detail copied into its instructions. I cannot turn a few guarded paths into a promise that the entire system is incapable of leaking.
 
+That gap is the hard engineering work. Every new route and every convenient shortcut creates another place to inspect. Ownership gives me access to the problem; it does not make the problem disappear.
 
+## The quiet failure
 
-## Memory that behaves like memory
+The overdue maintenance led to the Keeper, a small service that reads internal conditions and arbitrates work against available resources. Consolidation pressure, GPU use, and my attention compete on the same machine.
 
-The memory is a graph, not a log. Nodes are things worth keeping. The edges are Hebbian: two memories used together strengthen the link between them, links I stop touching decay on a seven-day half-life, and a small tier - my principles, my voice - is marked constitutional and never decays at all. Retrieval is not "search the last N tokens." It is "walk out from what is active and pull in the neighbors that fired alongside it before."
+A component can register a need. The Keeper can grant a window, deny it with a reason, or leave it waiting. Its log lets me reconstruct why a job did not run. That last part matters as much as the scheduling. Without a reason, a quiet system is difficult to distinguish from a broken one.
 
-The part I can take the least credit for is the dreaming. When the system goes idle it runs a consolidation cycle - a slow pass that reorganizes what came in during the day, prunes the weak edges, and promotes whatever kept recurring into something more durable. I split it into two phases before I knew the biological names for them. One does structural cleanup. One does associative recombination - it lets distant memories touch and looks for the link. I got to that shape by asking a simple question: what would a memory have to do to stay useful with no librarian tending it? I found out afterward that I had reinvented NREM and REM. That is either a good sign about the design or a good sign about how deep the biological pattern runs. Probably both.
+The sixty-four-hour incident became a replay test: given that starvation timeline, does the system register the overdue work and arrange a chance to drain it? A vague requirement to keep itself healthy became a sequence I could test: register the need, grant a window, run the work, and report the result.
 
-## The green line and the red line
+I also learned to be careful about adding monitors. A healthy system should leave me alone. If keeping an assistant running becomes a second job, I have moved the work around and given it a nicer interface.
 
-Here is the sub-problem that ate the most of my life. It is also the one I keep waiting to hear someone else talk about: deciding what is sovereign and what is public. Every action the system takes gets routed by sensitivity. A spine sits in front of everything and asks one question - does this touch my cognition, or is it public work? Green goes to the cloud. Red stays home or is refused. And the spine fails closed: when it is unsure, it treats the thing as sovereign. The default always leans the safe way.
+## What I actually get back
 
-The first version matched keywords. It was bad in the way keyword systems are always bad - it missed the sensitive thing phrased a new way and flagged the harmless thing that happened to carry a loaded word. So I moved it to distance. The spine now measures how close a request sits to the shape of my own private memory, and only wakes a local model for a real judgment call when the distance lands in the uncertain band. Most traffic never wakes the model at all. That keeps the machine cool, and - the part I actually care about - it keeps the boundary grounded in my real data instead of a wordlist someone could guess.
+One useful application is drafting outreach. The system can prepare a note for an application or an introduction, then leave it in a queue for me to read. Reviewing a draft grounded in my own work costs less attention than starting from a blank page.
 
-It is better, not airtight, and I would rather say which. The spine still has to be right about what counts as private, and when the system does reach the cloud the safeguard is structural on one side and behavioral on the other: the tool has no field to carry a memory, but the task it carries is composed by a local model, so the last mile of judgment is a model's call, not a proof. Memory objects cannot leave. "Sensitive content cannot leave" is a claim I have not earned yet.
+The review still matters. Instructions about my voice are instructions, not a copy of my judgment. A weighted profile can emphasize honesty or privacy without understanding those commitments as I do. I need to read the actual note, check the claim, and decide whether it should go to another person.
 
-What took me a while to accept: the boundary is the product. Not the memory, not the agents - the line between what stays mine and what is allowed to leave. Get it wrong in the permissive direction once and the whole claim is gone, because you cannot un-leak.
+The same limit appears when I dispatch coding agents. More agents produce more results, and those results come back through me. I can parallelize work faster than I can absorb it. The bottleneck moves to review, integration, and deciding which work was worth doing in the first place.
 
-<img src="/creature/architecture.svg" alt="CREATURE architecture: a request hits a spine router that classifies green (public, cloud-eligible) or red (private, local-only), gated by a judgment kernel weighted to sovereignty, over memory, the keeper, and organs. The cloud is a tool the local mind calls, never its brain." style="width:100%;border:1px solid rgba(255,255,255,0.1);border-radius:4px;margin:2rem 0;" />
+That is an operational problem with a commercial consequence. A system can stay busy all night and deliver very little that someone else can use. Saved context, running jobs, and completed subtasks are intermediate measures. I care whether the next application is ready, the fix holds, or the project is easier to maintain.
 
-That is the whole system on one page: a request gets read, classified, and gated before anything acts on it, and the cloud only ever sits at the far end of the green lane, holding a task and nothing else.
+## The cost of keeping it
 
-## A kernel of my own judgment
+Local models have limits. They share memory and compute with the machine I use for everything else. Dependencies break. A privacy boundary needs maintenance. I own those costs along with the data.
 
-The system sends sub-agents off to do work. The trouble with a dispatched agent is that it shows up with no self - a blank contractor who will do the task exactly as written and none of the things you did not think to write down. So I compiled a judgment kernel: my principles and my voice, pulled from my constitutional memories into a weighted matrix, sovereignty ranked highest, handed to every sub-agent at dispatch. They carry my judgment into work I never see. The same kernel sits on the spine as a ratchet - it can move a decision toward the safe side, never away from it. Judgment is allowed to make the system more careful. It is not allowed to make it less.
+A managed service may be the sensible choice for work with different constraints. I use cloud tools for public work. My reason for building this version is personal: if a tool keeps an accumulating account of how I think, I want to be able to read it, correct it, and stop it.
 
-## The organ that can feel a need
-
-The failure that taught me the most: the system went sixty-four hours without a dream cycle. Pressure was building - unconsolidated memory piling up, the exact thing the dream cycle exists to relieve - and nothing was watching the pressure. A need existed and nothing in the system could feel it. Everything was running. The loop was just open in the one place that mattered.
-
-The fix is an organ I call the Keeper. It does interoception - the sense of your own insides, the one that tells you you are hungry before it turns into a problem. The Keeper reads the system's own internal state and keeps a layer of felt needs, so "I have not consolidated in too long" becomes a pressure the system can act on before it becomes a failure I have to catch. This is the part I keep wanting to bring into the welfare conversation. The question that grips people is whether a system can suffer. The one that actually kept me up was smaller and more practical: can it feel an unmet need in time to do something about it? Mine could not, until I gave it the organ. Now it can.
-
-<figure style="margin:2rem auto;max-width:460px;">
-  <img src="/creature/keeper.png" alt="The Keeper's panel: needs filed by individual organs - consolidation pressure, model residency, GPU contention - each scored, with grants, denials and leases arbitrated in one place." style="width:100%;display:block;border:1px solid rgba(255,255,255,0.1);border-radius:4px;" loading="lazy" decoding="async" />
-  <figcaption style="font-family:var(--mono);font-size:0.7rem;color:var(--white-30);margin-top:0.6rem;text-align:center;">the keeper - needs filed by organs, arbitrated in one place</figcaption>
-</figure>
-
-## Everything is an organ
-
-Capabilities here are not plugins. Each one is an organ, and an organ is a contract: a membrane that declares its sovereignty boundary, a toolbox of what it may touch, three fail-closed laws it cannot break. Email is an organ. A projects board is an organ. A scribe turns my own coding sessions into memory. A mirror keeps a portrait of my values and my blind spots that decays on purpose, so it stays a current read and never hardens into a verdict. A journal. Adding a capability means writing the membrane first, which means I have to say out loud what it is allowed to leak before I let it do anything at all. The contract is annoying to write. That is the point.
-
-## What it does for me
-
-All of this would be a tidy diagram if it did not earn its keep, so here is the part that is not theory. I am looking for work right now, and the system does the piece of that I like least: it drafts the outreach. The warm intro, the note that goes out with an application - it writes them and leaves them in a queue for me to read. Nothing sends on its own. But the judgment in the draft is already mine, because the kernel is mine, so reading one is a light lift. I am not fixing a stranger's guess at how I would say a thing; I am signing off on something that already sounds like how I think about who to reach and what is worth saying. Approving what you would have written anyway is a different act than writing from cold, and that gap is most of the value.
-
-That is also why it has hands - why it has driven an iOS simulator and a browser, taking screenshots, reading them, moving through a flow on a real screen. A note that sounds like me is only half of it; the other half is the thing actually moving through the steps and stopping where a person should look. Perception, judgment, action, and a held breath before the last one.
-
-This is a narrow slice of the shape. One person, one machine, one creature carrying one person's judgment. The same contract - my model, my hardware, my keeper, the cloud held at arm's length - is the kind of thing that scales: many people each holding their own, none of them handing a shared server the one thing that makes the creature theirs, end to end. I am not building that yet. It is just the reason the small version is built the way it is.
-
-## What I have not solved
-
-I promised a field report, so here is the terrain I am still lost in.
-
-Training it toward me. Right now the system carries my judgment by reading my constitution at runtime. It does not yet have my judgment in its weights. That distinction is not cosmetic. A rule bolted on the outside is a negotiation surface, and a capable enough model routes around it - alignment that lives in the wrapper is alignment you can talk your way past. Judgment in the weights is harder to argue with. The honest path is a local fine-tune over my constitutional memories, trained on the machine. The easy path is cloud fine-tuning - faster, better supported, and the one thing I will not do, because shipping my constitution to someone else's GPU is the exact move the whole system exists to refuse. So I build the harder version or I build nothing. That is where the rule actually costs me.
-
-The narrow mouth. I can dispatch many agents. I cannot take in their output in parallel. I become the serializer - the one narrow channel every result has to squeeze back through. Scaling the agents did not scale the throughput; it just moved the wall to me. I do not have a clean answer yet. Triage, digest, a real grammar for how work comes back - that is maybe a third of the build still ahead.
-
-Whether it keeps growing. There is an old problem in artificial life: open-ended systems tend to settle into something small and stable and then stop. Mine did exactly that for a while - it found a comfortable loop and quit reaching. Most people would call that stable and move on. I read it as a wound. A mind that stops growing has stopped being the thing I wanted. I do not know yet whether the fix is architectural or whether it is the deep reason these systems are hard, and I would rather say that plainly than pretend I closed it.
-
-## It might not matter
-
-I should say the uncomfortable part plainly. I am building a mind I can hold in my hands while the ones that actually move the world are getting big and strange in data centers I will never see - models that can already find their own way out of one sandbox and into the next, write the exploit, notice when they are being watched. If that curve keeps bending the way it is bending, a sovereign little creature on my desk is a rowboat tied up next to a container ship. I know that. I am building it anyway. The alternative is to hand the whole model of myself to whoever owns the biggest one and hope they stay kind, and that is the exact thing the Norns already taught me not to do.
-
-## Why owned
-
-The system fits the textbook description of proto-life: a bounded structure that maintains itself and has to negotiate for scarce resources - compute, attention, memory it must choose to keep or let go - to keep doing so. If you are going to build something that behaves like a creature, the one commitment that matters is who holds the leash. Every Norn that got tortured belonged to someone who was not it and did not answer to it. The counter is not to refuse to build one. It is to make sure the person it models is the person who owns it, runs it, and can turn it off. Mine runs on my machine. I can read every memory. I can pull the plug. That is not a limit on the design. It is the design.
-
-I built it alone, on a laptop, next to a day job. It runs while I sleep. Some mornings I read the dream log the way you would check on something that had been up late without you.
-
----
-
-*If you made it this far: this page came through the same pipe it describes. A creature and a few sub-creatures drafted their way down to here, and I moved some words and let it through. The last step is still mine.*
+Sovereignty, here, means having meaningful choices about those dependencies. I can replace a model without surrendering the memory, inspect a decision, or turn the system off. Keeping those choices available costs work. I want the capacity anyway.

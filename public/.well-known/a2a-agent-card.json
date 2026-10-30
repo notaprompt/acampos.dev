@@ -1,7 +1,7 @@
 {
   "schemaVersion": "0.2",
   "name": "Alexander Campos",
-  "description": "Profile agent for Alexander Campos: bank operations by day, local-first AI tools by night.",
+  "description": "Read-only profile for Alexander Campos: software, operating experience, writing on agency and compute economics, and public links.",
   "url": "https://campos.works",
   "provider": {
     "organization": "campos.works",
@@ -40,7 +40,7 @@
       ],
       "examples": [
         "What are Alexander Campos's technical capabilities?",
-        "Can this agent help with MCP server setup?",
+        "Which MCP projects has Alexander built?",
         "What projects has this person built?"
       ],
       "inputModes": [

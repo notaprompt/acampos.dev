@@ -1,409 +1,96 @@
 ---
 import Page from '../layouts/Page.astro';
-import HitCounter from '../components/HitCounter.astro';
 import DitherThumb from '../components/DitherThumb.astro';
-import TerminalLine from '../components/TerminalLine.astro';
 import { getCollection } from 'astro:content';
-import office from '../data/office.json';
 
-// The cards read from the same collections the project pages do - the
-// homepage can no longer drift from the truth it links to.
-const projects = (await getCollection('projects'))
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 3);
+const projects = await getCollection('projects');
+const selected = ['reframed', 'forgeframe', 'creature'].map((slug) => projects.find((p) => p.slug === slug)!);
 const essays = (await getCollection('essays'))
   .filter((e) => e.data.status === 'published')
   .sort((a, b) => b.data.date.localeCompare(a.data.date))
   .slice(0, 3);
-const officeLine = [
-  office.memories && `${office.memories.toLocaleString('en-US')} memories on this desk`,
-  office.forecasts && `${office.forecasts.toLocaleString('en-US')} signed forecasts`,
-  office.services && `${office.services} services under launchd`,
-].filter(Boolean).join(' · ');
-
-const statusLines = [
-  'understand the intricate. build the intuitive. present the essential.',
-  'you are at the front door.',
-  'ops by day. local-first ai by night.',
-  "memories decay. principles don't.",
-  'every forecast signed before the market resolves.',
-  'the cloud is a tool, not the mind.',
-  office.memories ? `${office.memories.toLocaleString('en-US')} memories on this desk.` : 'one machine. mine.',
-  'currently: building quietly.',
-];
 ---
 
-<Page title="alexander campos" description="Alexander Campos - operations by day, local-first AI tools by night: agent memory, model routing, and the tools that make them usable. Reframed (live), ForgeFrame (open source).">
-  <section class="splash">
-    <h1 class="site-name">Alexander Campos</h1>
-    <p class="lede">I build and run AI systems in places where the output gets audited — agent memory, model routing, and the operations underneath.</p>
-    <p class="tagline">Operator by trade, builder by habit. <a href="/resume">Six years running operations in regulated finance</a>, the kind where someone eventually asks you to prove it. I build my own tools end to end, mostly at night, and <a href="/work">some of them are in use</a>. It's most of what I think about, and sometimes I <a href="/writing">write it down</a>.</p>
-    <TerminalLine lines={statusLines} label="status" />
-
-  </section>
-
-  <section class="home-section">
-    <p class="offer-alt">
-      <a href="/work">Work</a>
-      <span class="alt-sep" aria-hidden="true">/</span>
-      <a href="/writing">Writing</a>
-      <span class="alt-sep" aria-hidden="true">/</span>
-      <a href="/resume">Resume</a>
+<Page title="Alexander Campos" description="Software, operations, and writing about the systems we depend on. Work and research by Alexander Campos, Virginia.">
+  <section class="intro">
+    <h1>Alexander Campos</h1>
+    <p class="lede">I work on the gap between what software can do and what people can actually use.</p>
+    <p>
+      I’m in Virginia. Six years in regulated finance taught me to build for
+      bad data, awkward handoffs, and someone asking how the number was produced.
+      I also build software of my own.
     </p>
+    <p>
+      As intelligence gets cheaper, I’m interested in what turns it into a
+      useful outcome: infrastructure, capital, data, permissions, and a way to
+      reach the people who need it. I want to build at those points.
+    </p>
+    <p class="intro-links"><a href="/work">Work and experience</a><a href="/about">More about me</a></p>
   </section>
 
-  <div class="retro-marquee-wrap" aria-hidden="true">
-    <span class="retro-marquee-text">
-      <span style="color: var(--gold-accent);">assume someone will check</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;playing like it pays · building like it's clay — NoVA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--gold-accent);">assume someone will check</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;playing like it pays · building like it's clay — NoVA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    </span>
-  </div>
+  <section class="home-section" aria-labelledby="current-research">
+    <h2 id="current-research">What I’m thinking about</h2>
+    <a href="/research/claims-capacity-collateral" class="entry">
+      <h3>Claims, capacity, and collateral</h3>
+      <p>Following the distance between promised compute, working infrastructure, and the useful work that pays for it. Who controls that conversion, who captures the value, and who carries the risk?</p>
+    </a>
+  </section>
 
-  <!-- proof -->
-  <section class="home-section">
-    <h2 class="section-heading">Selected work</h2>
-
-    <div class="project-cards">
-      {projects.map((p) => (
-        <a href={`/projects/${p.slug}`} class="project-card">
+  <section class="home-section" aria-labelledby="selected-work">
+    <h2 id="selected-work">Some things I’ve built</h2>
+    <div class="work-list">
+      {selected.map((p) => (
+        <a href={`/projects/${p.slug}`} class="entry project-card">
           <DitherThumb slug={p.slug} />
-          <span class="project-text">
-            <span class="project-name">{p.data.title}</span>
-            <span class="project-line">
-              {p.data.tagline}
-              {p.data.demo && <> Live at <span class="gold">{new URL(p.data.demo).hostname}</span>.</>}
-            </span>
-          </span>
+          <div>
+            <h3>{p.data.title}</h3>
+            <p>{p.data.tagline}</p>
+          </div>
         </a>
       ))}
     </div>
-
-    <p class="more-link"><a href="/projects">all projects >></a></p>
+    <p class="more"><a href="/projects">All projects</a></p>
   </section>
 
-  <!-- what I think -->
-  <section class="home-section">
-    <h2 class="section-heading">Writing</h2>
-
-    <div class="essay-cards">
+  <section class="home-section" aria-labelledby="writing">
+    <h2 id="writing">Writing</h2>
+    <div class="writing-list">
       {essays.map((e) => (
-        <a href={`/writing/${e.slug}`} class="essay-card">
-          <span class="essay-title">{e.data.title}</span>
-          <span class="essay-line">{e.data.subtitle}</span>
+        <a href={`/writing/${e.slug}`} class="entry">
+          <h3>{e.data.title}</h3>
+          <p>{e.data.subtitle}</p>
         </a>
       ))}
     </div>
-
-    <p class="more-link"><a href="/writing">all writing >></a></p>
+    <p class="more"><a href="/writing">All writing</a></p>
   </section>
 
-  <section class="home-section">
-
-    {officeLine && <p class="office-line">{officeLine} - as of {office.asof}</p>}
-
-    <div class="counter-row">
-      <HitCounter />
-    </div>
+  <section class="home-section closing">
+    <p>There are also <a href="/work#orellana">tools for a landscaping business</a>, some <a href="/influences">books</a>, and the music playing here. Oliver is the dog.</p>
+    <p>If something here overlaps with what you’re working on, <a href="mailto:alex@campos.works">write to me</a>.</p>
   </section>
-
-  <script is:inline>
-    console.log(
-      '%c you are at the front door -- again, kinda. ',
-      'color: #b8965a; font-family: monospace; font-size: 11px;'
-    );
-  </script>
-
-  <script is:inline src="/islands/hit-counter.js"></script>
 </Page>
 
 <style>
-  /* Every claim in the tagline links to its receipt. Grey until hover so the
-     paragraph still reads as prose and nothing competes with the CTA below. */
-  .tagline a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px solid currentColor;
-    transition: color 0.18s ease;
+  .intro h1 { font-size: clamp(2rem, 4vw, 2.6rem); margin-bottom: 1.2rem; }
+  .intro .lede { font-size: clamp(1.25rem, 2.2vw, 1.55rem); line-height: 1.45; color: var(--glow-hot); max-width: 38rem; margin-bottom: 1.3rem; text-wrap: pretty; }
+  .intro > p:not(.lede) { max-width: 65ch; }
+  .intro-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; padding-top: 0.3rem; }
+  .intro-links a, .more a { font-family: var(--mono); font-size: 0.75rem; }
+  .home-section { margin-top: 3.3rem; }
+  .home-section > h2 { margin: 0 0 1.6rem; font-size: 1.5rem; }
+  .work-list, .writing-list { display: grid; gap: 1.65rem; }
+  .entry { display: block; border: 0; text-decoration: none; }
+  .entry h3 { font-size: 1.2rem; margin: 0 0 0.35rem; }
+  .entry p { color: var(--white-60); margin: 0; max-width: 63ch; font-size: 1rem; line-height: 1.65; }
+  .entry:hover { border: 0; text-decoration: none; }
+  .entry:hover h3 { color: var(--gold-accent); }
+  .project-card { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 1.2rem; align-items: center; }
+  .more { margin: 1.25rem 0 0; }
+  .closing { max-width: 64ch; }
+  @media (max-width: 480px) {
+    .home-section { margin-top: 2.6rem; }
+    .project-card { grid-template-columns: 48px minmax(0, 1fr); gap: 1rem; }
+    .project-card :global(.dither-thumb) { width: 48px; height: 48px; }
   }
-  .tagline a:hover { color: var(--gold-accent); }
-
-  /* ── The one action ──
-     A single bordered block instead of a row of pills. One decision, made
-     obvious, with the reason to press it sitting inside it rather than three
-     paragraphs above it. */
-  .home-offer {
-    display: block;
-    border: 1px solid var(--white-15);
-    padding: 1.5rem 1.6rem;
-    text-decoration: none;
-    transition: border-color 0.22s ease, background 0.22s ease;
-  }
-  .home-offer:hover { border-color: var(--gold-accent); background: var(--depth-1); }
-  .home-offer:hover .offer-go { color: var(--gold-accent); }
-  .home-offer:hover .offer-go span { transform: translateX(4px); }
-
-  .offer-eyebrow {
-    display: block;
-    font-family: var(--mono);
-    font-size: 0.63rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold-accent);
-    margin-bottom: 0.7rem;
-  }
-  .offer-head {
-    display: block;
-    font-family: var(--serif);
-    font-size: clamp(1.25rem, 3.4vw, 1.6rem);
-    line-height: 1.22;
-    color: var(--glow-hot);
-    margin-bottom: 0.65rem;
-    text-wrap: balance;
-  }
-  .offer-body {
-    display: block;
-    font-size: 0.92rem;
-    color: var(--white-60);
-    line-height: 1.65;
-    max-width: 56ch;
-    margin-bottom: 1rem;
-  }
-  .offer-go {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--white-45);
-    transition: color 0.2s ease;
-  }
-  .offer-go span { transition: transform 0.2s ease; }
-
-  /* ── Two doors ──
-     A hiring manager and a business owner both land on this page wanting
-     opposite things. One CTA meant one of them was always in the wrong room,
-     and the one that is easy to lose is the hiring side — a services funnel
-     reads as "this person sells consulting" long before it reads as "this
-     person builds." Hiring reads first; the offer keeps its place, quieter. */
-  .door-pair {
-    display: grid;
-    gap: 1rem;
-  }
-  @media (min-width: 720px) {
-    .door-pair { grid-template-columns: 1fr 1fr; }
-  }
-  .home-offer--quiet { border-color: var(--white-08); }
-  .home-offer--quiet .offer-eyebrow { color: var(--white-30); }
-  .home-offer--quiet .offer-head {
-    color: var(--white-60);
-    font-size: clamp(1.1rem, 2.8vw, 1.3rem);
-  }
-
-  .offer-alt { font-family: var(--mono); font-size: 0.72rem; color: var(--white-45); margin-top: 0.85rem; }
-  .offer-alt a { color: var(--white-60); }
-  .offer-alt .alt-sep { color: var(--white-30); margin: 0 0.45rem; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .home-offer, .offer-go, .offer-go span { transition: none; }
-  }
-
-  /* ── Opening ── */
-  .splash {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin-bottom: 1rem;
-  }
-
-  .site-name {
-    font-family: var(--serif);
-    font-size: clamp(1.7rem, 4vw, 2.25rem);
-    font-weight: 400;
-    color: var(--glow);
-    margin: 0 0 0.75rem;
-    letter-spacing: 0.02em;
-  }
-
-  .lede {
-    font-family: var(--body);
-    font-size: clamp(1.08rem, 2vw, 1.3rem);
-    font-weight: 400;
-    color: var(--glow-hot);
-    line-height: 1.5;
-    margin: 0 0 1rem;
-    max-width: 38rem;
-  }
-
-  .tagline {
-    font-family: var(--body);
-    font-size: 0.95rem;
-    color: var(--white-60);
-    line-height: 1.75;
-    margin-bottom: 1rem;
-    max-width: 44rem;
-  }
-
-  .warm-line {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--white-30);
-    margin-bottom: 2.5rem;
-    letter-spacing: 0.01em;
-  }
-
-  /* ── Sections ── */
-  .home-section {
-    padding: 2.8rem 0 0;
-  }
-
-  .section-heading {
-    font-family: var(--serif);
-    font-size: 1.35rem;
-    font-weight: 400;
-    color: var(--glow);
-    margin: 0 0 1.1rem;
-  }
-
-  .home-prose {
-    font-family: var(--body);
-    font-size: 0.9rem;
-    color: var(--white-60);
-    line-height: 1.65;
-    max-width: 540px;
-  }
-
-  .home-prose.dim { color: var(--white-30); font-family: var(--mono); font-size: 0.75rem; }
-
-  .home-prose a {
-    color: var(--white-70);
-    border-bottom: 1px dashed var(--white-20);
-  }
-
-  .home-prose a:hover {
-    color: var(--gold-accent);
-    border-bottom-color: var(--gold-accent);
-  }
-
-  .more-link {
-    margin-top: 1rem;
-  }
-
-  .more-link a {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--white-45);
-    border-bottom: none;
-  }
-
-  .more-link a:hover { color: var(--glow-hot); }
-
-  .project-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 1.3rem;
-  }
-
-  .project-card {
-    display: flex;
-    align-items: center;
-    gap: 1.1rem;
-    padding: 0;
-    text-decoration: none;
-    transition: color 0.18s ease;
-  }
-
-  .project-card:hover .project-name { color: var(--gold-accent); }
-  .project-text { display: block; min-width: 0; }
-
-  .project-name {
-    font-family: var(--serif);
-    font-size: 1.08rem;
-    font-weight: 400;
-    color: var(--glow-hot);
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-
-  .project-line {
-    font-family: var(--body);
-    font-size: 0.9rem;
-    color: var(--white-60);
-    line-height: 1.6;
-    max-width: 42rem;
-  }
-
-  .gold { color: var(--gold-accent); }
-
-  .essay-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 1.15rem;
-  }
-
-  .essay-card {
-    display: block;
-    padding: 0;
-    text-decoration: none;
-    transition: color 0.18s ease;
-  }
-
-  .essay-card:hover .essay-title { color: var(--gold-accent); }
-
-  .essay-title {
-    font-family: var(--serif);
-    font-size: 1.05rem;
-    font-weight: 400;
-    color: var(--glow-hot);
-    display: block;
-    margin-bottom: 0.2rem;
-  }
-
-  .essay-line {
-    font-family: var(--body);
-    font-size: 0.88rem;
-    color: var(--white-60);
-    line-height: 1.6;
-    max-width: 42rem;
-  }
-
-  /* ── Services row ── */
-  .service-row {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.75rem;
-  }
-
-  .service-pill {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--gold-accent);
-    border: 1px solid var(--gold-accent);
-    padding: 0.4rem 0.9rem;
-    text-decoration: none;
-    transition: all 0.15s;
-  }
-
-  .service-pill:hover {
-    background: var(--gold-accent);
-    color: var(--void);
-  }
-
-  /* ── Counter ── */
-  .office-line {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--white-45);
-    margin: 0;
-  }
-
-  .counter-row {
-    padding-top: 0.65rem;
-    margin-top: 0.4rem;
-  }
-
-  /* ── Mobile ── */
-  @media (max-width: 600px) {
-    .service-row { flex-direction: column; }
-    .service-pill { text-align: center; }
-  }
-
 </style>

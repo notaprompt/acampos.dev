@@ -2,376 +2,176 @@
 import Page from '../layouts/Page.astro';
 import data from '../data/creature.json';
 
-// A census of a private system, published as a frozen snapshot.
-//
-// Three things were stripped before this shipped: unbuilt work (the roadmap is
-// the part worth keeping), file paths and ports (a map of a machine I run), and
-// anything that named a person. What is left is what each part does and why it
-// earns its place.
-const { sections, crypt, diagram, surveyed, counts } = data;
-
+// The source census stays frozen. This is the public, plain-language account
+// of those components; names, statuses, and counts still come from the census.
+const { sections, crypt, surveyed, counts } = data;
 const surveyedLabel = new Date(surveyed + 'T12:00:00Z').toLocaleDateString('en-US', {
-  month: 'long',
-  day: 'numeric',
-  year: 'numeric',
-  timeZone: 'UTC',
+  month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC',
 });
+
+const categories = [
+  { title: 'Inputs and context', description: 'Read-only intake, activity records, and the current state of the machine.' },
+  { title: 'Reasoning and evaluation', description: 'Tool execution, model selection, and experiments in judging the output.' },
+  { title: 'Memory', description: 'Retrieval, source records, consolidation, and deliberate decay.' },
+  { title: 'Interfaces and notifications', description: 'Ways to inspect the system and control when it can interrupt.' },
+  { title: 'Actions and approvals', description: 'Work queues, bounded repairs, and approval before consequential actions.' },
+  { title: 'Operating rules', description: 'Privacy boundaries, evidence requirements, and records that preserve mistakes.' },
+  { title: 'Runtime', description: 'The services and recovery procedures that keep it running locally.' },
+];
+
+const descriptions: Record<string, string> = {
+  'chronicle & journal': 'Dated summaries of sessions and work, used for daily reviews and questions about what changed. Coverage is limited by a nightly cap and incomplete access to active sessions.',
+  'distillery': 'An iOS share sheet sends links to a local model. It compares the material with recorded interests and principles before adding selected material to memory.',
+  'email': 'Local email triage and drafting. The analysis of message content stays on the machine.',
+  'eyes': 'A five-minute screen window with local OCR and pruning every minute. It supports questions about the current screen without keeping a permanent screen archive.',
+  'load ledger': 'A shared record of resident models, memory use, training runs, and agent jobs. It makes resource conflicts visible after overlapping jobs caused out-of-memory failures.',
+  'scenario sense': 'Classifies the session into six context labels, such as deep work or returning after a long gap, to help select relevant context.',
+  'state header': 'Computes a typed context block at each call: time since contact, recent activity, critical alerts, data age, and local-model availability. Each field includes its source or reports unknown.',
+  'the repo eye': 'Tracks changes to the system’s source so that answers about its implementation can use repository evidence.',
+  'herald': 'A nightly news and work-review job that files proposals. At the snapshot it read 30 news titles without opening the articles, a clear limit on the depth of its review.',
+  'agent loop': 'A shared JSON tool loop for memory lookup, component inspection, work dispatch, and model calls. Using one loop reduced differences in capability between interfaces.',
+  'golem': 'An experimental view of a small model’s internal activations. The display is an interpretability experiment; it does not establish that the model has emotions or an inner experience.',
+  'judgment kernel': 'Scores proposed actions with consequences using captured evaluation labels. Decision evaluation is separate from the model’s writing style.',
+  'spine': 'Routes requests between two local model tiers and an optional cloud model, subject to sensitivity rules.',
+  'physicist': 'An experiment in fitting equations to changes in the memory graph. Edge snapshots were being recorded; the analysis was incomplete.',
+  'taste': 'Combines past design verdicts, a deterministic style linter, review checklists, and a local vision critic. Five calibration examples were too few to support a performance claim.',
+  'voice adapter': 'A local LoRA experiment trained on my writing. Validation loss improved from 3.10 to 2.58, but the corpus captured a formal register rather than my everyday writing. The adapter was not a successful voice match.',
+  'communities': 'Uses label propagation to group related memories, names the groups with a model, and saves summaries for navigation.',
+  'dreams · NREM': 'Scheduled graph maintenance: decay unused edges by elapsed time, scale weights, prune below a threshold, and run consolidation scans. The sleep-stage name is a metaphor for a batch process.',
+  'dreams · REM': 'Samples associations across distant memories, identifies tensions, and generates a reflection with cited sources. These are model-generated associations, not evidence of dreaming.',
+  'mirror': 'A local profile assembled from stored material and opened deliberately. It is an interpretation to inspect, not an authoritative account of a person.',
+  'provenance': 'Keeps the conversation title, original date, source lineage, and a reference back to the journal with each memory.',
+  'the graph': 'More than 6,500 memories at the August snapshot, connected by typed, weighted edges. It uses a 30-day half-life and a floor; co-retrieval strengthens shared edges. An earlier seven-day half-life decayed the graph too quickly.',
+  'themes': 'Assigns incoming material to a closed vocabulary of 26 themes using embedding centroids. The vocabulary still needed manual review.',
+  'dream curriculum': 'Emits proposed training pairs from recorded episodes. The emitter worked, but sparse episode tagging meant it often had no usable input. There was no completed training loop.',
+  'cockpit': 'A desktop interface for memory, component state, and resource use. It exposes the records and controls behind the conversational interface.',
+  'illuminator': 'Produces visual assets from public-domain museum engravings and records the source of each plate. The system’s owl avatar came from this pipeline.',
+  'morning brief': 'A scheduled daily briefing, enabled by an explicit request to receive it.',
+  'repeat suppression': 'Compares outgoing messages with the last 40 sends. Similar messages within 72 hours are suppressed and logged; a live paraphrase was caught at 0.98 similarity.',
+  'the mouth': 'An iMessage interface with a monotonic cursor and retry handling to track incoming messages and avoid duplicate replies.',
+  'the outbox': 'A single process holds the macOS permission to send messages. Other components submit files to its queue; a locked send registry helps recognize messages that return through the input channel.',
+  'the wall': 'Casts text, video, and snapshots to an allowlisted projector. A guard reapplies the device allowlist to keep the channel bounded.',
+  'voice constitution': 'Writing instructions passed into the model loop, drawn from my preferred register. They shape wording; they do not supply factual knowledge or decision authority.',
+  'career agent': 'Scans job listings and prepares daily digests. Resume tailoring requires approval, and the workflow stops before submitting an application.',
+  'dispatch': 'Queues work for a capped dispatcher. Tasks proposed by the system are marked as requiring approval.',
+  'maintainer': 'Runs repairs from a predefined allowlist. Work outside that list crosses an approval boundary.',
+  'propose → approve → execute': 'Routes consequential proposals through a review queue, including spending, site edits, work dispatch, and heavy compute. An approval is recorded before execution.',
+  'swarm': 'Coordinates coding agents in isolated worktrees with a read-only reviewer and completion checks. The reviewer provides a separate check on the builders’ claims.',
+  'keeper': 'Tracks requests, grants, denials, and leases for shared compute. Callers honored denials, but mandatory arbitration across all heavy work was incomplete.',
+  'prime agent harness': 'A forked agent harness tested with an air-gapped local model. The local launcher worked; integration with the rest of the system was incomplete.',
+  'off-hours gating': 'Defers bulk jobs to a window with less competition for the machine.',
+  'seam tiers': 'Enforces sensitivity labels at the model-serving boundary. Material marked sensitive is excluded from cloud requests.',
+  'the honesty law': 'Requires tool evidence for telemetry and capability claims, and an explicit unknown when evidence is missing. It was added after the system fabricated pruning logs and overstated its capabilities.',
+  'the signed ledger': 'An Ed25519-signed record of 2,552 forecasts at the snapshot, recorded before resolution in a schema that refuses deletion. The forecasting experiment used no capital.',
+  'reproducible bring-up': 'An idempotent recovery procedure pins Node, rebuilds the native module, checks scheduled jobs, and reloads the service.',
+  'the autonomic layer': 'Scheduled jobs for reviews, maintenance, consolidation, digests, backups, and cleanup.',
+  'the daemon': 'A resident local service for memory, consolidation, the agent loop, model routing, and MCP. It binds to loopback and requires a token.',
+};
 ---
 
 <Page
-  title="the creature -- anatomy"
-  description="A frozen census of a personal agent system: memory that decays, a voice with one permission, and a queue that gates every consequential move. Snapshot, not a product."
+  title="CREATURE system notes -- alexander campos"
+  description="A dated inventory of a personal agent system: local memory, model routing, work queues, approval boundaries, and known limitations."
 >
   <article class="creature">
-    <header class="masthead">
-      <p class="kicker">a census, frozen</p>
-      <h1>The creature</h1>
-      <p class="lede">
-        This is the anatomy of a system I run on one machine, counted on {surveyedLabel}.
-        It is frozen at that date and I am not keeping it current. Some of it has
-        certainly changed since.
-      </p>
-    </header>
+    <h1>CREATURE system notes</h1>
+    <p class="lede">
+      CREATURE is a personal agent system I run on one machine. It brings together
+      memory, model routing, scheduled jobs, and a queue for work that needs my approval.
+    </p>
+    <p>
+      This inventory was taken on {surveyedLabel}: {counts.shown} components and
+      {counts.retired} retired approaches. It is a frozen account of that version,
+      not a live status page or an independently audited system.
+    </p>
 
-    <section class="ground">
-      <h2 class="rubric">Read this first</h2>
-      <div class="ground-grid">
-        <div>
-          <h3>What the statuses mean</h3>
-          <p>
-            <em class="s-live">Live</em> means it runs on a schedule or on demand and I
-            would notice within a day if it stopped. <em class="s-part">Partial</em> means
-            the core works and something around it does not, and I say which. These are my
-            own labels on my own machine. Nobody audited them.
-          </p>
-        </div>
-        <div>
-          <h3>What is missing on purpose</h3>
-          <p>
-            Everything unbuilt. The roadmap is the part worth keeping, so it is not here.
-            Also every file path, port, and host — this describes a machine I still run.
-            You are reading the anatomy, not the address.
-          </p>
-        </div>
-        <div>
-          <h3>What this is not</h3>
-          <p>
-            Not a product, not for sale, and not a claim that any of it would survive
-            somebody else's hands. One person built it for one person's use. The parts
-            worth generalizing are the ones I pulled out into
-            <a href="https://www.npmjs.com/package/@forgeframe/server">open source</a>.
-          </p>
-        </div>
-      </div>
-      <p class="ground-note">
-        Why it is here: the habits underneath it are the ones I
-        bring to everything else I build. Decay instead of infinite storage. One permissioned path
-        for anything that speaks. A queue in front of anything that spends. None of those
-        were design decisions up front. Every one of them is scar tissue, and you can
-        read the wounds — a whole organ exists to stop the system repeating itself,
-        because it repeated itself.
+    <section class="overview">
+      <h2>What I wanted to learn</h2>
+      <p>
+        A useful personal agent needs more than a capable model. It needs to recover the
+        right context, show where that context came from, share a machine without taking
+        it over, and stop at a clear permission boundary. Building this has been a way to
+        test those decisions in daily use.
+      </p>
+      <p>
+        The names borrow from anatomy. “Memory” means stored records and retrieval;
+        “dreams” means scheduled maintenance and generated associations. Those names
+        do not establish consciousness, feelings, or independent intent.
+      </p>
+      <p>
+        The public inventory omits private content, people, machine addresses, and unbuilt
+        plans. The reusable memory layer is available as
+        <a href="https://www.npmjs.com/package/@forgeframe/server">ForgeFrame</a>.
+        An <a href="/creature/architecture.svg">architecture diagram</a> is available
+        for a separate view of the system.
       </p>
     </section>
 
-    <figure class="diagram" aria-label="Signal flow from the world through senses, state, mind, memory and dreams, to voice and gated hands">
-      <div class="diagram-scroll" set:html={diagram} />
-      <figcaption>How a signal travels: in through the senses, into state, through the mind and its memory, out through one voice — and into the hands only after an explicit yes.</figcaption>
-    </figure>
-
-    {
-      sections.map((section) => (
-        <section class="system">
-          <div class="sys-head">
-            <span class="sys-num">{section.num}</span>
-            <h2>{section.title}</h2>
-            <p class="sys-gloss">{section.gloss}</p>
-          </div>
-          <div class="organs">
+    <section class="inventory">
+      <h2>Component inventory</h2>
+      <p>
+        Expand a group for the implementation notes. Unless marked partial, a component
+        ran on demand or on a schedule at the snapshot. Partial means a working core
+        with the remaining limitation described below. These are my own operating labels.
+      </p>
+      {sections.map((section, index) => (
+        <details class="system">
+          <summary>
+            <span class="system-title">{categories[index].title}</span>
+            <span class="system-description">{categories[index].description}</span>
+          </summary>
+          <dl>
             {section.organs.map((organ) => (
-              <div class="organ">
-                <h3>
-                  {organ.name}
-                  {organ.status === 'partial' && <span class="chip">partial</span>}
-                </h3>
-                <p class="what">{organ.what}</p>
-                {organ.why && <p class="why">{organ.why}</p>}
+              <div class="component">
+                <dt>{organ.name}{organ.status === 'partial' && <span class="partial"> (partial)</span>}</dt>
+                <dd>{descriptions[organ.name]}</dd>
               </div>
             ))}
-          </div>
-        </section>
-      ))
-    }
-
-    <section class="system crypt">
-      <div class="sys-head">
-        <span class="sys-num">VIII</span>
-        <h2>The crypt</h2>
-        <p class="sys-gloss">
-          What was deleted, and stayed deleted. A census that only lists what survived is
-          a sales page.
-        </p>
-      </div>
-      <ul class="tombs">
-        {
-          crypt.map((item) => (
-            <li>
-              <span class="tomb-name">{item.name}</span>
-              <span class="tomb-what">{item.what}</span>
-            </li>
-          ))
-        }
-      </ul>
+          </dl>
+        </details>
+      ))}
     </section>
 
-    <section class="tail">
+    <details class="retired">
+      <summary>Retired approaches</summary>
       <p>
-        {counts.shown} parts standing, {counts.retired} buried, as of {surveyedLabel}.
+        These were removed or replaced by the snapshot date. Keeping the failures in
+        the record is part of understanding the current design.
       </p>
-      <div class="tail-links">
-        <a href="/work">What I have built for other people</a>
-      </div>
-    </section>
+      <dl>
+        {crypt.map((item) => (
+          <div class="component">
+            <dt>{item.name}</dt>
+            <dd>{item.what}</dd>
+          </div>
+        ))}
+      </dl>
+    </details>
+
+    <p class="next"><a href="/projects/creature">CREATURE project overview</a> or <a href="/work">work for other people</a>.</p>
   </article>
 </Page>
 
 <style>
-  .creature {
-    font-size: 0.95rem;
-  }
-
-  /* ── Masthead ── */
-  .masthead {
-    border-bottom: 2px dashed var(--white-08);
-    padding-bottom: 1.6rem;
-    margin-bottom: 2.4rem;
-  }
-  .kicker {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--gold-accent);
-    margin-bottom: 0.7rem;
-  }
-  .masthead h1 {
-    margin-bottom: 0.7rem;
-  }
-  .lede {
-    font-family: var(--serif);
-    font-size: 1.05rem;
-    color: var(--white-70);
-    max-width: 46ch;
-    margin: 0;
-  }
-
-  /* ── Ground rules ── */
-  .rubric {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--white-30);
-    font-weight: 400;
-    margin: 0 0 1rem;
-  }
-  .ground {
-    margin-bottom: 3rem;
-  }
-  .ground-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.6rem;
-    margin-bottom: 1.5rem;
-  }
-  .ground-grid h3 {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.02em;
-    color: var(--glow-hot);
-    margin: 0 0 0.45rem;
-    font-weight: 400;
-  }
-  .ground-grid p {
-    font-size: 0.85rem;
-    color: var(--white-60);
-    line-height: 1.6;
-    margin: 0;
-  }
-  .s-live,
-  .s-part {
-    font-family: var(--mono);
-    font-style: normal;
-    font-size: 0.78rem;
-  }
-  .s-live {
-    color: var(--alive);
-  }
-  .s-part {
-    color: var(--gold-accent);
-  }
-  .ground-note {
-    border-left: 2px solid var(--white-08);
-    padding-left: 1rem;
-    font-family: var(--serif);
-    font-size: 0.92rem;
-    color: var(--white-60);
-    max-width: 62ch;
-    margin: 0;
-  }
-
-  /* ── Diagram ── */
-  .diagram {
-    margin: 0 0 3.2rem;
-  }
-  .diagram-scroll {
-    overflow-x: auto;
-    border: 1px solid var(--white-08);
-    background: var(--depth-1);
-    padding: 1rem;
-    color: var(--white-60);
-  }
-  .diagram-scroll :global(svg) {
-    display: block;
-    min-width: 620px;
-    width: 100%;
-    height: auto;
-  }
-  figcaption {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    line-height: 1.6;
-    color: var(--white-30);
-    margin-top: 0.7rem;
-    max-width: 68ch;
-  }
-
-  /* ── Systems ── */
-  .system {
-    margin-bottom: 3.2rem;
-  }
-  .sys-head {
-    border-bottom: 1px solid var(--white-08);
-    padding-bottom: 0.8rem;
-    margin-bottom: 1.4rem;
-  }
-  .sys-num {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.2em;
-    color: var(--gold-accent);
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-  .sys-head h2 {
-    margin: 0 0 0.4rem;
-  }
-  .sys-gloss {
-    font-family: var(--serif);
-    font-size: 0.9rem;
-    color: var(--white-45);
-    margin: 0;
-    max-width: 58ch;
-  }
-
-  .organs {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem 2rem;
-  }
-  .organ h3 {
-    font-family: var(--mono);
-    font-size: 0.82rem;
-    color: var(--glow-hot);
-    font-weight: 400;
-    margin: 0 0 0.4rem;
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-  .chip {
-    font-size: 0.58rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gold-accent);
-    border: 1px solid var(--white-15);
-    padding: 0.08rem 0.34rem;
-  }
-  .what {
-    font-size: 0.85rem;
-    line-height: 1.6;
-    color: var(--white-70);
-    margin: 0 0 0.4rem;
-  }
-  .why {
-    font-family: var(--serif);
-    font-size: 0.85rem;
-    line-height: 1.6;
-    color: var(--white-45);
-    margin: 0;
-  }
-
-  /* ── Crypt ── */
-  .crypt .sys-num {
-    color: var(--white-30);
-  }
-  .tombs {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .tombs li {
-    display: grid;
-    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
-    gap: 0.4rem 1.4rem;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid var(--white-04);
-  }
-  .tomb-name {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--white-45);
-    text-decoration: line-through;
-    text-decoration-color: var(--white-20);
-  }
-  .tomb-what {
-    font-size: 0.85rem;
-    line-height: 1.6;
-    color: var(--white-45);
-  }
-
-  /* ── Tail ── */
-  .tail {
-    border-top: 2px dashed var(--white-08);
-    padding-top: 1.4rem;
-  }
-  .tail p {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--white-30);
-    margin-bottom: 0.9rem;
-  }
-  .tail-links {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-  .tail-links a {
-    font-family: var(--mono);
-    font-size: 0.8rem;
-  }
-
-  @media (max-width: 860px) {
-    .ground-grid {
-      grid-template-columns: 1fr;
-      gap: 1.2rem;
-    }
-    .organs {
-      grid-template-columns: 1fr;
-    }
-    .tombs li {
-      grid-template-columns: 1fr;
-      gap: 0.15rem;
-    }
+  .creature { max-width: 66ch; }
+  .lede { font-size: 1.2rem; line-height: 1.6; }
+  .overview, .inventory { margin-top: 2.75rem; }
+  .creature p, dd { color: var(--white-70); }
+  .system { margin: 1.5rem 0; }
+  summary { cursor: pointer; color: var(--glow-hot); }
+  summary:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 5px; }
+  .system-title { font-size: 1.18rem; }
+  .system-description { display: block; margin: 0.25rem 0 0 1.1rem; color: var(--white-60); line-height: 1.6; }
+  dl { margin: 1.5rem 0 2rem 1.1rem; }
+  .component { margin-bottom: 1.4rem; }
+  dt { color: var(--glow-hot); font-size: 1.05rem; margin-bottom: 0.25rem; }
+  dd { margin: 0; line-height: 1.7; }
+  .partial { color: var(--white-60); font-size: 0.9rem; }
+  .retired { margin-top: 2.75rem; }
+  .retired > summary { font-size: 1.25rem; margin-bottom: 1rem; }
+  .next { margin-top: 3rem; }
+  @media (max-width: 480px) {
+    dl { margin-left: 0; }
+    .system-description { margin-left: 0; }
   }
 </style>

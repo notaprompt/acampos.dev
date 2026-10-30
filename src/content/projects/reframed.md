@@ -1,61 +1,37 @@
 ---
 title: "Reframed"
-tagline: "Helps people describe their experience honestly and still get the job."
+tagline: "Resume tailoring with two versions, a visible change log, and the applicant in control."
 status: "shipped"
 stack: ["Next.js", "TypeScript", "Anthropic", "Neon Postgres", "Upstash Redis", "Stripe", "React PDF"]
 demo: "https://reframed.works"
-order: 3
+order: 1
 screenshots:
   - src: "/images/projects/reframed-landing.jpg"
-    caption: "reframed.works - production"
+    caption: "The public product and its sample resume comparison. This is a demonstration of the workflow, not a customer outcome."
   - src: "/images/projects/reframed-receipt.jpg"
-    caption: "an honesty receipt - signed authorship breakdown, verifiable by anyone"
-metrics:
-  - { label: "api routes", value: "76", asof: "Aug 2026" }
-  - { label: "commits", value: "713", asof: "Aug 2026" }
-  - { label: "test files", value: "47", asof: "Aug 2026" }
-  - { label: "status", value: "live · billing wired", asof: "Aug 2026" }
-
+    caption: "The example Honesty Receipt. Its percentages illustrate the interface; they are not measured authorship or an independent check that a resume is true."
 ---
 
-I was tailoring resumes by hand and it took too long. Build a tool that does the rewriting -- two versions, refined and reframed -- without fabricating experience. Pay-per-use, magic-link auth, no friction.
+Tailoring my resume by hand took too long. The useful part was translating experience into the language of a role. The difficult part was knowing when stronger wording crossed into a claim I could not support.
 
-## How it works
+I built Reframed around that decision. An applicant uploads or pastes a resume, adds a job description, and receives two versions with a change log. They review the changes and choose what to keep before exporting a PDF.
 
-Upload a resume (paste, file, or URL scrape), paste a job description. The system scores the match semantically, then generates two reframed versions with a change log for each.
+## The product decisions
 
-**Semantic analysis.** Multi-provider routing reads the resume against the job description and returns a confidence score, gap analysis, and per-section annotations. Not keyword matching -- it reads for intent, culture fit, and transferable experience.
+Refined keeps the original structure and tightens the language. Reframed reorganizes the experience around the role. I removed a more aggressive third option because it added another decision without making the choice clearer.
 
-**Two versions.** Refined keeps your structure with stronger language. Reframed reshapes it for the specific role. Each version includes a change log showing exactly what was modified and why. Killed the aggressive third version -- two gives you a real choice without decision paralysis.
+The prompt defines what the model may change at the sentence level. It can explain transferable experience and adjust emphasis; it must not invent employers, skills, responsibilities, or results. Those constraints reduce the room for fabrication, but the applicant still needs to check every claim.
 
-**No fabrication.** The tailoring prompt explicitly prohibits inventing experience, inflating metrics, or adding skills the user doesn't have. It reframes what exists. The user decides which version to use.
+A change log makes the rewrite reviewable. The Honesty Receipt adds a signed record of changes classified through text overlap with the original. The signature verifies the record's origin and integrity; the overlap rules are a review aid, not a test of whether the underlying experience is true.
 
-**Voice fingerprinting.** The system detects your writing voice and calibrates the rewrites to sound like you, not like a template. 14 industry format profiles for context-aware formatting.
+## What I built
 
-**PDF export.** ATS-optimized template rendered server-side. Download and submit.
+The application handles resume extraction, job matching, model routing with provider fallbacks, and server-rendered PDF export. It includes magic-link authentication, Stripe billing and credits, an application board, and a job-board integration.
 
-## What's live
+Much of the work sits around the model call: preserving the applicant's input through a multi-step flow, showing progress while analysis runs, handling checkout recovery, and enforcing access when a subscription changes. A successful generation is only one part of a usable product.
 
-- 76 API routes as of Aug 2026, multi-provider routing with fallback chains
-- Stripe payments, magic-link auth, credit system
-- InstantScore - paste a JD, get a match score before committing to a full tailoring
-- Voice fingerprinting, 14 industry profiles
-- 5-dimension confidence scoring
-- Live job board integration (Adzuna)
-- Artifacts counter
-- Full agent-callable surface (llms.txt, agent.json, AIIA, IndexNow)
-- Hardened payment flow (subscription revocation, checkout recovery)
-- Application tracking board
-- Streaming analysis with real-time progress
+## Where it stands
 
-## What I haven't solved
+Reframed is live at [reframed.works](https://reframed.works), with authentication, billing, tailoring, and export connected in one workflow. Distribution is the next commercial problem to solve: finding a repeatable way to reach applicants.
 
-- Resume parser handles most formats but unusual layouts can break extraction.
-- Multi-model routing means each step takes a few seconds. The full flow is not instant.
-- Product works. Distribution is the bottleneck.
-
-## Where it's going
-
-The hardest part was the tailoring prompt. Getting a model to rewrite without fabricating required explicit structural constraints -- not just "don't make things up" but defining what reframing means at the sentence level. The difference between "managed a team" and "led cross-functional execution" is reframing. Adding a team you never managed is fabrication. The prompt encodes that distinction.
-
-Two versions is the right number. One feels like the tool is deciding for you. Three was noise. Two gives you a spectrum and lets you pick what feels honest.
+Unusual resume layouts can still break extraction. Analysis takes time across several model steps, and the applicant needs to review the final wording before using it.

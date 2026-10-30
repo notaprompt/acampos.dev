@@ -131,7 +131,8 @@
   var audioCtx = null;
   var analyser = null;
   var sourceNode = null;
-  var panelOpen = window.innerWidth > 768;
+  var panelOpen = window.innerWidth > 1180;
+  var startOpen = panelOpen;
   var peaks = [];
   var peakDecay = [];
   var animId = null;
@@ -490,7 +491,7 @@
     '}',
     '',
     '/* Mobile: full-width slide-out panel + mini-player at bottom */',
-    '@media (max-width: 768px) {',
+    '@media (max-width: 1180px) {',
     '  #music-panel {',
     '    width: 80vw !important;',
     '    max-width: 320px;',
@@ -580,6 +581,7 @@
     '  width: 0%;',
     '  transition: width 0.3s linear;',
     '}',
+    '@media (max-width: 1180px) { #mp-mini { display: block; } }',
   ].join('\n');
   document.head.appendChild(style);
 
@@ -603,13 +605,17 @@
   toggle.className = startOpen ? 'shifted' : ''; // no tab glow — play button pulses instead
   toggle.textContent = 'player';
   toggle.setAttribute('aria-label', 'Toggle music player');
+  toggle.setAttribute('aria-controls', 'music-panel');
+  toggle.setAttribute('aria-expanded', String(startOpen));
   document.body.appendChild(toggle);
 
   // Panel
   var panel = document.createElement('div');
   panel.id = 'music-panel';
+  panel.setAttribute('role', 'region');
+  panel.setAttribute('aria-label', 'Music player');
+  panel.inert = !startOpen;
   // Desktop: panel starts open. Mobile: starts closed.
-  var startOpen = window.innerWidth > 768;
   panel.className = startOpen ? 'open' : '';
   panel.innerHTML = [
     '<div id="mp-titlebar">',
@@ -684,6 +690,8 @@
   function togglePanel() {
     panelOpen = !panelOpen;
     panel.classList.toggle('open', panelOpen);
+    panel.inert = !panelOpen;
+    toggle.setAttribute('aria-expanded', String(panelOpen));
     toggle.classList.toggle('shifted', panelOpen);
     // Remove glow on first interaction
     toggle.classList.remove('glow');
@@ -695,7 +703,7 @@
 
   toggle.addEventListener('click', togglePanel);
   closeBtn.addEventListener('click', function () {
-    if (panelOpen) togglePanel();
+    if (panelOpen) { togglePanel(); toggle.focus(); }
   });
 
   // ── Playlist DOM ──────────────────────────────────────────
@@ -2015,6 +2023,7 @@
     isPlaying = !audio.paused;
     hasPlayedOnce = isPlaying;
     updatePlayBtn();
+    updateProgressDisplay();
     if (isPlaying) showBanner(true);
     // Start visualizer ambient immediately — playlist reconnect will upgrade it
     if (panelOpen) startVisualizer();

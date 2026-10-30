@@ -3,9 +3,9 @@
 
 export const PERSON = {
   name: 'Alexander Campos',
-  title: 'Operations & AI systems',
+  title: 'Software and operations',
   description:
-    'Operations by day, local-first AI tools by night. Six years in regulated bank operations (monitoring, controls, vendor integrations, automation). Builds agent memory, model routing, and evaluation tooling.',
+    'Builds software, works in operations, and writes about the systems people depend on. Research interests include compute economics, ownership, and individual agency. Background includes six years in regulated finance.',
   location: 'Virginia',
   email: 'alex@campos.works',
   website: 'https://campos.works',
@@ -15,25 +15,25 @@ export const PROJECTS = [
   {
     name: 'ForgeFrame',
     url: 'https://campos.works/projects/forgeframe',
-    description: 'Open-source memory for agents. MCP-native. SQLite + FTS5, strength decay, a principle tier that never decays.',
+    description: 'Open-source agent memory over MCP, using SQLite and FTS5. Supports retrieval, use-based strengthening, decay, and protected principles.',
     status: 'active',
   },
   {
     name: 'CREATURE',
     url: 'https://campos.works/projects/creature',
-    description: 'A personal agent system that runs on one machine: memory, consolidation, judgment, and a queue in front of anything consequential.',
+    description: 'A personal agent system running on one machine: memory, model routing, scheduled jobs, and approval queues. An experiment in making context, permissions, and failures inspectable.',
     status: 'active',
   },
   {
     name: 'Reframed',
     url: 'https://reframed.works',
-    description: "Resume analysis that keeps the writer's voice. Voice fingerprinting, multi-reader analysis, signed honesty receipts.",
+    description: "A live resume tool with several analytical perspectives and signed records of text changes. Its receipts document editing; they do not prove a claim is true.",
     status: 'shipped',
   },
   {
     name: 'DEUCE',
     url: 'https://campos.works/projects/deuce',
-    description: 'A calibration-first forecasting instrument for tennis prediction markets. Signs each forecast before resolution. Paper only.',
+    description: 'A tennis forecasting experiment that signs forecasts before outcomes are known so calibration can be evaluated. Paper only; no capital at risk.',
     status: 'active',
   },
 ];
@@ -50,6 +50,7 @@ export const LINKS = {
   linkedin: 'https://linkedin.com/in/alexander-d-campos',
   x: 'https://x.com/flapfinned',
   writing: 'https://campos.works/writing',
+  research: 'https://campos.works/research/claims-capacity-collateral',
   resume: 'https://campos.works/resume',
 };
 

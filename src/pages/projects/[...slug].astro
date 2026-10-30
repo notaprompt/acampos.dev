@@ -1,12 +1,9 @@
 ---
-import creatureData from '../../data/creature.json';
 import Page from '../../layouts/Page.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  // Micro entries share this route and URL space - every card on the index
-  // leads somewhere real. `hidden` micro entries still build (deep links from
-  // the hall of shame keep working); the index just doesn't advertise them.
+  // Hidden micro entries remain available for existing deep links.
   const projects = await getCollection('projects');
   const micro = await getCollection('micro');
   return [...projects, ...micro].map(entry => ({
@@ -17,15 +14,19 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-// Screenshots may be plain paths or {src, caption} - normalize once here.
 type Shot = { src: string; caption?: string };
-const shots: Shot[] = (entry.data.screenshots ?? []).map((s: string | Shot) =>
-  typeof s === 'string' ? { src: s } : s,
+const shots: Shot[] = (entry.data.screenshots ?? []).map((shot: string | Shot) =>
+  typeof shot === 'string' ? { src: shot } : shot,
 );
-const metrics = entry.data.metrics ?? [];
-// One quiet as-of line collects the distinct sources; dates live per-metric.
-const metricSources = [...new Set(metrics.map((m) => m.source).filter(Boolean))];
-const metricAsof = metrics.length ? metrics[0].asof : null;
+if (!shots.length && entry.data.image) shots.push({ src: entry.data.image });
+const download = 'download' in entry.data ? entry.data.download : undefined;
+const statusText = {
+  active: 'In development',
+  shipped: 'Shipped',
+  parked: 'Parked',
+  absorbed: 'Continued in ForgeFrame',
+  concept: 'Concept',
+};
 ---
 
 <Page
@@ -33,9 +34,9 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
   description={entry.data.tagline}
   ogType="article"
 >
-  <script type="application/ld+json" set:html={JSON.stringify({
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
-    "@type": "SoftwareSourceCode",
+    "@type": entry.data.status === 'concept' ? 'CreativeWork' : 'SoftwareSourceCode',
     "name": entry.data.title,
     "description": entry.data.tagline,
     "url": `https://campos.works/projects/${entry.slug}`,
@@ -54,169 +55,61 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     <header class="project-header">
       <h1>{entry.data.title}</h1>
       <p class="tagline">{entry.data.tagline}</p>
-      <div class="meta">
-        <span class={`status status-${entry.data.status}`}>{entry.data.status}</span>
-        <div class="stack">
-          {entry.data.stack.map(tech => (
-            <span class="tech">{tech}</span>
-          ))}
-        </div>
-        {entry.data.repo && (
-          <a href={entry.data.repo} class="repo-link" target="_blank" rel="noopener noreferrer">
-            source >>
-          </a>
-        )}
-        {entry.data.demo && (
-          <a href={entry.data.demo} class="demo-link" target="_blank" rel="noopener noreferrer">
-            launch demo >>
-          </a>
-        )}
+      <div class="project-meta">
+        <span>{statusText[entry.data.status]}</span>
+        {entry.data.repo && <a href={entry.data.repo}>Source</a>}
+        {entry.data.demo && <a href={entry.data.demo}>Visit site</a>}
+        {download && <a href={download}>Download</a>}
       </div>
     </header>
-
-    {entry.slug === 'creature' && (
-      <div id="creature-pulse" class="deuce-live">
-        <div class="dl-quiet">reading the pulse&hellip;</div>
-      </div>
-    )}
-
-    {entry.slug === 'creature' && (
-      <figure class="diagram" aria-label="Signal flow from the world through senses, state, mind, memory and dreams, to voice and gated hands">
-        <div class="diagram-scroll" set:html={creatureData.diagram} />
-        <figcaption>How a signal travels. Hands move only after an explicit yes.</figcaption>
-      </figure>
-    )}
-
-    {shots.length > 0 ? (
-      <div class={`project-screenshots project-screenshots--${shots.length}`}>
-        {shots.map((shot, i) => (
-          <figure class="project-screenshot">
-            <img src={shot.src} alt={`${entry.data.title} - ${shot.caption ?? `screenshot ${i + 1}`}`} loading="lazy" decoding="async" />
-            {shot.caption && <figcaption>{shot.caption}</figcaption>}
-          </figure>
-        ))}
-      </div>
-    ) : entry.data.image ? (
-      <div class="project-screenshots project-screenshots--1">
-        <figure class="project-screenshot">
-          <img src={entry.data.image} alt={`${entry.data.title} screenshot`} loading="lazy" decoding="async" />
-        </figure>
-      </div>
-    ) : null}
-
-    {entry.slug === 'deuce' && (
-      <div id="deuce-instrument" class="deuce-instrument"></div>
-    )}
-
-    {entry.slug === 'deuce' && (
-      <div id="deuce-live" class="deuce-live">
-        <div class="dl-quiet">reading the ledger&hellip;</div>
-      </div>
-    )}
-
-    {metrics.length > 0 && (
-      <dl class="proof-strip">
-        {metrics.map((m) => (
-          <div class="proof-item">
-            <dt>{m.label}</dt>
-            <dd>{m.value}</dd>
-            {m.plain && <p class="proof-plain">{m.plain}</p>}
-          </div>
-        ))}
-        <p class="proof-asof">
-          as of {metricAsof}{metricSources.length ? ` · ${metricSources.join(', ')}` : ''}
-        </p>
-      </dl>
-    )}
 
     <div class="project-content">
       <Content />
     </div>
 
-    {entry.slug === 'creature' && (
-      <figure class="creature-constellation-wrap">
-        <div id="creature-constellation" class="creature-constellation">
-          <img src="/images/projects/creature-constellation.jpg" alt="the memory graph" loading="lazy" decoding="async" />
-          <div class="cc-loading">waking&hellip;</div>
-        </div>
-        <figcaption>The memory graph. Every point is a memory; gold is the principle tier.</figcaption>
-      </figure>
+    {shots.length > 0 && (
+      <div class="project-screenshots">
+        {shots.map((shot, i) => (
+          <figure class="project-screenshot">
+            <img
+              src={shot.src}
+              alt={shot.caption ?? `${entry.data.title} screenshot ${i + 1}`}
+              loading="lazy"
+              decoding="async"
+            />
+            {shot.caption && <figcaption>{shot.caption}</figcaption>}
+          </figure>
+        ))}
+      </div>
     )}
 
-    <nav class="back-nav">
-      <a href="/projects">&lt;&lt; all projects</a>
+    <nav class="back-nav" aria-label="Projects">
+      <a href="/projects">All projects</a>
     </nav>
   </article>
-
-  {entry.slug === 'deuce' && <script is:inline src="/islands/deuce-live.js"></script>}
-  {entry.slug === 'deuce' && <script is:inline src="/islands/deuce-instrument.js"></script>}
-  {entry.slug === 'creature' && <script is:inline src="/islands/creature-pulse.js"></script>}
-  {entry.slug === 'creature' && <script is:inline src="/islands/creature-constellation.js"></script>}
 </Page>
 
 <style>
-  .project-detail {
-    max-width: 100%;
-  }
-
   .project-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--white-08);
+    margin-bottom: 2.5rem;
   }
 
   .tagline {
-    font-family: var(--mono);
-    font-size: 0.85rem;
-    color: var(--white-60);
-    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--glow);
+    margin-bottom: 0.8rem;
   }
 
-  .meta {
+  .project-meta {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .status {
+    align-items: baseline;
+    gap: 0.5rem 1.25rem;
     font-family: var(--mono);
-    font-size: 0.65rem;
-    padding: 0.15em 0.5em;
-    border: 1px solid;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .status-active { color: var(--alive); border-color: var(--alive); }
-  .status-shipped { color: var(--gold-accent); border-color: var(--gold-accent); }
-  .status-concept { color: var(--white-45); border-color: var(--white-30); }
-  .status-absorbed { color: var(--gold-accent); border-color: var(--gold-accent); opacity: 0.55; }
-  .status-parked { color: var(--white-45); border-color: var(--white-30); opacity: 0.7; }
-
-  .stack {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-  }
-
-  .tech {
-    font-family: var(--mono);
-    font-size: 0.65rem;
+    font-size: 0.72rem;
+    line-height: 1.6;
     color: var(--white-45);
-    background: var(--depth-2);
-    padding: 0.15em 0.4em;
-    border: 1px solid var(--white-08);
-  }
-
-  .repo-link,
-  .demo-link {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-  }
-
-  .demo-link {
-    color: var(--alive);
   }
 
   .project-content :global(h2) {
@@ -231,538 +124,33 @@ const metricAsof = metrics.length ? metrics[0].asof : null;
     margin-bottom: 0.5rem;
   }
 
-  .back-nav {
+  .project-screenshots {
+    display: grid;
+    gap: 2rem;
     margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--white-08);
-  }
-
-  .back-nav a {
-    font-family: var(--mono);
-    font-size: 0.8rem;
   }
 
   .project-screenshot {
-    border: 1px solid var(--white-08);
-    transition: border-color 0.2s;
-    overflow: hidden;
-  }
-
-  .project-screenshot:hover {
-    border-color: var(--gold-accent);
+    margin: 0;
   }
 
   .project-screenshot img {
-    width: 100%;
-    display: block;
-  }
-
-  /* single image */
-  .project-screenshot:not(.project-screenshots *) {
-    margin-bottom: 2rem;
-  }
-
-  /* screenshots grid */
-  .project-screenshots {
-    margin-bottom: 2rem;
-  }
-
-  /* Two shots stack at full width and keep their own proportions. The old
-     2fr/1fr grid forced both into 260px cells and cropped with `cover`, which
-     ate the sides of anything that was not roughly 16:9 — a wide band lost its
-     ends, a tall panel lost its bottom. Fewer, whole images read calmer than
-     more, chopped ones. */
-  .project-screenshots--2 {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .project-screenshots--2 .project-screenshot img {
     width: 100%;
     height: auto;
     display: block;
   }
 
-  .project-screenshots--1 .project-screenshot img {
-    width: 100%;
-    max-height: 420px;
-    object-fit: cover;
-    object-position: center top;
-  }
-
-  .project-screenshots--3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-  }
-
-  .project-screenshots--3 .project-screenshot:first-child {
-    grid-column: 1 / -1;
-  }
-
-  .project-screenshots--3 .project-screenshot img {
-    width: 100%;
-    height: 240px;
-    object-fit: cover;
-    object-position: center;
-  }
-
-  .project-screenshots--3 .project-screenshot:first-child img {
-    height: 320px;
-  }
-
-  /* 4-up mirrors the 3-up grammar: first shot is the hero, rest sit under it */
-  .project-screenshots--4 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-  }
-
-  .project-screenshots--4 .project-screenshot:first-child {
-    grid-column: 1 / -1;
-  }
-
-  .project-screenshots--4 .project-screenshot img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    object-position: center;
-    object-position: center top;
-  }
-
-  .project-screenshots--4 .project-screenshot:first-child img {
-    height: 320px;
-  }
-
   .project-screenshot figcaption {
+    margin-top: 0.75rem;
     font-family: var(--mono);
-    font-size: 0.65rem;
-    color: var(--white-30);
-    padding: 0.35rem 0.1rem;
-  }
-
-  /* deuce instrument - the machine, drawn. Interactive architecture map:
-     stations, substrate rail, pulses riding the pipeline, the financing
-     ladder. Same terminal register as the live panel below it. */
-  .deuce-instrument {
-    font-family: var(--mono);
-    border: 1px solid var(--white-08);
-    background: var(--depth-2);
-    padding: 0.9rem 1rem 0.8rem;
-    margin: 0 0 1rem;
-  }
-  .deuce-instrument :global(svg) { display: block; width: 100%; height: auto; }
-  .deuce-instrument :global(.di-scroll) { overflow-x: auto; }
-  .deuce-instrument :global(.di-scroll svg) { min-width: 720px; }
-  .deuce-instrument :global(.di-head) {
-    display: flex; justify-content: space-between; align-items: baseline;
-    gap: 1rem; margin-bottom: 0.4rem;
-  }
-  .deuce-instrument :global(.di-title) {
-    font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--gold-accent);
-  }
-  .deuce-instrument :global(.di-hint) {
-    font-size: 0.66rem; color: var(--white-30); text-align: right;
-  }
-  .deuce-instrument :global(.di-edge) {
-    stroke: var(--white-15, rgba(255,255,255,0.15)); stroke-width: 1; fill: none;
-  }
-  .deuce-instrument :global(.di-feed) { stroke-dasharray: 3 4; }
-  .deuce-instrument :global(.di-node rect) {
-    fill: var(--depth-3); stroke: var(--white-15, rgba(255,255,255,0.18));
-    stroke-width: 1; cursor: pointer; transition: stroke 0.15s;
-  }
-  .deuce-instrument :global(.di-node:hover rect),
-  .deuce-instrument :global(.di-node.di-on rect) { stroke: var(--gold-accent); }
-  .deuce-instrument :global(.di-node:focus) { outline: none; }
-  .deuce-instrument :global(.di-node:focus rect) { stroke: var(--gold-accent); }
-  .deuce-instrument :global(.di-label) {
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
-    fill: var(--white-90); text-anchor: middle; pointer-events: none;
-  }
-  .deuce-instrument :global(.di-sub) {
-    font-family: var(--mono); font-size: 8.5px;
-    fill: var(--white-45, #888); text-anchor: middle; pointer-events: none;
-  }
-  .deuce-instrument :global(.di-locked rect) { stroke-dasharray: 4 3; }
-  .deuce-instrument :global(.di-locked .di-label) { fill: var(--white-45, #888); }
-  .deuce-instrument :global(.di-pulse) { fill: var(--gold-accent); opacity: 0; }
-  .deuce-instrument :global(.di-detail) {
-    border-top: 1px solid var(--white-08); margin-top: 0.3rem;
-    padding: 0.6rem 0.1rem 0.2rem; font-size: 0.74rem; line-height: 1.55;
-    color: var(--white-60); min-height: 5.2em;
-  }
-  .deuce-instrument :global(.di-dim) { color: var(--white-30); }
-  .deuce-instrument :global(.di-dname) {
-    color: var(--gold-accent); font-size: 0.7rem; letter-spacing: 0.14em;
-    margin-bottom: 0.35rem;
-  }
-  .deuce-instrument :global(.di-drow) { margin: 0.15rem 0; }
-  .deuce-instrument :global(.di-plain) {
-    font-family: var(--mono); font-size: 0.72rem; line-height: 1.6;
-    color: var(--white-60); font-style: normal; margin: 0.1rem 0 0.4rem;
-    max-width: 60em;
-  }
-
-  .deuce-instrument :global(.di-drow b) {
-    color: var(--white-45); font-weight: 400; font-size: 0.64rem;
-    letter-spacing: 0.1em; text-transform: uppercase; margin-right: 0.45em;
-  }
-  .deuce-instrument :global(.di-ladder) {
-    border-top: 1px solid var(--white-08); margin-top: 0.5rem; padding-top: 0.6rem;
-  }
-  .deuce-instrument :global(.di-lhead) {
-    font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--white-45); margin-bottom: 0.45rem;
-  }
-  .deuce-instrument :global(.di-leq) { color: var(--gold-accent); text-transform: none; letter-spacing: 0; }
-  .deuce-instrument :global(.di-stage) {
-    display: flex; align-items: baseline; gap: 0.6rem;
-    font-size: 0.72rem; padding: 0.18rem 0; color: var(--white-45);
-  }
-  .deuce-instrument :global(.di-now) { color: var(--white-90); }
-  .deuce-instrument :global(.di-now .di-sdot) { color: var(--alive); }
-  .deuce-instrument :global(.di-st) { min-width: 8.5em; letter-spacing: 0.1em; }
-  .deuce-instrument :global(.di-ss) { flex: 1; color: var(--white-45); }
-  .deuce-instrument :global(.di-gate-glyph) { font-size: 0.62rem; color: var(--white-30); }
-  .deuce-instrument :global(.di-lfoot) {
-    font-size: 0.64rem; color: var(--white-30); margin-top: 0.4rem;
-    padding-top: 0.35rem; border-top: 1px dashed var(--white-08);
-  }
-  .deuce-instrument :global(.di-gap) {
-    border-top: 1px solid var(--white-08); margin-top: 0.5rem; padding-top: 0.6rem;
-  }
-  .deuce-instrument :global(.di-axis) { stroke: var(--white-15); stroke-width: 1; }
-  .deuce-instrument :global(.di-gapband) { fill: rgba(184, 150, 90, 0.3); }
-  .deuce-instrument :global(.di-closemark) { fill: var(--white-45); }
-  .deuce-instrument :global(.di-minemark) { fill: var(--gold-accent); }
-  .deuce-instrument :global(.di-gaplabel) {
-    font-family: var(--mono); font-size: 9.5px; fill: var(--gold-accent);
-    text-anchor: middle;
-  }
-
-  /* touchable constellation - the hero, alive */
-  .creature-constellation-wrap {
-    margin: 0 0 1.2rem;
-  }
-
-  .creature-constellation {
-    position: relative;
-    border: 1px solid var(--white-08);
-    background: #080808;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-
-  .creature-constellation:hover {
-    border-color: var(--gold-accent);
-  }
-
-  .creature-constellation img {
-    width: 100%;
-    display: block;
-    opacity: 0.85;
-  }
-
-  .creature-constellation-wrap figcaption {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    color: var(--white-30);
-    padding: 0.35rem 0.1rem;
-  }
-
-  .creature-constellation :global(.cc-loading) {
-    position: absolute;
-    bottom: 8px;
-    left: 10px;
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    color: var(--white-30);
-  }
-
-  .creature-constellation :global(.cc-hint) {
-    position: absolute;
-    bottom: 8px;
-    left: 10px;
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    color: var(--white-30);
-    pointer-events: none;
-  }
-
-  /* live badge + arrival flash - shared by the live panels */
-  .deuce-live :global(.dl-live) {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35em;
-    font-size: 0.58rem;
-    letter-spacing: 0.14em;
-    color: var(--alive);
-    margin-left: 0.8rem;
-  }
-
-  .deuce-live :global(.dl-livedot) {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--alive);
-    animation: dl-pulse 1.6s ease-in-out infinite;
-  }
-
-  .deuce-live :global(.dl-asleep) {
-    color: var(--white-30);
-  }
-
-  .deuce-live :global(.dl-arrived) {
-    animation: dl-arrive 1.8s ease-out;
-  }
-
-  @keyframes dl-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.25; }
-  }
-
-  @keyframes dl-arrive {
-    0% { background: rgba(184, 150, 90, 0.22); }
-    100% { background: transparent; }
-  }
-
-  /* deuce live panel - the ledger, ticking. Terminal register: mono, dim
-     borders, gold only where something is alive. */
-  .deuce-live {
-    font-family: var(--mono);
-    border: 1px solid var(--white-08);
-    background: var(--depth-2);
-    padding: 0.9rem 1rem 0.7rem;
-    margin: 0 0 2rem;
-  }
-
-  .deuce-live :global(.dl-head) {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 0.5rem;
-  }
-
-  .deuce-live :global(.dl-title) {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--gold-accent);
-  }
-
-  .deuce-live :global(.dl-live) {
-    font-size: 0.62rem; letter-spacing: 0.2em; color: var(--alive);
-    display: inline-flex; align-items: center; gap: 0.4em; margin-left: 0.75rem;
-  }
-  .deuce-live :global(.dl-livedot) {
-    width: 6px; height: 6px; border-radius: 50%; background: var(--alive);
-    animation: dl-pulse 1.6s ease-in-out infinite;
-  }
-  @keyframes dl-pulse {
-    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(91, 242, 155, 0.45); }
-    50% { opacity: 0.45; box-shadow: 0 0 0 4px rgba(91, 242, 155, 0); }
-  }
-  .deuce-live :global(.dl-asleep) { color: var(--white-30); animation: none; }
-  .deuce-live :global(.dl-arrived) { animation: dl-arrive 2.4s ease-out; }
-  @keyframes dl-arrive {
-    0% { background: rgba(184, 150, 90, 0.22); }
-    100% { background: transparent; }
-  }
-
-  .deuce-live :global(.dl-asof) {
-    font-size: 0.6rem;
-    color: var(--white-30);
-  }
-
-  .deuce-live :global(.dl-gloss) {
-    font-size: 0.68rem; line-height: 1.5; color: var(--white-30);
-    margin: 0.15rem 0 0.35rem; max-width: 46em;
-  }
-
-  .deuce-live :global(.dl-counts) {
-    font-size: 0.8rem;
-    color: var(--glow);
-    margin-bottom: 0.2rem;
-  }
-
-  .deuce-live :global(.dl-last) {
-    font-size: 0.65rem;
-    color: var(--white-45);
-    margin-bottom: 0.6rem;
-  }
-
-  .deuce-live :global(.dl-rows) {
-    border-top: 1px solid var(--white-08);
-    padding-top: 0.5rem;
-    margin-bottom: 0.6rem;
-  }
-
-  .deuce-live :global(.dl-row) {
-    display: flex;
-    gap: 1.2rem;
-    font-size: 0.7rem;
-    line-height: 1.7;
+    font-size: 0.72rem;
+    line-height: 1.6;
     color: var(--white-45);
   }
 
-  .deuce-live :global(.dl-hash) { color: var(--white-60); min-width: 5.5em; }
-  .deuce-live :global(.dl-time) { flex: 1; }
-  .deuce-live :global(.dl-state) { color: var(--white-30); }
-  .deuce-live :global(.dl-open) { color: var(--alive); }
-
-  .deuce-live :global(.dl-foot) {
-    font-size: 0.6rem;
-    color: var(--white-20);
-    border-top: 1px solid var(--white-08);
-    padding-top: 0.45rem;
-  }
-
-  .deuce-live :global(.dl-quiet) {
-    font-size: 0.7rem;
-    color: var(--white-30);
-  }
-
-  .deuce-live :global(.dl-whead) {
-    margin-top: 1rem;
-  }
-
-  .deuce-live :global(.dl-windows) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.6rem;
-    border-top: 1px solid var(--white-08);
-    padding: 0.55rem 0 0.6rem;
-    margin-bottom: 0.6rem;
-  }
-
-  .deuce-live :global(.dl-wcell) {
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
+  .back-nav {
+    margin-top: 3rem;
+    font-family: var(--mono);
     font-size: 0.75rem;
   }
-
-  .deuce-live :global(.dl-wlabel) {
-    font-size: 0.58rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--white-30);
-  }
-
-  .deuce-live :global(.dl-up) { color: var(--alive); }
-  .deuce-live :global(.dl-down) { color: #d98a7a; }
-  .deuce-live :global(.dl-flat) { color: var(--white-45); }
-
-  .deuce-live :global(.dl-wrow) {
-    flex-wrap: wrap;
-    gap: 0.4rem 0.9rem;
-  }
-
-  .deuce-live :global(.dl-usd) {
-    color: var(--gold-accent);
-    min-width: 4.5em;
-    text-align: right;
-  }
-
-  .deuce-live :global(.dl-move) {
-    color: var(--white-60);
-  }
-
-  .deuce-live :global(.dl-mkt) {
-    color: var(--white-30);
-    flex-basis: 100%;
-    padding-left: 5.9em;
-    font-size: 0.62rem;
-    line-height: 1.1;
-    margin-top: -0.35em;
-    margin-bottom: 0.3em;
-  }
-
-  @media (max-width: 600px) {
-    .deuce-live :global(.dl-mkt) { padding-left: 0; }
-  }
-
-  /* proof strip - bookkeeping, not a dashboard. Borders whisper; numbers sit
-     in the glow; the as-of line owns the honesty. */
-  .proof-strip {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem 2.2rem;
-    margin: 0 0 2.5rem;
-    padding: 0.9rem 0.2rem 0.7rem;
-    border-top: 1px solid var(--white-08);
-    border-bottom: 1px solid var(--white-08);
-  }
-
-  .proof-plain {
-    font-size: 0.72rem;
-    line-height: 1.45;
-    color: var(--white-30);
-    margin: 0.25rem 0 0;
-    max-width: 12.5rem;
-  }
-
-  .proof-item dt {
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--white-30);
-    margin-bottom: 0.15rem;
-  }
-
-  .proof-item dd {
-    font-family: var(--mono);
-    font-size: 0.85rem;
-    color: var(--glow);
-    margin: 0;
-  }
-
-  .proof-asof {
-    flex-basis: 100%;
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    color: var(--white-20);
-    margin: 0.4rem 0 0;
-  }
-
-  @media (max-width: 600px) {
-    .project-screenshots--2,
-    .project-screenshots--3,
-    .project-screenshots--4 {
-      grid-template-columns: 1fr;
-    }
-
-    .project-screenshots--2 .project-screenshot,
-    .project-screenshots--3 .project-screenshot:first-child {
-      height: auto;
-    }
-
-    .project-screenshots--2 .project-screenshot img,
-    .project-screenshots--3 .project-screenshot img,
-    .project-screenshots--3 .project-screenshot:first-child img,
-    .project-screenshots--4 .project-screenshot img,
-    .project-screenshots--4 .project-screenshot:first-child img {
-      height: auto;
-      object-fit: unset;
-    }
-
-    .proof-strip {
-      gap: 0.4rem 1.4rem;
-    }
-  }
-
-  /* CREATURE: the invariants list and the lifted diagram live in the body */
-  .project-content :global(.enforced) { list-style: none; padding: 0; margin: 0 0 1.75rem; border-top: 1px solid var(--white-15); }
-  .project-content :global(.enforced li) { font-family: var(--mono); font-size: 0.8rem; line-height: 1.55; color: var(--white-60); padding: 0.55rem 0; border-bottom: 1px solid var(--white-08); }
-  .project-content :global(.enforced b) { color: var(--glow-hot); font-weight: 600; margin-right: 0.35rem; }
-  .diagram { margin: 0 0 1.5rem; }
-  .diagram-scroll { overflow-x: auto; border: 1px solid var(--white-08); background: var(--depth-1); padding: 1rem; color: var(--white-60); }
-  .diagram-scroll :global(svg) { display: block; min-width: 620px; width: 100%; height: auto; }
-  .diagram figcaption { font-family: var(--mono); font-size: 0.72rem; color: var(--white-45); margin-top: 0.5rem; }
-  .project-content :global(.door) { font-family: var(--mono); font-size: 0.8rem; color: var(--white-45); margin: 0 0 2rem; }
-  .project-content :global(.door a) { color: var(--gold-accent); }
 </style>
